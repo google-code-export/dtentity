@@ -11,7 +11,7 @@ Goals:
 
 [[Tutorial for creating entity systems]]
 
-[[DtEntity Scripting API]]
+[DtEntity Scripting API]
 
 == Download and build ==
 
