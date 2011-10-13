@@ -13,8 +13,7 @@ To open a remote debugging port at adress 8888, set the property DebugEnabled on
 
 
 == Global Functions ==
-
-<pre>
+{{{
 
 /*
  * Search for specified file in file system, checking the DataFilePathList for possible paths, 
@@ -64,7 +63,7 @@ function setDataFilePathList(array)
 function setNextStatisticsType()
 
 
-</pre>
+}}}
 
 == Component ==
 
@@ -76,8 +75,7 @@ the method EntitySystem.getComponent(eid);
 Components provide properties that can be read and written from JavaScript.
 
 Example of getting and setting a property of type Vec3Property:
-
-<pre>
+{{{
   // get entity id of entity with unique id "defaultCam");
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
   
@@ -92,11 +90,11 @@ Example of getting and setting a property of type Vec3Property:
   
   // Let camera react to property change
   cameraComponent.onFinishedSettingProperties();
-</pre>
+}}}
 
 Properties can have a number of types and have to be accessed accordingly.
 
-<pre>
+{{{
 
 // Array properties accept javascript arrays. Array values can be of
 // any type, even other arrays or objects.
@@ -120,10 +118,10 @@ component.MyVec3Property = [0,1,2];
 component.MyVec4Property = [0,1,2,3];
 
 component.MyStringProperty = "Hello, Property World";
-</pre>
+}}}
 
 Methods:
-<pre>
+{{{
   /*
    * returns true if other wraps the same component as this - same component
   * type and same entity id.
@@ -151,19 +149,19 @@ Methods:
    * Component can apply changes to its internal state.
    */
   function onFinishedSettingProperties();
-</pre>
+}}}
 
 == DebugDrawManager ==
 
 Can be used to draw lines, texts and other forms for debug purposes.
 Example - draw a red line along the z axis for 10 seconds:
-<pre>
+{{{
 var ddm = new DebugDrawManager();
 dd.addLine([0, 0, -10], [0, 0, 10], [1,0,0,1], 1, 10, true);
-</pre>
+}}}
 
 Methods:
-<pre>
+{{{
   /*
    Add a circle.
    Vec3 position: Center of circle to draw
@@ -216,7 +214,7 @@ Methods:
    bool useDepthTest: If false, make it show through other geometry
    */
   function addTriangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec4 color, [int linewidth, Number duration, bool useDepthTest])
- </pre>
+}}}
  
  
 == EntityManager ==
@@ -224,13 +222,12 @@ Methods:
 Global object giving access to a number of entity management functionality.
 
 Usage:
-<pre>
+{{{
 var sys = EntityManager.getEntitySystem("Name");
-</pre>
+}}}
 
 Methods:
-<pre>
-
+{{{
   /*
    Add a circle.
    Vec3 position: Center of circle to draw
@@ -345,22 +342,22 @@ Methods:
    */
   function toString()
   
-  </pre>
+  }}}
   
   
 == Entity System ==
 As returned by EntityManager.getEntitySystem().
 Just like components, entity systems expose a number of properties.
 They can be set directly from JavaScript:
-<pre>
+{{{
 var animsystem = EntityManager.getEntitySystem("Animation");
 animsystem.UseHardwareSkinning = false;
 animsystem.onFinishedSettingProperties();
-</pre>
+}}}
 
 Methods:
 
-<pre>
+{{{
 
 /*
  * return a string representation of entity system
@@ -410,20 +407,20 @@ function deleteComponent(entityid)
  */
 function onFinishedSettingProperties()
 
-</pre>
+}}}
 
 == GUI ==
 
 Exists as a global object. Is used for controlling CEGUI gui.
 Example:
-<pre>
+{{{
 GUI.loadScheme("WindowsLook.scheme");
 GUI.loadLayout("demoChooser.layout");
-</pre>
+}}}
 
 Methods:
 
-<pre>
+{{{
 /*
  * Return a string representation of GUI
  */
@@ -475,17 +472,16 @@ function createImageset(name, filename, [resourceGroupName])
  * Destroy the supplied imageset if it exists
  */
 function destroyImageset(name)
-</pre>
+}}}
 
 == GUIWidget ==
 CEGUI Widget properties can be accessed as javascript properties. Example:
-<pre>
+{{{
 GUI.getWidget("MyWidget").Visible = false;
-</pre>
+}}}
 
 Methods:
-
-<pre>
+{{{
 /*
  * return a string representation of gui widget
  */
@@ -515,14 +511,14 @@ function getProperty(name)
  * Create and return a new child to this widget
  */
 function addChildWidget(name)
-</pre>
+}}}
 
 == InputHandler ==
 
 Another global object.
 
 Methods:
-<pre>
+{{{
 
 /*
  * Get axis value from 0 - 1. Allowed inputs are entries of global Axis object.
@@ -610,3 +606,4 @@ function toString()
  * This is not useful during runtime but makes it easy to look keys up
  */
 function printKeys();
+}}}
