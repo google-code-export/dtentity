@@ -9,9 +9,9 @@ Goals:
   * Run on Windows and Linux
   * Extendable using plugins
 
-[[Tutorial for creating entity systems]]
+[EntityTutorial Tutorial for creating entity systems]
 
-[DtEntity Scripting API]
+[ScriptingAPI DtEntity Scripting API]
 
 == Download and build ==
 
