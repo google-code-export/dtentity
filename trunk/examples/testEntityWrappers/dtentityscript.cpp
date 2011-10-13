@@ -34,11 +34,13 @@
 #include <osgDB/FileUtils>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
+#include <dtEntity/profile.h>
 
 int main(int argc, char** argv)
 {
 
     std::string script = "";
+    bool profiling_enabled = false;
     int curArg = 1;
 
     while (curArg < argc)
@@ -53,6 +55,10 @@ int main(int argc, char** argv)
              {
                 script = argv[curArg];
              }
+          }
+          else if (curArgv == "--enable-profiling")
+          {
+             profiling_enabled = true;
           }
         }
        ++curArg;
@@ -88,6 +94,49 @@ int main(int argc, char** argv)
    
    scriptsys->ExecuteFile(script);
    
-   while (!viewer.done()) viewer.frame();
+   if(profiling_enabled)
+   {
+      dtEntity::StringId frameId = dtEntity::SID("Frame");
+      dtEntity::StringId frameAdvanceId = dtEntity::SID("Frame_Advance");
+      dtEntity::StringId frameEvTrId = dtEntity::SID("Frame_EventTraversal");
+      dtEntity::StringId frameUpTrId = dtEntity::SID("Frame_UpdateTraversal");
+      dtEntity::StringId frameRenderTrId = dtEntity::SID("Frame_RenderingTraversals");
+
+      unsigned int framecount = 0;
+      while (!viewer.done()) 
+      {
+         CProfileManager::Increment_Frame_Counter();
+			CProfileManager::Start_Profile(frameId);
+         
+         CProfileManager::Start_Profile(frameAdvanceId);
+         viewer.advance();
+         CProfileManager::Stop_Profile();
+
+         CProfileManager::Start_Profile(frameEvTrId);
+         viewer.eventTraversal();
+         CProfileManager::Stop_Profile();
+
+         CProfileManager::Start_Profile(frameUpTrId);
+         viewer.updateTraversal();
+         CProfileManager::Stop_Profile();
+
+         CProfileManager::Start_Profile(frameRenderTrId);
+         viewer.renderingTraversals();
+         CProfileManager::Stop_Profile();
+
+         CProfileManager::Stop_Profile();
+         if(++framecount > 999)
+         {
+            CProfileManager::dumpAll();
+			   fflush(stdout);
+            framecount = 0;
+            CProfileManager::Reset();
+         }
+      }
+   }
+   else
+   {
+      while (!viewer.done()) viewer.frame();
+   }
    return 0;
 }

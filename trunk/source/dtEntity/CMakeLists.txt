@@ -114,6 +114,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/debugdrawmanager.cpp
   ${SOURCE_PATH}/entity.cpp
   ${SOURCE_PATH}/entitymanager.cpp
+  ${SOURCE_PATH}/initosgviewer.cpp
   ${SOURCE_PATH}/inputhandler.cpp
   ${SOURCE_PATH}/layerattachpointcomponent.cpp
   ${SOURCE_PATH}/layercomponent.cpp

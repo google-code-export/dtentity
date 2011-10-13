@@ -101,8 +101,8 @@ namespace dtEntity
       void SetCullMask(unsigned int mask);
       unsigned int GetCullMask() const;
 
-      virtual osg::Vec3 GetTranslation() const { return GetPosition(); }
-      virtual void SetTranslation(const osg::Vec3& v) { SetPosition(v); }
+      virtual osg::Vec3d GetTranslation() const { return GetPosition(); }
+      virtual void SetTranslation(const osg::Vec3d& v) { SetPosition(v); }
 
       virtual osg::Quat GetRotation() const 
       { 

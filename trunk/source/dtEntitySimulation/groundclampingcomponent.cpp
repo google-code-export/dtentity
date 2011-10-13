@@ -20,6 +20,7 @@
 
 #include <dtEntitySimulation/groundclampingcomponent.h>
 
+#include <dtEntity/cameracomponent.h>
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/layerattachpointcomponent.h>
@@ -28,6 +29,8 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/stringid.h>
 #include <iostream>
+
+#define MINIMUM_MOVEMENT_DISTANCE 0.2
 
 namespace dtEntitySimulation
 {
@@ -42,15 +45,21 @@ namespace dtEntitySimulation
    const dtEntity::StringId GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId(
       dtEntity::SID("SetHeightAndRotationToTerrain"));
    const dtEntity::StringId GroundClampingComponent::VerticalOffsetId(dtEntity::SID("VerticalOffset"));
+   const dtEntity::StringId GroundClampingComponent::MinDistToCameraId(dtEntity::SID("MinDistToCamera"));
+   
 
    ////////////////////////////////////////////////////////////////////////////
    GroundClampingComponent::GroundClampingComponent()
       : mTransformComponent(NULL)
       , mEntity(NULL)
       , mIntersector(new osgUtil::LineSegmentIntersector(osg::Vec3d(), osg::Vec3d()))
+      , mLastClampedPosition(osg::Vec3(FLT_MAX, FLT_MAX, FLT_MAX))
    {
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
+      Register(MinDistToCameraId, &mMinDistToCamera);
+
+      mMinDistToCamera.Set(100);
 
    }
     
@@ -103,8 +112,7 @@ namespace dtEntitySimulation
 
       AddScriptedMethod("getTerrainHeight", dtEntity::ScriptMethodFunctor(this, &GroundClampingSystem::ScriptGetTerrainHeight));
 
-      dtEntity::MapSystem* ms;
-      if(em.GetEntitySystem(dtEntity::MapComponent::TYPE, ms) && ms->GetCurrentScene() != "") 
+      if(em.GetEntitySystem(dtEntity::MapComponent::TYPE, mMapSystem) && mMapSystem->GetCurrentScene() != "") 
       {
          dtEntity::SceneLoadedMessage msg;
          OnMapLoaded(msg);
@@ -149,9 +157,8 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::OnMapLoaded(const dtEntity::Message& msg)
    {
-      dtEntity::MapSystem* ms;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-      mTerrainId = ms->GetEntityIdByUniqueId("Terrain");
+
+      mTerrainId = mMapSystem->GetEntityIdByUniqueId("Terrain");
       if(mTerrainId == 0) 
       {
          LOG_DEBUG("Cannot find terrain entity, ground clamping not possible!");
@@ -225,6 +232,17 @@ namespace dtEntitySimulation
          return;
       }
 
+      dtEntity::EntityId camid = mMapSystem->GetEntityIdByUniqueId("defaultCam");
+      dtEntity::CameraComponent* cam;
+      
+      if(!GetEntityManager().GetComponent(camid, cam))
+      {
+         LOG_ERROR("No primary camera found in ground clamping system!");
+         return;
+      }
+
+      osg::Vec3d campos = cam->GetPosition();
+
       dtEntity::LayerAttachPointSystem* layersys;
       GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
       dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
@@ -244,17 +262,44 @@ namespace dtEntitySimulation
          dtEntity::StringId mode = component->GetClampingMode();
          if(mode == GroundClampingComponent::ClampingMode_DisabledId)
          {
+            //std::cout << "Disabled\n";
             continue;
          }
 
          dtEntity::TransformComponent* transformcomp = component->GetTransformComponent();
          assert(transformcomp != NULL);
          osg::Vec3d translation = transformcomp->GetTranslation();
+
+         // don't do clamping if camera is too far away
+         float distToCam = (translation - campos).length();
+         if(distToCam > component->GetMinDistToCamera())
+         {
+           // std::cout << "MinDistCam\n";
+            continue;
+         }
+
+         osg::Vec3d lastpos = component->GetLastClampedPosition();
+        
+         double distMovedX = abs(translation[0] - lastpos[0]);
+         double distMovedY = abs(translation[0] - lastpos[0]);
+
+         // if only moved a little: Set height to last clamp height to override other
+         // height modifiers
+         if(distMovedX < MINIMUM_MOVEMENT_DISTANCE && distMovedY < MINIMUM_MOVEMENT_DISTANCE)
+         {
+            transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
+            //std::cout << "MinDistMove\n";
+            continue;
+         }
+
          osgUtil::LineSegmentIntersector* intersector = component->GetIntersector();
          intersector->setStart(osg::Vec3d(translation[0], translation[1], translation[2] + 10000));
          intersector->setEnd(osg::Vec3d(translation[0], translation[1], translation[2] - 10000));
          mIntersectorGroup->addIntersector(intersector);
          iSectToCompMap.push_back(std::make_pair(intersector, component));
+         static int i = 0;
+         ++i;
+         //std::cout << "Intersect" << i << "\n";
       }
 
       mIntersectionVisitor.reset();
@@ -285,7 +330,7 @@ namespace dtEntitySimulation
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL && entity->GetId() == mTerrainId)
             {
-               osg::Vec3d isectpos = isect->localIntersectionPoint;         
+               osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
          
                dtEntity::StringId mode = component->GetClampingMode();
 
@@ -299,6 +344,8 @@ namespace dtEntitySimulation
                {
                   translation[2] = isectpos[2] + voffset;
                   transformcomp->SetTranslation(translation);
+                  component->SetLastClampedPosition(translation);
+                  
                }
 
                if(mode == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
@@ -311,14 +358,17 @@ namespace dtEntitySimulation
 
                   // make rotation from global up vec to surface normal
                   osg::Quat addrot;
-                  addrot.makeRotate(up, isect->localIntersectionNormal);
+                  addrot.makeRotate(up, isect->getWorldIntersectNormal());
                   rot = rot * addrot;
-                  transformcomp->SetRotation(rot);
-                  
-               }
+                  transformcomp->SetRotation(rot);                  
+               }               
                return;
             }
          }
       }
+
+      // no intersection found, set last clamped pos to current position
+      // so that there is no intersection test until translation changes
+      component->SetLastClampedPosition(component->GetTransformComponent()->GetTranslation());
    }
 }
