@@ -1,13 +1,13 @@
 dtEntity is a flexible, data driven gameplay and simulation system. It uses the Delta3D libraries and its wrappers of OpenSceneGraph, Cal3D, CEGUI and other libraries. DtEntity has a JavaScript binding that allows quick iterations for developing games and simulations.
 
 Goals:
-* Allow massive numbers of actors
-* Pure component approach - does not rely on inheritance to share functionality
-* Allow full control of the scene graph - don't try to abstract away OSG
-* Fully scriptable
-* Sandbox editor
-* Run on Windows and Linux
-* Extendable using plugins
+  * Allow massive numbers of actors
+  * Pure component approach - does not rely on inheritance to share functionality
+  * Allow full control of the scene graph - don't try to abstract away OSG
+  * Fully scriptable
+  * Sandbox editor
+  * Run on Windows and Linux
+  * Extendable using plugins
 
 [[Tutorial for creating entity systems]]
 
@@ -20,23 +20,23 @@ DtEntity can be downloaded here:
 svn co https://delta3d-extras.svn.sourceforge.net/svnroot/delta3d-extras/dtEntity/trunk dtEntity
 </pre>
 
-Dependencies:
-# Delta3D
-# Qt 4.7 (4.6 seems to work, but has some weird looking GUI layouts)
-# [http://www.delta3d.org/index.php?topic=downloads Delta3D 2.5.0] or higher and its sub-dependencies - build with animation, Qt and sound support
-# [http://code.google.com/intl/de-DE/apis/v8/build.html Google V8].
+Mandatory dependencies:
+  * OpenSceneGraph 3.0 or higher
+
+Optional dependencies:
+  * Qt 4.7 (4.6 seems to work, but has some weird looking GUI layouts)
+  * [http://code.google.com/intl/de-DE/apis/v8/build.html Google V8].
+  * [http://www.delta3d.org/index.php?topic=downloads Delta3D 2.5.0] or higher and its sub-dependencies - build with animation, Qt and sound support
 
 CMake options:
 
-DRAW_QT_MULTITHREADED - Run Qt and Delta3D in separate threads. Gives performance improvements. Does not work on Linux yet but should run fine on Windows.
-BUILD_PHYSX - Build entity systems for handling NVidia PhysX engine. Has support for simple collision shapes and dynamics, no composite shapes supported yet. Also a system for generating a physics mesh for paged terrain is provided.
 BUILD_QT - Build Qt Editor and widgets
-BUILD_TESTS - Build unit tests. Uses Qt testing framework. Not enough tests yet :-/
+BUILD_TESTS - Build unit tests
 USE_BOOST_POOL - Use Boost::Pool to allocate memory for entity systems. Should in theory give a performance gain, although observed differences were not significant.
 
 == Entity System ==
 
-DtEntity follows a pure component approach. Game objects do not use inheritance to share functionality, instead they are composed of a number of components. All components of an entity share a common entity ID, which is an unsigned integer unique to the entity. Components are not centrally stored, instead the components of each type are stored in an object derived from the class EntitySystem. 
+dtEntity follows a pure component approach. Game objects do not use inheritance to share functionality, instead they are composed of a number of components. All components of an entity share a common entity ID, which is an unsigned integer unique to the entity. Components are not centrally stored, instead the components of each type are stored in an object derived from the class EntitySystem. 
 
 As an example, a car entity could be composed of a physics component, a transformation component, a 3D render component and a sound component. There is a physics entity system, a transformation entity system and so on. When the car entity is created, the method ''CreateComponent(EntityId)'' is called for each of these entity systems.
 
