@@ -1,0 +1,156 @@
+dtEntity is a flexible, data driven gameplay and simulation system. It uses the Delta3D libraries and its wrappers of OpenSceneGraph, Cal3D, CEGUI and other libraries. DtEntity has a JavaScript binding that allows quick iterations for developing games and simulations.
+
+Goals:
+  * Allow massive numbers of actors
+  * Pure component approach - does not rely on inheritance to share functionality
+  * Allow full control of the scene graph - don't try to abstract away OSG
+  * Fully scriptable
+  * Sandbox editor
+  * Run on Windows and Linux
+  * Extendable using plugins
+
+[[Tutorial for creating entity systems]]
+
+[DtEntity Scripting API]
+
+== Download and build ==
+
+Mandatory dependencies:
+  * OpenSceneGraph 3.0 or higher
+
+Optional dependencies:
+  * Qt 4.7 (4.6 seems to work, but has some weird looking GUI layouts)
+  * [http://code.google.com/intl/de-DE/apis/v8/build.html Google V8].
+  * [http://www.delta3d.org/index.php?topic=downloads Delta3D 2.5.0] or higher and its sub-dependencies - build with animation, Qt and sound support
+
+CMake options:
+
+BUILD_QT - Build Qt Editor and widgets
+BUILD_TESTS - Build unit tests
+USE_BOOST_POOL - Use Boost::Pool to allocate memory for entity systems. Should in theory give a performance gain, although observed differences were not significant.
+
+== Entity System ==
+
+dtEntity follows a pure component approach. Game objects do not use inheritance to share functionality, instead they are composed of a number of components. All components of an entity share a common entity ID, which is an unsigned integer unique to the entity. Components are not centrally stored, instead the components of each type are stored in an object derived from the class EntitySystem. 
+
+As an example, a car entity could be composed of a physics component, a transformation component, a 3D render component and a sound component. There is a physics entity system, a transformation entity system and so on. When the car entity is created, the method ''CreateComponent(EntityId)'' is called for each of these entity systems.
+
+One of the advantages of storing components by type, not by object, is that it is very efficient to iterate over all components of a type. Also, efficient memory management techniques can be used. 
+
+All entity systems are registered with a central EntityManager object. Access to the EntityManager gives access to all entity systems and all their components.
+Components can reference each other. The physics system has to have access to the transformation of the car. It can retrieve the transformation component from the Entity Manager with the method EntityManager::GetComponent(EntityId).
+
+To learn more about entity systems, [http://t-machine.org/index.php/2007/09/03/entity-systems-are-the-future-of-mmog-development-part-1/ follow this link]
+
+== Properties ==
+
+DtEntity provides a property system. ''dtEntity::Property'' is an abstract base class. There are subclasses IntProperty, StringProperty, BoolProperty etc. ArrayProperty and GroupProperty are used to hold arrays of properties and collections of named sub-properties. It is possible to store a number of GroupProperties in an array property, creating property trees.
+Components as well as entity systems are derived from the class dtEntity::PropertyHolder. PropertyHolder contains a map from property name to property. Properties can be added using the method ''PropertyHolder::Register(StringId, Property*)''. Registered properties can be serialized to XML or edited with the editor GUI. In-game messages also derive from the PropertyHolder class.
+
+== StringIds ==
+
+To save memory and to make string comparison faster, component names are not stored as std::strings. Instead, they are hashed to integer values. The function ''StringId dtEntity::SID(const std::string&)'' uses the CRC32 algorithm to hash a string to an unsigned integer. The function also stores the string in a global map that can be used to do reverse lookups with the method ''std::string dtEntity::GetStringFromSID(StringId)''.
+
+If you want to use std::string instead, open file dtEntity/entityid.h and comment in the line '#define DTENTITY_USE_STRINGS_AS_STRINGIDS' and recompile your appliaction. This can be helpful for debugging.
+
+== Message System ==
+
+The message system of dtEntity is closely modelled on that of Delta3D. It is basically a topic-based pubsub system. Each Message type or topic is identified by a unique StringId name. An object can register itself for messages with the method ''EntityManager::RegisterForMessages(StringId msgtype, MessageFunctor& ftr, unsigned int options)''. 
+The options parameter can be used to set a priority for the registrant. Registering with a high priority will ensure that the functor will be called before functors registered with a low priority.
+
+A class CameraSystem with a method ''OnSceneLoaded(const Message&)'' can register itself to receive messages of type SceneLoadedMessage with this code:
+<pre>
+mEntityManager->RegisterForMessages(SceneLoadedMessage::TYPE, MessageFunctor(this, &CameraSystem::OnSceneLoaded));
+</pre>
+
+The method ''EntityManager::EmitMessage(const Message&)'' is used to send messages.
+<pre>
+SceneLoadedMessage msg;
+msg.SetSceneName("MyScene");
+mEntityManager->EmitMessage(msg);
+</pre>
+
+This should cause the OnSceneLoaded method to be directly called with the message as an argument.
+
+The method ''EntityManager::EnqueueMessage(const Message&)'' can be used to enqueue the message until the end of the simulation step. ''EntityManager::EnqueueMessageLater(const Message& msg, float timeToPost)'' can be used to enqueue a message for a number of seconds until it is emitted.
+EnqueueMessage and EnqueueMessageLater are thread safe and can be used to post messages from background threads.
+
+== Spawners ==
+
+A spawner is a kind of template for creating an entity. A spawner contains a list of components to instantiate and a number of properties to set on these components. A spawner can have a parent spawner, allowing a simple form of inheritance. A child spawner inherits the components and properties of its parent and can overwrite the property values of their parent and add aditional components. Spawners are registered with the Map entity system. 
+
+<pre>
+Spawner* spawner = new Spawner("MySpawner", "MyMap");
+
+// Add a component of type PositionAttitudeTransform and set its position property
+DynamicPropertyContainer componentValues;
+Vec3Property pos(osg::Vec3(1,2,3);
+componentValues.AddProperty(SID("Position", pos);
+spawner->AddComponent(SID("PositionAttitudeTransformComponent"), componentValues);
+
+// fetch map system from entity manager
+MapSystem* mapSystem;
+mEntityManager->GetEntitySystem(MapComponent::TYPE, mapSystem);
+
+// register spawner
+mapSystem->AddSpawner(*spawner);
+
+// Instantiate spawner
+Entity* entity;
+mEntityManager->CreateEntity(entity);
+mapSystem->Spawn("MySpawner", *entity);
+
+</pre>
+
+== Map System ==
+
+DtEntity has a map system that allows storing and loading scenes. A scene file contains the entity systems to load and their property values. It also holds a list of map files to load.
+A map file contains spawners and entities. It is possible to load and unload maps individually. Spawners, entities and their property values are stored to XML sorted by their name. This is to make maps play nice with version control systems.
+
+== Entity System plugins ==
+
+The class ''ComponentPluginManager'' is held by the map entity system and can be used to load entity systems from a plugin library. Each plugin can contain a number of entity systems. The entity systems are registered when the plugin is loaded, but the entity system is only started when a component of its type is instantiated or when the entity system is explicitly started.
+
+== DebugDrawManager ==
+
+The DebugDrawManager is a helper for drawing lines, spheres, meshes, text and other primitives.
+The DebugDrawManager receives a reference to the EntityManager by its constructor. It adds itself to the scene and removes itself cleanly in its destructor.
+It provides these methods:
+<pre>
+void AddPoint(const osg::Vec3f& position, const osg::Vec4& color, int size = 1, float duration = 0, bool depthTestEnabled = true);
+void AddPoints(const std::vector<osg::Vec3f>& positions, const osg::Vec4& color, int size = 1, float duration = 0, bool depthTestEnabled = true);
+void AddLine(const osg::Vec3& start, const osg::Vec3& end, const osg::Vec4& color, int linewidth = 1, float duration = 0, bool depthTestEnabled = true);
+void AddLines(const std::vector<osg::Vec3>, const osg::Vec4& color, int linewidth = 1, float duration = 0, bool depthTestEnabled = true);
+void AddCross(const osg::Vec3& position, const osg::Vec4& color, float size, float duration = 0, bool depthTestEnabled = true);
+void AddSphere(const osg::Vec3& position, float radius, const osg::Vec4& color, float duration = 0, bool depthTestEnabled = true);
+void AddTriangle(const osg::Vec3& vert0, const osg::Vec3& vert1, const osg::Vec3& vert2, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+void AddTriangles(const std::vector<osg::Vec3>, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+void AddMesh(osg::Geometry*, const osg::Vec3& position, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+void AddCircle(const osg::Vec3& position, const osg::Vec3& planeNormal, float radius, const osg::Vec4& color, float duration = 0, bool depthTestEnabled = true);
+void AddString(const osg::Vec3& position, const std::string& str, const osg::Vec4& color, float duration = 0, bool depthTestEnabled = true);
+void AddAABB(const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+void AddOBB(const osg::Matrix&, const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+void AddAxes(const osg::Matrix&, const osg::Vec4& color, float size, float duration = 0, bool depthTestEnabled = true);
+</pre>
+The duration value is the number of seconds that the primitive is to be shown. A duration of 0 means that the primitive is drawn once, then removed. This can be used to update debug geometry in real time, to visualize lines of sight, forces, etc.
+Please note that the debug draw manager is not performance optimized and may draw things in a non-optimal way.
+
+[[Image:testDebugDrawManager.png]]
+
+The image shows the output of testDebugDrawManager, included in the SVN repository.
+
+== dtEntityEditor ==
+
+DtEntity contains a sandbox editor. It can be used to edit map and scene files. 
+
+[[Image:dtEntityEditor.jpg]]
+
+On the left is the entity tree. It contains entity systems (yellow slash) and entities and spawners listed by map. Spawners are indented by their inheritance hierarchy.
+The green 'plus' icon can be used to add maps, entities or spawners.
+
+On the right side is the property editor. When an entity, spawner or entity system is selected in the entity tree, its properties are listed in the property editor. Changing a property has no immediate effect on the scene. You have to press the 'Apply Changes' button before anything happens.
+By default, the type of the property determines the editor that is provided for the property. The editor for a  bool property is a check box, the editor for a string is a text field. It is possible to customize the editor for a specific property. The property editor looks in the folder ProjectAssets/Delegates for files matching the name <Component Name>.xml. In the XML file, you can determine the type of property editor to use for a property. It is possible to configure the property editor to use a color picker to edit a vec4 property of a specific type. In the XML file it is also possible to define the type of property held by an array property. This way, the property editor knows what to add to an array when the '+' icon is pressed on the array property editor. 
+
+The '+' and '-' icons on the top of the property editor can be used to add and remove components from an entity or spawner.
+
+The editor also has a tool system that is shown on the top bar. There are tools to select, translate, rotate and scale entities with a transform property. There is also a plugin system that can be used to add custom tools to the tool bar.
