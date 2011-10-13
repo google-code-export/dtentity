@@ -37,6 +37,7 @@
 #include <dtEntityPhysX/physxcomponent.h>
 #include <dtEntityPhysX/physxpagedterraincomponent.h>
 #include <osgViewer/Renderer>
+#include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
 #include <osgGA/TrackballManipulator>
 #include <osgSim/DOFTransform>

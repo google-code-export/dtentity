@@ -261,8 +261,8 @@ namespace dtEntity
       }
 
 
-      virtual osg::Vec3 GetTranslation() const = 0;
-      virtual void SetTranslation(const osg::Vec3&) = 0;
+      virtual osg::Vec3d GetTranslation() const = 0;
+      virtual void SetTranslation(const osg::Vec3d&) = 0;
 
       virtual osg::Quat GetRotation() const = 0;
       virtual void SetRotation(const osg::Quat&) = 0;
@@ -302,14 +302,14 @@ namespace dtEntity
       void GetMatrix(osg::Matrix& m) const;
       void SetMatrix(const osg::Matrix& m);
       
-      virtual osg::Vec3 GetTranslation() const
+      virtual osg::Vec3d GetTranslation() const
       {
          osg::Matrix m;
          GetMatrix(m);
          return m.getTrans();
       }
 
-      virtual void SetTranslation(const osg::Vec3& t)
+      virtual void SetTranslation(const osg::Vec3d& t)
       {
          osg::Matrix m;
          GetMatrix(m);
@@ -380,8 +380,8 @@ namespace dtEntity
 
       void OnPropertyChanged(StringId propname, Property& prop);
 
-      osg::Vec3 GetPosition() const { return mPosition.Get(); }
-      void SetPosition(const osg::Vec3& p);
+      osg::Vec3d GetPosition() const { return mPosition.Get(); }
+      void SetPosition(const osg::Vec3d& p);
 
       osg::Quat GetAttitude() const { return mAttitude.Get(); }
       void SetAttitude(const osg::Quat& r);
@@ -389,15 +389,15 @@ namespace dtEntity
       osg::Vec3 GetScale() const;
       void SetScale(const osg::Vec3& q);
 
-      virtual osg::Vec3 GetTranslation() const  { return GetPosition(); }
-      virtual void SetTranslation(const osg::Vec3& t) { SetPosition(t); }
+      virtual osg::Vec3d GetTranslation() const  { return GetPosition(); }
+      virtual void SetTranslation(const osg::Vec3d& t) { SetPosition(t); }
 
       virtual osg::Quat GetRotation() const { return GetAttitude(); }
       virtual void SetRotation(const osg::Quat& q) { SetAttitude(q); }
 
    private:
 
-      Vec3Property mPosition;
+      Vec3dProperty mPosition;
       QuatProperty mAttitude;
       Vec3Property mScale;
    };

@@ -33,6 +33,11 @@
 #include <osgSim/LineOfSight>
 #include <osg/observer_ptr>
 
+namespace dtEntity
+{
+   class MapSystem;
+}
+
 namespace dtEntitySimulation
 {
 
@@ -47,6 +52,7 @@ namespace dtEntitySimulation
       static const dtEntity::StringId ClampingMode_KeepAboveTerrainId;
       static const dtEntity::StringId ClampingMode_SetHeightToTerrainHeightId;
       static const dtEntity::StringId ClampingMode_SetHeightAndRotationToTerrainId;
+      static const dtEntity::StringId MinDistToCameraId;
 
       static const dtEntity::StringId VerticalOffsetId;
 
@@ -76,14 +82,22 @@ namespace dtEntitySimulation
       osgUtil::LineSegmentIntersector* GetIntersector() const { return mIntersector.get(); }
       void SetIntersector(osgUtil::LineSegmentIntersector* isect) { mIntersector = isect; }
 
+      void SetLastClampedPosition(const osg::Vec3d& p) { mLastClampedPosition = p; }
+      osg::Vec3d GetLastClampedPosition() const { return mLastClampedPosition; }
+
+      void SetMinDistToCamera(float  p) { mMinDistToCamera.Set(p); }
+      float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
+
    private:
 
       dtEntity::StringIdProperty mClampingMode;
       dtEntity::FloatProperty mVerticalOffset;
+      dtEntity::FloatProperty mMinDistToCamera;
       dtEntity::TransformComponent* mTransformComponent;
       unsigned int mIntersectIndex;
       dtEntity::Entity* mEntity;
       osg::ref_ptr<osgUtil::LineSegmentIntersector> mIntersector;
+      osg::Vec3d mLastClampedPosition;
       
    };
 
@@ -129,5 +143,6 @@ namespace dtEntitySimulation
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;
       dtEntity::BoolProperty mEnabled;
       osgSim::LineOfSight mLos;
+      dtEntity::MapSystem* mMapSystem;
    };
 }

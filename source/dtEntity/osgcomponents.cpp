@@ -604,7 +604,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetPosition(const osg::Vec3& p)
+   void PositionAttitudeTransformComponent::SetPosition(const osg::Vec3d& p)
    {
       mPosition.Set(p);
       GetPositionAttitudeTransform()->setPosition(p);
@@ -635,7 +635,7 @@ namespace dtEntity
    {
       if(propname == PositionId)
       {
-         GetPositionAttitudeTransform()->setPosition(prop.Vec3Value());
+         GetPositionAttitudeTransform()->setPosition(prop.Vec3dValue());
       }
       else if(propname == AttitudeId)
       {
