@@ -1,0 +1,612 @@
+DtEntity has a JavaScript scripting interface.
+It uses the [http://code.google.com/intl/en_GB/apis/v8/intro.html V8 JavaScript engine].
+The goal is to provide full access to all dtEntity functionality, including entity management, camera control, scene loading, window management and so on.
+
+= Using the Google Chrome Developer Tools to debug JavaScript =
+
+There is an Eclipse plugin that you can use to edit and debug your JavaScript. It connects to DtScript over a network port and lets you define break points, step through functions and explore variable values.
+You can grab the eclipse plugin here: [[http://code.google.com/p/chromedevtools/]]
+To open a remote debugging port at adress 8888, set the property DebugEnabled on the Script System to true.
+
+
+= JavaScript API =
+
+
+== Global Functions ==
+
+<pre>
+
+/*
+ * Search for specified file in file system, checking the DataFilePathList for possible paths, 
+ * returning the full path of the first valid file found, return an empty string if no string is found.
+ */
+function findDataFile(string path);
+
+/*
+ * Get the search paths that the file system will look in for files
+ */
+function getDataFilePathList(array)
+
+/*
+ * Read and execute a JavaScript file.
+ * Uses osgdb paths.
+ * Example: <pre>include("Scripts/myscript.js");
+ */
+function include(string);
+
+/*
+ * Read and execute a JavaScript file.
+ * The path is checked against a list to make sure
+ * it is only included once.
+ * Uses osgdb paths.
+ * Example: <pre>include_once("Scripts/myscript.js");
+ */
+function include_once(string);
+
+/*
+ * print all arguments as strings to console
+ */
+function print(string, [string...]);
+
+/*
+ * print all arguments as strings to console. Append newline.
+ */
+function println(string, [string...]);
+
+/*
+ * Set the search paths that the file system will look in for files
+ */
+function setDataFilePathList(array)
+
+/*
+ * Loop through a number of OSG statistics displays
+ */
+function setNextStatisticsType()
+
+
+</pre>
+
+== Component ==
+
+Wraps an object of c++ type dtEntity::Component.
+
+Components cannot be directly constructed, they can only be obtained using 
+the method EntitySystem.getComponent(eid);
+
+Components provide properties that can be read and written from JavaScript.
+
+Example of getting and setting a property of type Vec3Property:
+
+<pre>
+  // get entity id of entity with unique id "defaultCam");
+  var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
+  
+  // get camera component of this entity
+  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+
+  // read current position
+  println("Last position: " + cameraComponent.Position);
+  
+  // set property value
+  cameraComponent.Position = [0, -10, 0];
+  
+  // Let camera react to property change
+  cameraComponent.onFinishedSettingProperties();
+</pre>
+
+Properties can have a number of types and have to be accessed accordingly.
+
+<pre>
+
+// Array properties accept javascript arrays. Array values can be of
+// any type, even other arrays or objects.
+component.MyArrayProperty = [1, 2, 3, [4,5], {"6" : 6}];
+
+component.MyBoolProperty = true;
+component.MyDoubleProperty = 3.1415;
+component.MyFloatProperty = 3.1415;
+
+// group properties accept javascript objects. These objects are treated as a collection
+// of name-value pairs. values can be of any type including arrays and objects.
+component.MyGroupProperty = {"first" : 1, "second" : [2,3], "third" : "three"};
+
+component.MyIntProperty = -4;
+component.MyUIntProperty = 4;
+
+component.MyMatrixProperty = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+component.MyQuatProperty = [0,1,2,3];
+component.MyVec2Property = [0,1];
+component.MyVec3Property = [0,1,2];
+component.MyVec4Property = [0,1,2,3];
+
+component.MyStringProperty = "Hello, Property World";
+</pre>
+
+Methods:
+<pre>
+  /*
+   * returns true if other wraps the same component as this - same component
+  * type and same entity id.
+  */  
+  function equals(other);
+  
+  /*
+   * Return type name of entity system that component belongs to
+   */
+  function getType();
+  
+  /*
+   * Returns object containing all property name/value pairs of component.
+   * Can not be used to set properties!
+   */
+  function properties();
+  
+  /*
+   * Return a string representation of component
+   */
+  function toString();
+  
+  /*
+   * Should be called by user when any properties were changed.
+   * Component can apply changes to its internal state.
+   */
+  function onFinishedSettingProperties();
+</pre>
+
+== DebugDrawManager ==
+
+Can be used to draw lines, texts and other forms for debug purposes.
+Example - draw a red line along the z axis for 10 seconds:
+<pre>
+var ddm = new DebugDrawManager();
+dd.addLine([0, 0, -10], [0, 0, 10], [1,0,0,1], 1, 10, true);
+</pre>
+
+Methods:
+<pre>
+  /*
+   Add a circle.
+   Vec3 position: Center of circle to draw
+   Vec3 normal: Normal defining face direction of circle
+   number radius: Radius of circle
+   Vec4 color: Color to draw
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function addCircle(Vec3 position, Vec3 normal, number radius, Vec4 color, [Number duration, bool useDepthTest])
+  
+  /*
+   Add a cross with side lenght 1.
+   Vec3 position: Center of cross to draw
+   Vec4 color: Color to draw
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function addCross(Vec3 position, Vec4 color, [Number duration, bool useDepthTest])
+  
+  /*
+   Add a line
+   Vec3 start: Start of line to draw
+   Vec3 end: End of line to draw
+   Vec4 color: Color to draw
+   int lineWidth: line width in pixels.
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function function addLine(Vec3 start, Vec3 end, [Vec4 color, int lineWidth, Number duration, bool useDepthTest])
+  
+  /*
+   Add a sphere.
+   Vec3 position: Center of sphere to draw
+   number radius: Radius of sphere
+   Vec4 color: Color to draw
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function addSphere(Vec3 position, number radius, Vec4 color, Number duration, bool useDepthTest])
+  
+  /*
+   Add a triangle.
+   Vec3 v1: Corner of triangle
+   Vec3 v2: Corner of triangle
+   Vec3 v3: Corner of triangle
+   Vec4 color: Color to draw
+   int lineWidth: line width in pixels.
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function addTriangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec4 color, [int linewidth, Number duration, bool useDepthTest])
+ </pre>
+ 
+ 
+== EntityManager ==
+
+Global object giving access to a number of entity management functionality.
+
+Usage:
+<pre>
+var sys = EntityManager.getEntitySystem("Name");
+</pre>
+
+Methods:
+<pre>
+
+  /*
+   Add a circle.
+   Vec3 position: Center of circle to draw
+   Vec3 normal: Normal defining face direction of circle
+   number radius: Radius of circle
+   Vec4 color: Color to draw
+   number duration: Draw for duration seconds. If <= 0 draw once.
+   bool useDepthTest: If false, make it show through other geometry
+   */
+  function addCircle(Vec3 position, Vec3 normal, number radius, Vec4 color, [Number duration, bool useDepthTest])
+  
+  
+  /*
+   * Add a javascript-defined entity system to manager. A usage example
+   * can be found in the file examples/ProjectAssets/Scripts/testentitysystem.js
+   */
+  function addEntitySystem(object)
+  
+  /*
+   * Add entity with given entity id to scene graph. 
+   * Causes layer system to attach node defined in layer component
+   * to layer attach point, also defined in layer component.
+   */
+  function addToScene(entityid)
+  
+  /*
+   * Creates a new, empty entity and returns its entity id.
+   */
+  function createEntity()
+  
+  /*
+   * Returns all components that are attached to the entity identified by entityid 
+   * in format {entitytype : component, ...} 
+   */
+  function getComponents(entityid)
+  
+  /*
+   * Returns an array with the entity ids of all existing entities
+   */
+  function getEntityIds()
+  
+  /*
+   * Create a message of type msgtype and set its parameters from values
+   * in params object. Immediately send the message.
+   * Example:
+   * EntityManager.emitMessage("EntitySelectedMessage", {AboutEntity: 3});
+   */
+  function emitMessage(string msgtype, object params)
+  
+  /*
+   * Create a message of type msgtype and set its parameters from values
+   * in params object. Message is sent at beginning of next frame (MESSAGE_PRE_FRAME)
+   * Example:
+   * EntityManager.enqueueMessage("EntitySelectedMessage", {AboutEntity: 3});
+   */
+  function enqueueMessage(string msgtype, object params)
+  
+  /*
+   * Create a message of type msgtype and set its parameters from values
+   * in params object. Message is sent after a given number of seconds.
+   * Example:
+   * EntityManager.enqueueMessageLater("EntitySelectedMessage", 5, {AboutEntity: 3});
+   */
+  function enqueueMessageLater(string msgtype, number seconds, object params)
+  
+  /*
+   * Return entity system identified by given name.
+   * Watch out: This method is not super-fast, it is better
+   * to re-use the result than to call this every frame!
+   */
+  function getEntitySystem(typename)
+  
+  /*
+   * Returns true if an entity system is registered with this typename
+   */
+  function hasEntitySystem(typename)
+  
+  /*
+   * Delete all components with this entity id and then
+   * delete the entity object
+   */
+  function killEntity(entityid)
+  
+  /*
+   * Register a function to be executed when a message of given type is emitted.
+   * The function should expect two parameters, the message name and the parameter object
+   * of the function.
+   * The options bit mask defines the order in that registrants are called by the entity manager.
+   * Possible values are Priority.highest, Priority.higher, Priority.default, Priority.lowest. Priority.default
+   * Also a bit for Priority.singleshot can be set that causes the function to be deregistered when it was called once.
+   *
+   * Example: EntityManager.registerForMessages("EndOfFrameMessage",
+   *   function(name, params) {print(name);}, Priority.lowest | Priority.singleshot);
+   */
+  function registerForMessages(string msgname, function, options)
+  
+  /*
+   * Unregister function from message. Throws an error if
+   * function was not registered to the message name.
+   */
+  function unregisterForMessages(string msgname, function)
+  
+  /*
+   * Detach entity from scene graph. Causes layer system to 
+   * detach the layer node defined in layer component from its defined parent.
+   */
+  function removeFromScene(entityid)
+  
+
+  /*
+   * Return a string representation of entity manager
+   */
+  function toString()
+  
+  </pre>
+  
+  
+== Entity System ==
+As returned by EntityManager.getEntitySystem().
+Just like components, entity systems expose a number of properties.
+They can be set directly from JavaScript:
+<pre>
+var animsystem = EntityManager.getEntitySystem("Animation");
+animsystem.UseHardwareSkinning = false;
+animsystem.onFinishedSettingProperties();
+</pre>
+
+Methods:
+
+<pre>
+
+/*
+ * return a string representation of entity system
+ */
+function toString()
+
+/*
+ * return an array containing all components in entity system
+ */
+function getAllComponents()
+
+/*
+ * Return component registered with given entityid.
+ * returns null if component does not exist.
+ */
+function getComponent(entityid)
+
+/*
+ * return string name of entity system type
+ */
+function getComponentType()
+
+/*
+ * return array with entity ids for which
+ * components exist in this system
+ */
+function getEntitiesInSystem()
+
+/*
+ * return true if a component was created for this entity id
+ */
+function hasComponent(entityid)
+
+/*
+ * Create and return a component for this entity id
+ */
+function createComponent(entityid)
+
+/*
+ * delete component from entity
+ */
+function deleteComponent(entityid)
+
+/*
+ * Should be called by user when any properties were changed.
+ * Entity system can apply changes to its internal state.
+ */
+function onFinishedSettingProperties()
+
+</pre>
+
+== GUI ==
+
+Exists as a global object. Is used for controlling CEGUI gui.
+Example:
+<pre>
+GUI.loadScheme("WindowsLook.scheme");
+GUI.loadLayout("demoChooser.layout");
+</pre>
+
+Methods:
+
+<pre>
+/*
+ * Return a string representation of GUI
+ */
+function toString()
+
+/*
+ * Load CEGUI scheme file from data path
+ */
+function loadScheme(string path)
+
+/*
+ * Use image from image set as a mouse cursor
+ */
+function setMouseCursor(string imagesetName, string imageName)
+
+/*
+ * Load CEGUI layout file from path
+ */
+function loadLayout(string path)
+
+/*
+ * Returns CEGUI widget at top level of layout as GUIWidget object
+ */
+function getWidget(string name)
+
+/*
+ * Create a new widget as child of parent. Returned as a GUIWidget object.
+ */
+function createWidget(string parent, string typename, [string name])
+
+/*
+ * remove widget from parent and delete
+ */
+function destroyWidget(name)
+
+/*
+ * returns true if image set with name exists
+ */
+function isImagesetPresent(name)
+
+/*
+ * Create an ImageSet based on the supplied Image file. The Imageset will 
+ * initially have a single image defined named "full_image" which is an image 
+ * that represents the entire area of the loaded image. 
+ */
+function createImageset(name, filename, [resourceGroupName])
+
+/*
+ * Destroy the supplied imageset if it exists
+ */
+function destroyImageset(name)
+</pre>
+
+== GUIWidget ==
+CEGUI Widget properties can be accessed as javascript properties. Example:
+<pre>
+GUI.getWidget("MyWidget").Visible = false;
+</pre>
+
+Methods:
+
+<pre>
+/*
+ * return a string representation of gui widget
+ */
+function toString()
+
+/*
+ * set widget visibility
+ */
+function setVisible(bool)
+
+/*
+ * set opacity of widget (0 - 1)
+ */
+function setAlpha(number)
+
+/*
+ * Set a CEGUI property
+ */
+function setProperty(string name, string value);
+
+/*
+ * Get a CEGUI property
+ */
+function getProperty(name)
+
+/*
+ * Create and return a new child to this widget
+ */
+function addChildWidget(name)
+</pre>
+
+== InputHandler ==
+
+Another global object.
+
+Methods:
+<pre>
+
+/*
+ * Get axis value from 0 - 1. Allowed inputs are entries of global Axis object.
+ * Example : 
+ * var x = InputHandler.getAxis(Axis.MouseX);
+ */
+function getAxis(axis)
+
+/*
+ * Returns true if key is currently pressed
+ * Example:
+ * bool zpressed = InputHandler.getKey("z");
+ */
+function getKey(name)
+
+/*
+ * Returns true if key was pressed down this frame.
+ */
+function getKeyDown(name)
+
+/*
+ * Returns true if key was released this frame.
+ */
+function getKeyUp(name)
+
+/*
+ * Returns true if any key on keyboard is currently pressed.
+ */
+function anyKeyDown()
+
+/*
+ * Return string of keys that were pressed this frame.
+ */
+function getInputString()
+
+/*
+ * return true if mouse button is currently pressed
+ * 0 is left, 1 is right, 2 is center mouse button
+ * Example : 
+ * var leftpressed = InputHandler.getMouseButton(0); 
+ */
+function getMouseButton(button)
+
+/*
+ * Returns true if mouse button was released this frame.
+ */
+function getMouseButtonUp(button)
+
+/*
+ * Returns true if mouse button was pressed down this frame.
+ */
+function getMouseButtonDown()
+
+/*
+ * Returns true if mouse wheel is in given state.
+ * Example: InputHandler.getMouseWheelState(MouseWheelState.Up);
+ */
+function getMouseWheelState(state)
+
+/*
+ * Returns true if system supports multi touch
+ */
+function getMultiTouchEnabled()
+
+/*
+ * Return number of current touch points
+ */
+function getNumTouches()
+
+/*
+ * Return touch data structure.
+ * Format:
+ * [{"tapcount" : tapcount, "id" : id, "x": x, "y" : y, "phase" : phase}, ...]
+ */
+function getTouches()
+
+/*
+ * return string representation
+ */
+function toString()
+
+
+/*
+ * Prints a list of all registered keyboard key names to console.
+ * This is not useful during runtime but makes it easy to look keys up
+ */
+function printKeys();
