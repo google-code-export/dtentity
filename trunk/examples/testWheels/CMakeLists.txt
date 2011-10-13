@@ -1,0 +1,34 @@
+SET(APP_NAME testWheels)
+
+IF (WIN32)
+ADD_DEFINITIONS(-DNOMINMAX)
+ENDIF (WIN32)
+
+INCLUDE_DIRECTORIES( 
+  ${CMAKE_SOURCE_DIR}/${INC_DIR}  
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+  ${OSG_INCLUDE_DIRS}
+)
+
+SET(APP_SOURCES
+    testwheels.cpp
+)
+
+ADD_EXECUTABLE(${APP_NAME}
+    ${APP_SOURCES}
+)
+
+TARGET_LINK_LIBRARIES(${APP_NAME}     
+					  dtEntity                   
+                      ${OSG_LIBRARIES}        
+                      ${DTUTIL_LIBRARIES}
+					  ${DTCORE_LIBRARIES}            
+					  ${DTABC_LIBRARIES}
+                      )
+                     
+INCLUDE(ModuleInstall OPTIONAL)
+
+IF (MSVC_IDE)
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES IMPORT_PREFIX "../")
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+ENDIF (MSVC_IDE)

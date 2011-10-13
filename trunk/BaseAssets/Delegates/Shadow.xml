@@ -1,0 +1,13 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+   <enuminput propertyname="ShadowTechnique" values="LISPSM|LISPSM_ViewBounds|LISPSM_CullBounds|PSSM" />
+   <arrayinput propertyname="Children" >
+	   <prototype>
+			<stringproperty name="child" />
+	   </prototype>
+	   <inputs>
+	   <componentinput propertyname="child" />
+	   </inputs>
+   </arrayinput>
+
+</delegates>   

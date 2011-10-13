@@ -1,0 +1,56 @@
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+<map>
+  <spawner name="TestSpawner">
+    <component type="StaticMesh">
+	  <stringproperty name="Mesh">terrapage_example/archive.txp</stringproperty>
+    </component>
+    
+   <component type="Layer">
+        <stringproperty name="Layer">default</stringproperty>
+        <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+    </component>
+	
+	<component type="Map">
+        <stringproperty name="EntityName">Terrain</stringproperty>
+        <stringproperty name="UniqueId">Terrain</stringproperty>
+    </component>
+
+	<component type="PositionAttitudeTransform">
+      <vec3property name="Position" x="0.0" y="0" z="0" />
+      <arrayproperty name="Children">
+        <stringproperty name="">StaticMesh</stringproperty>
+      </arrayproperty>
+    </component>    
+	<component type="PhysXPagedTerrain">     
+    </component>
+    
+  </spawner>
+
+  <entity spawner="TestSpawner">
+  </entity>
+  
+   <spawner name="PhysicsCube">
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>      
+    </component>
+    <component type="PositionAttitudeTransform">
+      <vec3property name="Position" x="0.0" y="0" z="0" />
+	  <vec3property name="Scale" x="10" y="10" z="10" />
+      <arrayproperty name="Children">
+        <stringproperty name="">StaticMesh</stringproperty>
+      </arrayproperty>
+    </component>
+   <component type="Layer">
+        <stringproperty name="Layer">default</stringproperty>
+        <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+    </component>    
+    <component type="PhysX">
+		<stringproperty name="CollisionType">Cube</stringproperty>
+		<vec3property name="BoxHalfLengths" x="5" y="5" z="5" />
+	</component>
+  </spawner>
+  
+  
+  
+
+</map>
