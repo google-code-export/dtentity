@@ -2,7 +2,7 @@ This tutorial shows how to code a simple entity system, register it with dtEntit
 Entities that have a component of the described entity system will have a line of text displayed over the position of the entity.
 The full code of the tutorial is in the subversion repository under examples/testEntitySystemPlugin. The entity system is built to a shared library which is loaded into dtEntity at run time.
 
-[http://dtentity.googlecode.com/svn/wiki/images/dtentity_tutorial1.jpg]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial1.jpg]
 
 == header ==
 First up, the header for the component and entity system. As entity system and component are basically a unit, both classes are defined in the same header file.
