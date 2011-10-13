@@ -7,7 +7,7 @@ The full code of the tutorial is in the subversion repository under examples/tes
 == header ==
 First up, the header for the component and entity system. As entity system and component are basically a unit, both classes are defined in the same header file.
 
-<pre>
+{{{
 #ifndef DTENTITY_TESTENTITY_COMPONENT
 #define DTENTITY_TESTENTITY_COMPONENT
 
@@ -154,13 +154,13 @@ private:
 };
 
 #endif //DTENTITY_TESTENTITY_COMPONENT
-</pre>
+}}}
 
 == source file ==
 
 Now the cpp file. The entity system is registered to receive messages of type dtEntity::TickMessage. This way, the method OnTick is called once during each simulation step. Here the position of the text attachment is updated.
 
-<pre>
+{{{
 #include "testcomponent.h"
 
 #include <dtEntity/basemessages.h>
@@ -329,13 +329,13 @@ void TestEntitySystem::Tick(const dtEntity::Message& msg)
    }
 }
 
-</pre>
+}}}
 
 == Adding plugin entry point ==
 
 The entity system is now complete and can be added to the entity manager. To keep the core of dtEntity clean, a plugin system can be used to add entity systems during run time. The file pluginfactory.cpp contains a c function called ''CreatePluginFactories'' that acts as an entry point for loading the plugin. This function can return a list of objects of class ''ComponentPluginFactory''. Each ComponentPluginFactory is used to instantiate a single entity system. The plugin can contain more than one entity system, that's why the entry function returns a list.
 
-<pre>
+{{{
 #include "export.h"
 #include "testcomponent.h"
 #include <dtEntity/componentplugin.h>
@@ -404,7 +404,7 @@ extern "C" DT_TESTENTITYSYSTEM_EXPORT void CreatePluginFactories(std::list<dtEnt
 {
    list.push_back(new PluginFactory());
 }
-</pre>
+}}}
 
 == Using the entity system ==
 
@@ -417,7 +417,7 @@ If you load the plugin in the editor right now you will get default property edi
 
 Add a file ProjectAssets/Delegates/TestEntity.xml:
 
-<pre>
+{{{
 <?xml  version="1.0" encoding="UTF-8" standalone="no"?>
 <delegates>
 
@@ -465,7 +465,7 @@ Add a file ProjectAssets/Delegates/TestEntity.xml:
       </inputs>   
    </arrayinput>
 </delegates>
-</pre>
+}}}
 
 == Trying it out in the editor ==
 First make sure that the plugin is in the directory working dir/dteplugins and that all its dependencies can be found. Then start the editor.
