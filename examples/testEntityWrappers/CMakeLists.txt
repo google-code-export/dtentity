@@ -1,0 +1,51 @@
+SET(APP_NAME dtEntityScript)
+
+IF (WIN32)
+ADD_DEFINITIONS(-DNOMINMAX)
+ENDIF (WIN32)
+
+INCLUDE_DIRECTORIES( 
+  ${CMAKE_SOURCE_DIR}/${INC_DIR}  
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+  ${DELTA3D_INCLUDE_DIR}
+  ${OSG_INCLUDE_DIRS}
+)
+
+SET(APP_SOURCES
+    dtentityscript.cpp
+)
+
+ADD_EXECUTABLE(${APP_NAME}
+    ${APP_SOURCES}
+)
+
+TARGET_LINK_LIBRARIES(${APP_NAME}  
+					  dtEntity       
+                      dtEntityWrappers
+					  ${OSG_LIBRARIES}     
+					  ${DTUTIL_LIBRARIES}
+					  ${DTCORE_LIBRARIES} 
+					  ${DTABC_LIBRARIES}
+)
+                     
+INCLUDE(ModuleInstall OPTIONAL)
+
+IF (MSVC)
+   install(TARGETS ${LIB_NAME}
+      ARCHIVE
+      DESTINATION lib
+      COMPONENT libs
+   )
+   install(TARGETS ${LIB_NAME}
+      RUNTIME
+      DESTINATION bin
+      COMPONENT application
+   )
+ENDIF (MSVC)
+
+IF (MSVC_IDE)
+  
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES IMPORT_PREFIX "../")
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+ENDIF (MSVC_IDE)
+

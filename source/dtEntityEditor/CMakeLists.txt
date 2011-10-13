@@ -1,0 +1,60 @@
+SET(APP_NAME dtEntityEditor)
+
+FIND_PACKAGE(Qt4 REQUIRED)
+
+SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${APP_NAME})
+SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(APP_PUBLIC_HEADERS
+   ${HEADER_PATH}/editorapplication.h
+   ${HEADER_PATH}/editormainwindow.h
+
+)
+
+SET(APP_SOURCES
+   ${SOURCE_PATH}/editorapplication.cpp
+   ${SOURCE_PATH}/editormainwindow.cpp
+   ${SOURCE_PATH}/main.cpp
+)
+
+set(MOC_INPUT
+   ${HEADER_PATH}/editorapplication.h
+   ${HEADER_PATH}/editormainwindow.h
+)
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+  ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+  ${CMAKE_SOURCE_DIR}/source/dtEntity/include
+  ${CMAKE_SOURCE_DIR}/source/dtEntityWrappers/include
+  ${CMAKE_SOURCE_DIR}/source/dtEntityQtWidgets/include
+  ${QT_INCLUDE_DIR}
+  ${OSG_INCLUDE_DIRS}
+  ${OPENTHREADS_INCLUDE_DIRS}
+)
+
+QT4_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
+
+ADD_EXECUTABLE(${APP_NAME} 
+    ${APP_PUBLIC_HEADERS}
+    ${APP_SOURCES}
+    ${MOC_SOURCES}
+    ${RCC_SOURCES}
+)
+
+
+TARGET_LINK_LIBRARIES(${APP_NAME}
+                           ${QT_QTCORE_LIBRARIES}
+                           ${QT_QTGUI_LIBRARIES}
+                           ${QT_QTOPENGL_LIBRARIES}
+                           ${OSG_LIBRARIES}
+									${OPENTHREADS_LIBRARIES}	
+                           dtEntity
+									dtEntityQtWidgets
+									dtEntityWrappers
+)
+
+IF (MSVC)
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+ENDIF (MSVC) 
+

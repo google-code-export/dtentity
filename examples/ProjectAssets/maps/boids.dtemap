@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<map>
+
+  <spawner addtospawnerstore="true" guicategory="default" iconpath="" name="Boids">
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+      <stringproperty name="Layer">default</stringproperty>
+      <boolproperty name="Visible" value="true"/>
+    </component>
+    <component type="PositionAttitudeTransform">
+      <quatproperty name="Attitude" w="1.0000000000" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+      <arrayproperty name="Children">
+        <stringproperty name="000000">StaticMesh</stringproperty>
+      </arrayproperty>
+      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+    </component>
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
+    </component>
+  </spawner>
+
+  <entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+      <stringproperty name="Layer">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">Terrain</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+    </component>
+    <component type="PositionAttitudeTransform">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">StaticMesh</stringproperty>
+      </arrayproperty>
+      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+    </component>
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+    </component>
+  </entity>
+
+  <entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+    <component type="LayerAttachPoint">
+      <stringproperty name="Name">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">SkyBox</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">SkyBox</stringproperty>
+    </component>
+    <component type="Shadow">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">LayerAttachPoint</stringproperty>
+      </arrayproperty>
+      <floatproperty name="MaxFarPlane" value="10000.000000"/>
+      <stringproperty name="ShadowTechnique">PSSM</stringproperty>
+      <uintproperty name="TexSize" value="512"/>
+    </component>
+    <component type="SkyBox">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">Shadow</stringproperty>
+      </arrayproperty>
+      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+    </component>
+  </entity>
+
+</map>

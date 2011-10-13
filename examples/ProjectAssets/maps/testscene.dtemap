@@ -1,0 +1,24 @@
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+
+<scene name="MyProject">
+	
+	<entitysystem type="Layer">
+		<arrayproperty name="Layers">
+			<groupproperty name="">
+				<stringproperty name="Name">default</stringproperty>
+				<boolproperty name="Wireframe" value="false" />
+				<boolproperty name="Lighting" value="true" />
+				<boolproperty name="Visible" value="true" />
+			</groupproperty>			
+			<groupproperty name="">
+				<stringproperty name="Name">skybox</stringproperty>
+				<boolproperty name="Wireframe" value="false" />
+				<boolproperty name="Lighting" value="false" />
+				<boolproperty name="Visible" value="true" />
+			</groupproperty>			
+		</arrayproperty>
+	</entitysystem>
+	<maps>
+		<map path="testmap.xml" />
+	</maps>
+</scene>

@@ -1,0 +1,23 @@
+<template name="window" content="content">
+<head>
+	<link type="text/rcss" href="rkt.rcss"/>
+	<link type="text/rcss" href="shine.rcss"/>
+</head>
+<body class="window">
+	<div id="title_bar">
+		<handle move_target="#document">
+			<div id="title">Title</div>
+		</handle>
+	</div>
+	<div id="window">
+	   <div id="spacer">
+		   <div id="scrollbar">
+				<div id="content">
+				</div>
+			</div>
+		</div>
+	</div>
+	<handle size_target="#document" style="position: absolute; width: 10px; height: 10px; bottom: 10px; right: 10px;"></handle>
+
+</body>
+</template>
