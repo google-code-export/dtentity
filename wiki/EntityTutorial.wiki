@@ -472,34 +472,34 @@ First make sure that the plugin is in the directory working dir/dteplugins and t
 
 Add a new map entry.
 
-[[Image:dtentity_tutorial2.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial2.jpg]
 
 Select the map entry and right click it. In the upcoming context menu press "add Entity".
 
-[[Image:dtentity_tutorial3.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial3.jpg]
 
 Select the newly created entity. The property editor on the right should now show the components of the new entity - a single map component.
 Click the green plus icon above the property editor. A list of available plugins to add to the entity pops up. Now if the test plugin was loaded correctly the list should have an entry "TestEntity".
 
-[[Image:dtentity_tutorial4.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial4.jpg]
 
 Don't select that entry for now, instead select "PositionAttitudeTransform", "Layer" and "StaticMesh" and press OK.
 Now we have to setup the entity to show a static mesh. In the property editor, select the Mesh property of the StaticMesh component. A button "Choose" should become visible. Press that and select a mesh file, for example StaticMeshes/physics_crate.ive. We want the static mesh to be movable, so we attach it to the PositionAttitudeTransform component. Press the '+' button besides the property "Children" of the PositionAttitudeTransform component. In the upcoming select box chose "StaticMesh".
 
-[[Image:dtentity_tutorial5.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial5.jpg]
 
 The PositionAttitudeTransform has to be made visible in the scene. Select the "Layer" component and set its AttachedComponent property to "PositionAttitudeTransform". This makes sure that the PositionAttitudeTransform component is added as a scene graph child to the top level scene node.
 
 Finally click the "Apply Changes" button and the mesh object should appear in view.
 
-[[Image:dtentity_tutorial6.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial6.jpg]
 
 Now add the TestEntity component. If everything went fine then a small black text should appear above the crate mesh. 
 
 You can change the color of the text using the color property of the TestEntity component, and you can use the Enum property to choose a different text.
 
-[[Image:dtentity_tutorial7.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial7.jpg]
 
 You can also try adding an array entry to property ArrayTest. This should show up:
 
-[[Image:dtentity_tutorial8.jpg]]
+[http://dtentity.googlecode.com/svn/wiki/Dtentity_tutorial8.jpg]
