@@ -15,11 +15,6 @@ Goals:
 
 == Download and build ==
 
-DtEntity can be downloaded here:
-<pre>
-svn co https://delta3d-extras.svn.sourceforge.net/svnroot/delta3d-extras/dtEntity/trunk dtEntity
-</pre>
-
 Mandatory dependencies:
   * OpenSceneGraph 3.0 or higher
 
