@@ -1,0 +1,505 @@
+This tutorial shows how to code a simple entity system, register it with dtEntity and use it in the editor.
+Entities that have a component of the described entity system will have a line of text displayed over the position of the entity.
+The full code of the tutorial is in the subversion repository under examples/testEntitySystemPlugin. The entity system is built to a shared library which is loaded into dtEntity at run time.
+
+[[Image:dtentity_tutorial1.jpg]]
+
+== header ==
+First up, the header for the component and entity system. As entity system and component are basically a unit, both classes are defined in the same header file.
+
+<pre>
+#ifndef DTENTITY_TESTENTITY_COMPONENT
+#define DTENTITY_TESTENTITY_COMPONENT
+
+#include "export.h"
+#include <dtEntity/component.h>
+#include <dtEntity/debugdrawmanager.h>
+#include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/property.h>
+#include <dtEntity/debugdrawmanager.h>
+
+class DT_TESTENTITYSYSTEM_EXPORT TestEntityComponent : public dtEntity::Component
+{
+
+public:
+
+   /*
+     Each component is associated with a unique component type.
+     ComponentType is a StringId, a string hashed to an unsigned int.
+   */
+   static const dtEntity::ComponentType TYPE;
+
+   /*
+     Each property of the component has a name. These names are
+     declared here and defined in the cpp. They are associated with
+     their respective properties in the constructor of the component.
+   */
+   static const dtEntity::StringId ArrayTestId;
+   static const dtEntity::StringId DateTimeId;
+   static const dtEntity::StringId EnumId;
+   static const dtEntity::StringId PathId;
+   static const dtEntity::StringId ColorId;
+
+   // CTor
+   TestEntityComponent();
+
+   // DTor
+   virtual ~TestEntityComponent();
+
+   /*
+      Each component must override the GetType() method and return the
+      component type.
+   */
+   virtual dtEntity::ComponentType GetType() const { return TYPE; }
+
+   /*
+     Each component must override the IsInstanceOf method.
+     If the component is derived from another component then
+     it may be wise to also call the IsInstaceOf method of the superclass.
+     Check out dtEntity::TransformComponent and its child class
+     dtEntity::MatrixTransformComponent for an example.
+   */
+   virtual bool IsInstanceOf(dtEntity::ComponentType id) const
+   {
+      return (id == TYPE);
+   }
+
+   /*
+     When the editor or a map loader changes a property on a component,
+     the OnPropertyChanged method is called. It can be overridden to
+     react to property changes. It is good practice to call this method
+     whenever you change a component property from outside
+   */
+   virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
+
+   /*
+     This method is called when the component is assigned to an entity.
+     It receives a reference to an entity object, which is basically
+     a wrapper for the entity id and contains a reference to the entity manager.
+     So if the component needs access to the outside world it is possible to
+     store a reference to this entity object or to the entity manager.
+   */
+   virtual void OnAddedToEntity(dtEntity::Entity& entity);
+
+   /*
+     Is called before the component is deleted.
+   */
+   virtual void OnRemovedFromEntity(dtEntity::Entity& entity);
+
+   /* While it is possible to access the properties of the component
+      using the GetProperty method inherited from PropertyContainer,
+      it is better to provide accessors that don't have to do a map lookup.
+      You can also provide setters here, but make sure to sync with the
+      OnPropertyChanged method.
+    */
+   osg::Vec4 GetColor() const { return mColor.Get(); }
+   std::string GetEnum() const { return mEnum.Get(); }
+
+private:
+
+   /*
+      The properties of the component. Each property holds a single
+      primitive value. All property classes also provide generic methods
+      like GetType, ToString and FromString for serialization.
+   */
+   dtEntity::ArrayProperty mArrayTest;
+   dtEntity::UIntProperty mDateTime;
+   dtEntity::StringProperty mEnum;
+   dtEntity::StringProperty mPath;
+   dtEntity::Vec4Property mColor;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+   The entity system that holds the TestEntityComponents.
+   It derives from a template class DefaultEntitySystem which
+   provides a standard implementation for methods like
+   CreateComponent, GetComponent and so on.
+   This is a good place to register for messages that
+   should influence components.
+*/
+class DT_TESTENTITYSYSTEM_EXPORT TestEntitySystem
+   : public dtEntity::DefaultEntitySystem<TestEntityComponent>
+{
+   // Have to call constructor of base class, so remember base class type
+   typedef dtEntity::DefaultEntitySystem<TestEntityComponent> BaseClass;
+
+public:
+
+   /*
+     The constructor receives access to the entity manager.
+     The entity manager can be used to register for messages or
+     access other entity systems and components.
+   */
+   TestEntitySystem(dtEntity::EntityManager& em);
+
+   // Destructor
+   ~TestEntitySystem();
+
+   /*
+     This method will be called by the EntityManager when we
+     register for tick messages
+     */
+   void Tick(const dtEntity::Message& msg);
+
+private:
+
+   // The message functor is used to register and deregister for a specific message
+   dtEntity::MessageFunctor mTickFunctor;
+
+   // A debug draw manager is a simple way to draw primitive shapes to the scene
+   dtCore::RefPtr<dtEntity::DebugDrawManager> mDebugDrawManager;
+};
+
+#endif //DTENTITY_TESTENTITY_COMPONENT
+</pre>
+
+== source file ==
+
+Now the cpp file. The entity system is registered to receive messages of type dtEntity::TickMessage. This way, the method OnTick is called once during each simulation step. Here the position of the text attachment is updated.
+
+<pre>
+#include "testcomponent.h"
+
+#include <dtEntity/basemessages.h>
+#include <dtEntity/entity.h>
+#include <dtEntity/layercomponent.h>
+#include <dtEntity/stringid.h>
+#include <dtEntity/osgcomponents.h>
+#include <dtEntity/debugdrawmanager.h>
+#include <sstream>
+
+
+/*
+  Define the component type. dtEntity::SID takes a string and
+  hashes it to an unsigned int.
+*/
+const dtEntity::StringId TestEntityComponent::TYPE(dtEntity::SID("TestEntity"));
+
+/*
+  Define the property names
+*/
+const dtEntity::StringId TestEntityComponent::ArrayTestId(dtEntity::SID("ArrayTest"));
+const dtEntity::StringId TestEntityComponent::DateTimeId(dtEntity::SID("DateTime"));
+const dtEntity::StringId TestEntityComponent::EnumId(dtEntity::SID("Enum"));
+const dtEntity::StringId TestEntityComponent::PathId(dtEntity::SID("Path"));
+const dtEntity::StringId TestEntityComponent::ColorId(dtEntity::SID("Color"));
+
+////////////////////////////////////////////////////////////////////////////
+TestEntityComponent::TestEntityComponent()
+{
+   /*
+      Add the properties to the component. Each call to Register
+      adds an entry to a map mapping from StringId to property.
+      All properties registered here are shown in the editor
+      and will be saved to a map.
+    */
+   Register(ArrayTestId, &mArrayTest);
+   Register(DateTimeId, &mDateTime);
+   Register(EnumId, &mEnum);
+   Register(PathId, &mPath);
+   Register(ColorId, &mColor);
+
+   /*
+     Set initial values for properties. The color property defines
+     the color of the text. We have to set the alpha value of the color to non-null,
+     otherwise the text would be invisible.
+   */
+   mColor.Set(osg::Vec4(0, 0, 0, 1));
+
+   /*
+     Also define an initial text to show.
+   */
+   mEnum.Set("Initial value");
+}
+
+////////////////////////////////////////////////////////////////////////////
+TestEntityComponent::~TestEntityComponent()
+{
+   // nothing to do here
+}
+
+////////////////////////////////////////////////////////////////////////////
+void TestEntityComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
+{
+   // Here it is possible to react to property changes. We don't have to, so we won't
+   if(propname == ArrayTestId)
+   {
+      LOG_ALWAYS("Array property was set");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////
+void TestEntityComponent::OnAddedToEntity(dtEntity::Entity& entity)
+{
+   // nothing to do...
+}
+
+////////////////////////////////////////////////////////////////////////////
+void TestEntityComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
+{
+   // nothing to do...
+}
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+/*
+  The constructor initializer list passes the entity manager to the
+  base class DefaultEntitySystem. Also an entity manager is created,
+  which uses its access to the entity manager to immediately add
+  itself to the scene.
+*/
+TestEntitySystem::TestEntitySystem(dtEntity::EntityManager& em)
+   : BaseClass(em)
+   , mDebugDrawManager(new dtEntity::DebugDrawManager(em))
+{
+   /*
+     Register the method TestEntitySystem::Tick to be called
+     when a message of type TickMessage::TYPE is posted to the entity manager
+     This happens every simulation step, so the tick method can be used
+     to do stuff in real time.
+   */
+   mTickFunctor = dtEntity::MessageFunctor(this, &TestEntitySystem::Tick);
+   em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
+
+   /*
+     The debug draw manager is not automatically enabled, so do this here
+  */
+   mDebugDrawManager->SetEnabled(true);
+}
+
+////////////////////////////////////////////////////////////////////////////
+TestEntitySystem::~TestEntitySystem()
+{
+   // Clean up. We have to deregister from tick messages, otherwise a crash occurs
+   GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
+}
+
+////////////////////////////////////////////////////////////////////////////
+void TestEntitySystem::Tick(const dtEntity::Message& msg)
+{
+   /*
+     We can be sure that only messages of type TickMessage are received here, so
+     a static cast does just fine
+   */
+   const dtEntity::TickMessage& tickMessage = static_cast<const dtEntity::TickMessage&>(msg);
+
+   /*
+     Get value of message property DeltaSimTime
+   */
+   //float dt = tickMessage.GetDeltaSimTime();
+
+   /*
+     Loop through all components of type TestEntityComponent
+   */
+   for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+   {
+      // The id of the entity the component is assigned to
+      dtEntity::EntityId id = i->first;
+
+      // The actual component
+      TestEntityComponent* component = i->second;
+
+      /*
+        Get access to a component of type PositionAttitudeTransform on the same entity.
+        If it does not exist then ignore component
+      */
+      dtEntity::PositionAttitudeTransformComponent* pcomp;
+      if(GetEntityManager().GetComponent(id, pcomp))
+      {
+         // Get position property from transform component
+         osg::Vec3 position = pcomp->GetPosition();
+
+         // draw text a little higher
+         position[2] += 1;
+
+         // get color and text values from component
+         osg::Vec4 color = component->GetColor();
+         std::string label = component->GetEnum();
+
+         // Draw a string at the position of the entity.
+         // A duration value of 0 means the text is only rendered once.
+         // Because the AddString method is called each frame this is
+         // perfect.
+         mDebugDrawManager->AddString(position, label, color, 0, true);
+      }
+   }
+}
+
+</pre>
+
+== Adding plugin entry point ==
+
+The entity system is now complete and can be added to the entity manager. To keep the core of dtEntity clean, a plugin system can be used to add entity systems during run time. The file pluginfactory.cpp contains a c function called ''CreatePluginFactories'' that acts as an entry point for loading the plugin. This function can return a list of objects of class ''ComponentPluginFactory''. Each ComponentPluginFactory is used to instantiate a single entity system. The plugin can contain more than one entity system, that's why the entry function returns a list.
+
+<pre>
+#include "export.h"
+#include "testcomponent.h"
+#include <dtEntity/componentplugin.h>
+
+class DT_TESTENTITYSYSTEM_EXPORT PluginFactory : public dtEntity::ComponentPluginFactory
+{
+public:
+
+   /*
+     Create the entity system and assign it to parameter es. Return true if successful.
+   */
+   virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
+   {
+      es = new TestEntitySystem(*em);
+      return true;
+   }
+
+   /*
+      Can be used to delete the entity system when the plugin is stopped
+   */
+   virtual void Destroy() 
+   {
+   }
+
+   /*
+      get the name of the entity system
+   */
+   virtual std::string GetName() const 
+   {
+      return "TestEntitySystem";
+   }
+
+   /*
+     Get type handle of component
+   */
+   virtual dtEntity::ComponentType GetType() const 
+   {
+      return TestEntityComponent::TYPE;
+   }
+
+   /*
+      get a description of the plugin
+   */
+   virtual std::string GetDescription() const 
+   {
+      return "An example entity system";
+   }
+
+   /*
+     If entity system depends on the presence of other entity systems
+     then these should be listed here. dtEntity will ensure that
+     these entity systems are started before this entity system
+     is added to the entity manager.
+   */
+   virtual void GetDependencies(std::list<dtEntity::ComponentType>& l) 
+   {
+      l.push_back(dtEntity::SID("MatrixTransform"));
+      l.push_back(dtEntity::SID("StaticMesh"));
+   };
+};
+
+/*
+  The C function to give access to the plugin.
+*/
+extern "C" DT_TESTENTITYSYSTEM_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
+{
+   list.push_back(new PluginFactory());
+}
+</pre>
+
+== Using the entity system ==
+
+DtEntity contains a class named ComponentPluginManager. It has a method ''LoadPluginsInDir'' that searches through all shared libraries in a directory and tries to register its entity systems. The dtEntityEditor application looks for plugins in the directory working dir/dteplugins. To make the editor use the plugin, copy or symlink it to that directory. dtEntityEditor automatically adds all found entity systems to the entity manager. Other applications may defer starting the entity system until a component of its type is created the first time.
+If your plugin fails to load please check if it is at the right path location. If it still fails to load you may also want to check if the shared library has unresolved dependencies. Under windows you can use the tool 'Dependency Walker', under Linux the command line utility ldd can be used.
+
+== Configuring the property editor ==
+
+If you load the plugin in the editor right now you will get default property editors. That means that the color property is simply treated as a vec4 and not as a color. dtEntityEditor supports an XML file format to configure the editor used to edit properties. In that XML file it is also possible to define the type of property that should be added to an array property when the add icon is clicked.
+
+Add a file ProjectAssets/Delegates/TestEntity.xml:
+
+<pre>
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+<delegates>
+
+   <!-- Use a date time editor to edit uint property DateTime -->
+   <datetimeinput propertyname="DateTime" />
+
+   <!-- Use a combo box to edit Enum property. Populate combo box with given values -->
+   <enuminput propertyname="Enum" values="Value 1|Value 2|Value 3" />
+
+   <!-- Open a color picker dialog to edit the Color property -->
+   <colorinput propertyname="Color" />
+
+   <!-- Open a file open dialog to edit Path property. Only show files with given extensions -->
+   <fileinput propertyname="Path" filters="*.txt *.xml *.html" />
+
+   <arrayinput propertyname="ArrayTest" >
+
+      <!-- When the '+' icon next to the ArrayTest property is clicked, add an array
+           entry and populate it with the given prototype property
+      -->
+           <prototype>
+
+         <!-- prototype property is a group property, a named collection of properties -->
+         <groupproperty name="">
+            <stringproperty name="Name">Enter name here</stringproperty>
+            <uintproperty name="Age" value="18" />
+            <boolproperty name="Active" value="true" />
+            <vec4property name="Eye Color" x="0" y="0" z="1" w="1" />
+            <arrayproperty name="Additional Names" />
+         </groupproperty>
+           </prototype>
+
+      <!-- Define editors to use to edit the properties in the array entries -->
+      <inputs>
+
+         <!-- Open a color picker dialog to edit the Eye Color property in the array -->
+         <colorinput propertyname="Eye Color" />
+
+         <!-- Array properties can be nested. Give a prototype for the Additional Names array property  -->
+         <arrayinput propertyname="Additional Names">
+            <prototype>
+               <stringproperty name="">Another Name</stringproperty>
+            </prototype>
+         </arrayinput>
+      </inputs>   
+   </arrayinput>
+</delegates>
+</pre>
+
+== Trying it out in the editor ==
+First make sure that the plugin is in the directory working dir/dteplugins and that all its dependencies can be found. Then start the editor.
+
+Add a new map entry.
+
+[[Image:dtentity_tutorial2.jpg]]
+
+Select the map entry and right click it. In the upcoming context menu press "add Entity".
+
+[[Image:dtentity_tutorial3.jpg]]
+
+Select the newly created entity. The property editor on the right should now show the components of the new entity - a single map component.
+Click the green plus icon above the property editor. A list of available plugins to add to the entity pops up. Now if the test plugin was loaded correctly the list should have an entry "TestEntity".
+
+[[Image:dtentity_tutorial4.jpg]]
+
+Don't select that entry for now, instead select "PositionAttitudeTransform", "Layer" and "StaticMesh" and press OK.
+Now we have to setup the entity to show a static mesh. In the property editor, select the Mesh property of the StaticMesh component. A button "Choose" should become visible. Press that and select a mesh file, for example StaticMeshes/physics_crate.ive. We want the static mesh to be movable, so we attach it to the PositionAttitudeTransform component. Press the '+' button besides the property "Children" of the PositionAttitudeTransform component. In the upcoming select box chose "StaticMesh".
+
+[[Image:dtentity_tutorial5.jpg]]
+
+The PositionAttitudeTransform has to be made visible in the scene. Select the "Layer" component and set its AttachedComponent property to "PositionAttitudeTransform". This makes sure that the PositionAttitudeTransform component is added as a scene graph child to the top level scene node.
+
+Finally click the "Apply Changes" button and the mesh object should appear in view.
+
+[[Image:dtentity_tutorial6.jpg]]
+
+Now add the TestEntity component. If everything went fine then a small black text should appear above the crate mesh. 
+
+You can change the color of the text using the color property of the TestEntity component, and you can use the Enum property to choose a different text.
+
+[[Image:dtentity_tutorial7.jpg]]
+
+You can also try adding an array entry to property ArrayTest. This should show up:
+
+[[Image:dtentity_tutorial8.jpg]]
