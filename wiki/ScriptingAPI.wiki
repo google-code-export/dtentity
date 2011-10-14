@@ -92,7 +92,7 @@ Example of getting and setting a property of type Vec3Property:
   cameraComponent.onFinishedSettingProperties();
 }}}
 
-Properties can have a number of types and have to be accessed accordingly.
+Properties have to be accessed by type:
 
 {{{
 
