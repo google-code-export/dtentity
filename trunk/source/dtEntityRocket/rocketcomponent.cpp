@@ -180,6 +180,7 @@ namespace dtEntityRocket
 
    ////////////////////////////////////////////////////////////////////////////
    RocketComponent::RocketComponent()
+      : mEntity(NULL)
    {
       Register(FullScreenId, &mFullScreen);
       Register(ContextNameId, &mContextName);
