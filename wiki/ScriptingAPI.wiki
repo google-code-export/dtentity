@@ -243,17 +243,6 @@ var sys = EntityManager.getEntitySystem("Name");
 
 Methods:
 {{{
-  /*
-   Add a circle.
-   Vec3 position: Center of circle to draw
-   Vec3 normal: Normal defining face direction of circle
-   number radius: Radius of circle
-   Vec4 color: Color to draw
-   number duration: Draw for duration seconds. If <= 0 draw once.
-   bool useDepthTest: If false, make it show through other geometry
-   */
-  function addCircle(Vec3 position, Vec3 normal, number radius, Vec4 color, [Number duration, bool useDepthTest])
-  
   
   /*
    * Add a javascript-defined entity system to manager. A usage example
@@ -294,19 +283,11 @@ Methods:
   
   /*
    * Create a message of type msgtype and set its parameters from values
-   * in params object. Message is sent at beginning of next frame (MESSAGE_PRE_FRAME)
+   * in params object. If third param is 0 then message is sent at beginning of next simulation step. Else, third param sets the simulation time at that the message should be sent.
    * Example:
    * EntityManager.enqueueMessage("EntitySelectedMessage", {AboutEntity: 3});
    */
-  function enqueueMessage(string msgtype, object params)
-  
-  /*
-   * Create a message of type msgtype and set its parameters from values
-   * in params object. Message is sent after a given number of seconds.
-   * Example:
-   * EntityManager.enqueueMessageLater("EntitySelectedMessage", 5, {AboutEntity: 3});
-   */
-  function enqueueMessageLater(string msgtype, number seconds, object params)
+  function enqueueMessage(string msgtype, object params, number when)
   
   /*
    * Return entity system identified by given name.
@@ -426,7 +407,7 @@ function onFinishedSettingProperties()
 
 == GUI ==
 
-Exists as a global object. Is used for controlling CEGUI gui.
+Exists as a global object if compiled with CEGUI support. Is used for controlling CEGUI gui.
 Example:
 {{{
 GUI.loadScheme("WindowsLook.scheme");
