@@ -74,6 +74,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/inputhandler.h
   ${HEADER_PATH}/layerattachpointcomponent.h
   ${HEADER_PATH}/layercomponent.h
+  ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/log.h
   ${HEADER_PATH}/mapcomponent.h
   ${HEADER_PATH}/mapencoder.h
@@ -118,6 +119,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/inputhandler.cpp
   ${SOURCE_PATH}/layerattachpointcomponent.cpp
   ${SOURCE_PATH}/layercomponent.cpp
+  ${SOURCE_PATH}/lightcomponent.cpp
   ${SOURCE_PATH}/mapcomponent.cpp	
   ${SOURCE_PATH}/messagepump.cpp	
   ${SOURCE_PATH}/osganimationcomponent.cpp

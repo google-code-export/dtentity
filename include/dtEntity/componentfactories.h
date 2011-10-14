@@ -28,6 +28,7 @@
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/lightcomponent.h>
 #include <dtEntity/osganimationcomponent.h>
 #include <dtEntity/pickshapecomponent.h>
 #include <dtEntity/shadowcomponent.h>
@@ -204,6 +205,35 @@ namespace dtEntity
       }
    };
 
+   ////////////////////////////////////////////////////////////////////////////////
+   class LightComponentFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+      virtual bool Create(EntityManager* em, EntitySystem*& es)
+      {
+         es = new LightSystem(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "Light";
+      }
+
+      virtual ComponentType GetType() const
+      {
+         return LightComponent::TYPE;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "Light component system";
+      }
+   };
+
 #ifdef BUILD_OPENAL
    ////////////////////////////////////////////////////////////////////////////////
    class SoundComponentFactory : public dtEntity::ComponentPluginFactory
@@ -342,6 +372,7 @@ namespace dtEntity
       pluginManager.AddFactory(new TextLabelFactory());
       pluginManager.AddFactory(new TextureLabelFactory());
       pluginManager.AddFactory(new OSGAnimationComponentFactory());
+      pluginManager.AddFactory(new LightComponentFactory());
 
 #ifdef BUILD_CAL3D_WRAPPER
        pluginManager.AddFactory(new AnimationComponentFactory());

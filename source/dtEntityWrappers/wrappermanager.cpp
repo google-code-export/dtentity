@@ -77,6 +77,7 @@ namespace dtEntityWrappers
       bool success = GetFileContents(path, code);
       if(!success)
       {
+         LOG_ERROR("Could not load script file from " + path);
          return Handle<Script>();
       }
 
