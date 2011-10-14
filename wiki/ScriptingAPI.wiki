@@ -92,7 +92,7 @@ Example of getting and setting a property of type Vec3Property:
   cameraComponent.onFinishedSettingProperties();
 }}}
 
-Properties have to be accessed by type:
+Properties have to be accessed by type. Writing a string to an int property will cause a javascript exception.
 
 {{{
 
