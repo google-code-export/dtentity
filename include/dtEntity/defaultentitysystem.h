@@ -50,10 +50,16 @@ namespace dtEntity
       : public std::tr1::unordered_map<EntityId, T*>
    {
    };
-#else
+#elif defined(__GNUG__)
    template<class T>
    class ComponentStoreMap
       : public __gnu_cxx::hash_map<EntityId, T*>
+   {
+   };
+#else
+	template<class T>
+   class ComponentStoreMap
+      : public std::map<EntityId, T*>
    {
    };
 #endif
