@@ -127,7 +127,6 @@ dataselect
 
 input.submit
 {
-	margin-left: 0px;
 }
 
 
@@ -135,13 +134,18 @@ input.submit
 button,
 input.submit
 {
+
 	display: inline-block;
 
 	width: 90px;
 	height: 22px;
 
+
+	padding-left:0px;
 	padding-top: 4px;
-	vertical-align: -18px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+
 
 	font-size: 12;
 	text-align: center;
@@ -177,12 +181,13 @@ input.submit:active
 
 input.text
 {
-	height: 31px;
-	padding: 10px 10px 0px;
+	height: 22px;
+	padding: 3px 10px 0px;
 
 	background-decorator: tiled-horizontal;
-	background-left-image: shine.tga 162px 192px 176px 223px;
-	background-center-image: shine.tga stretch 176px 192px 177px 223px;
+	background-left-image: shine.tga 41px 113px 43px 131px;
+	background-right-image: shine.tga 56px 113px 58px 131px;
+	background-center-image: shine.tga stretch 43px 113px 56px 131px;
 }
 
 input.text,
@@ -190,7 +195,7 @@ select,
 dataselect
 {
 	color: black;
-	font-size: 13;
+	font-size: 12;
 }
 
 datagrid input.text
