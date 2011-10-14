@@ -5,7 +5,7 @@ The goal is to provide full access to all dtEntity functionality, including enti
 = Using the Google Chrome Developer Tools to debug JavaScript =
 
 There is an Eclipse plugin that you can use to edit and debug your JavaScript. It connects to DtScript over a network port and lets you define break points, step through functions and explore variable values.
-You can grab the eclipse plugin here: [[http://code.google.com/p/chromedevtools/]]
+You can grab the eclipse plugin here: [http://code.google.com/p/chromedevtools/]
 To open a remote debugging port at adress 8888, set the property DebugEnabled on the Script System to true.
 
 
