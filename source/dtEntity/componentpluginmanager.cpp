@@ -112,7 +112,7 @@ namespace dtEntity
             {
                osg::ref_ptr<ComponentPluginFactory> factory = *i;
                assert(factory.valid());
-               std::string pluginName = factory->GetName();
+               
                ComponentType ctype = factory->GetType();
 
                // check if a plugin with this name already exists
@@ -283,7 +283,6 @@ namespace dtEntity
       while(!mFactories.empty())
       {
          ComponentType ctype = mFactories.begin()->first;
-         std::string tp = GetStringFromSID(ctype);
          if(mEntityManager->HasEntitySystem(ctype))
          {
             dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(ctype);

@@ -311,7 +311,10 @@ namespace dtEntityWrappers
       }
 
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(info.Holder());
-      sys->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+	  if(sys)
+	  {
+		sys->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+	  }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

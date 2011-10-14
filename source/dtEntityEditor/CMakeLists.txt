@@ -1,5 +1,11 @@
 SET(APP_NAME dtEntityEditor)
 
+IF(UNIX)
+  FIND_PACKAGE(X11 REQUIRED)
+  INCLUDE_DIRECTORIES(X11_INCLUDE_DIR)
+  SET(ADDITIONAL_LIBS ${X11_LIBRARIES})
+ENDIF(UNIX)
+
 FIND_PACKAGE(Qt4 REQUIRED)
 
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${APP_NAME})
@@ -48,10 +54,11 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${QT_QTGUI_LIBRARIES}
                            ${QT_QTOPENGL_LIBRARIES}
                            ${OSG_LIBRARIES}
-									${OPENTHREADS_LIBRARIES}	
+                           ${ADDITIONAL_LIBS}
+                           ${OPENTHREADS_LIBRARIES}
                            dtEntity
-									dtEntityQtWidgets
-									dtEntityWrappers
+						   dtEntityQtWidgets
+						   dtEntityWrappers
 )
 
 IF (MSVC)

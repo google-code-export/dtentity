@@ -62,7 +62,10 @@ namespace dtEntityWrappers
          ValToProp(value, prop);
       }
       dtEntity::Component* component = UnwrapComponent(info.Holder());
-      component->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+	  if(component) 
+	  {
+		component->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+	  }
 
    }
 
