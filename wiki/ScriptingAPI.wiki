@@ -214,6 +214,21 @@ Methods:
    bool useDepthTest: If false, make it show through other geometry
    */
   function addTriangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec4 color, [int linewidth, Number duration, bool useDepthTest])
+
+  /*
+   Clear all currently displayed geometry
+   */
+  function clear()
+
+  /*
+   returns true if debug draw manager is enabled
+   */
+  function isEnabled()
+  
+  /*
+   if set to false, all calls to add*() are ignored
+   */
+  function setEnabled(bool)
 }}}
  
  
