@@ -39,7 +39,7 @@
 int main(int argc, char** argv)
 {
 
-    std::string script = "";
+    std::string script = "Scripts/autostart.js";
     bool profiling_enabled = false;
     int curArg = 1;
 
@@ -62,12 +62,6 @@ int main(int argc, char** argv)
           }
         }
        ++curArg;
-    }
-
-    if(script == "")
-    {
-        std::cout << "Please give argument --script with path to javascript file!";
-        return 0;
     }
 
    osg::ArgumentParser arguments(&argc,argv);   
