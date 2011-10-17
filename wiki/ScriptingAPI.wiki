@@ -831,6 +831,17 @@ function changeTimeSettings(newSimTime, newTimeScale, newClockTime)
 function getSimulationClockTimeString()
 }}}
 
+== GroundClamping System ==
+
+{{{
+/*
+ * Return terrain height at given position.
+ * voffset gives the number of meters to test above and
+ * below given position.
+ */
+function getTerrainHeight(vec3, [voffset])
+}}}
+
 == Layer System ==
 
 {{{
@@ -845,6 +856,88 @@ function addVisibleBoundingBox(entityid)
 function removeVisibleBoundingBox(entityid)
 
 }}}
+
+== Map System ==
+
+/*
+ * 
+ */
+function addEmptyMap()
+
+/*
+ * 
+ */
+function getEntityIdByUniqueId()
+
+/*
+ * 
+ */
+function toString()
+
+/*
+ * 
+ */
+function loadMap()
+
+/*
+ * 
+ */
+function loadScene()
+
+/*
+ * 
+ */
+function unloadScene()
+
+/*
+ * 
+ */
+function saveScene()
+
+/*
+ * 
+ */
+function unloadMap()
+
+/*
+ * 
+ */
+function getLoadedMaps()
+
+/*
+ * 
+ */
+function spawn()
+
+/*
+ * 
+ */
+function deleteEntitiesByMap()
+
+/*
+ * 
+ */
+function addSpawner()
+
+/*
+ * 
+ */
+function deleteSpawner()
+
+/*
+ * 
+ */
+function getSpawner()
+
+/*
+ * 
+ */
+function getAllSpawnerNames()
+
+/*
+ * 
+ */
+function getEntitiesInMap()
 
 == OSGAnimation System ==
 
@@ -865,7 +958,7 @@ function stopAnimation(entityid, name)
 function getAnimations(entityid)
 }}}
 
-== TextLabel System ==
+== !TextLabel System ==
 
 {{{
 
