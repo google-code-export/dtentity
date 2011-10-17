@@ -153,6 +153,25 @@ Methods:
   function onFinishedSettingProperties();
 }}}
 
+
+== Context ==
+Only if compiled with libRocket support!
+
+{{{
+/*
+ * load mouse cursor from given rml document
+ */
+function loadMouseCursor(path)
+
+/*
+ * Load document and return an ElementDocument object
+ * or null if not found
+ */
+function loadDocument(path)
+}}}
+
+
+
 == !DebugDrawManager ==
 
 Can be used to draw lines, texts and other forms for debug purposes.
@@ -302,6 +321,30 @@ function setProperty(name, value)
 
 }}}
 
+
+
+== ElementDocument ==
+
+Only when compiled with libRocket and dtEntityRocket library is loaded!
+Inherits all functionality from Element class.
+
+{{{
+/*
+ * close the document
+ */
+function close()
+
+/*
+ * hide the document
+ */
+function hide()
+
+/*
+ * show the document
+ */
+function show()
+
+}}}
  
 == !EntityManager ==
 
