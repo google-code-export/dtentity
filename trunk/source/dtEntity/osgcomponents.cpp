@@ -114,7 +114,20 @@ namespace dtEntity
          {
             mModels[path] = node;
          }
-         return node;
+
+         if(cachemode == CacheMode::HardwareMeshes)
+         {
+            return osg::clone(node, osg::CopyOp(
+               osg::CopyOp::DEEP_COPY_ALL &
+               ~osg::CopyOp::DEEP_COPY_PRIMITIVES &
+               ~osg::CopyOp::DEEP_COPY_ARRAYS &
+               ~osg::CopyOp::DEEP_COPY_TEXTURES
+            ));           
+         }
+         else
+         {
+            return node;
+         }
       }
 
       void Clear()
