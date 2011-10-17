@@ -552,7 +552,7 @@ function createImageset(name, filename, [resourceGroupName])
 function destroyImageset(name)
 }}}
 
-== !GUIWidget ==
+== GUIWidget ==
 CEGUI Widget properties can be accessed as javascript properties. Example:
 {{{
 GUI.getWidget("MyWidget").Visible = false;
