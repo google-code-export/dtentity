@@ -8,7 +8,7 @@ var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
 var clamper = EntityManager.getEntitySystem("GroundClamping").createComponent(camid);
 clamper.ClampingMode = "KeepAboveTerrain";
 clamper.VerticalOffset = 1;
-clamper.onFinishedSettingProperties();
+clamper.finished();
 var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
 var tempvec = [0,0,0];
 var toRight = [0,0,0];
@@ -78,7 +78,7 @@ function updateFPS(msgname, params) {
   
   cameraComponent.Position = pos;
   cameraComponent.EyeDirection = eyedir;
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ function startFPSDemo() {
   cameraComponent.NearClip = 0.1;
   cameraComponent.FarClip = 100000;
   cameraComponent.Up = [0, 0, 1];
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
   
   camMotion = EntityManager.getEntitySystem("CameraMotion");
   camMotion.StartPosition = cameraComponent.Position;

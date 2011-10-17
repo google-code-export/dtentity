@@ -27,7 +27,7 @@ function startSpiral() {
   cameraComponent.Position = [0, -10, 0];
   cameraComponent.EyeDirection = [0, 1, 0];
   cameraComponent.Up = [0, 0, 1];
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
   
   // pure data object that will act as prototype for our entity
   var entityProto = {

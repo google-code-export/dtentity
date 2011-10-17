@@ -57,7 +57,7 @@ function startAnimDemo() {
   cameraComponent.NearClip = 0.1;
   cameraComponent.FarClip = 100;
   cameraComponent.Up = [0, 0, 1];
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
   
   var animsystem = EntityManager.getEntitySystem("OSGAnimation");
   if(animsystem === null) {

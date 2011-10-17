@@ -28,7 +28,7 @@ function startToolsDemo() {
   cameraComponent.NearClip = 0.1;
   cameraComponent.FarClip = 100;
   cameraComponent.Up = [0, 0, 1];
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
   
 
   // pure data object that will act as prototype for our entity
