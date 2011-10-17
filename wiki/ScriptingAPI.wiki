@@ -11,7 +11,7 @@ You can grab the eclipse plugin here: [http://code.google.com/p/chromedevtools/]
 To open a remote debugging port at adress 8888, set the property DebugEnabled on the Script System to true.
 
 
-= JavaScript API =
+= Scripting API =
 
 
 == Global Functions ==
