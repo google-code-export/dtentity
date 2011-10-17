@@ -2,6 +2,8 @@ DtEntity has a JavaScript scripting interface.
 It uses the [http://code.google.com/intl/en_GB/apis/v8/intro.html V8 JavaScript engine].
 The goal is to provide full access to all dtEntity functionality, including entity management, camera control, scene loading, window management and so on.
 
+<wiki:toc max_depth="1" />
+
 = Using the Google Chrome Developer Tools to debug JavaScript =
 
 There is an Eclipse plugin that you can use to edit and debug your JavaScript. It connects to DtScript over a network port and lets you define break points, step through functions and explore variable values.
