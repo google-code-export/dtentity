@@ -717,3 +717,55 @@ function info(str);
  */
 function warning(str);
 }}}
+
+== Screen ==
+
+Global object providing window and view functionality
+
+{{{
+
+/*
+ * Returns a vec3 [x,y,z] representing a pick ray at screen coords
+ * x, y. The pick ray is a unit vector pointing from camera position
+ * into the scene so that it would intersect the given screen 
+ * coordinates. x and y go from 0 - 1 starting in the lower left
+ * screen corner.
+ */
+function getPickRay(x, y)
+
+
+/*
+ * Do an intersection test with default layer and return results 
+ * in a data structure. Only nodes with an entity reference in their
+ * user data are picked.
+ *
+ * @param from: A vec3 giving start position of intersection test line
+ * @param to: A vec3 giving end position of intersection test line
+ * @param nodemask: An OSG bit mask for masking intersection test
+ * @return A data structure [{EntityId: xxx, Normal: xxx, Position: xxx},...]
+ */
+function intersect(from, to, nodemask)
+
+
+/*
+ *
+ */
+function pickEntity()
+
+
+/*
+ *
+ */
+function convertWorldToScreenCoords()
+
+
+/*
+ *
+ */
+function openWindow()
+
+/*
+ *
+ */
+function closeWindow()
+}}}
