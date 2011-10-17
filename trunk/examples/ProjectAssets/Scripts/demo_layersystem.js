@@ -22,7 +22,7 @@ function startLayerSystem() {
   cameraComponent.Position = [0, -10, 0];
   cameraComponent.EyeDirection = [0, 1, 0];
   cameraComponent.Up = [0, 0, 1];
-  cameraComponent.onFinishedSettingProperties();
+  cameraComponent.finished();
   
   // The crate. A LayerAttachPoint component is specified and added as
   // a child to the transform component. All entities attached to this attach point

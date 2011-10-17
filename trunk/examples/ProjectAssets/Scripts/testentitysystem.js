@@ -9,7 +9,7 @@ function MyComponent() {
     this[propname] = val;
   }
   
-  this.onFinishedSettingProperties = function() {}  
+  this.finished = function() {}  
 }
 
 function MyEntitySystem() {
@@ -69,5 +69,5 @@ EntityManager.addEntitySystem(es);
 
 /*comp = es.createComponent(1);
 comp.onPropertyChanged("testNumber", 666);
-comp.onFinishedSettingProperties();
+comp.finished();
 */
