@@ -405,6 +405,86 @@ function onFinishedSettingProperties()
 
 }}}
 
+== File ==
+
+Gives file read / write access.
+
+Example:
+{{{
+var outfile = new File("temp.txt");
+  outfile.open("w");
+  outfile.write("Hello, File World!");
+  outfile.close();
+}}}
+
+
+Methods:
+{{{
+/*
+ * Open file with given filename. Accepts absolute paths
+ * or relative to data paths (see getDataFilePathList())
+ */
+function open(filename)
+
+/*
+ * read from file. If length is given, read length chars from file
+ */
+function read([length])
+
+/*
+ * Rewind file pointer to beginning of file
+ */
+function rewind()
+
+
+/*
+ * Close file.
+ */
+function close()
+
+/*
+ * Flush queued output operations to file
+ */
+function flush()
+
+/*
+ * Write text data to file.
+ */
+function write(data) 
+
+/*
+ * Return text description of file
+ */
+function toString()
+
+/*
+ * return true if this file exists on disk
+ */
+function exists()
+
+/*
+ * Rename file on disk. Returns true on success.
+ */
+function move(newname)
+
+/*
+ * Copy file to new name on disk. Returns true on success.
+ */
+function copy(newname)
+
+/*
+ * Returns an object containing file info: size, mtime, atime,
+ * ctime, mode, uid, gid
+ */
+function stat()
+
+/*
+ * Returns true if file exists and is a file (not a dir etc)
+ */
+function isFile()
+
+}}}
+
 == GUI ==
 
 Exists as a global object if compiled with CEGUI support. Is used for controlling CEGUI gui.
