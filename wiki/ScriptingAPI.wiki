@@ -860,84 +860,97 @@ function removeVisibleBoundingBox(entityid)
 == Map System ==
 
 /*
- * 
+ * Create a new, empty map. Map will not be saved immediately.
+ * Map will be created in first data path.
  */
-function addEmptyMap()
+function addEmptyMap(filename)
 
 /*
- * 
+ * Look up and return entity id of map component with
+ * this unique id. 
  */
-function getEntityIdByUniqueId()
+function getEntityIdByUniqueId(string)
 
 /*
- * 
+ * Load map from this relative location
  */
-function toString()
+function loadMap(mapname)
 
 /*
- * 
- */
-function loadMap()
-
-/*
- * 
+ * Load scene from this relative location
  */
 function loadScene()
 
 /*
- * 
+ * Unload scene from this relative location
  */
 function unloadScene()
 
 /*
- * 
+ * Save Scene with this scene path
  */
 function saveScene()
 
 /*
- * 
+ * Unload map with this map path
  */
 function unloadMap()
 
 /*
- * 
+ * Return an array containing map paths of all current maps
  */
 function getLoadedMaps()
 
 /*
- * 
+ * Use spawner registered with given spawner name and spawn all
+ * its components on pre-existing entity with given entity id
  */
-function spawn()
+function spawn(spawnername, entityid)
 
 /*
- * 
+ * Delete all entities that were loaded from given map
  */
-function deleteEntitiesByMap()
+function deleteEntitiesByMap(mappath)
 
 /*
- * 
+ * Register a new spawner
+ * @param name Name to register spawner with
+ * @param mapname Store spawner to this map
+ * @param obj Object containing component values.
+ *            Format:
+ *            { ComponentType:
+ *                { ParamName: ParamValue,
+ *                  ...
+ *                },
+ *                ...
+ *             }
+ * @param parentname: Name of spawner that this spawner should inherit
+ *
+ *  Example: mapSystem.addSpawner("car", "maps/carmap.dtemap", 
+ *             { StaticMesh: { Mesh: "Meshes/car.ive"} }, "movable");
  */
-function addSpawner()
+function addSpawner(name, mapname, obj, [parentname])
 
 /*
- * 
+ * Unregister spawner with given name
  */
-function deleteSpawner()
+function deleteSpawner(name)
 
 /*
- * 
+ * Return spawner data with given name.
+ * See addSpawner() for object format
  */
-function getSpawner()
+function getSpawner(name)
 
 /*
- * 
+ * Return an array with names of all registered spawners
  */
 function getAllSpawnerNames()
 
 /*
- * 
+ * Get array with all entity ids spawned from given map
  */
-function getEntitiesInMap()
+function getEntitiesInMap(mappath)
 
 == OSGAnimation System ==
 
