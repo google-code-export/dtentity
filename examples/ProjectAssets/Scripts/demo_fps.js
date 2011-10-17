@@ -56,10 +56,6 @@ function updateFPS(msgname, params) {
     osg.Vec3.mult(tempvec, dt * speed, tempvec);
     osg.Vec3.add(tempvec, pos, pos);
   }
-  if(Input.getMouseButton(0)) {
-    Screen.showCursor = true;
-    Screen.lockCursor = false;
-  }
     
   if(Input.getKey("Space")) {
     Screen.fullScreen = false;
@@ -75,7 +71,6 @@ function updateFPS(msgname, params) {
   osg.Quat.makeRotate(mouseY * rotatespeed * dt, toRight[0], toRight[1], toRight[2], rotateOp);
   osg.Quat.rotate(rotateOp, eyedir, eyedir);
   
-  
   cameraComponent.Position = pos;
   cameraComponent.EyeDirection = eyedir;
   cameraComponent.finished();
@@ -83,17 +78,18 @@ function updateFPS(msgname, params) {
 
 ////////////////////////////////////////////////////////////////////////////////
 function startFPSDemo() {
-  var paths = getDataFilePathList();
-  paths.push("D:/SUT/ProjectAssetsBerbera");
-  setDataFilePathList(paths);
+
+  cameraMotionSystem.Enabled = false;
+  cameraMotionSystem.onPropertyChanged("Enabled");
+
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
   var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
-  cameraComponent.Position = [100, 100, 400];
+  cameraComponent.Position = [0, 0, 2];
   cameraComponent.EyeDirection = [0, 1, 0];
   cameraComponent.FieldOfView = 80;
   cameraComponent.CullingMode = "NoAutoNearFarCulling";
   cameraComponent.NearClip = 0.1;
-  cameraComponent.FarClip = 100000;
+  cameraComponent.FarClip = 10000;
   cameraComponent.Up = [0, 0, 1];
   cameraComponent.finished();
   
@@ -101,11 +97,11 @@ function startFPSDemo() {
   camMotion.StartPosition = cameraComponent.Position;
   camMotion.StartEyeDirection = [0, 0.9, -0.1];
 
-  //Screen.lockCursor = true;
+  Screen.lockCursor = true;
   Screen.showCursor = false;
   Screen.fullScreen = true;
   
-  //EntityManager.registerForMessages("TickMessage", updateFPS);
+  EntityManager.registerForMessages("TickMessage", updateFPS);
 
   var mapsys = EntityManager.getEntitySystem("Map");
   mapsys.loadMap("maps/fpsdemo.dtemap");
@@ -118,6 +114,9 @@ function startFPSDemo() {
 
 ////////////////////////////////////////////////////////////////////////////////
 function stopFPSDemo() {
+  cameraMotionSystem.Enabled = true;
+  cameraMotionSystem.onPropertyChanged("Enabled");
+
   EntityManager.unregisterForMessages("TickMessage", updateFPS);
   Screen.fullScreen = false;
   Screen.showCursor = true;
