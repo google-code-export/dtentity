@@ -973,6 +973,35 @@ function stopAnimation(entityid, name)
 function getAnimations(entityid)
 }}}
 
+== Rocket System ==
+{{{
+
+/*
+ * Get RocketContext object of rocket component with given entity id
+ */ 
+function getContext(entityid)
+
+/*
+ * Instance an element in rml document.
+ * @param parent Element object
+ * @param instancer RML instancer to use
+ * @param tag tag of element to instance
+ * @param attributes Object containing name-value pairs
+ *
+ * Example: 
+ * var listDemoSelect = window.getElementById("demo_chooser");
+ * var option = rocketSystem.instanceElement(
+ *   listDemoSelect, "*", "option", {value: "OptionName"});
+ *
+ */
+function instanceElement(parent, instancer, tag, attributes)
+
+/*
+ * Load and install font from given data path
+ */
+function loadFontFace(path)
+}}}
+
 == !TextLabel System ==
 
 {{{
