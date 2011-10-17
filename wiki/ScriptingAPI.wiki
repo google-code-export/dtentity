@@ -859,6 +859,7 @@ function removeVisibleBoundingBox(entityid)
 
 == Map System ==
 
+{{{
 /*
  * Create a new, empty map. Map will not be saved immediately.
  * Map will be created in first data path.
@@ -951,6 +952,7 @@ function getAllSpawnerNames()
  * Get array with all entity ids spawned from given map
  */
 function getEntitiesInMap(mappath)
+}}}
 
 == OSGAnimation System ==
 
