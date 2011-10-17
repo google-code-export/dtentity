@@ -153,7 +153,7 @@ Methods:
   function onFinishedSettingProperties();
 }}}
 
-== DebugDrawManager ==
+== !DebugDrawManager ==
 
 Can be used to draw lines, texts and other forms for debug purposes.
 Example - draw a red line along the z axis for 10 seconds:
