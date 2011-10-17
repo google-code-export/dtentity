@@ -47,6 +47,22 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EDHide(const Arguments& args)
+   {
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      v->Hide();
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EDClose(const Arguments& args)
+   {
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      v->Close();
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapElementDocument(Rocket::Core::ElementDocument* v)
    {
       
@@ -72,6 +88,8 @@ namespace dtEntityRocket
 
         proto->Set("toString", FunctionTemplate::New(EDToString));
         proto->Set("show", FunctionTemplate::New(EDShow));
+        proto->Set("hide", FunctionTemplate::New(EDHide));
+        proto->Set("close", FunctionTemplate::New(EDClose));
       }
       Local<Object> instance = s_elementDocumentTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
