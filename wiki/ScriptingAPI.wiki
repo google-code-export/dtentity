@@ -234,7 +234,7 @@ Methods:
 }}}
  
  
-== EntityManager ==
+== !EntityManager ==
 
 Global object giving access to a number of entity management functionality.
 
@@ -552,7 +552,7 @@ function createImageset(name, filename, [resourceGroupName])
 function destroyImageset(name)
 }}}
 
-== GUIWidget ==
+== !GUIWidget ==
 CEGUI Widget properties can be accessed as javascript properties. Example:
 {{{
 GUI.getWidget("MyWidget").Visible = false;
@@ -591,7 +591,7 @@ function getProperty(name)
 function addChildWidget(name)
 }}}
 
-== InputHandler ==
+== !InputHandler ==
 
 Another global object.
 
