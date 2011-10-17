@@ -70,7 +70,7 @@ namespace dtEntity
          return (id == TYPE); 
       }      
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
 

@@ -193,7 +193,7 @@ namespace dtEntity
          bool success = entity.GetComponent(ctype, newcomp);
          if(success)
          {
-            newcomp->OnFinishedSettingProperties();
+            newcomp->Finished();
          }
       }
 

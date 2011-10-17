@@ -184,11 +184,11 @@ namespace dtEntityWrappers
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESOnFinishedSettingProperties(const Arguments& args)
+   Handle<Value> ESFinished(const Arguments& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
 
-      es->OnFinishedSettingProperties();
+      es->Finished();
       return Undefined();
    }
    
@@ -341,7 +341,7 @@ namespace dtEntityWrappers
         proto->Set("hasComponent", FunctionTemplate::New(ESHasComponent));
         proto->Set("createComponent", FunctionTemplate::New(ESCreateComponent));
         proto->Set("deleteComponent", FunctionTemplate::New(ESDeleteComponent));
-        proto->Set("onFinishedSettingProperties", FunctionTemplate::New(ESOnFinishedSettingProperties));
+        proto->Set("finished", FunctionTemplate::New(ESFinished));
       }
    }   
 

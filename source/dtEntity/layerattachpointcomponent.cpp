@@ -61,9 +61,9 @@ namespace dtEntity
    }
 
     ////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointComponent::OnFinishedSettingProperties()
+   void LayerAttachPointComponent::Finished()
    {
-      BaseClass::OnFinishedSettingProperties();
+      BaseClass::Finished();
       assert(mEntityManager != NULL);
       if(mName.Get() != mCurrentName)
       {

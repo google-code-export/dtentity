@@ -327,9 +327,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroupComponent::OnFinishedSettingProperties()
+   void GroupComponent::Finished()
    {
-      BaseClass::OnFinishedSettingProperties();
+      BaseClass::Finished();
       assert(mEntity != NULL && "Please add group component to entity before adding children!");
 
       GetAttachmentGroup()->removeChild(0, GetAttachmentGroup()->getNumChildren());
@@ -399,10 +399,10 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshComponent::OnFinishedSettingProperties()
+   void StaticMeshComponent::Finished()
    {
       SetMesh(mMeshPathProperty.Get(), mCacheHint.Get());
-      BaseClass::OnFinishedSettingProperties();
+      BaseClass::Finished();
    }
    
    ////////////////////////////////////////////////////////////////////////////

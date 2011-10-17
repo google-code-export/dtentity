@@ -111,7 +111,7 @@ function createEntity(proto) {
   }
 
   for(k in comps) {
-     comps[k].onFinishedSettingProperties();
+     comps[k].finished();
   }
 
   return entityId;

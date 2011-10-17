@@ -66,7 +66,7 @@ namespace dtEntitySimulation
       }
 
       virtual void OnAddedToEntity(dtEntity::Entity& e);
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
       dtEntity::TransformComponent* GetTransformComponent() const { return mTransformComponent; }
 
       void SetClampingMode(dtEntity::StringId mode) { mClampingMode.Set(mode); }

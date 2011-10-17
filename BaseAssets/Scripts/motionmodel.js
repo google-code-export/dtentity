@@ -204,14 +204,14 @@ function CameraMotionsSystem() {
       targetCamComp.EyeDirection = eyedir;
       targetCamComp.Up = up;
 
-      targetCamComp.onFinishedSettingProperties();
+      targetCamComp.finished();
 
       // update sound
       if(soundSystem != null) {
         soundSystem.ListenerTranslation = targetCamComp.Position;
         soundSystem.ListenerUp = targetCamComp.Up;
         soundSystem.ListenerEyeDirection = targetCamComp.EyeDirection;
-        soundSystem.onFinishedSettingProperties();
+        soundSystem.finished();
       }
    }
 
@@ -290,7 +290,7 @@ function CameraMotionsSystem() {
                                            eye = [0, 1, 0];
                                         }
                                         targetCamComp.EyeDirection = eye;
-                                        targetCamComp.onFinishedSettingProperties();
+                                        targetCamComp.finished();
                                      });
    
 }

@@ -46,7 +46,7 @@ namespace dtEntityWrappers
       ScriptSystem(dtEntity::EntityManager& em);
       ~ScriptSystem();
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
       void OnSceneLoaded(const dtEntity::Message& msg);
       void OnResetSystem(const dtEntity::Message& msg);
 

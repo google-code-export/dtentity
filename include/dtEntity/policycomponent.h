@@ -135,9 +135,9 @@ namespace dtEntity
          NotifyPropertyChanged(this, propname, prop);
       }
 
-      virtual void OnFinishedSettingProperties()
+      virtual void Finished()
       {
-         Component::OnFinishedSettingProperties();
+         Component::Finished();
          NotifyPropertiesChanged(this);
       }
    };

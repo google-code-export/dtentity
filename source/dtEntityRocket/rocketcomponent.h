@@ -61,7 +61,7 @@ namespace dtEntityRocket
 
       void OnAddedToEntity(dtEntity::Entity& e);
       void OnRemovedFromEntity(dtEntity::Entity& e);
-      void OnFinishedSettingProperties();
+      void Finished();
 
       virtual dtEntity::ComponentType GetType() const { return TYPE; }
       virtual bool IsInstanceOf(dtEntity::ComponentType id) const

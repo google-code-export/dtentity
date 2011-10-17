@@ -68,7 +68,7 @@ namespace dtEntity
       }      
 
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
       void OnAddedToEntity(dtEntity::Entity& entity);
 

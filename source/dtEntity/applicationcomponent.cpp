@@ -420,7 +420,7 @@ namespace dtEntity
          target->SetFrom(*i->second);
          component->OnPropertyChanged(i->first, *target);
       }
-      component->OnFinishedSettingProperties();
+      component->Finished();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ namespace dtEntity
          target->SetFrom(*i->second);
          sys->OnPropertyChanged(i->first, *target);
       }
-      sys->OnFinishedSettingProperties();
+      sys->Finished();
       
    }
 

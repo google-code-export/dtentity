@@ -96,7 +96,9 @@ namespace dtEntity
        * The component can overwrite this method to react to these
        * changes.
        */
-      virtual void OnFinishedSettingProperties() {}
+      virtual void Finished() {}
+
+      void OnFinishedSettingProperties() { Finished(); }
 
       /**
        * template helper for creating Clone() methods

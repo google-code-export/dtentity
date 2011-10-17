@@ -134,7 +134,7 @@ namespace dtEntity
          return TYPE; 
       }
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
       virtual osg::Group* GetGroup() const;
       
@@ -196,7 +196,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-     virtual void OnFinishedSettingProperties();
+     virtual void Finished();
 
 
       // set existing geometry as static mesh
