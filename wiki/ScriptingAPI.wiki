@@ -748,24 +748,37 @@ function intersect(from, to, nodemask)
 
 
 /*
+ * Pick first intersecting entity.
+ * Only nodes with an entity reference in their user data are picked.
  *
+ * @param from: A vec3 giving start position of intersection test line
+ * @param to: A vec3 giving end position of intersection test line
+ * @param nodemask: An OSG bit mask for masking intersection test
+ * @return An entity ID or 0 if no intersection]
  */
-function pickEntity()
+function pickEntity(from, to, nodemask)
 
 
 /*
- *
+ * Converts from world coordinates onto screen coordinates.
+ * Useful for placing GUI icons over scene objects etc. 
+ * Returns a vec3.
  */
-function convertWorldToScreenCoords()
+function convertWorldToScreenCoords(vec3)
 
 
 /*
- *
+ * Open a new 3D window if used window manager supports this.
+ * @param name Handle to later close this window
+ * @param layername Optional: New window should display entities in this layer. Default is DefaultLayer
+ * @param traits Optional An object containing window settings.
+ *               Entries: x, y, width, height, windowDecoration, 
+ *               hostName, displayNum, screenNum, vsync
  */
-function openWindow()
+function openWindow(name, [layername, traits])
 
 /*
- *
+ * Close window with given name
  */
-function closeWindow()
+function closeWindow(name)
 }}}
