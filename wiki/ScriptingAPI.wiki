@@ -323,7 +323,7 @@ function setProperty(name, value)
 
 
 
-== ElementDocument ==
+== !ElementDocument ==
 
 Only when compiled with libRocket and dtEntityRocket library is loaded!
 Inherits all functionality from Element class.
