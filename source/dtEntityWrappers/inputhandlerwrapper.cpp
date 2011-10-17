@@ -33,6 +33,154 @@ namespace dtEntityWrappers
 {
 
    ////////////////////////////////////////////////////////////////////////////////
+   class InputCallbackWrapper
+      : public dtEntity::InputCallbackInterface
+   {
+   public:
+
+      InputCallbackWrapper(Handle<Object> obj)
+      {
+         mObject = Persistent<Object>::New(obj);
+         
+         if(obj->Has(String::New("keyDown"))) 
+         {
+            mKeyDownFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("keyDown"))));
+         }
+         if(obj->Has(String::New("keyUp"))) 
+         {
+            mKeyUpFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("keyUp"))));
+         }
+         if(obj->Has(String::New("mouseButtonDown"))) 
+         {
+            mMouseDownFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseButtonDown"))));
+         }
+         if(obj->Has(String::New("mouseButtonUp"))) 
+         {
+            mMouseUpFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseButtonUp"))));
+         }
+         if(obj->Has(String::New("mouseWheel"))) 
+         {
+            mMouseWheelFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseWheel"))));
+         }
+         if(obj->Has(String::New("mouseMove"))) 
+         {
+            mMouseMoveFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseMove"))));
+         }
+      }
+
+      virtual void KeyUp(const std::string& name) {
+         if(!mKeyUpFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[1] = { String::New(name.c_str()) };
+            Handle<Value> ret = mKeyUpFunc->Call(mObject, 1, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      virtual void KeyDown(const std::string& name) 
+      {
+         if(!mKeyDownFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[1] = { String::New(name.c_str()) };
+            Handle<Value> ret = mKeyDownFunc->Call(mObject, 1, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      virtual void MouseButtonUp(int button) 
+      {
+         if(!mMouseUpFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[1] = { Integer::New(button) };
+            Handle<Value> ret = mMouseUpFunc->Call(mObject, 1, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      virtual void MouseButtonDown(int button) 
+      {
+         if(!mMouseDownFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[1] = { Integer::New(button) };
+            Handle<Value> ret = mMouseDownFunc->Call(mObject, 1, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      virtual void MouseWheel(int dir) 
+      {
+         if(!mMouseWheelFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[1] = { Integer::New(dir) };
+            Handle<Value> ret = mMouseWheelFunc->Call(mObject, 1, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      virtual void MouseMove(float x, float y) 
+      {
+         if(!mMouseMoveFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[2] = { Number::New(x), Number::New(y) };
+            Handle<Value> ret = mMouseMoveFunc->Call(mObject, 2, argv);
+
+            if(ret.IsEmpty()) 
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
+      Persistent<Function> mKeyUpFunc;
+      Persistent<Function> mKeyDownFunc;
+      Persistent<Function> mMouseUpFunc;
+      Persistent<Function> mMouseDownFunc;
+      Persistent<Function> mMouseWheelFunc;
+      Persistent<Function> mMouseMoveFunc;
+      Persistent<Object> mObject;
+   };
+
+   std::vector<InputCallbackWrapper*> s_inputCallbackWrappers;
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKey(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
@@ -153,6 +301,36 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> IHAddInputCallback(const Arguments& args)
+   {
+      Handle<Object> o = Handle<Object>::Cast(args[0]);
+      InputCallbackWrapper* wr = new InputCallbackWrapper(o);
+
+      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+      ih->AddInputCallback(wr);
+      s_inputCallbackWrappers.push_back(wr);
+
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> IHRemoveInputCallback(const Arguments& args)
+   {
+      for(std::vector<InputCallbackWrapper*>::iterator i = s_inputCallbackWrappers.begin();
+         i != s_inputCallbackWrappers.end(); ++i)
+      {
+         if((*i)->mObject == args[0])
+         {
+            dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+            ih->RemoveInputCallback(*i);
+            return True();
+         }
+      }
+      
+      return False();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHPrintKeys(const Arguments& args)
    {
       dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
@@ -198,6 +376,8 @@ namespace dtEntityWrappers
       proto->Set("getTouches", FunctionTemplate::New(IHGetTouches));
       proto->Set("printKeys", FunctionTemplate::New(IHPrintKeys));
       proto->Set("toString", FunctionTemplate::New(IHToString));
+      proto->Set("addInputCallback", FunctionTemplate::New(IHAddInputCallback));
+      proto->Set("removeInputCallback", FunctionTemplate::New(IHRemoveInputCallback));
       
       Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));

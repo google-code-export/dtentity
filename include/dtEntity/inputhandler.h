@@ -57,6 +57,20 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
+   class InputCallbackInterface : public osg::Referenced
+   {
+   public:
+      virtual ~InputCallbackInterface() {}
+      virtual void KeyUp(const std::string& name) {}
+      virtual void KeyDown(const std::string& name) {}
+
+      virtual void MouseButtonUp(int button) {}
+      virtual void MouseButtonDown(int button) {}
+      virtual void MouseWheel(int dir) {}
+      virtual void MouseMove(float x, float y) {};
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT InputHandler : public osg::Node
    {
    public:
@@ -76,6 +90,9 @@ namespace dtEntity
       InputHandler(dtEntity::EntityManager& em);
 
       virtual void traverse(osg::NodeVisitor& nv);
+
+      void AddInputCallback(InputCallbackInterface*);
+      bool RemoveInputCallback(InputCallbackInterface*);
 
       /**
        * Stores if current system is multitouch-capable
@@ -191,6 +208,9 @@ namespace dtEntity
       bool mLockCursor;
       unsigned int mNumTouches;
       std::vector<TouchPoint> mTouches;
+
+      typedef std::vector<osg::ref_ptr<InputCallbackInterface> > Callbacks;
+      Callbacks mCallbacks;
       
       std::set<int> mKeyPressedSet;
       std::set<int> mKeyUpSet;
