@@ -32,6 +32,33 @@
       <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
     </component>
   </entity>-->
+
+<entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+    <component type="LayerAttachPoint">
+      <stringproperty name="Name">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">SkyBox</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">SkyBox</stringproperty>
+    </component>
+    <component type="SkyBox">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">LayerAttachPoint</stringproperty>
+      </arrayproperty>
+      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+    </component>
+  </entity>
   <entity>
     <component type="Layer">
       <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>

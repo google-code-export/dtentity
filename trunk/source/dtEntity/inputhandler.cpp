@@ -454,17 +454,19 @@ namespace dtEntity
 
       if(mLockCursor)
       {
-
-         const osgViewer::GraphicsWindow* win = dynamic_cast<const osgViewer::GraphicsWindow*>(ea.getGraphicsContext());
-         if(win)
+         if(nx > 0.1f || ny > 0.1f || nx < -0.1f || ny < -0.1f)
          {
-            const osg::GraphicsContext::Traits* traits = win->getTraits();
-            mMouseXRaw = traits->x + traits->width/2.f;
-            mMouseYRaw = traits->y + traits->height/2.f;
-            mMouseX = 0;
-            mMouseY = 0;
-            const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw, mMouseYRaw);
-         }         
+            const osgViewer::GraphicsWindow* win = dynamic_cast<const osgViewer::GraphicsWindow*>(ea.getGraphicsContext());
+            if(win)
+            {
+               const osg::GraphicsContext::Traits* traits = win->getTraits();
+               mMouseXRaw = traits->x + traits->width/2.f;
+               mMouseYRaw = traits->y + traits->height/2.f;
+               mMouseX = 0;
+               mMouseY = 0;
+               const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer((ea.getXmin()+ea.getXmax())/2.0f,(ea.getYmin()+ea.getYmax())/2.0f);
+            }
+         }
       }
    }
 

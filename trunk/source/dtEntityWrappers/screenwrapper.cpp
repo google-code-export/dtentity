@@ -77,7 +77,7 @@ namespace dtEntityWrappers
       }
       else
       {
-         window->useCursor(false);
+         window->setCursor(osgViewer::GraphicsWindow::NoCursor);
       }
       
       info.This()->Set(String::New("__USE_CURSOR__"), Boolean::New(showCursor));
