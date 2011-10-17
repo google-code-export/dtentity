@@ -683,3 +683,37 @@ function toString()
  */
 function printKeys();
 }}}
+
+== Log ==
+Example: 
+{{{ 
+Log.debug("Hello, log!");
+}}}
+
+Methods:
+{{{
+/*
+ * print to log with log level always
+ */
+function always(str);
+
+/*
+ * print to log with log level debug
+ */
+function debug(str);
+
+/*
+ * print to log with log level error
+ */
+function error(str);
+
+/*
+ * print to log with log level info
+ */
+function info(str);
+
+/*
+ * print to log with log level warning
+ */
+function warning(str);
+}}}
