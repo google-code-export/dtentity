@@ -297,6 +297,26 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void InputHandler::AddInputCallback(InputCallbackInterface* cb)
+   {
+      mCallbacks.push_back(cb);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool InputHandler::RemoveInputCallback(InputCallbackInterface* cb)
+   {
+      for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+      {
+         if(*i == cb)
+         {
+            mCallbacks.erase(i);
+            return true;
+         }         
+      }
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool InputHandler::handle(const osgGA::GUIEventAdapter& ea, 
                              osgGA::GUIActionAdapter& aa, 
                              osg::NodeVisitor* nv)
@@ -393,43 +413,77 @@ namespace dtEntity
 
       mKeyUpSet.insert(key);
       mKeyPressedSet.erase(key);
+
+      std::string v = mKeyNamesReverse[key];
+      if(!mCallbacks.empty())
+      {
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->KeyUp(v);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleKeyDown(const osgGA::GUIEventAdapter& ea)
    {
      int key = ea.getUnmodifiedKey();
-    mKeyDownSet.insert(key);
+      mKeyDownSet.insert(key);
       mKeyPressedSet.insert(key);
       mInputString << mKeyNamesReverse[key];
+      if(!mCallbacks.empty())
+      {
+         std::string v = mKeyNamesReverse[key];
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->KeyDown(v);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseUp(const osgGA::GUIEventAdapter& ea)
    {
-      int index = 0;
+      int index;
       switch(ea.getButton())
       {
+         case osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON: index = 0; break;
          case osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON: index = 2; break;
          case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON: index = 1; break;
       }
 
       mMouseButtonPressed[index] = false;
       mMouseButtonUp[index] = true;
+
+      if(!mCallbacks.empty())
+      {
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->MouseButtonUp(index);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseDown(const osgGA::GUIEventAdapter& ea)
    {
-      int index = 0;
+      int index;
       switch(ea.getButton())
       {
+         case osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON: index = 0; break;
          case osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON: index = 2; break;
          case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON: index = 1; break;
       }
 
       mMouseButtonPressed[index] = true;
       mMouseButtonDown[index] = true;
+      if(!mCallbacks.empty())
+      {
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->MouseButtonDown(index);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -468,12 +522,36 @@ namespace dtEntity
             }
          }
       }
+
+      if(!mCallbacks.empty())
+      {
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->MouseMove(nx, ny);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseWheel(const osgGA::GUIEventAdapter& ea)
    {
       mMouseScroll = ea.getScrollingMotion();
+      
+      if(!mCallbacks.empty())
+      {
+         int dir = 0;
+         switch(mMouseScroll)
+         {
+         case osgGA::GUIEventAdapter::SCROLL_UP:
+            dir = 1; break;
+         case osgGA::GUIEventAdapter::SCROLL_DOWN:
+            dir = -1; break;
+         }
+         for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+         {
+            (*i)->MouseWheel(dir);
+         }
+      }
    }
   
    ////////////////////////////////////////////////////////////////////////////////
