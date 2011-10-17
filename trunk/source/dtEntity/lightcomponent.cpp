@@ -143,7 +143,7 @@ namespace dtEntity
  
 
    ////////////////////////////////////////////////////////////////////////////
-   void LightComponent::OnFinishedSettingProperties()
+   void LightComponent::Finished()
    {
      
    }

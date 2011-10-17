@@ -149,7 +149,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::OnFinishedSettingProperties()
+   void TextLabelComponent::Finished()
    {
       for(unsigned int j = 0; j < GetNumTexts(); ++j)
       {

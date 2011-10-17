@@ -140,7 +140,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::OnFinishedSettingProperties()
+   void ScriptSystem::Finished()
    {
       if(mDebugEnabled.Get() && !mDebugPortOpened)
       {

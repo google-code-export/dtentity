@@ -92,7 +92,7 @@ namespace dtEntity
       void InitFromEntity(const Entity& entity);
 
       /**
-       * Add components to entity and set their properties. Calls OnFinishedSettingProperties().
+       * Add components to entity and set their properties. Calls Finished().
        */
       bool Spawn(Entity& entity) const;
 

@@ -73,7 +73,7 @@ namespace dtEntity
       void SetCamera(osg::Camera* cam);
       osg::Camera* GetCamera() const { return mCamera.get(); }
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);

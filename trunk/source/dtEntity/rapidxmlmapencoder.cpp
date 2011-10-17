@@ -491,7 +491,7 @@ namespace dtEntity
          }
       }
 
-      component->OnFinishedSettingProperties();
+      component->Finished();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -762,7 +762,7 @@ namespace dtEntity
             }
          }
       }
-      es->OnFinishedSettingProperties();
+      es->Finished();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

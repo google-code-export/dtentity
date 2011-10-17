@@ -265,7 +265,7 @@ namespace dtEntity
       if(success)
       {
          // call, although no properties were set yet
-         es->OnFinishedSettingProperties();
+         es->Finished();
          LOG_DEBUG("Created entity system of type " + GetStringFromSID(ctype));
          mEntityManager->AddEntitySystem(*es);
          return true;

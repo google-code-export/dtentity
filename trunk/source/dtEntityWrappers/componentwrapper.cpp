@@ -103,10 +103,10 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> COOnFinishedSettingProperties(const Arguments& args)
+   Handle<Value> COFinished(const Arguments& args)
    {
       dtEntity::Component* component = UnwrapComponent(args.Holder());
-      component->OnFinishedSettingProperties();
+      component->Finished();
       return Undefined();
    }
    
@@ -151,7 +151,7 @@ namespace dtEntityWrappers
        proto->Set("getType", FunctionTemplate::New(COGetType));
        proto->Set("properties", FunctionTemplate::New(COProperties));
        proto->Set("toString", FunctionTemplate::New(COToString));
-       proto->Set("onFinishedSettingProperties", FunctionTemplate::New(COOnFinishedSettingProperties));
+       proto->Set("finished", FunctionTemplate::New(COFinished));
      }
 
      Local<Object> instance = s_componentTemplate->GetFunction()->NewInstance();

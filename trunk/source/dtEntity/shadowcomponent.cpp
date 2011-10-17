@@ -114,9 +114,9 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShadowComponent::OnFinishedSettingProperties()
+   void ShadowComponent::Finished()
    { 
-      BaseClass::OnFinishedSettingProperties();
+      BaseClass::Finished();
       assert(mEntity != NULL);
 
       osgShadow::MinimalShadowMap* msm = NULL;

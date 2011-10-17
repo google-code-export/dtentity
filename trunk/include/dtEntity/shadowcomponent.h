@@ -65,7 +65,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
       void SetShadowTechnique(const std::string name);
 

@@ -188,11 +188,11 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextureLabelComponent::OnFinishedSettingProperties()
+   void TextureLabelComponent::Finished()
    {
       assert(mLabelSystem != NULL);
       mLabelSystem->SetupLabel(*this);
-      BaseClass::OnFinishedSettingProperties();
+      BaseClass::Finished();
       SetVisible(mLabelSystem->GetEnabled());
    }
   

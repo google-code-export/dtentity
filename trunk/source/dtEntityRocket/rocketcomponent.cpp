@@ -223,7 +223,7 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void RocketComponent::OnFinishedSettingProperties()
+   void RocketComponent::Finished()
    {
 
      // GuiNode is responsible for rendering the LibRocket GUI to OSG

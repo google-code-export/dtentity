@@ -138,7 +138,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::OnFinishedSettingProperties()
+   void CameraComponent::Finished()
    {
       UpdateViewMatrix();
    }

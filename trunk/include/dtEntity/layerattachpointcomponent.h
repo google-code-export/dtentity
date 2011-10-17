@@ -43,7 +43,7 @@ namespace dtEntity
       
       LayerAttachPointComponent();
       virtual ~LayerAttachPointComponent();
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
       void OnAddedToEntity(Entity& entity);
 
       virtual void SetNode(osg::Node* node);
