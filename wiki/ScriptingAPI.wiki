@@ -4,7 +4,7 @@ The goal is to provide full access to all dtEntity functionality, including enti
 
 <wiki:toc max_depth="2" />
 
-= Using the Google Chrome Developer Tools to debug JavaScript =
+= Using the Google Chrome Developer Tools to debug JavaScript 
 
 There is an Eclipse plugin that you can use to edit and debug your JavaScript. It connects to DtScript over a network port and lets you define break points, step through functions and explore variable values.
 You can grab the eclipse plugin here: [http://code.google.com/p/chromedevtools/]
@@ -863,4 +863,66 @@ function stopAnimation(entityid, name)
  * return an array containing names of all registered animations
  */
 function getAnimations(entityid)
+}}}
+
+== TextLabel System ==
+
+{{{
+
+/*
+ * Add text to TextLabel component for given entity id.
+ */
+function create(entityid, textid)
+
+/*
+ * Remove text
+ */
+function destroy(entityid, textid)
+
+/*
+ * Set text for given text id
+ */
+function setText(entityid, textid, text)
+
+/*
+ * Set vec3 offset for given text id
+ */
+function setOffset(entityid, textid, vec3)
+
+
+/*
+ * Set vec3 offset for given text id.
+ * Alignment can be one of:
+ * "LEFT_TOP", "LEFT_CENTER", "LEFT_BOTTOM", "CENTER_TOP",
+ * "CENTER_CENTER", "CENTER_BOTTOM", "RIGHT_TOP", 
+ * "RIGHT_CENTER", "RIGHT_BOTTOM", "LEFT_BASE_LINE", 
+ * "CENTER_BASE_LINE", "RIGHT_BASE_LINE", "LEFT_BOTTOM_BASE_LINE",
+ * "CENTER_BOTTOM_BASE_LINE", "RIGHT_BOTTOM_BASE_LINE"
+ */
+function setAlignment(entityid, textid, align)
+
+
+/*
+ * Set offset from 0 in pixels. May not work in standard
+ * implementation. :(
+ */
+function setPixelOffset(entityid, textid, vec2)
+
+
+/*
+ * Set text color
+ */
+function setColor(entityid, textid, vec4)
+
+
+/*
+ * Set text background color
+ */
+function setBackdropColor(entityid, textid, vec4)
+
+
+/*
+ * should text have an outline in background color?
+ */ 
+function setHighlighted(entityid, textid, bool)
 }}}
