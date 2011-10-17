@@ -233,6 +233,75 @@ Methods:
   function setEnabled(bool)
 }}}
  
+== Element ==
+
+Only when compiled with libRocket and dtEntityRocket library is loaded!
+
+{{{
+
+/*
+ * Add a listener to rocket events.
+ * @param eventname Name of event to listen to
+ * @param function function to call when event comes. Function will
+ *                 receive 5 parameters: event type, parameters, phase,
+ *                 current element, target element.
+ * @param inCapturePhase set to true if event listener should
+ *                       be called during capture traversal phase 
+ */
+function addEventListener(eventname, function, [bool inCapturePhase])
+
+/*
+ * Append a child element, 
+ * @param domelement True if the element is to be part of the DOM, 
+ * false otherwise. Only set this to false if you know 
+ * what you're doing!
+ */
+function appendChild(childElement, bool domelement)
+
+/*
+ * Get attribute value
+ */
+function getAttribute(name)
+
+/*
+ * Return a child element by id, null if not found
+ */
+function getElementById(id)
+
+/*
+ * Return inner RML
+ */
+function getInnerRML()
+
+/*
+ * Return property with given name. Can also be accessed 
+* as a JavaScript property
+ */
+function getProperty(name)
+
+/*
+ * Remove a previously added event listener
+ */
+function removeEventListener(eventname, function, phase)
+
+/*
+ * set attribute to value. 
+ */
+function setAttribute(name, val)
+
+/*
+ * set inner rml value
+ */
+function setInnerRML(val)
+
+/*
+ * Set property value. Can also be done with javascript
+ * property syntax
+ */
+function setProperty(name, value)
+
+}}}
+
  
 == !EntityManager ==
 
@@ -992,6 +1061,7 @@ function getContext(entityid)
  * var listDemoSelect = window.getElementById("demo_chooser");
  * var option = rocketSystem.instanceElement(
  *   listDemoSelect, "*", "option", {value: "OptionName"});
+ * listDemoSelect.appendChild(option);
  *
  */
 function instanceElement(parent, instancer, tag, attributes)
