@@ -784,3 +784,83 @@ function openWindow(name, [layername, traits])
  */
 function closeWindow(name)
 }}}
+
+= Entity System Script Methods =
+
+Entity systems deriving from class ScriptAccessor may provide script methods. Here are the predefined script methods of base dtEntity entity systems.
+
+== Application System ==
+
+{{{
+
+/*
+ * Return time scale at that simulation is running
+ */
+function getTimeScale()
+
+
+/*
+ * Return current simulation time in seconds
+ */
+function getSimulationTime()
+
+/*
+ * Return current time since startup in seconds
+ */
+function getSimTimeSinceStartup()
+
+/*
+ * Return OSG calendar time
+ */
+function getSimulationClockTime()
+
+
+/*
+ * return OSG tick time
+ */
+function getRealClockTime()
+
+/*
+ * change time settings of simulation
+ */
+function changeTimeSettings(newSimTime, newTimeScale, newClockTime)
+
+/*
+ * Get clock time formatted as a string
+ */
+function getSimulationClockTimeString()
+}}}
+
+== Layer System ==
+
+{{{
+/*
+ * Draw a bounding box around entity
+ */
+function addVisibleBoundingBox(entityid)
+
+/*
+ * Remove bounding box around entity if there is one drawn
+ */
+function removeVisibleBoundingBox(entityid)
+
+}}}
+
+== OSGAnimation System ==
+
+{{{
+/*
+ * Play this animation if it exists
+ */
+function playAnimation(entityid, name, priority, weight)
+
+/*
+ * Stop playing this animation if it is playing
+ */
+function stopAnimation(entityid, name)
+
+/*
+ * return an array containing names of all registered animations
+ */
+function getAnimations(entityid)
+}}}
