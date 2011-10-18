@@ -33,6 +33,7 @@
 #include <osgDB/ReadFile>
 #include <assert.h>
 #include <osgDB/FileUtils>
+#include <osgUtil/Optimizer>
 
 namespace dtEntity
 {
@@ -55,7 +56,7 @@ namespace dtEntity
 
    public:
 
-      osg::Node* GetNode(const std::string& path, CacheMode::e cachemode)
+      osg::Node* GetNode(const std::string& path, CacheMode::e cachemode, bool optimize)
       {
          switch(cachemode)
          {
@@ -110,6 +111,11 @@ namespace dtEntity
          }
          
          osg::Node* node = osgDB::readNodeFile(path);
+         if(optimize)
+         {
+            osgUtil::Optimizer optimizer;
+            optimizer.optimize(node);
+         }
          if(cachemode != CacheMode::None)
          {
             mModels[path] = node;
@@ -382,6 +388,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    const StringId StaticMeshComponent::TYPE(SID("StaticMesh"));
    const StringId StaticMeshComponent::MeshId(SID("Mesh"));
+   const StringId StaticMeshComponent::OptimizeId(SID("Optimize"));
    const StringId StaticMeshComponent::CacheHintId(SID("CacheHint"));
 
    const StringId StaticMeshComponent::CacheNoneId(SID("None"));
@@ -396,6 +403,7 @@ namespace dtEntity
    {
       Register(MeshId, &mMeshPathProperty);
       Register(CacheHintId, &mCacheHint);
+      Register(OptimizeId, &mOptimize);
       
       GetNode()->setName("StaticMeshComponent");
       GetNode()->setNodeMask(
@@ -449,7 +457,7 @@ namespace dtEntity
          {
            cm = CacheMode::HardwareMeshes;
          }
-         mMeshNode = s_modelCache.GetNode(path, cm);
+         mMeshNode = s_modelCache.GetNode(path, cm, GetOptimize());
          if(mMeshNode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
