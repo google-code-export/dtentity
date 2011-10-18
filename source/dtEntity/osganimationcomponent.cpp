@@ -32,6 +32,7 @@
 #include <osgAnimation/RigGeometry>
 #include <osgAnimation/RigTransformHardware>
 #include <osgAnimation/BoneMapVisitor>
+#include <osgAnimation/MorphGeometry>
 #include <osgDB/FileUtils>
 #include <sstream>
 
@@ -50,6 +51,7 @@ namespace dtEntity
                osgAnimation::AnimationManagerBase* b = dynamic_cast<osgAnimation::AnimationManagerBase*>(node.getUpdateCallback());
                if (b) {
                    _am = new osgAnimation::BasicAnimationManager(*b);
+                   node.removeUpdateCallback(_am);
                    return;
                }
            }
@@ -164,10 +166,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    struct SetupRigGeometry : public osg::NodeVisitor
    {
-       bool _hardware;
-
-       SetupRigGeometry( bool hardware = true)
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN), _hardware(hardware)
+      
+       SetupRigGeometry()
+         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
        {
        }
 
@@ -180,27 +181,27 @@ namespace dtEntity
        }
 
        void apply(osg::Drawable& geom)
-       {
-           if (_hardware)
+       {          
+           osgAnimation::RigGeometry* rig = dynamic_cast<osgAnimation::RigGeometry*>(&geom);
+           if (rig)
            {
-               osgAnimation::RigGeometry* rig = dynamic_cast<osgAnimation::RigGeometry*>(&geom);
-               if (rig)
-               {
-                 rig->setRigTransformImplementation(new MyRigTransformHardware);
-               }
-           }
+              rig->setRigTransformImplementation(new MyRigTransformHardware);
+           }           
        }
    };
-
 
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
    const StringId OSGAnimationComponent::TYPE(SID("OSGAnimation"));
+   const StringId OSGAnimationComponent::EnabledId(SID("Enabled"));
    
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationComponent::OSGAnimationComponent()
+      : mEntity(NULL)
    {
+      Register(EnabledId, &mEnabled);
+      mEnabled.Set(false);
    }
 
 
@@ -212,14 +213,21 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationComponent::OnAddedToEntity(Entity& entity)
    {
+      mEntity = &entity;
       StaticMeshComponent* smc;
-      if(!entity.GetComponent(smc))
+      if(entity.GetComponent(smc))
       {
-         return;
+         SetupMesh(smc->GetNode());
       }
+   }
 
-      SetupMesh(smc->GetNode());
-
+   ////////////////////////////////////////////////////////////////////////////
+   void OSGAnimationComponent::OnPropertyChanged(StringId propname, Property& prop)
+   {
+      if(propname == EnabledId)
+      {
+         SetEnabled(prop.BoolValue());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -229,17 +237,55 @@ namespace dtEntity
       node->accept(finder);
       mAnimationManager = finder._am;
       
-      // I am not entirely sure why this is necessary,
-      // taken from osg example osganimationviewer:
-      node->setUpdateCallback(mAnimationManager);
+      if(mEnabled.Get())
+      {
+         SetEnabled(true);
+      }
 
       if(mAnimationManager == NULL)
       {
          return;
       }
 
-      SetupRigGeometry switcher(true);
-      node->accept(switcher);
+      
+      SetupRigGeometry switcher;
+      node->accept(switcher);     
+      SetEnabled(true);
+   }
+
+
+   class EmptyCB : public osg::NodeCallback
+   {
+   public:
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv) {}
+   };
+
+   ////////////////////////////////////////////////////////////////////////////
+   void OSGAnimationComponent::SetEnabled(bool v)
+   {
+      mEnabled.Set(v);
+
+      if(mAnimationManager)
+      {
+         StaticMeshComponent* smc;
+         if(mEntity->GetComponent(smc))
+         {
+            if(v)
+            {
+               smc->GetNode()->setUpdateCallback(mAnimationManager);
+            }
+            else
+            {
+               smc->GetNode()->setUpdateCallback(new EmptyCB());
+            }
+         }         
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool OSGAnimationComponent::GetEnabled() const
+   {
+      return mEnabled.Get();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -252,6 +298,8 @@ namespace dtEntity
       AddScriptedMethod("playAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptPlayAnimation));
       AddScriptedMethod("stopAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptStopAnimation));
       AddScriptedMethod("getAnimations", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimations));
+      AddScriptedMethod("getAnimationLength", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationLength));
+      
    }
 
 
@@ -378,6 +426,35 @@ namespace dtEntity
          arr->Add(new StringProperty((*i)->getName()));
       }
       return arr;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Property* OSGAnimationSystem::ScriptGetAnimationLength(const PropertyArgs& args)
+   {
+      if(args.size() < 2)
+      {
+         LOG_ERROR("Usage: getAnimationLength(entityid, name)");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      std::string name = args[1]->StringValue();
+
+      osgAnimation::BasicAnimationManager* manager;
+      const osgAnimation::AnimationList* list;
+      if(!GetAnimationList(id, list, manager))
+      {
+         return NULL;
+      }
+
+      for(osgAnimation::AnimationList::const_iterator i = list->begin(); i != list->end(); ++i)
+      {
+         if((*i)->getName() == name)
+         {
+            (*i)->computeDuration();
+            return new dtEntity::DoubleProperty((*i)->getDuration());
+         }
+      }
+      return NULL;
    }
 
 
