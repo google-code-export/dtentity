@@ -1085,6 +1085,12 @@ function stopAnimation(entityid, name)
 function getAnimations(entityid)
 }}}
 
+/*
+ * return length of animation in seconds
+ */
+function getAnimationLength(entityid, name)
+}}}
+
 == Rocket System ==
 {{{
 
