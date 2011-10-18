@@ -33,7 +33,6 @@
 namespace dtEntity
 {
 
-
    ///////////////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT OSGAnimationComponent : public Component
    {
@@ -41,12 +40,13 @@ namespace dtEntity
    public:
       
       static const ComponentType TYPE;
+      static const StringId EnabledId;
       
       OSGAnimationComponent();
       virtual ~OSGAnimationComponent();
 
       virtual ComponentType GetType() const { return TYPE; }
-
+      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity);
 
       osgAnimation::BasicAnimationManager* GetAnimationManager() const
@@ -56,9 +56,15 @@ namespace dtEntity
 
       void SetupMesh(osg::Node*);
 
+      void SetEnabled(bool);
+      bool GetEnabled() const;
+
    private:
 
       osg::ref_ptr<osgAnimation::BasicAnimationManager> mAnimationManager;
+      dtEntity::BoolProperty mEnabled;
+      Entity* mEntity;
+ 
    };
 
   
@@ -80,6 +86,7 @@ namespace dtEntity
       Property* ScriptPlayAnimation(const PropertyArgs& args);
       Property* ScriptStopAnimation(const PropertyArgs& args);
       Property* ScriptGetAnimations(const PropertyArgs& args);
+      Property* ScriptGetAnimationLength(const PropertyArgs& args);
 
       MessageFunctor mMeshChangedFunctor;
    };
