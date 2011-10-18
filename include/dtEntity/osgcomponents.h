@@ -185,6 +185,7 @@ namespace dtEntity
       static const ComponentType TYPE;
       static const StringId MeshId;
       static const StringId CacheHintId;
+      static const StringId OptimizeId;
 
       static const StringId CacheNoneId;
       static const StringId CacheAllId;
@@ -215,11 +216,15 @@ namespace dtEntity
       void SetCacheHint(StringId v) { mCacheHint.Set(v); }
       StringId GetCacheHint() const { return mCacheHint.Get(); }
 
+      bool GetOptimize() const { return mOptimize.Get(); }
+      void SetOptimize(bool v) { mOptimize.Set(v); }
+
    protected:
      
       // path to loaded script file
       StringProperty mMeshPathProperty;
       StringIdProperty mCacheHint;
+      BoolProperty mOptimize;
       osg::ref_ptr<osg::Node> mMeshNode;
       std::string mLoadedMesh;
    };

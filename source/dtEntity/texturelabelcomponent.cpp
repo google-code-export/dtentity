@@ -43,6 +43,8 @@
 
 namespace dtEntity
 {
+   
+
    const dtEntity::StringId TextureLabelComponent::TYPE(dtEntity::SID("TextureLabel"));
    const dtEntity::StringId TextureLabelComponent::OffsetId(dtEntity::SID("Offset"));
    const dtEntity::StringId TextureLabelComponent::ColorId(dtEntity::SID("Color"));
@@ -89,17 +91,14 @@ namespace dtEntity
       mDotGeometry->setVertexArray(verts);
       mDotGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, verts->size()));
 
-      mColorArray = new osg::Vec4Array();
-      mColorArray->push_back(mColor.Get());
-      mDotGeometry->setColorArray(mColorArray);
-      mDotGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-      
-
       // have to set bound to be non-zero, otherwise point is not shown
       // I actually make it quite big because otherwise the label is cut off as soon as
       // the center of the actor is offscreen.
       osg::BoundingBox bb(-1000, -1000, -1000, 1000, 1000, 1000);
       mDotGeometry->setInitialBound(bb);
+
+      mColorUniform = new osg::Uniform("texlabelcolor", osg::Vec4(mColor.Get()));
+      
 
    }
     
@@ -149,8 +148,7 @@ namespace dtEntity
    void TextureLabelComponent::SetColor(const osg::Vec4& v)
    {
       mColor.Set(v);
-      (*mColorArray)[0] = v;
-      mDotGeometry->dirtyDisplayList();
+      mColorUniform->set(v);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -205,6 +203,40 @@ namespace dtEntity
    {
       Register(EnabledId, &mEnabled);
       mEnabled.Set(true);
+
+      mProgram = new osg::Program();
+
+      mProgram->setName("TextureLabel");
+      
+
+      std::string vsrc = ""
+      "uniform sampler2D diffuseTexture;\n"
+      "uniform vec4 texlabelcolor;\n"
+      "\n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+      "   gl_FrontColor = texlabelcolor;\n"
+      "   gl_TexCoord[0] = gl_MultiTexCoord0;\n"
+      "}";
+
+      osg::Shader* vert = new osg::Shader(osg::Shader::VERTEX);
+      vert->setShaderSource(vsrc);  
+      mProgram->addShader(vert);
+      std::string fsrc = ""
+      "uniform sampler2D diffuseTexture;\n"
+      "\n"
+      "void main(void)\n"
+      "{\n"
+      "   vec4 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);\n"
+      "   gl_FragColor.rgb = diffuseColor.rgb * gl_Color;"
+      "   gl_FragColor.a = diffuseColor.a;\n"
+      "}";
+
+      osg::Shader* frag = new osg::Shader(osg::Shader::FRAGMENT);
+      frag->setShaderSource(fsrc);
+      mProgram->addShader(frag);
+
    }  
 
    ////////////////////////////////////////////////////////////////////////////
@@ -278,6 +310,7 @@ namespace dtEntity
          ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
       }
 
+      ss->setAttributeAndModes(mProgram.get());
       ss->setMode(GL_FOG, osg::StateAttribute::OFF);
 
       osg::ref_ptr<osg::Image> image = osgDB::readImageFile(symbolpath);
@@ -287,6 +320,7 @@ namespace dtEntity
          return ss;
       }
       texture->setImage(image);
+      ss->addUniform(component.GetColorUniform());
 
       return ss;
    }

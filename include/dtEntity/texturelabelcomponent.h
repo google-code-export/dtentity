@@ -28,6 +28,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/osgcomponents.h>
 #include <osg/Geometry>
+#include <osg/Program>
 
 namespace dtEntity
 {      
@@ -101,6 +102,7 @@ namespace dtEntity
       bool GetAlwaysOnTop() const { return mAlwaysOnTop.Get(); }
       void SetAlwaysOnTop(bool v) { mAlwaysOnTop.Set(v); }
 
+      osg::Uniform* GetColorUniform() const { return mColorUniform; }
    private:
 
       osg::ref_ptr<osg::Vec4Array> mColorArray;
@@ -114,7 +116,7 @@ namespace dtEntity
       dtEntity::BoolProperty mVisible;
       dtEntity::BoolProperty mAlwaysOnTop;
       TextureLabelSystem* mLabelSystem;
-
+      osg::ref_ptr<osg::Uniform> mColorUniform;
    };
    
    
@@ -141,5 +143,6 @@ namespace dtEntity
    private:
 
       dtEntity::BoolProperty mEnabled;
+      osg::ref_ptr<osg::Program> mProgram;
    };
 }
