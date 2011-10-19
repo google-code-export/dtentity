@@ -66,6 +66,15 @@ namespace dtEntity
    struct MyRigTransformHardware : public osgAnimation::RigTransformHardware
    {
 
+      std::string mVertexShader;
+      std::string mFragmentShader;
+
+      MyRigTransformHardware(const std::string vertshader, const std::string& fragshader)
+         : mVertexShader(vertshader)
+         , mFragmentShader(fragshader)
+      {
+      }
+
        void operator()(osgAnimation::RigGeometry& geom)
        {
            if (_needInit)
@@ -103,7 +112,7 @@ namespace dtEntity
                program->setName("HardwareSkinning");
                if (!_shader.valid())
                {
-                   std::string shaderPath = osgDB::findDataFile("shaders/osganimationskinning.vert");
+                   std::string shaderPath = osgDB::findDataFile(mVertexShader);
                    _shader = osg::Shader::readShaderFile(osg::Shader::VERTEX, shaderPath);
 
                }
@@ -127,7 +136,7 @@ namespace dtEntity
 
                program->addShader(_shader.get());
 
-               std::string shaderPath2 = osgDB::findDataFile("shaders/osganimationskinning.frag");
+               std::string shaderPath2 = osgDB::findDataFile(mFragmentShader);
                osg::Shader* shader2 = osg::Shader::readShaderFile(osg::Shader::FRAGMENT, shaderPath2);
                if(shader2)
                {
@@ -166,9 +175,12 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    struct SetupRigGeometry : public osg::NodeVisitor
    {
-      
-       SetupRigGeometry()
+      std::string mVertexShader;
+      std::string mFragmentShader;
+       SetupRigGeometry(const std::string& vertexShader, const std::string& fragmentShader)
          : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+         , mVertexShader(vertexShader)
+         , mFragmentShader(fragmentShader)
        {
        }
 
@@ -185,7 +197,7 @@ namespace dtEntity
            osgAnimation::RigGeometry* rig = dynamic_cast<osgAnimation::RigGeometry*>(&geom);
            if (rig)
            {
-              rig->setRigTransformImplementation(new MyRigTransformHardware);
+              rig->setRigTransformImplementation(new MyRigTransformHardware(mVertexShader, mFragmentShader));
            }           
        }
    };
@@ -247,8 +259,9 @@ namespace dtEntity
          return;
       }
 
-      
-      SetupRigGeometry switcher;
+      OSGAnimationSystem* sys;
+      mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
+      SetupRigGeometry switcher(sys->GetVertexShader(), sys->GetFragmentShader());
       node->accept(switcher);     
       SetEnabled(true);
    }
@@ -289,9 +302,18 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   const StringId OSGAnimationSystem::VertexShaderId(SID("VertexShader"));
+   const StringId OSGAnimationSystem::FragmentShaderId(SID("FragmentShader"));
+   
    OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
      : DefaultEntitySystem<OSGAnimationComponent>(em)
    {
+      Register(VertexShaderId, &mVertexShader);
+      Register(FragmentShaderId, &mFragmentShader);
+
+      mVertexShader.Set("shaders/osganimationskinning.vert");
+      mFragmentShader.Set("shaders/osganimationskinning.frag");
+
       mMeshChangedFunctor = MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
       em.RegisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor,
                             FilterOptions::PRIORITY_DEFAULT, "OSGAnimationSystem::OnMeshChanged");

@@ -88,7 +88,7 @@ namespace dtEntity
    }      
 
    ////////////////////////////////////////////////////////////////////////////
-   void AnimationComponent::OnFinishedSettingProperties()
+   void AnimationComponent::Finished()
    {
       SetTimeScale(mTimeScale.Get());
    }
