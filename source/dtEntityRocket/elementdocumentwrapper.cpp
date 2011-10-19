@@ -55,14 +55,6 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EDHide(const Arguments& args)
-   {
-      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
-      v->Hide();
-      return Undefined();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDClose(const Arguments& args)
    {
       Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
