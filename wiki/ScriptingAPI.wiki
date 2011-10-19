@@ -1069,15 +1069,7 @@ function getEntitiesInMap(mappath)
 == OSGAnimation System ==
 
 {{{
-/*
- * Play this animation if it exists
- */
-function playAnimation(entityid, name, priority, weight)
 
-/*
- * Stop playing this animation if it is playing
- */
-function stopAnimation(entityid, name)
 
 /*
  * return an array containing names of all registered animations
@@ -1089,6 +1081,27 @@ function getAnimations(entityid)
  * return length of animation in seconds
  */
 function getAnimationLength(entityid, name)
+
+/*
+ * Returns string "LOOP", "ONCE", "STAY" or "PPONG", NULL if not found
+ */
+function getAnimationPlayMode(entityid, name);
+
+/*
+ * Play this animation if it exists
+ */
+function playAnimation(entityid, name, priority, weight)
+
+/*
+ * Set to "LOOP", "ONCE", "STAY" or "PPONG"
+ */
+function setAnimationPlayMode(entityid, name, mode);
+
+/*
+ * Stop playing this animation if it is playing
+ */
+function stopAnimation(entityid, name)
+
 }}}
 
 == Rocket System ==
