@@ -46,6 +46,14 @@ namespace dtEntityRocket
       return Undefined();      
    }
 
+	////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EDHide(const Arguments& args)
+   {  
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      v->Hide();   
+      return Undefined();      
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDHide(const Arguments& args)
    {
@@ -86,6 +94,7 @@ namespace dtEntityRocket
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
+		  proto->Set("hide", FunctionTemplate::New(EDHide));
         proto->Set("toString", FunctionTemplate::New(EDToString));
         proto->Set("show", FunctionTemplate::New(EDShow));
         proto->Set("hide", FunctionTemplate::New(EDHide));

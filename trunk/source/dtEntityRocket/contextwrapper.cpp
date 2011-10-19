@@ -67,6 +67,22 @@ namespace dtEntityRocket
       return Undefined();      
    }
 
+	////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> RCUnloadDocument(const Arguments& args)
+   {
+      if(args.Length() > 0)
+      {
+			Rocket::Core::ElementDocument* doc = UnwrapElementDocument(args[0]);
+			if(doc == NULL)
+			{
+				return ThrowError("Cannot unload document: not a document!");
+			}
+         
+         Rocket::Core::Context* rs = UnwrapContext(args.Holder());
+         rs->UnloadDocument(doc);
+      }
+      return Undefined();      
+   }
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapContext(Rocket::Core::Context* v)
    {
@@ -86,6 +102,7 @@ namespace dtEntityRocket
         proto->Set("toString", FunctionTemplate::New(RCToString));
         proto->Set("loadMouseCursor", FunctionTemplate::New(RCLoadMouseCursor));
         proto->Set("loadDocument", FunctionTemplate::New(RCLoadDocument));
+		  proto->Set("unloadDocument", FunctionTemplate::New(RCUnloadDocument));
       }
       Local<Object> instance = s_contextTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
