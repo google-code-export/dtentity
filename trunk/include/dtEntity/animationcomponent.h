@@ -70,7 +70,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
       std::string GetMesh() const;

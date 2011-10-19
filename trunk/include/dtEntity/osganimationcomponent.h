@@ -76,9 +76,17 @@ namespace dtEntity
    {
    public:
 
-      OSGAnimationSystem(EntityManager& em);
+      static const StringId VertexShaderId;
+      static const StringId FragmentShaderId;
 
+      OSGAnimationSystem(EntityManager& em);
       void OnMeshChanged(const Message&);
+
+      void SetVertexShader(const std::string& v) { mVertexShader.Set(v); }
+      std::string GetVertexShader() const { return mVertexShader.Get(); }
+
+      void SetFragmentShader(const std::string& v) { mFragmentShader.Set(v); }
+      std::string GetFragmentShader() const { return mFragmentShader.Get(); }
 
    private:
       bool GetAnimationList(EntityId id, const osgAnimation::AnimationList*& list,
@@ -91,5 +99,7 @@ namespace dtEntity
       Property* ScriptSetAnimationPlayMode(const PropertyArgs& args);      
 
       MessageFunctor mMeshChangedFunctor;
+      StringProperty mVertexShader;
+      StringProperty mFragmentShader;
    };
 }
