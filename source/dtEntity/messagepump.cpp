@@ -97,6 +97,11 @@ namespace dtEntity
    void MessagePump::EmitMessage(const Message& msg)
    {
       dtEntity::MessageType messageType = msg.GetType();
+      if(messageType == MessageType())
+      {
+         LOG_ERROR("Trying to send a message with an empty type string!");
+         return;
+      }
       std::pair<MessageFunctorRegistry::iterator, MessageFunctorRegistry::iterator> keyRange;
       keyRange = mMessageFunctors.equal_range(messageType);
       

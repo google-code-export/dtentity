@@ -87,6 +87,8 @@ namespace dtEntity
       Property* ScriptStopAnimation(const PropertyArgs& args);
       Property* ScriptGetAnimations(const PropertyArgs& args);
       Property* ScriptGetAnimationLength(const PropertyArgs& args);
+      Property* ScriptGetAnimationPlayMode(const PropertyArgs& args);
+      Property* ScriptSetAnimationPlayMode(const PropertyArgs& args);      
 
       MessageFunctor mMeshChangedFunctor;
    };
