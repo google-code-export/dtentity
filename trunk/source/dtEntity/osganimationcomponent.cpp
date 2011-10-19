@@ -299,7 +299,8 @@ namespace dtEntity
       AddScriptedMethod("stopAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptStopAnimation));
       AddScriptedMethod("getAnimations", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimations));
       AddScriptedMethod("getAnimationLength", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationLength));
-      
+      AddScriptedMethod("getAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationPlayMode));
+      AddScriptedMethod("setAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptSetAnimationPlayMode));
    }
 
 
@@ -457,5 +458,86 @@ namespace dtEntity
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   Property* OSGAnimationSystem::ScriptGetAnimationPlayMode(const PropertyArgs& args)
+   {
+      if(args.size() < 2)
+      {
+         LOG_ERROR("Usage: getAnimationPlayMode(entityid, name)");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      std::string name = args[1]->StringValue();
 
+      osgAnimation::BasicAnimationManager* manager;
+      const osgAnimation::AnimationList* list;
+      if(!GetAnimationList(id, list, manager))
+      {
+         return NULL;
+      }
+
+      for(osgAnimation::AnimationList::const_iterator i = list->begin(); i != list->end(); ++i)
+      {
+         if((*i)->getName() == name)
+         {
+            osgAnimation::Animation::PlayMode pm = (*i)->getPlayMode();
+            switch(pm)
+            {
+            case osgAnimation::Animation::LOOP: return new dtEntity::StringProperty("LOOP");
+            case osgAnimation::Animation::ONCE: return new dtEntity::StringProperty("ONCE");
+            case osgAnimation::Animation::STAY: return new dtEntity::StringProperty("STAY");
+            case osgAnimation::Animation::PPONG: return new dtEntity::StringProperty("PPONG");
+            }
+         }         
+      }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Property* OSGAnimationSystem::ScriptSetAnimationPlayMode(const PropertyArgs& args)
+   {
+      if(args.size() < 3)
+      {
+         LOG_ERROR("Usage: setAnimationPlayMode(entityid, name, mode=[LOOP|ONCE|STAY|PPONG])");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      std::string name = args[1]->StringValue();
+      std::string mode = args[2]->StringValue();
+
+      osgAnimation::BasicAnimationManager* manager;
+      const osgAnimation::AnimationList* list;
+      if(!GetAnimationList(id, list, manager))
+      {
+         return NULL;
+      }
+
+      for(osgAnimation::AnimationList::const_iterator i = list->begin(); i != list->end(); ++i)
+      {
+         if((*i)->getName() == name)
+         {
+            if(mode == "LOOP")
+            {
+               (*i)->setPlayMode(osgAnimation::Animation::LOOP);
+            }
+            else if(mode == "ONCE")
+            {
+               (*i)->setPlayMode(osgAnimation::Animation::ONCE);
+            }
+            else if(mode == "STAY")
+            {
+               (*i)->setPlayMode(osgAnimation::Animation::STAY);
+            }
+            else if(mode == "PPONG")
+            {
+               (*i)->setPlayMode(osgAnimation::Animation::PPONG);
+            }
+            else
+            {
+               LOG_ERROR("Unknown animation play mode: " + mode);
+            }
+         }        
+      }
+      return NULL;
+   }
 }
