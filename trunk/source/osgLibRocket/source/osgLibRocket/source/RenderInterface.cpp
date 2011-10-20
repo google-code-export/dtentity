@@ -37,8 +37,9 @@ namespace osgLibRocket
 	{
 	}
 
-	void RenderInterface::setRenderTarget(osg::Group* grp, int w, int h)
+	void RenderInterface::setRenderTarget(osg::Group* grp, int w, int h, bool fullscreen)
 	{
+      _fullScreen = fullscreen;
 		_screenWidth = w;
 		_screenHeight = h;
 		if(_renderTarget != grp)
@@ -195,7 +196,11 @@ namespace osgLibRocket
 	/// @param[in] enable True if scissoring is to enabled, false if it is to be disabled.
 	void RenderInterface::EnableScissorRegion(bool enable)
 	{
-		_scissorsEnabled = enable;
+      // cannot use scissors when rendering to in-scene geometry
+      if(_fullScreen)
+      {
+		   _scissorsEnabled = enable;
+      }
 	}
 
 	/// Called by Rocket when it wants to change the scissor region.
@@ -215,8 +220,16 @@ namespace osgLibRocket
 		texture->setImage(image);
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-      texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
-		texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+      if(_fullScreen) 
+      {
+         texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
+         texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+      }
+      else
+      {
+         texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
+		   texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+      }
 		_textureMap[texture_handle] = texture;
 	}
 
