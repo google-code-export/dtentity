@@ -280,8 +280,8 @@ namespace dtEntitySimulation
 
          osg::Vec3d lastpos = component->GetLastClampedPosition();
         
-         double distMovedX = abs(translation[0] - lastpos[0]);
-         double distMovedY = abs(translation[0] - lastpos[0]);
+         double distMovedX = fabs(translation[0] - lastpos[0]);
+         double distMovedY = fabs(translation[0] - lastpos[0]);
 
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
