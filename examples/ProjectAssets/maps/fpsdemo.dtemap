@@ -32,7 +32,19 @@
       <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
     </component>
   </entity>-->
-
+  
+  <entity>
+	<component type="Light">
+	  <vec4property name="Position" x="1" y="1" z="1" w="0" />
+	  <vec4property name="Diffuse" x="1" y="1" z="1" w="1" />
+	  <vec4property name="Ambient" x="0.5" y="0.5" z="0.5" w="1" />
+	</component>	
+	<component type="Layer">
+      <stringproperty name="AttachedComponent">Light</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+  </entity>
+  
 <entity>
     <component type="Layer">
       <stringproperty name="AttachedComponent">SkyBox</stringproperty>

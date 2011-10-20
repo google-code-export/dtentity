@@ -42,7 +42,7 @@ function initRocket() {
   rocketSystem.loadFontFace("LibRocket/Delicious-BoldItalic.otf");
   
   var context = rocketSystem.getContext(rocketId);  
-  context.loadMouseCursor("LibRocket/cursor.rml");
+  //context.loadMouseCursor("LibRocket/cursor.rml");
   window = context.loadDocument("LibRocket/demo_select.rml");
   window.style = "position: absolute; width: 200px; height: 400px; top: 30px; left: 30px;";
   window.getElementById("title").setInnerRML("dtEntity Demos");

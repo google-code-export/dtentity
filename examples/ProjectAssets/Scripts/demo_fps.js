@@ -98,8 +98,8 @@ function startFPSDemo() {
   camMotion.StartEyeDirection = [0, 0.9, -0.1];
 
   Screen.lockCursor = true;
-  Screen.showCursor = false;
   Screen.fullScreen = true;
+  Screen.showCursor = false;
   
   EntityManager.registerForMessages("TickMessage", updateFPS);
 
