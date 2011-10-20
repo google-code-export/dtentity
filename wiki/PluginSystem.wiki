@@ -36,8 +36,8 @@ extern "C" DT_ENTITY_SIMULATION_EXPORT void CreatePluginFactories(std::list<dtEn
 }
 }}}
 
-The plugin creates an instance of dtEntity::ComponentPluginFactory and pushes it into the offered list. The plugin manager will store the factory object and use it to instantiate the ground clamping system when one of this happens:
-  * A map is loaded with an entity that contains a component of the type returned by GetType()
+The plugin creates an instance of {{{dtEntity::ComponentPluginFactory}}} and pushes it into the offered list. The plugin manager will store the factory object and use it to instantiate the ground clamping system when one of this happens:
+  * A map is loaded with an entity that contains a component of the type returned by {{{GetType()}}}
   * A scene is loaded that has an entry <entitysystem type="GroundClamping" />
   * EntityManager::CreateComponent is called with a component of the type returned by GetType()
-  * A spawner is spawned containing a component of the given type
+  * A [spawner] is spawned containing a component of the given type
