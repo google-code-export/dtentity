@@ -111,6 +111,12 @@ namespace dtEntity
          }
          
          osg::Node* node = osgDB::readNodeFile(path);
+
+         if(node == NULL)
+         {
+            return NULL;
+         }
+
          if(optimize)
          {
             osgUtil::Optimizer optimizer;
