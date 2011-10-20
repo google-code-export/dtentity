@@ -1,0 +1,2 @@
+A spawner is a kind of template for creating entities.
+Spawners are stored in the map system. A spawner can inherit components from another spawner and overwrite component properties.
