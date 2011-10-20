@@ -73,11 +73,13 @@ namespace dtEntityWrappers
       bool showCursor = value->BooleanValue();
       if(showCursor)
       {
+         window->useCursor(true);
          window->setCursor(osgViewer::GraphicsWindow::RightArrowCursor);
       }
       else
       {
          window->setCursor(osgViewer::GraphicsWindow::NoCursor);
+         window->useCursor(false);
       }
       
       info.This()->Set(String::New("__USE_CURSOR__"), Boolean::New(showCursor));

@@ -23,7 +23,7 @@
 		</style>
 	</head>
 	<body template="window">
-		Choose Demo: 
+		Choose Demo: <br />
 			
 		<select name="DemoSelect" id="demo_chooser" onchange="startDemo(parameters.value)" style="vertical-align: -5px;">
 		</select>
@@ -40,7 +40,6 @@
 <span id="animationbox" style="visibility:hidden;">
 	<form>
 		<select id="AnimationChooser" onchange="changeAnimation(parameters.value);">
-		<option value="">None</option>
 		</select>
 	</form>
 </span>

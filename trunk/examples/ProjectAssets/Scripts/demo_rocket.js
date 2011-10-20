@@ -57,11 +57,15 @@ function startRocket() {
   
   EntityManager.addToScene(guiId);
   
+  var mapsys = EntityManager.getEntitySystem("Map");
+  mapsys.loadMap("maps/fpsdemo.dtemap");
+  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 function stopRocket() {
-
+  var mapsys = EntityManager.getEntitySystem("Map");
+  mapsys.unloadMap("maps/fpsdemo.dtemap");
   EntityManager.removeFromScene(guiId);
   EntityManager.killEntity(guiId);
   hideHelp();

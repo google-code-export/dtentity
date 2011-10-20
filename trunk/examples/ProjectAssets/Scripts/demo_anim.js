@@ -22,7 +22,7 @@ function addAnimation(position) {
         Attitude : osg.Quat.makeRotate(1.5, 1,0,0)
       },
     StaticMesh : {
-      CacheHint : "HardwareMeshes",
+      CacheHint : "CacheHardwareMeshes",
       Mesh : "SkeletalMeshes/zombie.osgb"
     },
     OSGAnimation : {
@@ -51,11 +51,11 @@ function startAnimDemo() {
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
   var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
 
-  cameraComponent.Position = [0, 0, 1.8];
+  cameraComponent.Position = [4, -8, 2.8];
   cameraComponent.EyeDirection = [0, 1, 0];
   cameraComponent.CullingMode = "NoAutoNearFarCulling";
   cameraComponent.NearClip = 0.1;
-  cameraComponent.FarClip = 100;
+  cameraComponent.FarClip = 10000;
   cameraComponent.Up = [0, 0, 1];
   cameraComponent.finished();
   
@@ -66,10 +66,12 @@ function startAnimDemo() {
   }
 
 
-  addAnimation([-2, 10, 0]);
+  addAnimation([0, 0, 0]);
 
   var anims = animsystem.getAnimations(animEntity);
-
+  if(anims.length > 0) {
+	animsystem.playAnimation(animEntity, anims[0]);
+  }
   if(rocketSystem) {
      var animbox = window.getElementById("animationbox");
      animbox.style = "visibility:visible;"
