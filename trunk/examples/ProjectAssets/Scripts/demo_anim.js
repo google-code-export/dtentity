@@ -17,13 +17,11 @@ function addAnimation(position) {
     },
     PositionAttitudeTransform : {
         Children : ["StaticMesh"],
-        Position: position,
-        Scale : [10,10,10],
-        Attitude : osg.Quat.makeRotate(1.5, 1,0,0)
+        Position: position
       },
     StaticMesh : {
       CacheHint : "CacheHardwareMeshes",
-      Mesh : "SkeletalMeshes/zombie.osgb"
+      Mesh : "SkeletalMeshes/monster.osgb"
     },
     OSGAnimation : {
     }
@@ -51,8 +49,8 @@ function startAnimDemo() {
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
   var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
 
-  cameraComponent.Position = [4, -8, 2.8];
-  cameraComponent.EyeDirection = [0, 1, 0];
+  cameraComponent.Position = [6, 8, -14];
+  cameraComponent.EyeDirection = [-1, -1, -0.2];
   cameraComponent.CullingMode = "NoAutoNearFarCulling";
   cameraComponent.NearClip = 0.1;
   cameraComponent.FarClip = 10000;
@@ -66,12 +64,15 @@ function startAnimDemo() {
   }
 
 
-  addAnimation([0, 0, 0]);
+  addAnimation([0, 0, -15]);
 
   var anims = animsystem.getAnimations(animEntity);
-  if(anims.length > 0) {
-	animsystem.playAnimation(animEntity, anims[0]);
-  }
+  /*if(anims.length > 0) {
+    playing = anims[0];
+	animsystem.playAnimation(animEntity, playing);
+  }*/
+  playing = "run";
+  animsystem.playAnimation(animEntity, playing);
   if(rocketSystem) {
      var animbox = window.getElementById("animationbox");
      animbox.style = "visibility:visible;"
@@ -112,8 +113,10 @@ function startAnimDemo() {
       }
     };
   }
-  var text = "Shows how to load an animated mesh and to start / stop animations.";
+  var text = "Shows how to load an animated mesh and to start / stop animations. Free model from www.3drt.com";
   showHelp(text);
+  var mapsys = EntityManager.getEntitySystem("Map");
+  mapsys.loadMap("maps/fpsdemo.dtemap");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +132,8 @@ function stopAnimDemo() {
     GUI.destroyWidget(animlist);
   }
   hideHelp();
+  var mapsys = EntityManager.getEntitySystem("Map");
+  mapsys.unloadMap("maps/fpsdemo.dtemap");
 }
 if(EntityManager.hasEntitySystem("OSGAnimation")) {
   addDemo("Animations", startAnimDemo, stopAnimDemo);
