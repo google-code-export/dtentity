@@ -122,6 +122,7 @@ namespace dtEntity
       {
          osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
          stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
+         stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
          view->addEventHandler(stats);
          
       }
