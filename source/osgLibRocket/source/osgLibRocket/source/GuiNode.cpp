@@ -110,7 +110,7 @@ namespace osgLibRocket
                  if(_context != 0)
                  {
                    //_toLocal =  osg::computeWorldToLocal(nv.getNodePath());
-                    _renderer->setRenderTarget(this, _context->GetDimensions().x, _context->GetDimensions().y);
+                    _renderer->setRenderTarget(this, _context->GetDimensions().x, _context->GetDimensions().y, _camera != NULL);
 
                    _context->Update();
 

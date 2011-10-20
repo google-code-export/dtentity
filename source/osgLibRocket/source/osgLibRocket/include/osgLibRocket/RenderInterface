@@ -38,7 +38,7 @@ namespace osgLibRocket
 
 		RenderInterface();
 
-		void setRenderTarget(osg::Group* grp, int w, int h);
+		void setRenderTarget(osg::Group* grp, int w, int h, bool fullscreen);
 		osg::Group* getRenderTarget() const;
 
 		virtual void RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation);
@@ -88,6 +88,7 @@ namespace osgLibRocket
 
 		int _screenWidth;
 		int _screenHeight;
+      bool _fullScreen;
 
 	};
 }
