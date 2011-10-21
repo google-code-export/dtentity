@@ -1,0 +1,2 @@
+The DebugDrawManager is a tool for quickly adding debug geometry to a running scene. 
+There are a number of methods that allow adding lines, spheres, triangles and other primitives to the scene. It is possible to define color, line thickness, depth test and the duration for that the primitive is visible. Setting duration to 0 will cause the geometry to be drawn exactly once. This is useful for updating geometry in realtime.
