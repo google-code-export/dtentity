@@ -711,6 +711,14 @@ Methods:
 {{{
 
 /*
+ * Add an object to receive input callbacks. Object may
+ * contain these methods:
+ * keyDown(key), keyUp(key), 
+ * mouseButtonDown(button), mouseButtonUp(button),
+ * mouseWheel(axis), mouseMove(x, y).
+ */
+function addInputCallback(obj)
+/*
  * Get axis value from 0 - 1. Allowed inputs are entries of global Axis object.
  * Example : 
  * var x = InputHandler.getAxis(Axis.MouseX);
@@ -784,6 +792,11 @@ function getNumTouches()
  * [{"tapcount" : tapcount, "id" : id, "x": x, "y" : y, "phase" : phase}, ...]
  */
 function getTouches()
+
+/*
+ * remove a callback previously added woth addInputCallback
+ */
+function removeInputCallback(obj)
 
 /*
  * return string representation
