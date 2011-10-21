@@ -1,0 +1,7 @@
+dtEntity allows attaching entities to anywhere in the OSG scene graph. There are two component types used for this: 
+
+The layer attach point component contains an OSG group node. Each layer attach point also has a unique name string. At startup, an entity is generated with a layer attach point component containing the scene graph root. This attach point goes by two names: "root" and "default". 
+
+The second relevant component type is the layer compont. An entity that wants to be attached to the scene graph has to have a layer component. This component has two properties: First, the name of the layer attach point to attach to. This defaults to "default". Second, the component on this entity that should be attached to the attach point. This component has to be derived from NodeComponent. 
+
+To attach the entity to the layer attach point, the method EntityManager::AddToScene has to be called. This causes the layer component to attach itself to the attach point. EntityManager::RemoveFromScene removes it. Also, the layer component has a property Visible, that can be set to false to hide the entity.
