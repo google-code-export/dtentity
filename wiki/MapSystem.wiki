@@ -1,0 +1,3 @@
+dtEntity allows loading multiple maps at once. Each entity that is loaded from a map or that should be saved from a map has to have a map component. This component contains a human-readable name for the entity, a unique string identifier and the path of the map to save to.
+
+A scene file can contain a number of maps to load, also properties for initializing the various entity systems in the scene.
