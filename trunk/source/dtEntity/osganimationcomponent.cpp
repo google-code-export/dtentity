@@ -279,11 +279,15 @@ namespace dtEntity
       mEnabled.Set(v);
 
       if(mAnimationManager)
-      {
+      {         
          StaticMeshComponent* smc;
          if(mEntity->GetComponent(smc))
          {
-            if(v)
+            OSGAnimationSystem* sys;
+            mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
+            bool reallyEnabled = mEnabled.Get() && sys->GetEnabled();
+
+            if(reallyEnabled)
             {
                smc->GetNode()->setUpdateCallback(mAnimationManager);
             }
@@ -304,15 +308,18 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    const StringId OSGAnimationSystem::VertexShaderId(SID("VertexShader"));
    const StringId OSGAnimationSystem::FragmentShaderId(SID("FragmentShader"));
+   const StringId OSGAnimationSystem::EnabledId(SID("Enabled"));
    
    OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
      : DefaultEntitySystem<OSGAnimationComponent>(em)
    {
       Register(VertexShaderId, &mVertexShader);
       Register(FragmentShaderId, &mFragmentShader);
+      Register(EnabledId, &mEnabled);
 
       mVertexShader.Set("shaders/osganimationskinning.vert");
       mFragmentShader.Set("shaders/osganimationskinning.frag");
+      mEnabled.Set(true);
 
       mMeshChangedFunctor = MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
       em.RegisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor,
@@ -325,6 +332,33 @@ namespace dtEntity
       AddScriptedMethod("setAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptSetAnimationPlayMode));
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////
+   void OSGAnimationSystem::OnPropertyChanged(StringId propname, Property& prop)
+   {
+      if(propname == EnabledId)
+      {
+         SetEnabled(prop.BoolValue());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void OSGAnimationSystem::SetEnabled(bool v)
+   {
+      mEnabled.Set(v);
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         OSGAnimationComponent* comp = i->second;
+         comp->SetEnabled(comp->GetEnabled());
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool OSGAnimationSystem::GetEnabled() const
+   {
+      return mEnabled.Get();
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationSystem::GetAnimationList(EntityId id, const osgAnimation::AnimationList*& list, osgAnimation::BasicAnimationManager*& manager)
