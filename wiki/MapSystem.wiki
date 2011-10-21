@@ -1,3 +1,5 @@
 dtEntity allows loading multiple maps at once. Each entity that is loaded from a map or that should be saved from a map has to have a map component. This component contains a human-readable name for the entity, a unique string identifier and the path of the map to save to.
 
 A scene file can contain a number of maps to load, also properties for initializing the various entity systems in the scene.
+
+Maps and scenes are loaded and stored using the MapEncoder interface. There are two existing implementations for this interface: One uses RapidXML to store to XML, the other uses Xerces, also to XML. Possibly there will be binary encoding in the future.
