@@ -972,4 +972,52 @@ namespace dtEntity
       dtEntity::StringProperty mViewName;
    };
 
+   ////////////////////////////////////////////////////////////////////////////////
+
+   /**
+    * This message gets sent when a camera component is created.
+    */
+   class DT_ENTITY_EXPORT CameraAddedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      CameraAddedMessage();
+
+      virtual Message* Clone() const { return CloneContainer<CameraAddedMessage>(); }
+
+      EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
+      void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
+
+   private:
+
+      UIntProperty mAboutEntityId;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+
+   /**
+    * This message gets sent when a camera component is deleted.
+    */
+   class DT_ENTITY_EXPORT CameraRemovedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      CameraRemovedMessage();
+
+      virtual Message* Clone() const { return CloneContainer<CameraRemovedMessage>(); }
+
+      EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
+      void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
+
+   private:
+
+      UIntProperty mAboutEntityId;
+   };
+
 }

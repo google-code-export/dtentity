@@ -147,7 +147,7 @@ namespace dtEntity
       cam->setName(name);
       view->setCamera(cam);
 //      cam->setGraphicsContext(window);
-      appsys->AddCameraToSceneGraph(cam);
+      //appsys->AddCameraToSceneGraph(cam);
 //      gc->realize();
       view->setUpViewInWindow(100,100,800,600);
       compviewer->addView(view);

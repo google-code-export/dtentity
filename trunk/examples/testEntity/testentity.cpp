@@ -24,7 +24,6 @@
 #include <osgDB/FileUtils>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/basemessages.h>
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/defaultentitysystem.h>
@@ -227,7 +226,7 @@ public:
          {
             double time = msg.GetDouble(dtEntity::TickMessage::SimulationTimeId);
             osg::Vec2 targetv((float)sin(time / 10.0f), (float)cos(time / 10.0f));
-            mc->AddForce((targetv * 100 - mytrans) * 100);            
+            mc->AddForce((targetv * 400 - mytrans) * 400);
          }
          else
          {

@@ -354,14 +354,31 @@ namespace dtEntity
       {
          GetPrimaryCamera()->setName("defaultCam");
       }
-      AddCameraToSceneGraph(GetPrimaryCamera());
+     // AddCameraToSceneGraph(GetPrimaryCamera());
       layersys->GetSceneGraphRoot()->addChild(mInputHandler);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::AddCameraToSceneGraph(osg::Camera* cam)
+   /*void ApplicationSystem::AddCameraToSceneGraph(osg::Camera* cam)
    {
-      // wrap camera in entity
+      CameraSystem* camsystem;
+      GetEntityManager().GetEntitySystem(CameraComponent::TYPE, camsystem);
+
+      CameraSystem::ComponentStore::iterator i;
+      for(i = camsystem->begin(); i != camsystem->end(); ++i)
+      {
+         CameraComponent* camcomp = i->second;
+         if(camcomp->GetIsMainCamera())
+         {
+            if(camcomp->GetCamera() != cam)
+            {
+               camcomp->SetCamera(cam);
+            }
+            return;
+         }
+      }
+
+      // no camera in map found, wrap camera in entity
       dtEntity::MapSystem* ms;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
 
@@ -380,7 +397,7 @@ namespace dtEntity
       std::string camname = cam->getName() + std::string("_camera");
       mapComponent->SetEntityName(camname);
       mapComponent->SetUniqueId(camname);
-   }
+   }*/
 
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::OnSetComponentProperties(const Message& m)

@@ -27,6 +27,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void RegisterMessages(EntityManager& em)
    {
+      em.RegisterMessageType<CameraAddedMessage>(CameraAddedMessage::TYPE);
+      em.RegisterMessageType<CameraRemovedMessage>(CameraRemovedMessage::TYPE);
       em.RegisterMessageType<DeleteEntityMessage>(DeleteEntityMessage::TYPE);
       em.RegisterMessageType<EnableDebugDrawingMessage>(EnableDebugDrawingMessage::TYPE);
       em.RegisterMessageType<EndOfFrameMessage>(EndOfFrameMessage::TYPE);
@@ -306,6 +308,26 @@ namespace dtEntity
    {
       this->Register(AboutEntityId, &mAboutEntityId);
       this->Register(FilePathId, &mFilePath);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType CameraAddedMessage::TYPE(SID("CameraAddedMessage"));
+   const StringId CameraAddedMessage::AboutEntityId(SID("AboutEntity"));
+
+   CameraAddedMessage::CameraAddedMessage()
+      : Message(TYPE)
+   {
+      this->Register(AboutEntityId, &mAboutEntityId);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType CameraRemovedMessage::TYPE(SID("CameraRemovedMessage"));
+   const StringId CameraRemovedMessage::AboutEntityId(SID("AboutEntity"));
+
+   CameraRemovedMessage::CameraRemovedMessage()
+      : Message(TYPE)
+   {
+      this->Register(AboutEntityId, &mAboutEntityId);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
