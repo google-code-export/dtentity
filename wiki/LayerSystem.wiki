@@ -5,3 +5,5 @@ The layer attach point component contains an OSG group node. Each layer attach p
 The second relevant component type is the layer compont. An entity that wants to be attached to the scene graph has to have a layer component. This component has two properties: First, the name of the layer attach point to attach to. This defaults to "default". Second, the component on this entity that should be attached to the attach point. This component has to be derived from NodeComponent. 
 
 To attach the entity to the layer attach point, the method EntityManager::AddToScene has to be called. This causes the layer component to attach itself to the attach point. EntityManager::RemoveFromScene removes it. Also, the layer component has a property Visible, that can be set to false to hide the entity.
+
+It is possible to redefine the default layer attach point: By adding a new layer attach point to an entity and calling it "default", all currently existing entities attached to root will be re-attached to that entity. Also, all entities that are later added to the scene will be attached to that attach point.
