@@ -1,0 +1,17 @@
+dtEntity uses a publish-subscribe system to let the various subsystems communicate. 
+
+All messages derive from the dtEntity::Message class and contain a unique type hash and a number of properties. 
+
+Message sending and receiving happens in the MessagePump.
+
+Messages can be sent in two ways: {{{MessagePump::EmitMessage}}} immediately passes the message to all recipients. {{{MessagePump::EnqueueMessage}}} stores the message for a number of seconds or at least until the end of the simulation tick.{{{MessagePump::EnqueueMessage}}} is also thread safe, allowing cross-thread message communication.
+
+To register for a message, it is possible to call {{{MessagePump::RegisterForMessages}}} and pass it a message type to receive and also a functor to call.
+
+Example:
+{{{
+dtEntity::MessageFunctor ftr(this, &MyObject::MethodToCall);
+mEntityManager->RegisterForMessages(MyMessage::TYPE, ftr);
+}}}
+
+{{{MyObject::MethodToCall}}} has to have the signature {{{void MyObject::MethodToCall(const dtEntity::Message&)}}}.
