@@ -135,7 +135,7 @@ namespace dtEntity
       /** create entities for scene graph root and default camera */
       void CreateSceneGraphEntities();
 
-      void AddCameraToSceneGraph(osg::Camera*);
+      //void AddCameraToSceneGraph(osg::Camera*);
 
       InputHandler& GetInputHandler() { return *mInputHandler.get(); }
 

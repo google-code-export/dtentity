@@ -33,6 +33,7 @@
     <component type="PositionAttitudeTransform">
       <arrayproperty name="Children">
         <stringproperty name="000000">StaticMesh</stringproperty>
+        <stringproperty name="CacheHint">All</stringproperty>
       </arrayproperty>
       <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
     </component>

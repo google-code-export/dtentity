@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <scene>
 
-  <entitysystem type="MatrixTransform"/>
-
-  <entitysystem type="Camera"/>
-
-  <entitysystem type="Shadow"/>
-
-  <entitysystem type="Map"/>
-
-  <entitysystem type="Script">
-    <boolproperty name="DebugEnabled" value="false"/>
-    <uintproperty name="DebugPort" value="9222"/>
-    <arrayproperty name="Scripts"/>
-  </entitysystem>
-
-  <entitysystem type="Application">
-    <floatproperty name="TimeScale" value="1.000000"/>
-  </entitysystem>
-
-  <entitysystem type="PickShape"/>
-
-  <entitysystem type="PositionAttitudeTransform"/>
-
-  <entitysystem type="CameraMotion">
-    <boolproperty name="Enabled" value="true"/>
-    <boolproperty name="KeepUpright" value="false"/>
-    <boolproperty name="MouseEnabled" value="true"/>
-    <boolproperty name="ShowSelection" value="true"/>
-  </entitysystem>
-
-  <entitysystem type="Group"/>
-
-  <entitysystem type="SkyBox"/>
-
-  <entitysystem type="LayerAttachPoint"/>
-
-  <entitysystem type="StaticMesh"/>
-
-  <entitysystem type="Layer"/>
-
   <maps>
     <map path="maps/boids.dtemap"/>
   </maps>

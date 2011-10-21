@@ -24,12 +24,15 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/applicationcomponent.h>
+#include <osgViewer/View>
 
 namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
    const StringId CameraComponent::TYPE(SID("Camera"));
+   const StringId CameraComponent::IsMainCameraId(SID("IsMainCamera"));
    const StringId CameraComponent::CullingModeId(SID("CullingMode"));
    const StringId CameraComponent::NoAutoNearFarCullingId(SID("NoAutoNearFarCulling"));
    const StringId CameraComponent::BoundingVolumeNearFarCullingId(SID("BoundingVolumeNearFarCulling"));
@@ -47,9 +50,11 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
-      :  dtEntity::TransformComponent()
-      , mCullMask(NodeMasks::VISIBLE)
+      : mCullMask(NodeMasks::VISIBLE)
+      , mCamera(NULL)
    {
+
+      Register(IsMainCameraId, &mIsMainCamera);
       Register(CullingModeId, &mCullingMode);
       Register(FieldOfViewId, &mFieldOfView);
       Register(AspectRatioId, &mAspectRatio);
@@ -81,15 +86,51 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnAddedToEntity(Entity& entity)
    {
+      mEntity = &entity;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::OnRemovedFromEntity(Entity& entity)
+   {
+      if(mCamera.valid())
+      {
+         CameraRemovedMessage msg;
+         msg.SetAboutEntityId(mEntity->GetId());
+         mEntity->GetEntityManager().EmitMessage(msg);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnPropertyChanged(StringId propname, Property& prop)
    {
+      if(propname == IsMainCameraId)
+      {
+         if(mCamera == NULL)
+         {
+            if(mIsMainCamera.Get())
+            {
+               ApplicationSystem* appsys;
+               mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
+               SetCamera(appsys->GetPrimaryCamera());
+            }
+            else
+            {
+               SetCamera(new osg::Camera());
+            }
+            CameraAddedMessage msg;
+            msg.SetAboutEntityId(mEntity->GetId());
+            mEntity->GetEntityManager().EmitMessage(msg);
+         }
+         return;
+      }
       if(!mCamera.valid())
          return;
 
-      if(propname == CullingModeId)
+      if(propname == PositionId || propname == EyeDirectionId)
+      {
+         return;
+      }
+      else if(propname == CullingModeId)
       {
          if(prop.StringIdValue() == NoAutoNearFarCullingId)
          {
@@ -121,7 +162,6 @@ namespace dtEntity
       {
          mCamera->setClearColor(prop.Vec4Value());
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -140,7 +180,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::Finished()
    {
-      UpdateViewMatrix();
+      if(mCamera.valid())
+      {
+         UpdateViewMatrix();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////

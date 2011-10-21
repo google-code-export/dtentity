@@ -252,6 +252,30 @@ namespace dtEntity
          return c;
       }
 
+      ////////////////////////////////////////////////////////////////////////////////
+      typename ComponentStore::iterator begin()
+      {
+         return mComponents.begin();
+      }
+
+      ////////////////////////////////////////////////////////////////////////////////
+      typename ComponentStore::const_iterator begin() const
+      {
+         return mComponents.begin();
+      }
+
+      ////////////////////////////////////////////////////////////////////////////////
+      typename ComponentStore::iterator end()
+      {
+         return mComponents.end();
+      }
+
+      ////////////////////////////////////////////////////////////////////////////////
+      typename ComponentStore::const_iterator end() const
+      {
+         return mComponents.end();
+      }
+
    protected:
 
       ComponentStore mComponents;

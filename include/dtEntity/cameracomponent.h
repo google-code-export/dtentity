@@ -44,6 +44,7 @@ namespace dtEntity
    public:
 
       static const ComponentType TYPE;
+      static const StringId IsMainCameraId;
       static const StringId CullingModeId;
       static const StringId NoAutoNearFarCullingId;
       static const StringId BoundingVolumeNearFarCullingId;
@@ -68,12 +69,23 @@ namespace dtEntity
       }
 
       virtual void OnAddedToEntity(Entity& entity);
+      virtual void OnRemovedFromEntity(Entity& entity);
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
       void SetCamera(osg::Camera* cam);
       osg::Camera* GetCamera() const { return mCamera.get(); }
 
       virtual void Finished();
+
+		bool GetIsMainCamera() const
+		{
+			return mIsMainCamera.Get();
+		}
+
+		void SetIsMainCamera(bool v)
+		{
+			mIsMainCamera.Set(v);
+		}
 
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);
@@ -117,7 +129,9 @@ namespace dtEntity
 
    private:
 
+      Entity* mEntity;
       osg::ref_ptr<osg::Camera> mCamera;
+      BoolProperty mIsMainCamera;
       StringIdProperty mCullingMode;
       DoubleProperty mFieldOfView;
       DoubleProperty mAspectRatio;

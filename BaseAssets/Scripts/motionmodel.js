@@ -18,7 +18,7 @@ function CameraMotionsSystem() {
    this.ShowSelection = true;
    this.MoveParallelToGround = false;
 
-   var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam_camera");
+   var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
 
    var targetCamComp = EntityManager.getEntitySystem("Camera").getComponent(camid);
 

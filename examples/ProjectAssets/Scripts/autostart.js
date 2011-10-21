@@ -1,4 +1,23 @@
+include_once("Scripts/stdlib.js");
+
+createEntity({
+  Camera : {
+    IsMainCamera : true,
+    CullingMode : "NoAutoNearFarCulling",
+    NearClip : 1,
+    FarClip: 100000
+  },
+  Map: {
+    EntityName : "defaultCam",
+    UniqueId : "defaultCam"
+  }
+});
+
+include_once("Scripts/motionmodel.js");
+
 include_once("Scripts/demolist.js");
+
+
 
 if(demolist_initialized) {
 
