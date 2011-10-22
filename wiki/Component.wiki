@@ -1,0 +1,3 @@
+Components are stored in entity systems. Entity systems provide an interface to add, destroy, retrieve and iterate their components. Components are indexed in the entity system by the ID of the entity that they are associated with.
+
+Data of the component can either be stored as normal private member variables or as properties. Data stored in properties will be loaded and saved to map files, also scripts will be able to access and manipulate that data and the Qt property editor will have access to it.
