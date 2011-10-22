@@ -1,0 +1,4 @@
+dtEntity tries to keep the number of string in memory small. Property names, message and component types are stored as a StringId, which is a crc32 hash of the string. The function {{{dtEntity::SID}}} can be used to convert a std::string to a hashed string. This function also adds the string to a reverse lookup table that is used by the function {{{dtEntity::GetStringFromSID}}} to retrieve the original string from a hash. 
+
+For debugging purposes it may be useful to store strings in clear text. The header file dtEntity/entityid.h contains a definition 
+{{{//#define DTENTITY_USE_STRINGS_AS_STRINGIDS}}}. Remove the comment from the beginning of the line and do a full rebuild on the dtEntity sources and all property names are stored in the clear.
