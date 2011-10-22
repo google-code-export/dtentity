@@ -1,0 +1,8 @@
+To get a dtEntity application started, it has to know where to find its data files. dtEntity uses osgDB for file access, which allows defining a number of data paths. When dtEntity tries to load a data file from a relative path, all data paths are searched for this file.
+To add a data path, use {{{osgDB::setDataFilePathList}}}.
+
+Usually, it is necessary to at least add an entry to the BaseAssets folder included in the SVN repository. This folder contains XSD definitions for the various XML formats (which are used by Xerces and ignored by RapidXML), some fonts, shaders and also delegate definitions for the Qt property editor.
+
+Application specific data files can be added to a separate folder. The order in that folders are added to the data path is important: The first match is taken when searching for a data file. This way, application specific data paths can "overwrite" files in the BaseAssets folder.
+
+It may often be useful to have three separate data paths: First a project specific path, then an application specific path, then the BaseAssets.
