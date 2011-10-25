@@ -31,6 +31,7 @@
 #include <osg/Vec4>
 #include <osg/Quat>
 #include <osg/Timer>
+#include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
 #include <QtCore/QMetaType>
 #include <QtGui/QApplication>
@@ -104,8 +105,30 @@ int main(int argc, char *argv[])
 
    bool singleThread = false;
 
-   std::string projectassets = "";
-   std::string baseassets = "";
+    std::string projectassets = "";
+    std::string baseassets = "";
+
+    if(osgDB::fileExists("ProjectAssets")) 
+    {
+       projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
+    }
+
+    if(osgDB::fileExists("BaseAssets")) 
+    {
+       projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
+    }
+
+    const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
+    if(env_projectassets != NULL)
+    {
+       projectassets = env_projectassets;
+    }
+    const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
+    if(env_baseassets != NULL)
+    {
+       baseassets = env_baseassets;
+    }
+
    QString pluginPath = "plugins";
    QString scene = "";
    for(int curArg = 1; curArg < argc; ++curArg)
@@ -181,6 +204,7 @@ int main(int argc, char *argv[])
       QSettings settings;
       settings.setValue("DataPaths", paths);
    }
+
    application->SetDataPaths(paths);
 
    QThread* viewerThread;

@@ -38,7 +38,7 @@
 #include <dtEntityPhysX/physxcomponent.h>
 #include <dtEntityPhysX/physxpagedterraincomponent.h>
 #include <osgViewer/Renderer>
-#include <osgViewer/CompositeViewer>
+#include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include <osgDB/FileUtils>
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
    /////////////////////////////////////////////////////////////////////
 
    osg::ArgumentParser arguments(&argc,argv);   
-   osgViewer::CompositeViewer viewer(arguments);
+   osgViewer::Viewer viewer(arguments);
    dtEntity::EntityManager* em = new dtEntity::EntityManager();
    
    if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em))

@@ -24,6 +24,19 @@
 
   <entity spawner="TestSpawner">
   </entity>
-  
+  <entity>
+		<component type="Camera">
+			<stringproperty name="CullingMode">NoAutoNearFarCulling</stringproperty>
+			<vec3property name="EyeDirection" x="0.9698496995" y="-0.2433103193" z="-0.0138437315"/>
+			<boolproperty name="IsMainCamera" value="true"/>
+			<doubleproperty name="NearClip" value="4.0000000000"/>
+			<vec3property name="Position" x="-13.5959175672" y="30.8884023018" z="2.1082273157"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">defaultCam</stringproperty>
+			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
+			<stringproperty name="UniqueId">defaultCam</stringproperty>
+		</component>
+	</entity>
 
 </map>

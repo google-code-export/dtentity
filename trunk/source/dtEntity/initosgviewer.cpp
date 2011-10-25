@@ -20,6 +20,7 @@
 
 #include <dtEntity/initosgviewer.h>
 #include <iostream>
+#include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/View>
@@ -39,6 +40,16 @@ namespace dtEntity
       
        std::string projectassets = "";
        std::string baseassets = "";
+
+       if(osgDB::fileExists("ProjectAssets")) 
+       {
+          projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
+       }
+
+       if(osgDB::fileExists("BaseAssets")) 
+       {
+          projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
+       }
 
        const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
        if(env_projectassets != NULL)

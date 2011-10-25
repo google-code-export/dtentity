@@ -200,7 +200,10 @@ namespace dtEntity
       osg::Vec3 end(windowCoord, 1);
 
       osg::Matrix matrix;
-      matrix.preMult(cam->getViewport()->computeWindowMatrix());
+      if(cam->getViewport()) 
+      {
+         matrix.preMult(cam->getViewport()->computeWindowMatrix());
+      }
       matrix.preMult(cam->getProjectionMatrix());
       matrix.preMult(cam->getViewMatrix());
 
