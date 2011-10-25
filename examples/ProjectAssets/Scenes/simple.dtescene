@@ -1,67 +1,36 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
 <scene>
-
-  <entitysystem type="MatrixTransform"/>
-
-  <entitysystem type="Camera"/>
-
-  <entitysystem type="Shader"/>
-
-  <entitysystem type="Map"/>
-
-  <entitysystem type="Script">
-    <uintproperty name="DebugPort" value="0"/>
-    <arrayproperty name="Scripts"/>
-  </entitysystem>
-
-  <entitysystem type="AnimTest"/>
-
-  <entitysystem type="Application">
-    <doubleproperty name="FrameRate" value="60"/>
-    <doubleproperty name="MaxTimeBetweenDraws" value="0.03"/>
-    <stringproperty name="ProjectAssetsDir"></stringproperty>
-    <doubleproperty name="TimeScale" value="1"/>
-    <boolproperty name="UseFixedTimeStep" value="false"/>
-  </entitysystem>
-
-  <entitysystem type="PickShape"/>
-
-  <entitysystem type="PositionAttitudeTransform"/>
-
-  <entitysystem type="CameraMotion">
-    <boolproperty name="Enabled" value="true"/>
-    <doubleproperty name="RotationSpeed" value="0.01"/>
-    <uintproperty name="TranslationSpeed" value="5"/>
-  </entitysystem>
-
-  <entitysystem type="PDUProcessor">
-    <stringproperty name="SpawnerMap"></stringproperty>
-  </entitysystem>
-
-  <entitysystem type="Group"/>
-
-  <entitysystem type="Sound">
-    <vec3property name="ListenerPosition" x="0" y="0" z="0"/>
-    <vec3property name="ListenerRotation" x="0" y="0" z="0"/>
-  </entitysystem>
-
-  <entitysystem type="SkyBox"/>
-
-  <entitysystem type="StaticMesh"/>
-
-  <entitysystem type="Layer">
-    <arrayproperty name="Layers"/>
-  </entitysystem>
-
-  <entitysystem type="Animation">
-    <boolproperty name="UseHardwareSkinning" value="true"/>
-  </entitysystem>
-
-  <entitysystem type="DeadReckoning"/>
-
-  <maps>
-    <map path="maps/simple.dtemap"/>
-    <map path="maps/messageprototypes.dtemap"/>
-  </maps>
-
+	<entitysystem type="MatrixTransform"/>
+	<entitysystem type="TextLabel">
+		<boolproperty name="Enabled" value="true"/>
+	</entitysystem>
+	<entitysystem type="Camera"/>
+	<entitysystem type="Map"/>
+	<entitysystem type="Script">
+		<boolproperty name="DebugEnabled" value="false"/>
+		<uintproperty name="DebugPort" value="0"/>
+		<arrayproperty name="Scripts"/>
+	</entitysystem>
+	<entitysystem type="Application">
+		<floatproperty name="TimeScale" value="1.0000000000"/>
+	</entitysystem>
+	<entitysystem type="PickShape"/>
+	<entitysystem type="PositionAttitudeTransform"/>
+	<entitysystem type="CameraMotion">
+		<boolproperty name="Enabled" value="true"/>
+		<boolproperty name="KeepUpright" value="false"/>
+		<boolproperty name="MouseEnabled" value="true"/>
+		<boolproperty name="MoveParallelToGround" value="false"/>
+		<boolproperty name="ShowSelection" value="true"/>
+	</entitysystem>
+	<entitysystem type="Group"/>
+	<entitysystem type="SkyBox"/>
+	<entitysystem type="LayerAttachPoint"/>
+	<entitysystem type="StaticMesh"/>
+	<entitysystem type="Layer"/>
+	<maps>
+		<map path="maps/messageprototypes.dtemap"/>
+		<map path="maps/simple.dtemap"/>
+	</maps>
 </scene>
+

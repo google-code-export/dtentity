@@ -1475,7 +1475,7 @@ namespace dtEntityQtWidgets
 
       // callback that components can use to rebuild their data after
       // a number of data changes
-      comp->OnFinishedSettingProperties();
+      comp->Finished();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1515,7 +1515,7 @@ namespace dtEntityQtWidgets
 
       // callback that components can use to rebuild their data after
       // a number of data changes
-      es->OnFinishedSettingProperties();
+      es->Finished();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1724,7 +1724,7 @@ namespace dtEntityQtWidgets
          static_cast<dtEntity::LayerSystem*>(es)->OnEnterWorld(m);
       }
 
-      comp->OnFinishedSettingProperties();
+      comp->Finished();
 
       dtEntity::PropertyContainer::ConstPropertyMap pmap;
       comp->GetProperties(pmap);  

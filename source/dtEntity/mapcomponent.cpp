@@ -428,7 +428,12 @@ namespace dtEntity
          LOG_ERROR("Cannot save map: No map of this name exists!");
          return false;
       }
-      bool success = mMapEncoder->SaveMapToFile(path, path);
+      std::string abspath = osgDB::findDataFile(path);
+      if(abspath == "")
+      {
+         abspath = osgDB::getDataFilePathList().front() + "/" + path;
+      }
+      bool success = mMapEncoder->SaveMapToFile(path, abspath);
       
       return success;
    }

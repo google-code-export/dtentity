@@ -1,21 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
 <map>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="PlayAnimation">
-    <component type="Message">
-      <uintproperty name="AboutEntity" value="3"/>
-      <stringproperty name="AnimationName">Walk</stringproperty>
-      <stringproperty name="MessageTypeName">PlayAnimationMessage</stringproperty>
-    </component>
-  </spawner>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="SpawnEntity">
-    <component type="Message">
-      <boolproperty name="AddToScene" value="true"/>
-      <stringproperty name="MessageTypeName">SpawnEntityMessage</stringproperty>
-      <stringproperty name="SpawnerName">TestSpawner</stringproperty>
-      <stringproperty name="UniqueId">MySpawnedEntity</stringproperty>
-    </component>
-  </spawner>
-
+	<spawner name="PlayAnimation" guicategory="default" addtospawnerstore="false" iconpath="">
+		<component type="Message">
+			<uintproperty name="AboutEntity" value="3"/>
+			<stringproperty name="AnimationName">Walk</stringproperty>
+			<stringproperty name="MessageTypeName">PlayAnimationMessage</stringproperty>
+		</component>
+	</spawner>
+	<spawner name="SpawnEntity" guicategory="default" addtospawnerstore="false" iconpath="">
+		<component type="Message">
+			<boolproperty name="AddToScene" value="true"/>
+			<stringproperty name="MessageTypeName">SpawnEntityMessage</stringproperty>
+			<stringproperty name="SpawnerName">TestSpawner</stringproperty>
+			<stringproperty name="UniqueId">MySpawnedEntity</stringproperty>
+		</component>
+	</spawner>
 </map>
+

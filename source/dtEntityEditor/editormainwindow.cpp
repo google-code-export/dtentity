@@ -350,7 +350,7 @@ namespace dtEntityEditor
          QTimer::singleShot(0, controller, SLOT(Init()));
          
          entityTreeDock->setWidget(view);
-         
+
          addDockWidget(Qt::LeftDockWidgetArea, entityTreeDock);
       }
 
@@ -535,11 +535,10 @@ namespace dtEntityEditor
       connect(glwidget, SIGNAL(TextDropped(const QPointF&, const QString&)),
               this, SLOT(OnTextDroppedOntoGLWidget(const QPointF&, const QString&)));
 
-      glwidget->setMinimumSize(400,400);
-      
+      glwidget->setMinimumSize(800,600);
       ResizerWidget* r = new ResizerWidget();
       r->SetWidget(glwidget);  
-
+      r->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       QObject::connect(r, SIGNAL(Resized(const QSize&)), this, SLOT(OnViewResized(const QSize&)));
       QObject::connect(r, SIGNAL(Closing()), this, SLOT(OnViewClosing()));
 

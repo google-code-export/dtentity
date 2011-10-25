@@ -854,6 +854,7 @@ namespace dtEntity
          mGuiCategory = doc.allocate_string("guicategory");
          mIconPath = doc.allocate_string("iconpath");
          mMap = doc.allocate_string("map");
+         mMaps = doc.allocate_string("maps");
          mName = doc.allocate_string("name");
          mPath = doc.allocate_string("path");
          mParent = doc.allocate_string("parent");
@@ -892,6 +893,7 @@ namespace dtEntity
       char* mGuiCategory;
       char* mIconPath;
       char* mMap;
+      char* mMaps;
       char* mName;
       char* mPath;
       char* mParent;
@@ -1447,7 +1449,7 @@ namespace dtEntity
       mMapSystem->GetLoadedMaps(maps);
       if(!maps.empty())
       {
-         xml_node<>* mapselem = doc.allocate_node(node_element, names.mScene);
+         xml_node<>* mapselem = doc.allocate_node(node_element, names.mMaps);
          sceneelem->append_node(mapselem);
          std::list<std::string>::iterator j;
          for(j = maps.begin(); j != maps.end(); ++j)
