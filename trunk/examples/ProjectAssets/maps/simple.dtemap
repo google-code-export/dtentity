@@ -1,163 +1,132 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
 <map>
-
-  <spawner addtospawnerstore="true" guicategory="default" iconpath="icons/entitytree_spawner.png" name="TestSpawner">
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-      <stringproperty name="Layer">default</stringproperty>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="2.0000000000"/>
-    </component>
-    <component type="StaticMesh">
-      <stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
-      <boolproperty name="UseCache" value="false"/>
-    </component>
-  </spawner>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="ChildSpawner" parent="TestSpawner">
-    <component type="PositionAttitudeTransform">
-      <quatproperty name="Attitude" w="3.3000000000" x="0.0000000000" y="2.3000000000" z="3.3000000000"/>
-    </component>
-  </spawner>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="ChildChildSpawner" parent="ChildSpawner"/>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="ChildChilcChildSpawner" parent="ChildChildSpawner"/>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="PlayAnimationWalk">
-    <component type="Message">
-      <uintproperty name="AboutEntity" value="3"/>
-      <stringproperty name="AnimationName">Walk</stringproperty>
-      <stringproperty name="MessageTypeName">PlayAnimationMessage</stringproperty>
-    </component>
-  </spawner>
-
-  <spawner addtospawnerstore="false" guicategory="default" iconpath="" name="k">
-    <component type="Message">
-      <boolproperty name="Enable" value="false"/>
-      <stringproperty name="MessageTypeName">EnableDebugDrawingMessage</stringproperty>
-    </component>
-  </spawner>
-
-  <spawner addtospawnerstore="true" guicategory="default" iconpath="icons/component.png" name="ms">
-    <component type="Message">
-      <boolproperty name="Enable" value="false"/>
-      <stringproperty name="MessageTypeName">EnableDebugDrawingMessage</stringproperty>
-    </component>
-  </spawner>
-
-  <entity spawner="ChildSpawner">
-    <component type="Layer"/>
-    <component type="Map">
-      <stringproperty name="EntityName">111</stringproperty>
-      <stringproperty name="SpawnerName">ChildSpawner</stringproperty>
-      <stringproperty name="UniqueId">111</stringproperty>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-        <stringproperty name="000001">TextLabel</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="1.1300789118" y="28.1094169617" z="2.0000000000"/>
-    </component>
-    <component type="StaticMesh"/>
-    <component type="TextLabel">
-      <arrayproperty name="Texts">
-        <groupproperty name="000000">
-          <stringproperty name="Alignment">CENTER_CENTER</stringproperty>
-          <vec4property name="BackdropColor" w="1.0000000000" x="1.0000000000" y="0.0000000000" z="0.0000000000"/>
-          <floatproperty name="CharacterHeight" value="30.000000"/>
-          <vec4property name="Color" w="1.0000000000" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
-          <stringproperty name="Font">fonts/FreeSans.ttf</stringproperty>
-          <boolproperty name="Highlighted" value="false"/>
-          <vec3property name="Offset" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
-          <vec2property name="PixelOffset" x="0.0000000000" y="0.0000000000"/>
-          <stringproperty name="Text">dagdsagsadg</stringproperty>
-          <boolproperty name="Visible" value="true"/>
-        </groupproperty>
-      </arrayproperty>
-    </component>
-  </entity>
-
-  <entity>
-    <component type="Group">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">Animation</stringproperty>
-        <stringproperty name="000001">PickShape</stringproperty>
-      </arrayproperty>
-    </component>
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">Group</stringproperty>
-    </component>
-    <component type="Map">
-      <stringproperty name="EntityName">No Name</stringproperty>
-      <stringproperty name="MapName">maps/simple.dtemap</stringproperty>
-      <stringproperty name="SpawnerName"></stringproperty>
-      <stringproperty name="UniqueId">62fd596d-2aed-4d1f-91c3-5564f1592f65</stringproperty>
-    </component>
-    <component type="PickShape">
-      <vec3property name="MaxBounds" x="0.3000000119" y="0.2000000030" z="1.7999999523"/>
-      <vec3property name="MinBounds" x="-0.3000000119" y="-0.2000000030" z="0.0000000000"/>
-    </component>
-  </entity>
-
-  <entity spawner="TestSpawner">
-    <component type="Layer"/>
-    <component type="Map">
-      <stringproperty name="EntityName">Box1</stringproperty>
-      <stringproperty name="SpawnerName">TestSpawner</stringproperty>
-      <stringproperty name="UniqueId">Box1</stringproperty>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <quatproperty name="Attitude" w="0.0000000000" x="0.0000000000" y="0.1154100000" z="0.0000000000"/>
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="4.4398598671" y="27.6024589539" z="1.0326000452"/>
-    </component>
-    <component type="StaticMesh">
-      <stringproperty name="Mesh">StaticMeshes/articulation_test.ive</stringproperty>
-    </component>
-  </entity>
-
-  <entity spawner="ChildSpawner">
-    <component type="Layer"/>
-    <component type="Map">
-      <stringproperty name="EntityName">MyEntity1</stringproperty>
-      <stringproperty name="SpawnerName">ChildSpawner</stringproperty>
-      <stringproperty name="UniqueId">MyEntity1</stringproperty>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="3.4707899094" y="27.6024589539" z="3.5141999722"/>
-    </component>
-    <component type="StaticMesh"/>
-  </entity>
-
-  <entity>
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
-    </component>
-    <component type="Map">
-      <stringproperty name="EntityName">SkyBox</stringproperty>
-      <stringproperty name="MapName">maps/simple.dtemap</stringproperty>
-      <stringproperty name="SpawnerName"></stringproperty>
-      <stringproperty name="UniqueId">SkyBox</stringproperty>
-    </component>
-    <component type="SkyBox">
-      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
-      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
-      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
-      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
-      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
-      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
-    </component>
-  </entity>
-
+	<spawner name="TestSpawner" guicategory="default" addtospawnerstore="true" iconpath="icons/entitytree_spawner.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="2.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
+		</component>
+	</spawner>
+	<spawner name="ChildSpawner" guicategory="default" addtospawnerstore="false" iconpath="" parent="TestSpawner">
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="2.3000000000" z="3.3000000000" w="3.3000000000"/>
+		</component>
+	</spawner>
+	<spawner name="ChildChildSpawner" guicategory="default" addtospawnerstore="false" iconpath="" parent="ChildSpawner"/>
+	<spawner name="ChildChilcChildSpawner" guicategory="default" addtospawnerstore="false" iconpath="" parent="ChildChildSpawner"/>
+	<spawner name="k" guicategory="default" addtospawnerstore="false" iconpath="">
+		<component type="Message">
+			<boolproperty name="Enable" value="false"/>
+			<stringproperty name="MessageTypeName">EnableDebugDrawingMessage</stringproperty>
+		</component>
+	</spawner>
+	<spawner name="ms" guicategory="default" addtospawnerstore="true" iconpath="icons/component.png">
+		<component type="Message">
+			<boolproperty name="Enable" value="false"/>
+			<stringproperty name="MessageTypeName">EnableDebugDrawingMessage</stringproperty>
+		</component>
+	</spawner>
+	<entity spawner="ChildSpawner">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">111</stringproperty>
+			<stringproperty name="UniqueId">111</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+				<stringproperty name="1">TextLabel</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="1.1300789118" y="28.1094169617" z="2.0000000000"/>
+		</component>
+		<component type="StaticMesh"/>
+		<component type="TextLabel">
+			<arrayproperty name="Texts">
+				<groupproperty name="0">
+					<stringproperty name="Alignment">CENTER_CENTER</stringproperty>
+					<vec4property name="BackdropColor" x="1.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+					<floatproperty name="CharacterHeight" value="30.0000000000"/>
+					<vec4property name="Color" x="1.0000000000" y="1.0000000000" z="1.0000000000" w="1.0000000000"/>
+					<stringproperty name="Font">fonts/FreeSans.ttf</stringproperty>
+					<boolproperty name="Highlighted" value="false"/>
+					<vec3property name="Offset" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+					<vec2property name="PixelOffset" x="0.0000000000" y="0.0000000000"/>
+					<stringproperty name="Text">dagdsagsadg</stringproperty>
+					<boolproperty name="Visible" value="true"/>
+				</groupproperty>
+			</arrayproperty>
+		</component>
+	</entity>
+	<entity spawner="TestSpawner">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">Box1</stringproperty>
+			<stringproperty name="UniqueId">Box1</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.1154100000" z="0.0000000000" w="0.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="4.4398598671" y="27.6024589539" z="1.0326000452"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/articulation_test.ive</stringproperty>
+		</component>
+	</entity>
+	<entity spawner="ChildSpawner">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">MyEntity1</stringproperty>
+			<stringproperty name="UniqueId">MyEntity1</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="3.4707899094" y="27.6024589539" z="3.5141999722"/>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">SkyBox</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">SkyBox</stringproperty>
+			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
+			<stringproperty name="UniqueId">SkyBox</stringproperty>
+		</component>
+		<component type="SkyBox">
+			<stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+			<stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+			<stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+			<stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Camera">
+			<stringproperty name="CullingMode">NoAutoNearFarCulling</stringproperty>
+			<vec3property name="EyeDirection" x="0.9698496995" y="-0.2433103193" z="-0.0138437315"/>
+			<boolproperty name="IsMainCamera" value="true"/>
+			<doubleproperty name="NearClip" value="4.0000000000"/>
+			<vec3property name="Position" x="-13.5959175672" y="30.8884023018" z="2.1082273157"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">defaultCam</stringproperty>
+			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
+			<stringproperty name="UniqueId">defaultCam</stringproperty>
+		</component>
+	</entity>
 </map>
+

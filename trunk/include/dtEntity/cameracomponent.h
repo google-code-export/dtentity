@@ -82,10 +82,7 @@ namespace dtEntity
 			return mIsMainCamera.Get();
 		}
 
-		void SetIsMainCamera(bool v)
-		{
-			mIsMainCamera.Set(v);
-		}
+		void SetIsMainCamera(bool v);
 
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);
@@ -130,6 +127,7 @@ namespace dtEntity
    private:
 
       Entity* mEntity;
+      unsigned int mCullMask;
       osg::ref_ptr<osg::Camera> mCamera;
       BoolProperty mIsMainCamera;
       StringIdProperty mCullingMode;
@@ -142,7 +140,7 @@ namespace dtEntity
       Vec3dProperty mUp;
       Vec3dProperty mEyeDirection;
       Vec4Property mClearColor;
-      unsigned int mCullMask;
+
    };
 
    
@@ -154,6 +152,8 @@ namespace dtEntity
    public:
 
       CameraSystem(EntityManager& em);
+
+      dtEntity::EntityId GetOrCreateMainCameraEntity();
 
    private:
    };

@@ -263,9 +263,23 @@ namespace dtEntityEditor
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
-      mapSystem->UnloadScene();
-      //GetEntityManager()->KillAllEntities();      
+      if(mapSystem->GetCurrentScene().size() != 0)
+      {
+         mapSystem->UnloadScene();
+         dtEntity::CameraSystem* camsys;
+         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+         dtEntity::EntityId camid = camsys->GetOrCreateMainCameraEntity();
+         GetEntityManager().RemoveFromScene(camid);
+         GetEntityManager().KillEntity(camid);
+      }
+
       mapSystem->LoadScene(path.toStdString());
+
+      // create a main camera entity if it was not loaded from map
+      dtEntity::CameraSystem* camsys;
+      mEntityManager->GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+      camsys->GetOrCreateMainCameraEntity();
+
       emit SceneLoaded(path);
 
    }

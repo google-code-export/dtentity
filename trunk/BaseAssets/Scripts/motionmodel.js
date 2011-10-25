@@ -1,36 +1,55 @@
 include_once("Scripts/osgveclib.js");
+
 var positionAttitudeTransformSystem = EntityManager.getEntitySystem("PositionAttitudeTransform");
 var layerSystem = EntityManager.getEntitySystem("Layer");
 var soundSystem = EntityManager.getEntitySystem("Sound");
+var cameraSystem = EntityManager.getEntitySystem("Camera");
 
 var CameraTranslationSpeed = 50;
 var CameraRotationSpeed = 3;
 
 
-function CameraMotionsSystem() {
+function CameraMotionSystem() {
 
-   var self = this;
+   // public members
    this.componentType = "CameraMotion";
    this.Enabled = false;
    this.MouseEnabled = true;
-   var currentlyEnabled = false;
+
    this.KeepUpright = false;
    this.ShowSelection = true;
    this.MoveParallelToGround = false;
 
-   var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
-
-   var targetCamComp = EntityManager.getEntitySystem("Camera").getComponent(camid);
+   // private members
+   var camid = 0;
+   var targetCamComp = null;
+   var currentlyEnabled = false;
+   var self = this; // not all callbacks receive a correct 'this'
 
    this.getCameraPosition = function() { return targetCamComp.Position; }
    this.getCameraEyeDir = function() { return targetCamComp.EyeDirection; }
    this.getCameraUp = function() { return targetCamComp.Up; }
 
+   // entity system stuff
    this.hasComponent = function(eid) { return false; };
    this.getComponent = function(eid) { return null; }
    this.createComponent = function(eid) { return null; }
    this.deleteComponent = function(eid) { return false; }
    this.getEntitiesInSystem = function() { return []; }
+
+   this.setCameraId = function(camidnew) {
+      if(camidnew !== 0) {
+         camid = camidnew;
+         targetCamComp = EntityManager.getEntitySystem("Camera").getComponent(camid);
+         if(targetCamComp !== null)  {
+           return;
+         }
+      }
+      camid = null;
+      targetCamComp = null;
+   }
+
+   this.getCameraId = function() { return camid; }
 
    this.onPropertyChanged = function(propname) {
 
@@ -53,7 +72,7 @@ function CameraMotionsSystem() {
 
    /////////////////// camera transform update loop /////////////////////
    function update(msgname, params) {
-      if(self.Enabled === false) {
+      if(self.Enabled === false || targetCamComp === null) {
          return;
       }
       var mouseX = Input.getAxis(Axis.MouseX);
@@ -295,5 +314,27 @@ function CameraMotionsSystem() {
    
 }
 
-var cameraMotionSystem = new CameraMotionsSystem();
+var cameraMotionSystem = new CameraMotionSystem();
 EntityManager.addEntitySystem(cameraMotionSystem);
+
+// create camera motion system when camera is created
+function onCameraAdded(name, params) {
+
+  var camid = params.AboutEntity;
+  var camcomp = cameraSystem.getComponent(camid);
+  if(camcomp && camcomp.IsMainCamera) {
+    cameraMotionSystem.setCameraId(camid);
+  }
+}
+EntityManager.registerForMessages("CameraAddedMessage", onCameraAdded);
+
+// create camera motion system when camera is created
+function onCameraRemoved(name, params) {
+
+  var camid = params.AboutEntity;
+   if(camid === cameraMotionSystem.getCameraId()) {
+      cameraMotionSystem.setCameraId(0);
+   }
+
+}
+EntityManager.registerForMessages("CameraRemovedMessage", onCameraRemoved);

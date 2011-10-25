@@ -23,6 +23,7 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/applicationcomponent.h>
 #include <osgViewer/View>
@@ -100,27 +101,13 @@ namespace dtEntity
       }
    }
 
+
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnPropertyChanged(StringId propname, Property& prop)
    {
       if(propname == IsMainCameraId)
       {
-         if(mCamera == NULL)
-         {
-            if(mIsMainCamera.Get())
-            {
-               ApplicationSystem* appsys;
-               mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
-               SetCamera(appsys->GetPrimaryCamera());
-            }
-            else
-            {
-               SetCamera(new osg::Camera());
-            }
-            CameraAddedMessage msg;
-            msg.SetAboutEntityId(mEntity->GetId());
-            mEntity->GetEntityManager().EmitMessage(msg);
-         }
+         SetIsMainCamera(prop.BoolValue());
          return;
       }
       if(!mCamera.valid())
@@ -161,6 +148,28 @@ namespace dtEntity
       else if(propname == ClearColorId)
       {
          mCamera->setClearColor(prop.Vec4Value());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetIsMainCamera(bool v)
+   {
+      mIsMainCamera.Set(v);
+      if(mCamera == NULL)
+      {
+         if(v)
+         {
+            ApplicationSystem* appsys;
+            mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
+            SetCamera(appsys->GetPrimaryCamera());
+         }
+         else
+         {
+            SetCamera(new osg::Camera());
+         }
+         CameraAddedMessage msg;
+         msg.SetAboutEntityId(mEntity->GetId());
+         mEntity->GetEntityManager().EmitMessage(msg);
       }
    }
 
@@ -243,10 +252,36 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-
    CameraSystem::CameraSystem(EntityManager& em)
       : DefaultEntitySystem<CameraComponent>(em, dtEntity::TransformComponent::TYPE)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::EntityId CameraSystem::GetOrCreateMainCameraEntity()
+   {
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         if(i->second->GetIsMainCamera())
+         {
+            return i->first;
+         }
+      }
+
+      dtEntity::Entity* entity;
+      GetEntityManager().CreateEntity(entity);
+
+      CameraComponent* camcomp;
+      entity->CreateComponent(camcomp);
+      camcomp->SetIsMainCamera(true);
+      camcomp->Finished();
+      dtEntity::MapComponent* mapcomp;
+      entity->CreateComponent(mapcomp);
+      mapcomp->SetEntityName("defaultCam");
+      mapcomp->SetUniqueId("defaultCam");
+      mapcomp->Finished();
+      GetEntityManager().AddToScene(entity->GetId());
+      return entity->GetId();
    }
 
 }

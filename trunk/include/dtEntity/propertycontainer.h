@@ -98,8 +98,6 @@ namespace dtEntity
        */
       virtual void Finished() {}
 
-      void OnFinishedSettingProperties() { Finished(); }
-
       /**
        * template helper for creating Clone() methods
        */
