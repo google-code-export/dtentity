@@ -181,7 +181,7 @@ namespace dtEntityQtWidgets
                break;
             }
          }
-         if(!found) 
+         if(!found)
          {
             std::ostringstream os;
             os << "Cannot remove entity from tree: No entry found with id " << data.mEntityId;
@@ -195,7 +195,7 @@ namespace dtEntityQtWidgets
          assert(success);
          delete entityitem;
          endRemoveRows();
-         
+
       }
       else
       {
@@ -958,9 +958,8 @@ namespace dtEntityQtWidgets
 
       // add existing maps to model
       {      
-         std::list<std::string> mapnames;
-         mtsystem->GetLoadedMaps(mapnames);
-         std::list<std::string>::iterator i;
+         std::vector<std::string> mapnames = mtsystem->GetLoadedMaps();
+         std::vector<std::string>::iterator i;
          for(i = mapnames.begin(); i != mapnames.end(); ++i)
          {            
             dtEntity::MapLoadedMessage m;

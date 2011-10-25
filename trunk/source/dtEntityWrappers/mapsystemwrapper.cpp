@@ -131,12 +131,11 @@ namespace dtEntityWrappers
    Handle<Value> MSGetLoadedMaps(const Arguments& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
-      std::list<std::string> maps;
-      ms->GetLoadedMaps(maps);
+      std::vector<std::string> maps = ms->GetLoadedMaps();
       HandleScope scope;
       Handle<Array> arr = Array::New(maps.size());
       int idx = 0;
-      for(std::list<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
+      for(std::vector<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
       {
          arr->Set(Integer::New(idx), String::New(i->c_str()));
          ++idx;

@@ -237,8 +237,8 @@ namespace dtEntity
 
       // copy map name list so that removing maps from original list does not
       // cause crash
-      std::list<std::string> maps = mLoadedMaps;
-      for(std::list<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
+      std::set<std::string> maps = mLoadedMaps;
+      for(std::set<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
       {
          UnloadMap(*i);
       }
@@ -253,7 +253,7 @@ namespace dtEntity
 
       if(success && saveAllMaps)
       {
-         std::list<std::string>::const_iterator i;
+         std::set<std::string>::const_iterator i;
          for(i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
          {
             bool success = SaveMap(*i);
@@ -296,7 +296,7 @@ namespace dtEntity
       bool success = mMapEncoder->LoadMapFromFile(path);
       if(success)
       {
-         mLoadedMaps.push_back(path);
+         mLoadedMaps.insert(path);
 
          MapLoadedMessage msg1;
          msg1.SetMapPath(path);
@@ -387,7 +387,7 @@ namespace dtEntity
       }
 
 
-      mLoadedMaps.remove(path);
+      mLoadedMaps.erase(path);
       MapUnloadedMessage msg1;
       msg1.SetMapPath(path);
       GetEntityManager().EmitMessage(msg1);
@@ -460,14 +460,14 @@ namespace dtEntity
       }
       if(osgDB::findDataFile(mapname) != "")
       {
-         mLoadedMaps.push_back(mapname);
+         mLoadedMaps.insert(mapname);
          return false;
       }
 
       MapBeginLoadMessage msg;
       msg.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg);
-      mLoadedMaps.push_back(mapname);
+      mLoadedMaps.insert(mapname);
       MapLoadedMessage msg2;
       msg2.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg2);
@@ -477,18 +477,19 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::IsMapLoaded(const std::string& path) const
    {
-      std::list<std::string>::const_iterator i;
-      for(i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
-      {
-         if(*i == path) return true;
-      }
-      return false;
+      return (mLoadedMaps.find(path) != mLoadedMaps.end());
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MapSystem::GetLoadedMaps(std::list<std::string>& toFill) const
+   std::vector<std::string> MapSystem::GetLoadedMaps() const
    {
-      toFill = mLoadedMaps;
+      std::vector<std::string> ret;
+      std::set<std::string>::const_iterator i;
+      for(i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+      {
+         ret.push_back(*i);
+      }
+      return ret;
    }
 
    ////////////////////////////////////////////////////////////////////////////
