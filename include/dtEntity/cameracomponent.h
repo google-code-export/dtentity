@@ -153,7 +153,8 @@ namespace dtEntity
 
       CameraSystem(EntityManager& em);
 
-      dtEntity::EntityId GetOrCreateMainCameraEntity();
+      dtEntity::EntityId GetMainCameraEntity();
+      dtEntity::EntityId GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera);
 
    private:
    };

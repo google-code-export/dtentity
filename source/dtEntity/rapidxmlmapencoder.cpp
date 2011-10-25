@@ -1445,13 +1445,12 @@ namespace dtEntity
          SerializeEntitySystem(doc, names, sceneelem, *i);
       }
 
-      std::list<std::string> maps;
-      mMapSystem->GetLoadedMaps(maps);
+      std::vector<std::string> maps = mMapSystem->GetLoadedMaps();
       if(!maps.empty())
       {
          xml_node<>* mapselem = doc.allocate_node(node_element, names.mMaps);
          sceneelem->append_node(mapselem);
-         std::list<std::string>::iterator j;
+         std::vector<std::string>::iterator j;
          for(j = maps.begin(); j != maps.end(); ++j)
          {
             SerializeMap(doc, names, mapselem, *j);

@@ -257,8 +257,9 @@ namespace dtEntity
    {
    }
 
+
    ////////////////////////////////////////////////////////////////////////////
-   dtEntity::EntityId CameraSystem::GetOrCreateMainCameraEntity()
+   dtEntity::EntityId CameraSystem::GetMainCameraEntity()
    {
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
@@ -267,7 +268,18 @@ namespace dtEntity
             return i->first;
          }
       }
+      return dtEntity::EntityId();
+   }
 
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::EntityId CameraSystem::GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera)
+   {
+      dtEntity::EntityId id = GetMainCameraEntity();
+
+      if(id != dtEntity::EntityId())
+      {
+         return id;
+      }
       dtEntity::Entity* entity;
       GetEntityManager().CreateEntity(entity);
 
@@ -279,6 +291,7 @@ namespace dtEntity
       entity->CreateComponent(mapcomp);
       mapcomp->SetEntityName("defaultCam");
       mapcomp->SetUniqueId("defaultCam");
+      mapcomp->SetMapName(mapToSaveCamera);
       mapcomp->Finished();
       GetEntityManager().AddToScene(entity->GetId());
       return entity->GetId();

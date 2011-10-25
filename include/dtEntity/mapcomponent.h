@@ -257,7 +257,7 @@ namespace dtEntity
       /**
        * Get a list of all maps in system
        */
-      void GetLoadedMaps(std::list<std::string>& toFill) const;
+      std::vector<std::string> GetLoadedMaps() const;
 
       /**
        * Get all entities that are stored to this map
@@ -279,7 +279,7 @@ namespace dtEntity
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
 
-      std::list<std::string> mLoadedMaps;
+      std::set<std::string> mLoadedMaps;
 
       // store spawners in a map
       SpawnerStorage mSpawners;
