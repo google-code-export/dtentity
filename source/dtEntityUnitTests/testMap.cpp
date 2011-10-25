@@ -190,14 +190,14 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       children.push_back(new StringProperty("Child1"));
       children.push_back(new StringProperty("Child2"));
       transcomp->SetChildren(children);
-      transcomp->OnFinishedSettingProperties();
+      transcomp->Finished();
 
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);
       mapcomp->SetMapName(mapname);
       mapcomp->SetUniqueId("TestEntityId");
       mapcomp->SetEntityName("TestEntityName");
-      mapcomp->OnFinishedSettingProperties();
+      mapcomp->Finished();
       mEntityManager->AddToScene(entity->GetId());
 
       osgDB::FilePathList paths = osgDB::getDataFilePathList();

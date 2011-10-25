@@ -211,7 +211,7 @@ namespace dtEntitySimulation
             const dtEntity::Entity* entity = static_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL && entity->GetId() == mTerrainId)
             {
-               osg::Vec3d isectpos = isect->localIntersectionPoint;         
+               osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
                v[2] = isectpos[2];
                return true;
             }

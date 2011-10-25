@@ -1,5 +1,9 @@
 include_once("Scripts/stdlib.js");
 
+
+include_once("Scripts/motionmodel.js");
+
+
 createEntity({
   Camera : {
     IsMainCamera : true,
@@ -12,8 +16,6 @@ createEntity({
     UniqueId : "defaultCam"
   }
 });
-
-include_once("Scripts/motionmodel.js");
 
 include_once("Scripts/demolist.js");
 
