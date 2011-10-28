@@ -210,9 +210,26 @@ var Clipboard = {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
+
+var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
+var mainCamera = null;
+if(camid != null) {
+  mainCamera = EntityManager.getEntitySystem("Camera").getComponent(camid);
+}
+
+// create camera motion system when camera is created
+function onCameraAdded(name, params) {
+
+  camid = params.AboutEntity;
+  var cam = cameraSystem.getComponent(camid);
+  if(cam && cam.IsMainCamera) {
+    mainCamera = cam;
+  }
+}
+EntityManager.registerForMessages("CameraAddedMessage", onCameraAdded);
+
+
 var Tool = {
-  camera: EntityManager.getEntitySystem("Camera").getComponent(
-  EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam")),
   activate: function () {},
   deactivate: function () {},
   update: function () {},
@@ -228,13 +245,13 @@ var Tool = {
     }
   },
   getCameraPosition: function () {
-    return this.camera.Position;
+    return mainCamera.Position;
   },
   getCameraDirection: function () {
-    return this.camera.EyeDirection;
+    return mainCamera.EyeDirection;
   },
   getCameraUp: function () {
-    return this.camera.Up;
+    return mainCamera.Up;
   },
   scaleToCameraPlane: function (referenceVector, targetVector) { /** scales targetVector to be on the plane defined by the camera normal and the referenceVector. */
 
