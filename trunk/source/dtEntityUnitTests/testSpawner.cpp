@@ -64,7 +64,7 @@ TEST(SpawnComponent)
 TEST(SpawnHierarchy)
 {
    Spawner* parentSpawner = new Spawner("Bla", "mapname");
-   Spawner* childSpawner = new Spawner(*parentSpawner);
+   Spawner* childSpawner = new Spawner("Bla2", "mapname",parentSpawner);   
 
    DynamicPropertyContainer parentprops;
    parentprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(33,66,99)));
@@ -75,6 +75,8 @@ TEST(SpawnHierarchy)
    childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
 
    osg::ref_ptr<EntityManager> em = new EntityManager();
+
+   CHECK(childSpawner->GetParent() == parentSpawner);
    
 
    Entity* entity;
