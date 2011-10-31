@@ -64,7 +64,7 @@ namespace dtEntityWrappers
       dtEntity::MessageFunctor mSceneLoadedFunctor;
       dtEntity::MessageFunctor mResetSystemFunctor;
 
-      osg::ref_ptr<osgViewer::View> mView;
+      osg::observer_ptr<osgViewer::View> mView;
       
       dtEntity::BoolProperty mDebugEnabled;
       bool mDebugPortOpened;
