@@ -55,7 +55,7 @@ namespace dtEntity
 #ifdef BUILD_WITH_DELTA3D 
       osg::ref_ptr<dtABC::Application> mApplication;
 #endif
-      osg::ref_ptr<osgViewer::ViewerBase> mViewer;
+      osg::observer_ptr<osgViewer::ViewerBase> mViewer;
       osg::ref_ptr<DtEntityUpdateCallback> mUpdateCallback;
       osg::ref_ptr<const osg::FrameStamp> mLastFrameStamp;
       osg::ref_ptr<WindowManager> mWindowManager;
@@ -262,7 +262,7 @@ namespace dtEntity
    //////////////////////////////////////////////////////////////////////////////
    osgViewer::ViewerBase* ApplicationSystem::GetViewer() const
    {
-      return mImpl->mViewer;
+      return mImpl->mViewer.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
