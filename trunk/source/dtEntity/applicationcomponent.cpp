@@ -67,11 +67,14 @@ namespace dtEntity
    {
       ApplicationSystem* mApplicationSystem;
       osg::Timer_t mStartOfFrameTick;
+      double mPrevSimTime;
+
    public:
      
       DtEntityUpdateCallback(ApplicationSystem* as)
          : mApplicationSystem(as)
          , mStartOfFrameTick(osg::Timer::instance()->tick())
+         , mPrevSimTime(0)
       {
       }
 
@@ -83,7 +86,8 @@ namespace dtEntity
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
          double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
          float timeScale = mApplicationSystem->GetTimeScale();
-         double deltaSimTime = deltaTime * timeScale;
+         double deltaSimTime = simtime - mPrevSimTime;
+         mPrevSimTime = simtime;
          mStartOfFrameTick = currentTick;
          
          
