@@ -97,16 +97,12 @@ namespace dtEntityRocket
    {
       if(args.Length() > 0)
       {
-         
-         if(args[0]->IsNull())
+         Rocket::Core::Element* parent = NULL;
+         if(!args[0]->IsNull())
          {
-            return ThrowError("First arg has to be an element, is NULL!");
+            parent = UnwrapElement(args[0]);
          }
-         Rocket::Core::Element* parent = UnwrapElement(args[0]);
-         if(args[0]->IsNull() || parent == NULL)
-         {
-            return ThrowError("First arg has to be an element!");
-         }
+
          Rocket::Core::XMLAttributes attrs;
 
          if(args.Length() > 3)
