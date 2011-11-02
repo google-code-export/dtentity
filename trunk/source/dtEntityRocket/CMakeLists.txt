@@ -27,6 +27,7 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/eventlistenerinstancer.h
    ${HEADER_PATH}/eventlistenerwrapper.h
    ${HEADER_PATH}/export.h
+   ${HEADER_PATH}/hudcomponent.h
    ${HEADER_PATH}/messages.h
    ${HEADER_PATH}/rocketcomponent.h
    ${HEADER_PATH}/rocketsystemwrapper.h
@@ -36,12 +37,13 @@ SET(LIB_SOURCES
 	 ${SOURCE_PATH}/contextwrapper.cpp
 	 ${SOURCE_PATH}/elementdocumentwrapper.cpp
 	 ${SOURCE_PATH}/elementwrapper.cpp
-     ${SOURCE_PATH}/eventinstancer.cpp
-     ${SOURCE_PATH}/eventlistener.cpp
-     ${SOURCE_PATH}/eventlistenerinstancer.cpp
-     ${SOURCE_PATH}/eventlistenerwrapper.cpp
-     ${SOURCE_PATH}/messages.cpp
-     ${SOURCE_PATH}/pluginfactory.cpp
+	 ${SOURCE_PATH}/eventinstancer.cpp
+	 ${SOURCE_PATH}/eventlistener.cpp
+	 ${SOURCE_PATH}/eventlistenerinstancer.cpp
+	 ${SOURCE_PATH}/eventlistenerwrapper.cpp
+	 ${SOURCE_PATH}/hudcomponent.cpp
+	 ${SOURCE_PATH}/messages.cpp
+	 ${SOURCE_PATH}/pluginfactory.cpp
 	 ${SOURCE_PATH}/rocketcomponent.cpp	 
 	 ${SOURCE_PATH}/rocketsystemwrapper.cpp	 
 )

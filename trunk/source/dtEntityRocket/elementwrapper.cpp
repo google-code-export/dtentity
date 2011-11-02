@@ -94,6 +94,18 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELRemoveChild(const Arguments& args)
+   {
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* child = UnwrapElement(args[0]);
+      if(!child)
+      {
+         return ThrowError("Not an element!");
+      }
+      return Boolean::New(element->RemoveChild(child));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetAttribute(const Arguments& args)
    {  
       if(args.Length() < 1)
@@ -127,6 +139,24 @@ namespace dtEntityRocket
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELGetId(const Arguments& args)
+   {
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      return String::New(element->GetId().CString());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELSetId(const Arguments& args)
+   {
+      if(args.Length() < 1)
+      {
+         return ThrowError("Usage: setId(string id)");
+      }
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      element->SetId(ToStdString(args[0]).c_str());
+      return Undefined();
+   }
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetInnerRML(const Arguments& args)
    {  
@@ -301,7 +331,7 @@ namespace dtEntityRocket
 
       int index = 0;
       Rocket::Core::String name;
-      const Rocket::Core::String prop;
+      Rocket::Core::String prop;
       while(element->IterateAttributes(index, name, prop))
       {
          const char* str = name.CString();
@@ -408,10 +438,13 @@ namespace dtEntityRocket
         proto->Set("appendChild", FunctionTemplate::New(ELAppendChild));
         proto->Set("getAttribute", FunctionTemplate::New(ELGetAttribute));
         proto->Set("getElementById", FunctionTemplate::New(ELGetElementById));
+        proto->Set("getId", FunctionTemplate::New(ELGetId));
         proto->Set("getInnerRML", FunctionTemplate::New(ELGetInnerRML));
 		  proto->Set("getProperty", FunctionTemplate::New(ELGetProperty));
-        proto->Set("removeEventListener", FunctionTemplate::New(ELRemoveEventListener));
+		  proto->Set("removeChild", FunctionTemplate::New(ELRemoveChild));
+		  proto->Set("removeEventListener", FunctionTemplate::New(ELRemoveEventListener));
         proto->Set("setAttribute", FunctionTemplate::New(ELSetAttribute));
+        proto->Set("setId", FunctionTemplate::New(ELSetId));
         proto->Set("setInnerRML", FunctionTemplate::New(ELSetInnerRML));
 		  proto->Set("setProperty", FunctionTemplate::New(ELSetProperty));
         

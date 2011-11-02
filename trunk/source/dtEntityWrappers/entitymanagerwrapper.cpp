@@ -200,7 +200,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void ConvertJSToMessage(Handle<Value> val, dtEntity::Message* msg)
    {
-      const dtEntity::PropertyContainer::PropertyMap& params = msg->GetAllProperties();
+      /*const dtEntity::PropertyContainer::PropertyMap& params = msg->GetAllProperties();
 
       HandleScope scope;
 
@@ -216,6 +216,28 @@ namespace dtEntityWrappers
          {
             Handle<Value> val = o->Get(paramName);
             ValToProp(val, p);
+         }
+      }*/
+
+      HandleScope scope;
+      Handle<Object> o = Handle<Object>::Cast(val);
+      Local<Array> propnames = o->GetPropertyNames();
+      for(int i = 0; i < propnames->Length(); ++i)
+      {
+         Handle<Value> propn = propnames->Get(i);
+         std::string propname = ToStdString(propn);
+         dtEntity::Property* prop = msg->Get(dtEntity::SID(propname));
+         if(!prop)
+         {
+            std::ostringstream os;
+            os << "Error setting message values: Message ";
+            os << dtEntity::GetStringFromSID(msg->GetType());
+            os << " has no property with name " + propname;
+            LOG_ERROR(os.str());
+         }
+         else
+         {
+            ValToProp(o->Get(propn), prop);
          }
       }
    }

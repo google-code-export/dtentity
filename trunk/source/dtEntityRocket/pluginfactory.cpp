@@ -20,6 +20,7 @@
 
 #include "export.h"
 #include "messages.h"
+#include "hudcomponent.h"
 #include "rocketcomponent.h"
 #include "rocketsystemwrapper.h"
 #include <dtEntity/componentplugin.h>
@@ -32,10 +33,6 @@ namespace dtEntityRocket
    class DT_ROCKET_EXPORT RocketFactory : public dtEntity::ComponentPluginFactory
    {
    public:
-
-      RocketFactory()
-      {
-      }
 
       virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
       {
@@ -62,10 +59,36 @@ namespace dtEntityRocket
          return "LibRocket bindings";
       }
 
-   private:
-      virtual ~RocketFactory()
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class DT_ROCKET_EXPORT HUDFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+
+      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
       {
-      
+        es = new HUDSystem(*em);
+
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "HUD";
+      }
+
+      virtual dtEntity::ComponentType GetType() const
+      {
+         return HUDComponent::TYPE;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "LibRocket HUD";
       }
 
    };
@@ -82,4 +105,5 @@ extern "C" DT_ROCKET_EXPORT void RegisterMessages(dtEntity::EntityManager& em)
 extern "C" DT_ROCKET_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
 {
    list.push_back(new dtEntityRocket::RocketFactory());
+   list.push_back(new dtEntityRocket::HUDFactory());
 }

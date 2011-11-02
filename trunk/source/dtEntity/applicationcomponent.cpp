@@ -243,6 +243,10 @@ namespace dtEntity
    {
       osgViewer::CompositeViewer::Cameras cams;
       mImpl->mViewer->getCameras(cams);
+      if(cams.empty())
+      {
+         return NULL;
+      }
       return cams.front();
    }
 

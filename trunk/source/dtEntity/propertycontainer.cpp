@@ -135,7 +135,6 @@ namespace dtEntity
    void PropertyContainer::SetFloat(StringId name, float val)
    {
       assert(Get(name));
-      assert(Get(name)->GetType() == DataType::FLOAT);
       Property* prop = Get(name);
       prop->SetFloat(val);
       OnPropertyChanged(name, *prop);
@@ -145,7 +144,6 @@ namespace dtEntity
    void PropertyContainer::SetGroup(StringId name, const PropertyGroup& val)
    {
       assert(Get(name));
-      assert(Get(name)->GetType() == DataType::GROUP);
       Property* prop = Get(name);
       prop->SetGroup(val);
       OnPropertyChanged(name, *prop);
@@ -155,7 +153,6 @@ namespace dtEntity
    void PropertyContainer::SetInt(StringId name, int val)
    {
       assert(Get(name));
-      assert(Get(name)->GetType() == DataType::INT);
       Property* prop = Get(name);
       prop->SetInt(val);
       OnPropertyChanged(name, *prop);
@@ -165,7 +162,6 @@ namespace dtEntity
    void PropertyContainer::SetMatrix(StringId name, const osg::Matrix& val)
    {
       assert(Get(name));
-      assert(Get(name)->GetType() == DataType::MATRIX);
       Property* prop = Get(name);
       prop->SetMatrix(val);
       OnPropertyChanged(name, *prop);
@@ -175,7 +171,6 @@ namespace dtEntity
    void PropertyContainer::SetQuat(StringId name, const osg::Quat& val)
    {
       assert(Get(name));
-      assert(Get(name)->GetType() == DataType::QUAT);
       Property* prop = Get(name);
       prop->SetQuat(val);
       OnPropertyChanged(name, *prop);
