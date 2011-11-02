@@ -31,6 +31,9 @@
 namespace osgLibRocket
 {
 
+  class EventListener;
+
+
   /**
     A node for rendering a libRocket GUI in OpenSceneGraph.
     */
@@ -106,8 +109,11 @@ namespace osgLibRocket
     // context of this gui (one per gui)
     Rocket::Core::Context* _context;
 
+    EventListener* _contextEventListener;
+
     // camera to render to (can be NULL)
     osg::ref_ptr<osg::Camera> _camera;
+
 
   };
 }
