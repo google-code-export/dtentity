@@ -28,13 +28,47 @@
 #include <OpenThreads/ScopedLock>
 #include <sstream>
 #include <osg/ShapeDrawable>
+#include <iostream>
 
 namespace osgLibRocket
 {
 
+   class EventListener : public Rocket::Core::EventListener
+   {
+
+   public:
+      Rocket::Core::Element* _rootElement;
+      bool _keys_handled;
+      bool _mouse_handled;
+
+
+      EventListener(Rocket::Core::Element* rootelem)
+         : _rootElement(rootelem)
+         , _keys_handled(false)
+         , _mouse_handled(false)
+      {
+      }
+
+      virtual void ProcessEvent(Rocket::Core::Event& ev)
+      {
+         _keys_handled = _mouse_handled = (ev.GetTargetElement() != _rootElement);
+         if(ev.GetTargetElement()->HasAttribute("passkeyevents"))
+         {
+            _keys_handled = false;
+         }
+         if(ev.GetTargetElement()->HasAttribute("passmouseevents"))
+         {
+            _mouse_handled = false;
+         }
+
+      }
+   };
+
+
   GuiNode::GuiNode(const std::string& contextname, bool debug)
     : _previousTraversalNumber(osg::UNINITIALIZED_FRAME_NUMBER)
     , _camera(NULL)
+    , _contextEventListener(NULL)
   {
 
 
@@ -65,6 +99,15 @@ namespace osgLibRocket
       {
         Rocket::Debugger::Initialise(_context);
       }
+
+      _contextEventListener = new EventListener(_context->GetRootElement());
+      _context->AddEventListener("keydown",     _contextEventListener);
+      _context->AddEventListener("keyup",       _contextEventListener);
+      _context->AddEventListener("mousedown",   _contextEventListener);
+      _context->AddEventListener("mouseup",     _contextEventListener);
+      _context->AddEventListener("mousescroll", _contextEventListener);
+      _context->AddEventListener("mousemove",   _contextEventListener);
+
     }
 
 
@@ -78,6 +121,7 @@ namespace osgLibRocket
     {
       _context->RemoveReference();
     }
+    delete _contextEventListener;
   }
 
 
@@ -109,7 +153,7 @@ namespace osgLibRocket
              {
                  if(_context != 0)
                  {
-                   //_toLocal =  osg::computeWorldToLocal(nv.getNodePath());
+
                     _renderer->setRenderTarget(this, _context->GetDimensions().x, _context->GetDimensions().y, _camera != NULL);
 
                    _context->Update();
@@ -478,7 +522,10 @@ namespace osgLibRocket
   bool GuiNode::handle(const osgGA::GUIEventAdapter& ea,osgGA::EventVisitor& ev, osgGA::GUIActionAdapter& aa)
   {
 
-
+    if(ea.getHandled())
+    {
+      return false;
+    }
     switch(ea.getEventType())
     {
       case(osgGA::GUIEventAdapter::KEYDOWN):
@@ -487,8 +534,7 @@ namespace osgLibRocket
         int modifiers = GetKeyModifiers(ea.getModKeyMask());
         _context->ProcessTextInput((char)ea.getKey());
         _context->ProcessKeyDown(key, modifiers);
-		  Rocket::Core::Element* hover = _context->GetHoverElement();
-        return (hover != NULL && hover != _context->GetRootElement());
+        return _contextEventListener->_keys_handled;
 
       }
       case(osgGA::GUIEventAdapter::KEYUP):
@@ -496,8 +542,7 @@ namespace osgLibRocket
         Rocket::Core::Input::KeyIdentifier key = GetKeyCode(ea.getKey());
         int modifiers = GetKeyModifiers(ea.getModKeyMask());        
         _context->ProcessKeyUp(key, modifiers);
-		  Rocket::Core::Element* hover = _context->GetHoverElement();
-        return (hover != NULL && hover != _context->GetRootElement());
+        return _contextEventListener->_keys_handled;
 
       }
       case(osgGA::GUIEventAdapter::MOVE):
@@ -508,33 +553,27 @@ namespace osgLibRocket
         mousePosition(view,ea, ev, x, y);
         _context->ProcessMouseMove(x, y, GetKeyModifiers(ea.getModKeyMask()));
 
-        Rocket::Core::Element* hover = _context->GetHoverElement();
-        return (hover != NULL && hover != _context->GetRootElement());
+        // always pass mouse movements to OSG
+        return false;
 
       }
       case(osgGA::GUIEventAdapter::PUSH):
       {
-        if(ea.getHandled())
-        {
-          return false;
-        }
-
         _context->ProcessMouseButtonDown(GetButtonId(ea.getButton()), GetKeyModifiers(ea.getModKeyMask()));
         osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
         int x, y;
         mousePosition(view,ea, ev, x, y);
-
-        Rocket::Core::Element* hover = _context->GetHoverElement();
-        return (hover != NULL && hover != _context->GetRootElement());
+        return _contextEventListener->_mouse_handled;
       }
       case(osgGA::GUIEventAdapter::RELEASE):
       {
         _context->ProcessMouseButtonUp(GetButtonId(ea.getButton()), GetKeyModifiers(ea.getModKeyMask()));
-        return false;
+        return _contextEventListener->_mouse_handled;
       }
       case(osgGA::GUIEventAdapter::SCROLL):
       {
-        return _context->ProcessMouseWheel((int)ea.getScrollingDeltaY(), GetKeyModifiers(ea.getModKeyMask()));
+        _context->ProcessMouseWheel((int)ea.getScrollingDeltaY(), GetKeyModifiers(ea.getModKeyMask()));
+        return _contextEventListener->_mouse_handled;
       }
       case(osgGA::GUIEventAdapter::RESIZE):
       {
