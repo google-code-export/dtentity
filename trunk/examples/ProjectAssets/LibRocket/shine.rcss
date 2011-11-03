@@ -9,6 +9,7 @@ body
 
 body.window
 {	
+	z-index: top;
 	min-width: 250px;
 	max-width: 800px;
 	
