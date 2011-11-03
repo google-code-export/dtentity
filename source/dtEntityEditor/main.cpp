@@ -118,17 +118,6 @@ int main(int argc, char *argv[])
        projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
     }
 
-    const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
-    if(env_projectassets != NULL)
-    {
-       projectassets = env_projectassets;
-    }
-    const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
-    if(env_baseassets != NULL)
-    {
-       baseassets = env_baseassets;
-    }
-
    QString pluginPath = "plugins";
    QString scene = "";
    for(int curArg = 1; curArg < argc; ++curArg)

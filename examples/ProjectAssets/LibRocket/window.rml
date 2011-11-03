@@ -9,10 +9,10 @@
 			<div id="title">Title</div>
 		</handle>
 	</div>
-	<div id="window">
-	   <div id="spacer">
-		   <div id="scrollbar">
-				<div id="content">
+	<div id="window" passkeyevents="true" passmouseevents="true">
+		<div id="spacer" passkeyevents="true" passmouseevents="true">
+			<div id="scrollbar" passkeyevents="true" passmouseevents="true">
+				<div id="content" passkeyevents="true" passmouseevents="true">
 				</div>
 			</div>
 		</div>

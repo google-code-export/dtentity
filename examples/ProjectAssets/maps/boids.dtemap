@@ -1,80 +1,161 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
 <map>
-
-  <spawner addtospawnerstore="true" guicategory="default" iconpath="" name="Boids">
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-      <stringproperty name="Layer">default</stringproperty>
-      <boolproperty name="Visible" value="true"/>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <quatproperty name="Attitude" w="1.0000000000" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
-    </component>
-    <component type="StaticMesh">
-      <stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
-    </component>
-  </spawner>
-
-  <entity>
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-      <stringproperty name="Layer">default</stringproperty>
-    </component>
-    <component type="Map">
-      <stringproperty name="EntityName">Terrain</stringproperty>
-      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
-      <stringproperty name="SpawnerName"></stringproperty>
-      <stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
-    </component>
-    <component type="PositionAttitudeTransform">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">StaticMesh</stringproperty>
-        <stringproperty name="CacheHint">All</stringproperty>
-      </arrayproperty>
-      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
-    </component>
-    <component type="StaticMesh">
-      <stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
-    </component>
-  </entity>
-
-  <entity>
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
-      <stringproperty name="Layer">root</stringproperty>
-    </component>
-    <component type="LayerAttachPoint">
-      <stringproperty name="Name">default</stringproperty>
-    </component>
-    <component type="Map">
-      <stringproperty name="EntityName">SkyBox</stringproperty>
-      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
-      <stringproperty name="SpawnerName"></stringproperty>
-      <stringproperty name="UniqueId">SkyBox</stringproperty>
-    </component>
-    <component type="Shadow">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">LayerAttachPoint</stringproperty>
-      </arrayproperty>
-      <floatproperty name="MaxFarPlane" value="10000.000000"/>
-      <stringproperty name="ShadowTechnique">PSSM</stringproperty>
-      <uintproperty name="TexSize" value="512"/>
-    </component>
-    <component type="SkyBox">
-      <arrayproperty name="Children">
-        <stringproperty name="000000">Shadow</stringproperty>
-      </arrayproperty>
-      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
-      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
-      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
-      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
-      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
-      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
-    </component>
-  </entity>
-
+	<spawner name="Boids" guicategory="default" addtospawnerstore="true" iconpath="">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
+		</component>
+	</spawner>
+	<spawner name="Tree" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/tree.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="CacheHint">None</stringproperty>
+			<stringproperty name="Mesh">StaticMeshes/puno.ive</stringproperty>
+			<boolproperty name="Optimize" value="false"/>
+		</component>
+	</spawner>
+	
+	<spawner name="Helix" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/helix.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="CacheHint">None</stringproperty>
+			<stringproperty name="Mesh">StaticMeshes/helix.ive</stringproperty>
+			<boolproperty name="Optimize" value="false"/>
+		</component>
+	</spawner>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+		</component>
+		<component type="Light">
+			<vec4property name="Position" x="-1.0000000000" y="1.0000000000" z="1.0000000000" w="0.0000000000"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">LightSource</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">Light</stringproperty>
+			</arrayproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">Terrain</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+				<stringproperty name="1">All</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+		</component>
+	</entity>
+	<entity spawner="Boids">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">Boids</stringproperty>
+			<stringproperty name="UniqueId">8d6e64f7-aa89-4b0c-913e-a17de544f7bc</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="-4.2868232727" y="22.4401512146" z="-15.2212324142"/>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">SkyBox</stringproperty>
+			<stringproperty name="Layer">root</stringproperty>
+		</component>
+		<component type="LayerAttachPoint">
+			<stringproperty name="Name">default</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">SkyBox</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="UniqueId">SkyBox</stringproperty>
+		</component>
+		<component type="Shadow">
+			<arrayproperty name="Children">
+				<stringproperty name="0">LayerAttachPoint</stringproperty>
+			</arrayproperty>
+			<floatproperty name="MaxFarPlane" value="10000.0000000000"/>
+			<stringproperty name="ShadowTechnique">PSSM</stringproperty>
+			<uintproperty name="TexSize" value="512"/>
+		</component>
+		<component type="SkyBox">
+			<arrayproperty name="Children">
+				<stringproperty name="0">Shadow</stringproperty>
+			</arrayproperty>
+			<stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+			<stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+			<stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+			<stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Camera">
+			<vec3property name="EyeDirection" x="-0.1370528399" y="0.9063105604" z="-0.3997720441"/>
+			<boolproperty name="IsMainCamera" value="true"/>
+			<vec3property name="Position" x="-10.7011134222" y="12.2677350468" z="-10.3899623850"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">defaultCam</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="UniqueId">defaultCam</stringproperty>
+		</component>
+	</entity>
 </map>
+
