@@ -47,7 +47,7 @@ function initRocket() {
   window.style = "position: absolute; width: 200px; height: 400px; top: 30px; left: 30px;";
   window.getElementById("title").setInnerRML("dtEntity Demos");
   
-  var huds = context.loadDocument("LibRocket/huds.rml");
+  huds = context.loadDocument("LibRocket/huds.rml");
   huds.show();
 
   var listDemoSelect = window.getElementById("demo_chooser");
