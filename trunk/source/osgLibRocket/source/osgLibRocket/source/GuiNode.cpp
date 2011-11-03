@@ -534,7 +534,7 @@ namespace osgLibRocket
         int modifiers = GetKeyModifiers(ea.getModKeyMask());
         _context->ProcessTextInput((char)ea.getKey());
         _context->ProcessKeyDown(key, modifiers);
-        return _contextEventListener->_keys_handled;
+        return (_camera != NULL && _contextEventListener->_keys_handled);
 
       }
       case(osgGA::GUIEventAdapter::KEYUP):
@@ -542,7 +542,7 @@ namespace osgLibRocket
         Rocket::Core::Input::KeyIdentifier key = GetKeyCode(ea.getKey());
         int modifiers = GetKeyModifiers(ea.getModKeyMask());        
         _context->ProcessKeyUp(key, modifiers);
-        return _contextEventListener->_keys_handled;
+        return (_camera != NULL &&  _contextEventListener->_keys_handled);
 
       }
       case(osgGA::GUIEventAdapter::MOVE):
@@ -563,17 +563,17 @@ namespace osgLibRocket
         osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
         int x, y;
         mousePosition(view,ea, ev, x, y);
-        return _contextEventListener->_mouse_handled;
+        return (_camera != NULL &&  _contextEventListener->_mouse_handled);
       }
       case(osgGA::GUIEventAdapter::RELEASE):
       {
         _context->ProcessMouseButtonUp(GetButtonId(ea.getButton()), GetKeyModifiers(ea.getModKeyMask()));
-        return _contextEventListener->_mouse_handled;
+        return (_camera != NULL &&  _contextEventListener->_mouse_handled);
       }
       case(osgGA::GUIEventAdapter::SCROLL):
       {
         _context->ProcessMouseWheel((int)ea.getScrollingDeltaY(), GetKeyModifiers(ea.getModKeyMask()));
-        return _contextEventListener->_mouse_handled;
+        return (_camera != NULL &&  _contextEventListener->_mouse_handled);
       }
       case(osgGA::GUIEventAdapter::RESIZE):
       {

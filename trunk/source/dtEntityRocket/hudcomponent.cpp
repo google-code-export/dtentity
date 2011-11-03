@@ -135,6 +135,7 @@ namespace dtEntityRocket
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::PRIORITY_LOWEST, "HUDSystem::Tick");
 
+      mEnabled.Set(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////
