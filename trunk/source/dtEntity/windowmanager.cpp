@@ -284,12 +284,7 @@ namespace dtEntity
       cam->SetWindow(window);
       view->SetCamera(cam);
       cam->GetOSGCamera()->setName(name);
-      appSys->AddCameraToSceneGraph(cam->GetOSGCamera());
-     
-      cam->SetPerspectiveParams(60.0, (float)traits.width / (float) traits.height, 1.0, 40000.0);
-      cam->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 0.0, traits.width, traits.height));
-      cam->SetAspectRatio((float)traits.width / (float) traits.height);
-
+      
    }
 
    ///////////////////////////////////////////////////////////////////////////////

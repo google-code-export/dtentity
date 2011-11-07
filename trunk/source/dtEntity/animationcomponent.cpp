@@ -20,6 +20,7 @@
 
 #include <dtEntity/animationcomponent.h>
 
+#include <dtAnim/animationhelper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtEntity/basemessages.h>
@@ -30,7 +31,7 @@
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
 #include <assert.h>
-#include <dtAnim/animationhelper.h>
+
 
 namespace dtEntity
 {
