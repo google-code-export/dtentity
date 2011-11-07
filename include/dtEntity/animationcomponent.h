@@ -32,11 +32,7 @@
 #include <osg/Group>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
-
-namespace dtAnim
-{
-   class AnimationHelper;
-}
+#include <dtAnim/animationhelper.h>
 
 namespace dtEntity
 {
