@@ -253,6 +253,41 @@ namespace dtEntityWrappers
       return Undefined();
    }
 
+	////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> DebugDrawManagerAddString(const Arguments& args)
+   {
+      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+
+      if(args.Length() < 2 || !IsVec3(args[0]))
+      {
+         return ThrowError("usage: addString(Vec3 position, text, Vec4 color, Number duration, bool useDepthTest])");
+      }
+      osg::Vec3f pos = UnwrapVec3(args[0]);
+
+		std::string text = ToStdString(args[1]);
+
+      osg::Vec4f color(1,0,0,1);
+      if(args.Length() > 2)
+      {
+         color = UnwrapVec4(args[2]);
+      }
+
+      float duration = 0;
+      if(args.Length() > 3)
+      {
+         duration = args[3]->NumberValue();
+      }
+
+      bool depth = true;
+      if(args.Length() > 4)
+      {
+         depth = args[4]->BooleanValue();
+      }
+
+      ddm->AddString(pos, text, color, duration, depth);
+      return Undefined();
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddTriangle(const Arguments& args)
    {
@@ -342,6 +377,7 @@ namespace dtEntityWrappers
         proto->Set("addCross", FunctionTemplate::New(DebugDrawManagerAddCross));
         proto->Set("addLine", FunctionTemplate::New(DebugDrawManagerAddLine));
         proto->Set("addSphere", FunctionTemplate::New(DebugDrawManagerAddSphere));
+		  proto->Set("addString", FunctionTemplate::New(DebugDrawManagerAddString));
         proto->Set("addTriangle", FunctionTemplate::New(DebugDrawManagerAddTriangle));
         proto->Set("clear", FunctionTemplate::New(DebugDrawManagerClear));
         proto->Set("isEnabled", FunctionTemplate::New(DebugDrawManagerIsEnabled));
