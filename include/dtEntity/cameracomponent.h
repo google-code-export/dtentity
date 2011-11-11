@@ -46,6 +46,7 @@ namespace dtEntity
       static const ComponentType TYPE;
       static const StringId IsMainCameraId;
       static const StringId CullingModeId;
+      static const StringId CullMaskId;
       static const StringId NoAutoNearFarCullingId;
       static const StringId BoundingVolumeNearFarCullingId;
       static const StringId PrimitiveNearFarCullingId;
@@ -127,7 +128,6 @@ namespace dtEntity
    private:
 
       Entity* mEntity;
-      unsigned int mCullMask;
       osg::ref_ptr<osg::Camera> mCamera;
       BoolProperty mIsMainCamera;
       StringIdProperty mCullingMode;
@@ -140,6 +140,7 @@ namespace dtEntity
       Vec3dProperty mUp;
       Vec3dProperty mEyeDirection;
       Vec4Property mClearColor;
+      UIntProperty mCullMask;
 
    };
 

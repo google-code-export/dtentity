@@ -47,6 +47,7 @@ namespace dtEntity
    const StringId CameraComponent::PositionId(SID("Position"));
    const StringId CameraComponent::UpId(SID("Up"));
    const StringId CameraComponent::EyeDirectionId(SID("EyeDirection"));
+   const StringId CameraComponent::CullMaskId(SID("CullMask"));
 
 
    ////////////////////////////////////////////////////////////////////////////
@@ -66,6 +67,7 @@ namespace dtEntity
       Register(UpId, &mUp);
       Register(EyeDirectionId, &mEyeDirection);
       Register(ClearColorId, &mClearColor);
+      Register(CullMaskId, &mCullMask);
 
       mFieldOfView.Set(45);
       mAspectRatio.Set(1.3f);
@@ -77,6 +79,7 @@ namespace dtEntity
       mLODScale.Set(1);
       mAspectRatio.Set(1);
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
+      mCullMask.Set(0xFFFFFFFF);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -149,6 +152,10 @@ namespace dtEntity
       {
          mCamera->setClearColor(prop.Vec4Value());
       }
+      else if(propname == CullMaskId)
+      {
+         SetCullMask(prop.UIntValue());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -183,7 +190,7 @@ namespace dtEntity
       OnPropertyChanged(ClearColorId, mClearColor);
       OnPropertyChanged(NearClipId, mNearClip);
       OnPropertyChanged(FarClipId, mFarClip);
-      mCamera->setCullMask(mCullMask);
+      OnPropertyChanged(CullMaskId, mCullMask);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -241,14 +248,14 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetCullMask(unsigned int mask)
    {
-      mCullMask = mask;
+      mCullMask.Set(mask);
       mCamera->setCullMask(mCullMask);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    unsigned int CameraComponent::GetCullMask() const
    {
-      return mCullMask;
+      return mCullMask.Get();
    }
 
    ////////////////////////////////////////////////////////////////////////////
