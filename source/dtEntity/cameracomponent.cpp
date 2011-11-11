@@ -150,7 +150,7 @@ namespace dtEntity
       }
       else if(propname == ClearColorId)
       {
-         mCamera->setClearColor(prop.Vec4Value());
+         SetClearColor(prop.Vec4Value());
       }
       else if(propname == CullMaskId)
       {
@@ -249,7 +249,7 @@ namespace dtEntity
    void CameraComponent::SetCullMask(unsigned int mask)
    {
       mCullMask.Set(mask);
-      mCamera->setCullMask(mCullMask);
+      mCamera->setCullMask(mCullMask.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -257,6 +257,19 @@ namespace dtEntity
    {
       return mCullMask.Get();
    }
+
+	////////////////////////////////////////////////////////////////////////////
+	void CameraComponent::SetClearColor(const osg::Vec4& v)
+	{
+		mClearColor.Set(v);
+		mCamera->setClearColor(v);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 CameraComponent::GetClearColor() const
+	{
+		return mClearColor.Get();
+	}
 
    ////////////////////////////////////////////////////////////////////////////
    CameraSystem::CameraSystem(EntityManager& em)
