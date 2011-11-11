@@ -111,6 +111,9 @@ namespace dtEntity
       void SetCullMask(unsigned int mask);
       unsigned int GetCullMask() const;
 
+		void SetClearColor(const osg::Vec4&);
+      osg::Vec4 GetClearColor() const;
+
       virtual osg::Vec3d GetTranslation() const { return GetPosition(); }
       virtual void SetTranslation(const osg::Vec3d& v) { SetPosition(v); }
 
