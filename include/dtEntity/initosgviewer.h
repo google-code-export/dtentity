@@ -35,5 +35,5 @@ namespace dtEntity
 
    bool DT_ENTITY_EXPORT InitOSGViewer(int argc, char** argv, 
       osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em,
-      bool checkPathsExist = true, bool addStatsHandler = true);
+      bool checkPathsExist = true, bool addStatsHandler = true, bool addConsoleLog = true);
 }

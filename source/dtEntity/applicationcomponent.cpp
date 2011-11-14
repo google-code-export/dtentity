@@ -327,7 +327,16 @@ namespace dtEntity
       dtCore::System::GetInstance().SetSimulationTime(newTime);
       dtCore::System::GetInstance().SetTimeScale(newTimeScale);
 #else
-      LOG_ERROR("TODO: Implement!");
+      osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
+      if(cv)
+      {
+         cv->setStartTick(osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick());
+         // calendar time is ignored for now
+      }
+      else
+      {
+         LOG_ERROR("TODO: Implement ChangeTimeSettings for osgViewer::Viewer!");
+      }
 #endif
       TimeChangedMessage msg;
       msg.SetSimulationTime(newTime);

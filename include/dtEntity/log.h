@@ -20,25 +20,29 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/logmanager.h>
+
 #ifdef BUILD_WITH_DELTA3D
 	#include <dtUtil/log.h>
 #else
 
 	#include <osg/Notify>
 
+	#define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
+
 	#define LOG_DEBUG(msg)\
-   OSG_DEBUG << msg << std::endl; OSG_DEBUG.flush();
+	dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::DEBUG, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
    #define LOG_INFO(msg)\
-      OSG_INFO << msg << std::endl; OSG_INFO.flush();
+      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::INFO, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
    #define LOG_WARNING(msg)\
-      OSG_WARN << msg << std::endl; OSG_WARN.flush();
+      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::WARNING, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
    #define LOG_ERROR(msg)\
-      OSG_FATAL << msg << std::endl; OSG_FATAL.flush();
+      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::ERROR, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
    #define LOG_ALWAYS(msg)\
-      OSG_ALWAYS << msg << std::endl; OSG_ALWAYS.flush();
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::ALWAYS, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
 #endif
