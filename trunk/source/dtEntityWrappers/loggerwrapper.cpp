@@ -69,6 +69,82 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   class LogListenerHolder
+         : public dtEntity::LogListener
+   {
+      Persistent<String> mDebug;
+      Persistent<String> mAlways;
+      Persistent<String> mError;
+      Persistent<String> mInfo;
+      Persistent<String> mWarning;
+
+   public:
+
+      LogListenerHolder(Handle<Function> func)
+         : mFunction(Persistent<Function>::New(func))
+         , mDebug(String::New("DEBUG"))
+         , mAlways(String::New("ALWAYS"))
+         , mError(String::New("ERROR"))
+         , mInfo(String::New("INFO"))
+         , mWarning(String::New("WARNING"))
+      {
+      }
+
+      virtual void LogMessage(dtEntity::LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
+                      const std::string& msg) const
+      {
+         HandleScope scope;
+         Handle<Context> context = GetGlobalContext();
+         Context::Scope context_scope(context);
+
+         TryCatch try_catch;
+
+         Handle<String> loglevel;
+         switch(level)
+         {
+         case dtEntity::LogLevel::ALWAYS:  loglevel = mAlways; break;
+         case dtEntity::LogLevel::DEBUG:   loglevel = mDebug; break;
+         case dtEntity::LogLevel::ERROR:   loglevel = mError; break;
+         case dtEntity::LogLevel::INFO :   loglevel = mInfo; break;
+         case dtEntity::LogLevel::WARNING: loglevel = mWarning; break;
+         }
+
+         Handle<Value> argv[5] = {
+            loglevel,
+            String::New(filename.c_str()),
+            String::New(methodname.c_str()),
+            Integer::New(linenumber),
+            String::New(msg.c_str())
+         };
+
+         Handle<Value> result = mFunction->Call(mFunction, 5, argv);
+
+         if(result.IsEmpty())
+         {
+            ReportException(&try_catch);
+         }
+      }
+
+      Persistent<Function> mFunction;
+      dtEntity::MessageFunctor mFunctor;
+      Persistent<String> mMessageTypeStr;
+      dtEntity::MessageType mMessageType;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> LogAddListener(const Arguments& args)
+   {
+      if(args.Length() != 1 || !args[0]->IsFunction())
+      {
+         return ThrowError("Usage: addLogListener(function(LogLevel, filename, methodname, linenumber, message))");
+      }
+      HandleScope scope;
+      Handle<Function> func = Handle<Function>::Cast(args[0]);
+      LogListenerHolder* h = new LogListenerHolder(func);
+      dtEntity::LogManager::GetInstance().AddListener(h);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapLogger()
    {
       v8::HandleScope handle_scope;
@@ -88,6 +164,7 @@ namespace dtEntityWrappers
         proto->Set("error", FunctionTemplate::New(LogError));
         proto->Set("info", FunctionTemplate::New(LogInfo));
         proto->Set("warning", FunctionTemplate::New(LogWarning));
+        proto->Set("addLogListener", FunctionTemplate::New(LogAddListener));
 
       }
       Local<Object> instance = s_loggerTemplate->GetFunction()->NewInstance();
