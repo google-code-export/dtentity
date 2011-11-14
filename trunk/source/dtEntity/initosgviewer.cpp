@@ -27,17 +27,41 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/logmanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/applicationcomponent.h>
 #include <osgGA/GUIEventAdapter>
+#include <osg/Notify>
 
 namespace dtEntity
 {
-   bool InitOSGViewer(int argc, char** argv, osgViewer::ViewerBase* viewer,
-      dtEntity::EntityManager* em, bool checkPathsExist, bool addStatsHandler)
+   class ConsoleLogHandler
+      : public LogListener
    {
-      
+    public:
+      virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
+                      const std::string& msg) const
+      {
+         switch(level)
+         {
+         case  LogLevel::DEBUG  : OSG_DEBUG   << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::INFO   : OSG_INFO    << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::WARNING: OSG_WARN    << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::ERROR  : OSG_FATAL   << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::ALWAYS : OSG_ALWAYS  << msg << std::endl; OSG_DEBUG.flush(); break;
+         default:  OSG_ALWAYS << msg << std::endl; OSG_DEBUG.flush();
+         }
+      }
+   };
+
+   bool InitOSGViewer(int argc, char** argv, osgViewer::ViewerBase* viewer,
+      dtEntity::EntityManager* em, bool checkPathsExist, bool addStatsHandler, bool addConsoleLog)
+   {
+       if(addConsoleLog)
+       {
+          LogManager::GetInstance().AddListener(new ConsoleLogHandler());
+       }
        std::string projectassets = "";
        std::string baseassets = "";
 
