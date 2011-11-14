@@ -53,13 +53,13 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void GCStartCallback(GCType type, GCCallbackFlags flags)
    {
-      LOG_DEBUG("V8 garbage collection started");
+      //LOG_DEBUG("V8 garbage collection started");
    };
 
    ////////////////////////////////////////////////////////////////////////////
    void GCEndCallback(GCType type, GCCallbackFlags flags)
    {
-      LOG_DEBUG("V8 garbage collection ended");
+      //LOG_DEBUG("V8 garbage collection ended");
       /*HeapStatistics stats;
       V8::GetHeapStatistics(&stats);
       std::cout << "Total: " << stats.total_heap_size() << " Used: " << stats.used_heap_size() <<"\n";
