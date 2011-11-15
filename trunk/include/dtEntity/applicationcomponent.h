@@ -74,6 +74,7 @@ namespace dtEntity
    public:
       static const ComponentType TYPE;
       static const StringId TimeScaleId;
+      static const StringId CmdLineArgsId;
 
       ApplicationSystem(EntityManager& em);
       ~ApplicationSystem();
@@ -151,9 +152,19 @@ namespace dtEntity
       osgViewer::GraphicsWindow* GetPrimaryWindow() const;
       osg::Camera* GetPrimaryCamera() const;
 
+      void AddCmdLineArg(const std::string& arg)
+      {
+         mArgvArray.Add(new StringProperty(arg));
+      }
+
+      int GetNumCmdLineArgs() const { return  mArgvArray.Size(); }
+      std::string GetCmdLineArg(int i) { return mArgvArray.Get()[i]->StringValue(); }
+
    private:
 
       FloatProperty mTimeScale;
+      ArrayProperty mArgvArray;
+
       ApplicationImpl* mImpl;
 
       Property* ScriptGetTimeScale(const PropertyArgs& args)

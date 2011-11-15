@@ -130,6 +130,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const StringId ApplicationSystem::TYPE(SID("Application"));
    const StringId ApplicationSystem::TimeScaleId(SID("TimeScale"));
+   const StringId ApplicationSystem::CmdLineArgsId(SID("CmdLineArgs"));
  
    ////////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::ApplicationSystem(EntityManager& em)
@@ -138,6 +139,8 @@ namespace dtEntity
       , mInputHandler(new InputHandler(em))
    {
       Register(TimeScaleId, &mTimeScale);
+      Register(CmdLineArgsId, &mArgvArray);
+
       mTimeScale.Set(1);
 
       AddScriptedMethod("getTimeScale", ScriptMethodFunctor(this, &ApplicationSystem::ScriptGetTimeScale));
