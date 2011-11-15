@@ -82,22 +82,28 @@ namespace dtEntityWrappers
 
       LogListenerHolder(Handle<Function> func)
          : mFunction(Persistent<Function>::New(func))
-         , mDebug(String::New("DEBUG"))
-         , mAlways(String::New("ALWAYS"))
-         , mError(String::New("ERROR"))
-         , mInfo(String::New("INFO"))
-         , mWarning(String::New("WARNING"))
+         , mDebug(Persistent<String>::New(String::New("DEBUG")))
+         , mAlways(Persistent<String>::New(String::New("ALWAYS")))
+         , mError(Persistent<String>::New(String::New("ERROR")))
+         , mInfo(Persistent<String>::New(String::New("INFO")))
+         , mWarning(Persistent<String>::New(String::New("WARNING")))
       {
+      }
+
+      ~LogListenerHolder()
+      {
+         mDebug.Dispose();
+         mAlways.Dispose();
+         mError.Dispose();
+         mInfo.Dispose();
+         mWarning.Dispose();
+         mFunction.Dispose();
       }
 
       virtual void LogMessage(dtEntity::LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                       const std::string& msg) const
       {
          HandleScope scope;
-         Handle<Context> context = GetGlobalContext();
-         Context::Scope context_scope(context);
-
-         TryCatch try_catch;
 
          Handle<String> loglevel;
          switch(level)
@@ -117,6 +123,8 @@ namespace dtEntityWrappers
             String::New(msg.c_str())
          };
 
+         Context::Scope context_scope(GetGlobalContext());
+         TryCatch try_catch;
          Handle<Value> result = mFunction->Call(mFunction, 5, argv);
 
          if(result.IsEmpty())
@@ -142,6 +150,7 @@ namespace dtEntityWrappers
       Handle<Function> func = Handle<Function>::Cast(args[0]);
       LogListenerHolder* h = new LogListenerHolder(func);
       dtEntity::LogManager::GetInstance().AddListener(h);
+      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -27,11 +27,14 @@ namespace dtEntity
    void LogManager::LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                    const std::string& msg) const
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
-
-      for(int i = 0; i < mListeners.size(); ++i)
+      std::vector<osg::ref_ptr<LogListener> > listeners;
       {
-         mListeners[i]->LogMessage(level, filename, methodname, linenumber, msg);
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
+         listeners = mListeners;
+      }
+      for(int i = 0; i < listeners.size(); ++i)
+      {
+         listeners[i]->LogMessage(level, filename, methodname, linenumber, msg);
       }
    }
 
