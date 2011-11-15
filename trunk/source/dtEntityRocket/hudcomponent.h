@@ -100,6 +100,7 @@ namespace dtEntityRocket
       ~HUDSystem();
 
       void Tick(const dtEntity::Message& msg);
+      void OnVisibilityChanged(const dtEntity::Message& msg);
 
       void OnRemoveFromEntityManager(dtEntity::EntityManager &em);
 
@@ -110,6 +111,7 @@ namespace dtEntityRocket
    private:
 
       dtEntity::MessageFunctor mTickFunctor;
+      dtEntity::MessageFunctor mVisibilityChangedFunctor;
       dtEntity::BoolProperty mEnabled;
    };
 }

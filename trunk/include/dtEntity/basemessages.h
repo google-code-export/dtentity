@@ -632,6 +632,36 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
+
+   /**
+    * Emitted when entity is shown/hidden
+    */
+   class DT_ENTITY_EXPORT VisibilityChangedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      static const StringId VisibleId;
+
+      VisibilityChangedMessage();
+
+      virtual Message* Clone() const { return CloneContainer<VisibilityChangedMessage>(); }
+
+      EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
+      void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
+
+      bool GetVisible() const { return mVisible.Get(); }
+      void SetVisible(bool v) { mVisible.Set(v); }
+
+   private:
+
+      UIntProperty mAboutEntityId;
+      BoolProperty mVisible;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
    /**
     * Application system reacts to this message by retrieving the entity system
 	* of type t and applying the property values of mProperty to the entity system.
