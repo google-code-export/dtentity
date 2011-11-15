@@ -169,6 +169,10 @@ namespace dtEntity
       wins.front()->setName("defaultView");
 
       dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
+      for(int i = 0; i < argc; ++i)
+      {
+         appsystem->AddCmdLineArg(argv[i]);
+      }
       appsystem->SetViewer(viewer);
       appsystem->CreateSceneGraphEntities();
     
