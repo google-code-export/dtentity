@@ -45,11 +45,11 @@ namespace dtEntity
       {
          switch(level)
          {
-         case  LogLevel::DEBUG  : OSG_DEBUG   << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::INFO   : OSG_INFO    << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::WARNING: OSG_WARN    << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::ERROR  : OSG_FATAL   << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::ALWAYS : OSG_ALWAYS  << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::LVL_DEBUG  : OSG_DEBUG   << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::LVL_INFO   : OSG_INFO    << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::LVL_WARNING: OSG_WARN    << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::LVL_ERROR  : OSG_FATAL   << msg << std::endl; OSG_DEBUG.flush(); break;
+         case  LogLevel::LVL_ALWAYS : OSG_ALWAYS  << msg << std::endl; OSG_DEBUG.flush(); break;
          default:  OSG_ALWAYS << msg << std::endl; OSG_DEBUG.flush();
          }
       }

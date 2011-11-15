@@ -20,6 +20,7 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/export.h>
 #include <dtEntity/singleton.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
@@ -34,11 +35,11 @@ namespace dtEntity
    {
       enum e
       {
-         DEBUG,
-         INFO,
-         WARNING,
-         ERROR,
-         ALWAYS
+         LVL_DEBUG,
+         LVL_INFO,
+         LVL_WARNING,
+         LVL_ERROR,
+         LVL_ALWAYS
       };
    }
 
@@ -55,7 +56,7 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class LogManager
+   class DT_ENTITY_EXPORT LogManager
          : public dtEntity::Singleton<LogManager>
    {
    public:
