@@ -230,6 +230,10 @@ namespace dtEntity
          }
       }
       mCurrentlyVisible = visible;
+      VisibilityChangedMessage msg;
+      msg.SetAboutEntityId(mEntity->GetId());
+      msg.SetVisible(visible);
+      mEntity->GetEntityManager().EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////

@@ -63,6 +63,7 @@ namespace dtEntity
       em.RegisterMessageType<TimeChangedMessage>(TimeChangedMessage::TYPE);
       em.RegisterMessageType<ToolActivatedMessage>(ToolActivatedMessage::TYPE);
       em.RegisterMessageType<ToolsUpdatedMessage>(ToolsUpdatedMessage::TYPE);
+      em.RegisterMessageType<VisibilityChangedMessage>(VisibilityChangedMessage::TYPE);
       em.RegisterMessageType<WindowCreatedMessage>(WindowCreatedMessage::TYPE);      
       
    }
@@ -469,5 +470,16 @@ namespace dtEntity
    const StringId RequestToggleEntitySelectionMessage::AboutEntityId(SID("AboutEntity"));
 
 
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType VisibilityChangedMessage::TYPE(SID("VisibilityChangedMessage"));
+   const StringId VisibilityChangedMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId VisibilityChangedMessage::VisibleId(SID("Visible"));
+
+   VisibilityChangedMessage::VisibilityChangedMessage()
+      : Message(TYPE)
+   {
+      this->Register(AboutEntityId, &mAboutEntityId);
+      this->Register(VisibleId, &mVisible);
+   }
 
 }

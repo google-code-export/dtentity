@@ -74,7 +74,7 @@ namespace dtEntityRocket
    void HUDComponent::SetVisible(bool v)
    {
       mElement->SetProperty("visibility", v ? "visible" : "hidden");
-      mVisible.Set(true);
+      mVisible.Set(v);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -135,6 +135,9 @@ namespace dtEntityRocket
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::PRIORITY_LOWEST, "HUDSystem::Tick");
 
+      mVisibilityChangedFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnVisibilityChanged);
+      GetEntityManager().RegisterForMessages(dtEntity::VisibilityChangedMessage::TYPE,
+         mVisibilityChangedFunctor, dtEntity::FilterOptions::PRIORITY_LOWEST, "HUDSystem::OnVisibilityChanged");
       mEnabled.Set(true);
    }
 
@@ -165,6 +168,18 @@ namespace dtEntityRocket
    void HUDSystem::OnRemoveFromEntityManager(dtEntity::EntityManager &em)
    {
       GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDSystem::OnVisibilityChanged(const dtEntity::Message& m)
+   {
+      const dtEntity::VisibilityChangedMessage& msg =
+            static_cast<const dtEntity::VisibilityChangedMessage&>(m);
+      HUDComponent* comp = GetComponent(msg.GetAboutEntityId());
+      if(comp)
+      {
+         comp->SetVisible(msg.GetVisible());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
