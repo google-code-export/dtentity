@@ -53,6 +53,7 @@ namespace dtEntityWrappers
 
       virtual void OnAddedToEntity(dtEntity::Entity& entity);
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
+      virtual void Finished();
 
    private:
       dtEntity::ComponentType mComponentType;
@@ -79,7 +80,7 @@ namespace dtEntityWrappers
       virtual void GetEntitiesInSystem(std::list<dtEntity::EntityId>& toFill) const;
       virtual dtEntity::DynamicPropertyContainer GetComponentProperties() const;
       virtual void OnPropertyChanged(dtEntity::StringId propnamesid, dtEntity::Property& prop);
-
+      virtual void Finished();
       virtual void GetProperties(PropertyMap& toFill);
       virtual void GetProperties(ConstPropertyMap& toFill) const;
    private:

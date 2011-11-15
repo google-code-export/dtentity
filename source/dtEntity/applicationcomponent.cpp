@@ -35,6 +35,7 @@
 #include <osg/NodeVisitor>
 #include <osgViewer/View>
 #include <osgViewer/GraphicsWindow>
+#include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
 
 #ifdef BUILD_WITH_DELTA3D 
@@ -330,15 +331,20 @@ namespace dtEntity
       dtCore::System::GetInstance().SetSimulationTime(newTime);
       dtCore::System::GetInstance().SetTimeScale(newTimeScale);
 #else
+      osg::Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
       osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
       if(cv)
       {
-         cv->setStartTick(osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick());
+         cv->setStartTick(newstarttick);
          // calendar time is ignored for now
       }
       else
       {
-         LOG_ERROR("TODO: Implement ChangeTimeSettings for osgViewer::Viewer!");
+         osgViewer::Viewer* v = dynamic_cast<osgViewer::Viewer*>(GetViewer());
+         if(v != NULL)
+         {
+            v->setStartTick(newstarttick);
+         }
       }
 #endif
       TimeChangedMessage msg;
