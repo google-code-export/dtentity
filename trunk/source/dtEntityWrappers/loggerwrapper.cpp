@@ -108,11 +108,11 @@ namespace dtEntityWrappers
          Handle<String> loglevel;
          switch(level)
          {
-         case dtEntity::LogLevel::ALWAYS:  loglevel = mAlways; break;
-         case dtEntity::LogLevel::DEBUG:   loglevel = mDebug; break;
-         case dtEntity::LogLevel::ERROR:   loglevel = mError; break;
-         case dtEntity::LogLevel::INFO :   loglevel = mInfo; break;
-         case dtEntity::LogLevel::WARNING: loglevel = mWarning; break;
+         case dtEntity::LogLevel::LVL_ALWAYS:  loglevel = mAlways; break;
+         case dtEntity::LogLevel::LVL_DEBUG:   loglevel = mDebug; break;
+         case dtEntity::LogLevel::LVL_ERROR:   loglevel = mError; break;
+         case dtEntity::LogLevel::LVL_INFO :   loglevel = mInfo; break;
+         case dtEntity::LogLevel::LVL_WARNING: loglevel = mWarning; break;
          }
 
          Handle<Value> argv[5] = {
