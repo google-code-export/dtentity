@@ -151,6 +151,29 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ComponentJS::Finished()
+   {
+      HandleScope scope;
+
+      Handle<Value> cb = mComponent->Get(String::New("finished"));
+      if(!cb.IsEmpty() && cb->IsFunction())
+      {
+         Context::Scope context_scope(GetGlobalContext());
+         TryCatch try_catch;
+
+         Handle<Function> func = Handle<Function>::Cast(cb);
+         assert(!func.IsEmpty());
+
+         Handle<Value> ret = func->Call(mComponent, 0, NULL);
+
+         if(ret.IsEmpty())
+         {
+            ReportException(&try_catch);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentDestructor(v8::Persistent<Value> v, void*)
@@ -276,6 +299,29 @@ namespace dtEntityWrappers
             ReportException(&try_catch);
          }
       }      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntitySystemJS::Finished()
+   {
+      HandleScope scope;
+
+      Handle<Value> cb = mSystem->Get(String::New("finished"));
+      if(!cb.IsEmpty() && cb->IsFunction())
+      {
+         Context::Scope context_scope(GetGlobalContext());
+         TryCatch try_catch;
+
+         Handle<Function> func = Handle<Function>::Cast(cb);
+         assert(!func.IsEmpty());
+
+         Handle<Value> ret = func->Call(mSystem, 0, NULL);
+
+         if(ret.IsEmpty())
+         {
+            ReportException(&try_catch);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
