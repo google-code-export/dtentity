@@ -52,8 +52,8 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
-      : mCullMask(NodeMasks::VISIBLE)
-      , mCamera(NULL)
+      : mCamera(NULL)
+      , mCullMask(NodeMasks::VISIBLE)
    {
 
       Register(IsMainCameraId, &mIsMainCamera);

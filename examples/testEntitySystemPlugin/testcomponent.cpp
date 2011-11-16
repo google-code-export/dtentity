@@ -122,7 +122,7 @@ void TestSystem::Tick(const dtEntity::Message& msg)
      We can be sure that only messages of type TickMessage are received here, so
      a static cast does just fine
    */
-   const dtEntity::TickMessage& tickMessage = static_cast<const dtEntity::TickMessage&>(msg);
+   //const dtEntity::TickMessage& tickMessage = static_cast<const dtEntity::TickMessage&>(msg);
 
    /*
      Get value of message property DeltaSimTime

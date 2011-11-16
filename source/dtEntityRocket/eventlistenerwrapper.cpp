@@ -38,12 +38,12 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ELIShow(const Arguments& args)
+   /*Handle<Value> ELIShow(const Arguments& args)
    {  
       Rocket::Core::EventListener* v = UnwrapEventListener(args.Holder());
        
       return Undefined();      
-   }
+   }*/
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapEventListener(Rocket::Core::EventListener* v)
@@ -63,7 +63,7 @@ namespace dtEntityRocket
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
         proto->Set("toString", FunctionTemplate::New(ELIToString));
-        proto->Set("show", FunctionTemplate::New(ELIShow));
+       // proto->Set("show", FunctionTemplate::New(ELIShow));
       }
 
       Local<Object> instance = s_eventListenerTemplate->GetFunction()->NewInstance();

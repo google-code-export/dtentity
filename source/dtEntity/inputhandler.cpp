@@ -552,6 +552,8 @@ namespace dtEntity
             dir = 1; break;
          case osgGA::GUIEventAdapter::SCROLL_DOWN:
             dir = -1; break;
+         default:
+            return;
          }
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {

@@ -203,7 +203,7 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Object> o = Handle<Object>::Cast(val);
       Local<Array> propnames = o->GetPropertyNames();
-      for(int i = 0; i < propnames->Length(); ++i)
+      for(unsigned int i = 0; i < propnames->Length(); ++i)
       {
          Handle<Value> propn = propnames->Get(i);
          std::string propname = ToStdString(propn);
