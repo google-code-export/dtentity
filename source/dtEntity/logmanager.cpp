@@ -32,7 +32,7 @@ namespace dtEntity
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
          listeners = mListeners;
       }
-      for(int i = 0; i < listeners.size(); ++i)
+      for(unsigned int i = 0; i < listeners.size(); ++i)
       {
          listeners[i]->LogMessage(level, filename, methodname, linenumber, msg);
       }
