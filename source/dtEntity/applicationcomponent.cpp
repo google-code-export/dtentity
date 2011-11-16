@@ -68,6 +68,7 @@ namespace dtEntity
    {
       ApplicationSystem* mApplicationSystem;
       osg::Timer_t mStartOfFrameTick;
+      osg::Timer_t mSimulationClockTime;
       double mPrevSimTime;
 
    public:
@@ -76,8 +77,16 @@ namespace dtEntity
          : mApplicationSystem(as)
          , mStartOfFrameTick(osg::Timer::instance()->tick())
          , mPrevSimTime(0)
+         , mSimulationClockTime(0)
       {
+         time_t t;
+         time(&t);
+         osg::Timer_t time = t;
+         mSimulationClockTime = time / osg::Timer::instance()->getSecondsPerTick();
       }
+
+      void SetSimulationClockTime(osg::Timer_t t) { mSimulationClockTime = t; }
+      osg::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
 
       virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
       {
@@ -86,7 +95,11 @@ namespace dtEntity
          double simtime = fs->getSimulationTime();
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
          double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
-         float timeScale = mApplicationSystem->GetTimeScale();
+         
+         double timeScale = mApplicationSystem->GetTimeScale();
+         double add = (timeScale * deltaTime) / osg::Timer::instance()->getSecondsPerTick();
+         mSimulationClockTime += add;
+        // fs->setCalendarTime(mSimulationClockTime);
          double deltaSimTime = simtime - mPrevSimTime;
          mPrevSimTime = simtime;
          mStartOfFrameTick = currentTick;
@@ -274,7 +287,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   float ApplicationSystem::GetTimeScale() const
+   double ApplicationSystem::GetTimeScale() const
    {
       return mTimeScale.Get();
    }
@@ -294,10 +307,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    osg::Timer_t ApplicationSystem::GetSimulationClockTime() const
    {
-      if(!mImpl->mLastFrameStamp.valid()) return 0;
-      std::tm tm;
-      mImpl->mLastFrameStamp->getCalendarTime(tm);
-      return mktime(&tm);
+      return mImpl->mUpdateCallback->GetSimulationClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -309,28 +319,56 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    Property* ApplicationSystem::ScriptGetSimulationClockTimeString(const PropertyArgs& args)
    {
+      time_t time = GetSimulationClockTime() * osg::Timer::instance()->getSecondsPerTick();
+      struct tm * ptm = gmtime(&time);
       std::string ret = "";
-      if(mImpl->mLastFrameStamp.valid())
+
+      if(ptm != NULL)
       {
-         std::tm tm;
-         mImpl->mLastFrameStamp->getCalendarTime(tm);
          std::ostringstream os;
-         os << tm.tm_mday <<"." << tm.tm_mon << "." << (tm.tm_year + 1900);
-         os << " " << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec;
+         os << time << "___";
+         if(ptm->tm_mday < 10)
+         {
+            os << "0";
+         }
+         os << ptm->tm_mday<<".";
+
+         if(ptm->tm_mon < 9)
+         {
+            os << "0";
+         }
+         os << (ptm->tm_mon + 1) << "." << (ptm->tm_year + 1900);
+         os << " ";
+         if(ptm->tm_hour < 10)
+         {
+            os << "0";
+         }
+         os << ptm->tm_hour << ":";
+         if(ptm->tm_min < 10)
+         {
+            os << "0";
+         }
+         os << ptm->tm_min << ":";
+         if(ptm->tm_sec < 10)
+         {
+            os << "0";
+         }
+         os << ptm->tm_sec;
          ret = os.str();
       }
       return new StringProperty(ret);      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime)
+   void ApplicationSystem::ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime)
    {
       mTimeScale.Set(newTimeScale);
 #ifdef BUILD_WITH_DELTA3D
       dtCore::System::GetInstance().SetSimulationClockTime(newClockTime);
       dtCore::System::GetInstance().SetSimulationTime(newTime);
       dtCore::System::GetInstance().SetTimeScale(newTimeScale);
-#else
+#endif
+
       osg::Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
       osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
       if(cv)
@@ -346,7 +384,8 @@ namespace dtEntity
             v->setStartTick(newstarttick);
          }
       }
-#endif
+
+      mImpl->mUpdateCallback->SetSimulationClockTime(newClockTime);
       TimeChangedMessage msg;
       msg.SetSimulationTime(newTime);
       msg.SetSimulationClockTime(newClockTime);
@@ -363,7 +402,7 @@ namespace dtEntity
          return NULL;
       }
       double newtime = args[0]->DoubleValue();
-      float newtimescale = args[1]->FloatValue();
+      double newtimescale = args[1]->DoubleValue();
       osg::Timer_t newclocktime = args[2]->DoubleValue();
       ChangeTimeSettings(newtime, newtimescale, newclocktime);
       return NULL;
@@ -383,47 +422,6 @@ namespace dtEntity
      // AddCameraToSceneGraph(GetPrimaryCamera());
       layersys->GetSceneGraphRoot()->addChild(mInputHandler);
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   /*void ApplicationSystem::AddCameraToSceneGraph(osg::Camera* cam)
-   {
-      CameraSystem* camsystem;
-      GetEntityManager().GetEntitySystem(CameraComponent::TYPE, camsystem);
-
-      CameraSystem::ComponentStore::iterator i;
-      for(i = camsystem->begin(); i != camsystem->end(); ++i)
-      {
-         CameraComponent* camcomp = i->second;
-         if(camcomp->GetIsMainCamera())
-         {
-            if(camcomp->GetCamera() != cam)
-            {
-               camcomp->SetCamera(cam);
-            }
-            return;
-         }
-      }
-
-      // no camera in map found, wrap camera in entity
-      dtEntity::MapSystem* ms;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-
-      dtEntity::Entity* entity;
-      GetEntityManager().CreateEntity(entity);
-
-      dtEntity::CameraComponent* camcomp;
-      GetEntityManager().CreateComponent(entity->GetId(), camcomp);
-
-      camcomp->SetCamera(cam);
-
-      dtEntity::MapComponent* mapComponent;
-      GetEntityManager().CreateComponent(entity->GetId(), mapComponent);
-      mapComponent->SetUniqueId(cam->getName());
-      
-      std::string camname = cam->getName() + std::string("_camera");
-      mapComponent->SetEntityName(camname);
-      mapComponent->SetUniqueId(camname);
-   }*/
 
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::OnSetComponentProperties(const Message& m)

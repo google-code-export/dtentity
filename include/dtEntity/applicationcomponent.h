@@ -84,7 +84,7 @@ namespace dtEntity
       /**
        * @return The scale of realtime the GameManager is running at.
        */
-      float GetTimeScale() const;
+      double GetTimeScale() const;
 
       /**
        * @return the current simulation time. This is in SECONDs.
@@ -112,7 +112,7 @@ namespace dtEntity
        * @param newTimeScale the new simulation time progression as a factor of real time.
        * @param newClockTime  The new simulation wall-clock time. In MICRO SECONDs (seconds * 1000000LL).
        */
-      void ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime);
+      void ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime);
 
 	  /**
 	   * Set delta3d application pointer
@@ -162,14 +162,14 @@ namespace dtEntity
 
    private:
 
-      FloatProperty mTimeScale;
+      DoubleProperty mTimeScale;
       ArrayProperty mArgvArray;
 
       ApplicationImpl* mImpl;
 
       Property* ScriptGetTimeScale(const PropertyArgs& args)
       {
-         return new FloatProperty(GetTimeScale());
+         return new DoubleProperty(GetTimeScale());
       }
 
       Property* ScriptGetSimulationTime(const PropertyArgs& args)
