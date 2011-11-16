@@ -154,10 +154,8 @@ IF (BUILD_WITH_DELTA3D)
                                   ${DTUTIL_LIBRARIES}
    )
 
-   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/entitymanagerbase.h
-                                  ${HEADER_PATH}/shadercomponent.h)
-	LIST(APPEND LIB_SOURCES		    ${SOURCE_PATH}/entitymanagerbase.cpp
-  )
+   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/shadercomponent.h)
+
 ENDIF (BUILD_WITH_DELTA3D)
 
 IF(BUILD_XERCES)
