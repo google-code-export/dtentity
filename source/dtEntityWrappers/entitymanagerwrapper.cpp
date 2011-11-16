@@ -200,25 +200,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void ConvertJSToMessage(Handle<Value> val, dtEntity::Message* msg)
    {
-      /*const dtEntity::PropertyContainer::PropertyMap& params = msg->GetAllProperties();
-
-      HandleScope scope;
-
-      Handle<Object> o = Handle<Object>::Cast(val);
-      dtEntity::PropertyContainer::PropertyMap::const_iterator i;
-      for(i = params.begin(); i != params.end(); ++i)
-      {
-         dtEntity::StringId n = i->first;
-         dtEntity::Property* p = i->second;
-
-         Handle<String> paramName = GetString(n);
-         if(o->Has(paramName))
-         {
-            Handle<Value> val = o->Get(paramName);
-            ValToProp(val, p);
-         }
-      }*/
-
       HandleScope scope;
       Handle<Object> o = Handle<Object>::Cast(val);
       Local<Array> propnames = o->GetPropertyNames();
@@ -305,7 +286,7 @@ namespace dtEntityWrappers
    {  
       if(!args[0]->IsString() || !args[1]->IsFunction())
       {
-         return ThrowError("Usage: registerForMessages(string msgname, function)");
+         return ThrowError("Usage: registerForMessages(string msgname, function, [options])");
       }
       std::string msgname = ToStdString(args[0]);
       

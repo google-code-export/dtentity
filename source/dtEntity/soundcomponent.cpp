@@ -68,7 +68,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::OnFinishedSettingProperties()
+   void SoundComponent::Finished()
    {
       FreeSound();
            
@@ -202,7 +202,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnFinishedSettingProperties()
+   void SoundSystem::Finished()
    {      
       osg::Matrixd mat;
       mat.setTrans(mListenerTranslation.Get());
