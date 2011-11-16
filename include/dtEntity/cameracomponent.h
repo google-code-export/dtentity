@@ -117,9 +117,6 @@ namespace dtEntity
       virtual osg::Vec3d GetTranslation() const { return GetPosition(); }
       virtual void SetTranslation(const osg::Vec3d& v) { SetPosition(v); }
 
-      osg::Vec4 GetClearColor() const { return mClearColor.Get(); }
-      void SetClearColor(const osg::Vec4& v);
-
       virtual osg::Quat GetRotation() const 
       { 
          //TODO implement
