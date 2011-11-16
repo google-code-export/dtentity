@@ -67,8 +67,9 @@ namespace osgLibRocket
 
   GuiNode::GuiNode(const std::string& contextname, bool debug)
     : _previousTraversalNumber(osg::UNINITIALIZED_FRAME_NUMBER)
-    , _camera(NULL)
     , _contextEventListener(NULL)
+    , _camera(NULL)
+
   {
 
 

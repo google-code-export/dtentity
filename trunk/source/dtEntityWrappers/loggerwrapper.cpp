@@ -72,11 +72,6 @@ namespace dtEntityWrappers
    class LogListenerHolder
          : public dtEntity::LogListener
    {
-      Persistent<String> mDebug;
-      Persistent<String> mAlways;
-      Persistent<String> mError;
-      Persistent<String> mInfo;
-      Persistent<String> mWarning;
 
    public:
 
@@ -134,6 +129,11 @@ namespace dtEntityWrappers
       }
 
       Persistent<Function> mFunction;
+      Persistent<String> mDebug;
+      Persistent<String> mAlways;
+      Persistent<String> mError;
+      Persistent<String> mInfo;
+      Persistent<String> mWarning;
       dtEntity::MessageFunctor mFunctor;
       Persistent<String> mMessageTypeStr;
       dtEntity::MessageType mMessageType;

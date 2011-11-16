@@ -43,8 +43,8 @@ namespace dtEntityQtWidgets
       AdapterCreator(OSGGraphicsWindowQt* window, const osg::GraphicsContext::Traits& traits, QGLWidget* sharedContextWidget, GLWidgetFactory* factory = NULL)
          : mWindow(window)
          , mTraits(traits)
-         , mSharedContextWidget(sharedContextWidget)
          , mFactory(factory)
+         , mSharedContextWidget(sharedContextWidget)
          , mAdapter(NULL)
       {
 

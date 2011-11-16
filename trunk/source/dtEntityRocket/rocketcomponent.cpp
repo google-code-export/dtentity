@@ -260,7 +260,7 @@ namespace dtEntityRocket
        //appsys->GetPrimaryView()->addSlave(cam, false);
        dtEntity::LayerAttachPointSystem* layersys;
        mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-       dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
+       //dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
        
        // add as first child of scene graph root. This is to make sure
        // that the rocket node is the first to handle event callback.

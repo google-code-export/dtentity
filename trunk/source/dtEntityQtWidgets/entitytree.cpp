@@ -207,7 +207,6 @@ namespace dtEntityQtWidgets
    void EntityTreeModel::OnMapBeginAdd(const QString& name)
    {
       unsigned int size = mRootItem->childCount();
-      int row = mRootItem->row();
       beginInsertRows(QModelIndex(), size, size);
       
       EntityTreeItem* item = new EntityTreeItem(mRootItem, EntityTreeType::MAP);

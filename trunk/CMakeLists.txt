@@ -52,7 +52,7 @@ ENDIF (BUILD_WITH_DELTA3D)
 
 ADD_SUBDIRECTORY(source/dtEntity)
 ADD_SUBDIRECTORY(source/dtEntitySimulation)
-ADD_SUBDIRECTORY(source/dtEntityDIS)
+
 IF(BUILD_LIBROCKET)
 	ADD_SUBDIRECTORY(source/osgLibRocket)
 	ADD_SUBDIRECTORY(source/dtEntityRocket)

@@ -76,8 +76,8 @@ namespace dtEntity
       DtEntityUpdateCallback(ApplicationSystem* as)
          : mApplicationSystem(as)
          , mStartOfFrameTick(osg::Timer::instance()->tick())
-         , mPrevSimTime(0)
          , mSimulationClockTime(0)
+         , mPrevSimTime(0)
       {
          time_t t;
          time(&t);
