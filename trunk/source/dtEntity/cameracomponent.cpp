@@ -269,13 +269,6 @@ namespace dtEntity
    }
 
 	////////////////////////////////////////////////////////////////////////////
-	void CameraComponent::SetClearColor(const osg::Vec4& v)
-	{
-		mClearColor.Set(v);
-		mCamera->setClearColor(v);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
    osg::Vec4 CameraComponent::GetClearColor() const
 	{
 		return mClearColor.Get();
