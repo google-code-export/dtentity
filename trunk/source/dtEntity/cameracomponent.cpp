@@ -159,6 +159,16 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetClearColor(const osg::Vec4& v)
+   { 
+      mClearColor.Set(v); 
+      if(mCamera.valid())
+      {
+         mCamera->setClearColor(v);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetIsMainCamera(bool v)
    {
       mIsMainCamera.Set(v);
@@ -306,6 +316,7 @@ namespace dtEntity
       CameraComponent* camcomp;
       entity->CreateComponent(camcomp);
       camcomp->SetIsMainCamera(true);
+      camcomp->SetClearColor(osg::Vec4(0,0,0,1));
       camcomp->Finished();
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);

@@ -186,22 +186,22 @@ namespace dtEntityWrappers
       return v8::ThrowException(v8::Exception::SyntaxError(v8::String::New(err.c_str())));
    }
 
-   v8::Handle<v8::Value> WrapVec2(const osg::Vec2d& v);
-   v8::Handle<v8::Value> WrapVec3(const osg::Vec3d& v);
-   v8::Handle<v8::Value> WrapVec4(const osg::Vec4d& v);
-   v8::Handle<v8::Value> WrapQuat(const osg::Quat& v);
-   v8::Handle<v8::Value> WrapMatrix(const osg::Matrix& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec2(const osg::Vec2d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec3(const osg::Vec3d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec4(const osg::Vec4d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapQuat(const osg::Quat& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapMatrix(const osg::Matrix& v);
 
-   bool IsVec2(v8::Handle<v8::Value> v);
-   bool IsVec3(v8::Handle<v8::Value> v);
-   bool IsVec4(v8::Handle<v8::Value> v);
-   bool IsQuat(v8::Handle<v8::Value> v);
-   bool IsMatrix(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT bool IsVec2(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT bool IsVec3(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT bool IsVec4(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT bool IsQuat(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT bool IsMatrix(v8::Handle<v8::Value> v);
 
-   osg::Vec2d UnwrapVec2(v8::Handle<v8::Value> v);
-   osg::Vec3d UnwrapVec3(v8::Handle<v8::Value> v);
-   osg::Vec4d UnwrapVec4(v8::Handle<v8::Value> v);
-   osg::Quat UnwrapQuat(v8::Handle<v8::Value> v);
-   osg::Matrix UnwrapMatrix(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT osg::Vec2d UnwrapVec2(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT osg::Vec3d UnwrapVec3(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT osg::Vec4d UnwrapVec4(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT osg::Quat UnwrapQuat(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT osg::Matrix UnwrapMatrix(v8::Handle<v8::Value> v);
 
 }

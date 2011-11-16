@@ -67,7 +67,7 @@ namespace dtEntity
          return (id == TYPE); 
       }
 
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity;}
       virtual void OnRemovedFromEntity(Entity& entity) { mOwner = NULL; }
       void SetSoundPath(const std::string& p);
@@ -118,7 +118,7 @@ namespace dtEntity
       void OnLeaveWorld(const Message&);
       void OnTick(const Message& msg);
       
-      virtual void OnFinishedSettingProperties();
+      virtual void Finished();
 
       void SetSoundPath(EntityId eid, const std::string& p);
       void PlaySound(EntityId eid);
