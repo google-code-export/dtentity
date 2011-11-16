@@ -90,11 +90,11 @@ int main(int argc, char** argv)
    
    if(profiling_enabled)
    {
-      dtEntity::StringId frameId = dtEntity::SID("Frame");
-      dtEntity::StringId frameAdvanceId = dtEntity::SID("Frame_Advance");
-      dtEntity::StringId frameEvTrId = dtEntity::SID("Frame_EventTraversal");
-      dtEntity::StringId frameUpTrId = dtEntity::SID("Frame_UpdateTraversal");
-      dtEntity::StringId frameRenderTrId = dtEntity::SID("Frame_RenderingTraversals");
+      static dtEntity::StringId frameId = dtEntity::SID("Frame");
+      static dtEntity::StringId frameAdvanceId = dtEntity::SID("Frame_Advance");
+      static dtEntity::StringId frameEvTrId = dtEntity::SID("Frame_EventTraversal");
+      static dtEntity::StringId frameUpTrId = dtEntity::SID("Frame_UpdateTraversal");
+      static dtEntity::StringId frameRenderTrId = dtEntity::SID("Frame_RenderingTraversals");
 
       unsigned int framecount = 0;
       while (!viewer.done()) 

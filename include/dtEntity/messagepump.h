@@ -136,7 +136,7 @@ namespace dtEntity
       void EnqueueMessage(const Message& msg, double when);
 
       /**
-      * Called by EntityManagerBase: Emit all messages in message queue
+      * Emit all messages in message queue
       */
       void EmitQueuedMessages(double simtime);
 
