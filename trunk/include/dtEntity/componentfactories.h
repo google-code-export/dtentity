@@ -36,9 +36,6 @@
 #include <dtEntity/textlabelcomponent.h>
 #include <dtEntity/texturelabelcomponent.h>
 
-#ifdef BUILD_WITH_DELTA3D
-#include <dtEntity/shadercomponent.h>
-#endif
 
 #ifdef BUILD_OPENAL
   #include <dtEntity/soundcomponent.h>
@@ -116,36 +113,6 @@ namespace dtEntity
    };
 #endif
 
-#ifdef BUILD_WITH_DELTA3D
-   ////////////////////////////////////////////////////////////////////////////////
-   class ShaderComponentFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-      
-      virtual bool Create(EntityManager* em, EntitySystem*& es)
-      {
-         es = new ShaderSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const 
-      {
-         return "Shaders";
-      }
-
-      virtual ComponentType GetType() const 
-      {
-         return ShaderComponent::TYPE;
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const 
-      {
-         return "Shader component system";
-      }
-   };
-#endif
 
    ////////////////////////////////////////////////////////////////////////////////
    class SkyBoxComponentFactory : public dtEntity::ComponentPluginFactory
@@ -376,11 +343,6 @@ namespace dtEntity
 
 #ifdef BUILD_CAL3D_WRAPPER
        pluginManager.AddFactory(new AnimationComponentFactory());
-#endif
-
-
-#ifdef BUILD_WITH_DELTA3D
-       pluginManager.AddFactory(new ShaderComponentFactory());
 #endif
 
 #if BUILD_OPENAL

@@ -22,27 +22,23 @@
 
 #include <dtEntity/logmanager.h>
 
-#ifdef BUILD_WITH_DELTA3D
-	#include <dtUtil/log.h>
-#else
 
-	#include <osg/Notify>
+#include <osg/Notify>
 
-	#define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
+#define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
 
-	#define LOG_DEBUG(msg)\
-	dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_DEBUG, __FILE__, __FUNCTION__, __LINE__, msg) ;
+#define LOG_DEBUG(msg)\
+dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_DEBUG, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
-   #define LOG_INFO(msg)\
-      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_INFO, __FILE__, __FUNCTION__, __LINE__, msg) ;
+#define LOG_INFO(msg)\
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_INFO, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
-   #define LOG_WARNING(msg)\
-      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_WARNING, __FILE__, __FUNCTION__, __LINE__, msg) ;
+#define LOG_WARNING(msg)\
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_WARNING, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
-   #define LOG_ERROR(msg)\
-      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, __FILE__, __FUNCTION__, __LINE__, msg) ;
+#define LOG_ERROR(msg)\
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
-   #define LOG_ALWAYS(msg)\
-   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ALWAYS, __FILE__, __FUNCTION__, __LINE__, msg) ;
+#define LOG_ALWAYS(msg)\
+dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ALWAYS, __FILE__, __FUNCTION__, __LINE__, msg) ;
 
-#endif

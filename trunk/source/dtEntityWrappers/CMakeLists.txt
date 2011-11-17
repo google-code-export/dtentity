@@ -22,7 +22,6 @@ ENDIF(BUILD_WITH_DELTA3D)
 
 INCLUDE_DIRECTORIES( 
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
-  ${DELTA3D_INCLUDE_DIR}
   ${OSG_INCLUDE_DIRS}
   ${V8_INCLUDE_DIR}
   ${CEGUI_INCLUDE_DIR}
@@ -75,9 +74,6 @@ SET(LIB_SOURCES
 )
 
 SET(WRAPLIBRARIES dtEntity
-                  ${DTCORE_LIBRARIES}
-                  ${DTUTIL_LIBRARIES}
-                  ${DTABC_LIBRARIES}
                   ${V8_LIBRARIES}
                   ${OSG_LIBRARIES}
                   ${OPENTHREADS_LIBRARIES}

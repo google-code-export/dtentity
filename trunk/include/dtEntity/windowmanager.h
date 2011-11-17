@@ -43,6 +43,11 @@ namespace dtCore
    class DeltaWin;
 }
 
+#ifdef BUILD_WITH_DELTA3D
+#include <dtABC/application.h>
+#endif
+
+
 namespace dtEntity
 { 
 
@@ -107,7 +112,14 @@ namespace dtEntity
    class DT_ENTITY_EXPORT D3DWindowManager : public WindowManager
    {     
    public:
-      D3DWindowManager(EntityManager& em);
+      D3DWindowManager(EntityManager& em, dtABC::Application& application);
+
+      virtual ~D3DWindowManager();
+
+	  /**
+	   * Get pointer to delta3d application
+	   */
+      dtABC::Application* GetApplication() const { return mApplication.get(); }
 
       virtual void OpenWindow(const std::string& name,
          dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits);
@@ -127,10 +139,13 @@ namespace dtEntity
        */
       osg::Vec3 GetPickRay(const std::string& name, float x, float y);
 
+      void OnTimeChange(const dtEntity::Message& msg);
+
    protected:
 
       void OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits);
-
+      osg::ref_ptr<dtABC::Application> mApplication;
+      dtEntity::MessageFunctor mTimeChangedFunctor;
    };	
 #endif
 }

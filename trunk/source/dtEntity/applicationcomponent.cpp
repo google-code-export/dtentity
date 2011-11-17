@@ -38,24 +38,14 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
 
-#ifdef BUILD_WITH_DELTA3D 
-	#include <dtABC/application.h>
-	#include <dtCore/system.h>
-#endif
-
 namespace dtEntity
 {   
    class DtEntityUpdateCallback;
 
    class ApplicationImpl
    {
-
-
    public:
 
-#ifdef BUILD_WITH_DELTA3D 
-      osg::ref_ptr<dtABC::Application> mApplication;
-#endif
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;
       osg::ref_ptr<DtEntityUpdateCallback> mUpdateCallback;
       osg::ref_ptr<const osg::FrameStamp> mLastFrameStamp;
@@ -175,11 +165,7 @@ namespace dtEntity
       em.RegisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor,
                              FilterOptions::PRIORITY_DEFAULT, "ApplicationSystem::OnResetSystem");
 
-#ifdef BUILD_WITH_DELTA3D 
-      SetWindowManager(new D3DWindowManager(em));
-#else
       SetWindowManager(new OSGWindowManager(em));
-#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -194,30 +180,6 @@ namespace dtEntity
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::SetApplication(dtABC::Application* app)
-   {
-
-#ifdef BUILD_WITH_DELTA3D
-
-      assert(mImpl->mApplication == NULL);
-      mImpl->mApplication = app;
-      SetViewer(app->GetCompositeViewer());
-      app->GetCamera()->RemoveSender(&dtCore::System::GetInstance());
-      CreateSceneGraphEntities();
-#endif
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   dtABC::Application* ApplicationSystem::GetApplication() const
-   {
-#ifdef BUILD_WITH_DELTA3D
-      return mImpl->mApplication;
-#else
-      return NULL;
-#endif
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetWindowManager(WindowManager* wm) 
    { 
       mImpl->mWindowManager = wm; 
@@ -227,16 +189,6 @@ namespace dtEntity
    WindowManager* ApplicationSystem::GetWindowManager() const 
    { 
       return mImpl->mWindowManager.get(); 
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::SetNextStatisticsType() const
-   {
-#ifdef BUILD_WITH_DELTA3D
-      mImpl->mApplication->SetNextStatisticsType();
-#else
-      LOG_ERROR("TODO: Implement!");
-#endif
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -363,11 +315,6 @@ namespace dtEntity
    void ApplicationSystem::ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime)
    {
       mTimeScale.Set(newTimeScale);
-#ifdef BUILD_WITH_DELTA3D
-      dtCore::System::GetInstance().SetSimulationClockTime(newClockTime);
-      dtCore::System::GetInstance().SetSimulationTime(newTime);
-      dtCore::System::GetInstance().SetTimeScale(newTimeScale);
-#endif
 
       osg::Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
       osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());

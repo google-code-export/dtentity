@@ -95,7 +95,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/scriptaccessor.h
   ${HEADER_PATH}/singleton.h
   ${HEADER_PATH}/spawner.h
-  ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
   ${HEADER_PATH}/stringid.h
@@ -144,19 +143,12 @@ SET(LIB_SOURCES
 
 
 SET(DTENTITYLIBS      ${OSG_LIBRARIES}
-                      ${OPENTHREADS_LIBRARIES}                      
+                      ${OPENTHREADS_LIBRARIES}         
+                      ${DTABC_LIBRARIES}
+                      ${DTAUDIO_LIBRARIES}
+                      ${DTCORE_LIBRARIES}
+                      ${DTUTIL_LIBRARIES}             
 )
-
-IF (BUILD_WITH_DELTA3D)
-   LIST(APPEND DTENTITYLIBS       ${DTABC_LIBRARIES}
-                                  ${DTAUDIO_LIBRARIES}
-                                  ${DTCORE_LIBRARIES}
-                                  ${DTUTIL_LIBRARIES}
-   )
-
-   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/shadercomponent.h)
-
-ENDIF (BUILD_WITH_DELTA3D)
 
 IF(BUILD_XERCES)
 
@@ -169,8 +161,7 @@ IF(BUILD_CAL3D_WRAPPER)
 
 	LIST(APPEND DTENTITYLIBS       ${DTANIM_LIBRARIES} ${CAL3D_LIBRARIES})
 	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationcomponent.h)
-	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationcomponent.cpp
-                                 ${SOURCE_PATH}/shadercomponent.cpp)
+	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationcomponent.cpp)
 ENDIF(BUILD_CAL3D_WRAPPER)
 
 IF(BUILD_OPENAL)

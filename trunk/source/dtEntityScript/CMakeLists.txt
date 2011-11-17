@@ -7,7 +7,6 @@ ENDIF (WIN32)
 INCLUDE_DIRECTORIES( 
   ${CMAKE_SOURCE_DIR}/${INC_DIR}  
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
-  ${DELTA3D_INCLUDE_DIR}
   ${OSG_INCLUDE_DIRS}
 )
 
@@ -23,9 +22,6 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
 					  dtEntity       
                       dtEntityWrappers
 					  ${OSG_LIBRARIES}     
-					  ${DTUTIL_LIBRARIES}
-					  ${DTCORE_LIBRARIES} 
-					  ${DTABC_LIBRARIES}
 )
                      
 INCLUDE(ModuleInstall OPTIONAL)
