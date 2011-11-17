@@ -102,6 +102,59 @@ namespace dtEntityWrappers
       return Undefined();
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> DebugDrawManagerAddLines(const Arguments& args)
+   {
+      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+
+      if(args.Length() < 1 || !args[0]->IsArray())
+      {
+         return ThrowError("usage: addLines(Array(Vec3) lines,[Vec4 color, Int lineWidth, Number duration, bool useDepthTest])");
+      }
+
+      std::vector<osg::Vec3> lines;
+      HandleScope scope;
+      Handle<Array> arr = Handle<Array>::Cast(args[0]);
+      
+      unsigned int l = arr->Length();
+      for(unsigned int i = 0; i < l; ++i)
+      {
+         lines.push_back(UnwrapVec3(arr->Get(i)));
+      }
+      
+      osg::Vec4f color(1,0,0,1);
+      if(args.Length() > 1)
+      {
+         color = UnwrapVec4(args[1]);
+      }
+
+      int linewidth = 1;
+      if(args.Length() > 2)
+      {
+         linewidth = args[2]->Int32Value();
+         if(linewidth == 0) 
+         {
+            linewidth = 1;
+         }
+      }
+
+      float duration = 0;
+      if(args.Length() > 3)
+      {
+         duration = args[3]->NumberValue();
+      }
+
+      bool depth = true;
+      if(args.Length() > 4)
+      {
+         depth = args[4]->BooleanValue();
+      }
+
+      ddm->AddLines(lines, color, linewidth, duration, depth);
+      return Undefined();
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddAABB(const Arguments& args)
    {
@@ -376,6 +429,7 @@ namespace dtEntityWrappers
         proto->Set("addCircle", FunctionTemplate::New(DebugDrawManagerAddCircle));
         proto->Set("addCross", FunctionTemplate::New(DebugDrawManagerAddCross));
         proto->Set("addLine", FunctionTemplate::New(DebugDrawManagerAddLine));
+        proto->Set("addLines", FunctionTemplate::New(DebugDrawManagerAddLines));
         proto->Set("addSphere", FunctionTemplate::New(DebugDrawManagerAddSphere));
 		  proto->Set("addString", FunctionTemplate::New(DebugDrawManagerAddString));
         proto->Set("addTriangle", FunctionTemplate::New(DebugDrawManagerAddTriangle));
