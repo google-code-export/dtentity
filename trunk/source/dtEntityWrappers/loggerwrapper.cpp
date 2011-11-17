@@ -96,7 +96,7 @@ namespace dtEntityWrappers
       }
 
       virtual void LogMessage(dtEntity::LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
-                      const std::string& msg) const
+                      const std::string& msg)
       {
          HandleScope scope;
 
