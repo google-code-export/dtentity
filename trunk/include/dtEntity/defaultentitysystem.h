@@ -242,6 +242,12 @@ namespace dtEntity
       }
 
       ////////////////////////////////////////////////////////////////////////////////
+      unsigned int GetNumComponents() const 
+      {
+         return mComponents.size();
+      }
+
+      ////////////////////////////////////////////////////////////////////////////////
       virtual DynamicPropertyContainer GetComponentProperties() const
       {
          ConstPropertyMap m;
