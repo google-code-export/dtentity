@@ -33,17 +33,6 @@
 #include <osg/Group>
 #include <osg/Timer>
 
-
-namespace dtABC
-{
-   class Application;
-}
-
-namespace dtCore
-{
-   class View;
-}
-
 namespace osgViewer
 {
    class View;
@@ -114,16 +103,6 @@ namespace dtEntity
        */
       void ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime);
 
-	  /**
-	   * Set delta3d application pointer
-	   */
-		void SetApplication(dtABC::Application* app);
-
-	  /**
-	   * Get pointer to delta3d application
-	   */
-      dtABC::Application* GetApplication() const;
-
 	  /** Functor reacting to SetComponentPropertiesMessage */
       void OnSetComponentProperties(const Message& msg);
 	  
@@ -143,8 +122,6 @@ namespace dtEntity
       void SetWindowManager(WindowManager* wm);
       WindowManager* GetWindowManager() const;
 
-      void SetNextStatisticsType() const;
-      
       osgViewer::ViewerBase* GetViewer() const;
       void SetViewer(osgViewer::ViewerBase*);
 

@@ -40,7 +40,6 @@
 #include <sstream>
 
 #ifdef BUILD_WITH_DELTA3D 
-	#include <dtABC/application.h>
 	#include <dtCore/camera.h>
 	#include <dtCore/deltawin.h>
 	#include <dtCore/scene.h>
@@ -221,9 +220,34 @@ namespace dtEntity
 #ifdef BUILD_WITH_DELTA3D 
 
    ///////////////////////////////////////////////////////////////////////////////
-   D3DWindowManager::D3DWindowManager(EntityManager& em)
+   D3DWindowManager::D3DWindowManager(EntityManager& em, dtABC::Application& app)
       : WindowManager(em)
+      , mApplication(&app)
    {
+      ApplicationSystem* appsys;
+      em.GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      appsys->SetViewer(mApplication->GetCompositeViewer());
+      mApplication->GetCamera()->RemoveSender(&dtCore::System::GetInstance());
+      appsys->CreateSceneGraphEntities();
+
+      mTimeChangedFunctor = dtEntity::MessageFunctor(this, &D3DWindowManager::OnTimeChange);
+      em.RegisterForMessages(dtEntity::TimeChangedMessage::TYPE, mTimeChangedFunctor, "EphemerisSystem::OnTimeChange");
+
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   D3DWindowManager::~D3DWindowManager()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void D3DWindowManager::OnTimeChange(const dtEntity::Message& m)
+   {
+      const TimeChangedMessage& msg = static_cast<const TimeChangedMessage&>(m);
+      dtCore::System::GetInstance().SetSimulationClockTime(msg.GetSimulationClockTime());
+      dtCore::System::GetInstance().SetSimulationTime(msg.GetSimulationTime());
+      dtCore::System::GetInstance().SetTimeScale(msg.GetTimeScale());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -276,9 +300,7 @@ namespace dtEntity
       view->SetScene(scene);
       view->SetName(name);
       
-      ApplicationSystem* appSys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appSys);
-      appSys->GetApplication()->AddView(*view);
+      GetApplication()->AddView(*view);
       
       dtCore::Camera* cam = new dtCore::Camera(name);   
       cam->SetWindow(window);
@@ -291,26 +313,23 @@ namespace dtEntity
    void D3DWindowManager::CloseWindow(const std::string& name)
    {
 
-      ApplicationSystem* appSys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appSys);
       dtCore::View* v = GetD3DViewByName(name);
       if(v)
       {
-         appSys->GetApplication()->RemoveView(*v);
+         GetApplication()->RemoveView(*v);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::View* D3DWindowManager::GetD3DViewByName(const std::string& name)
    {
-      ApplicationSystem* appSys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appSys);
-      int num = appSys->GetApplication()->GetNumberOfViews();
+
+      int num = GetApplication()->GetNumberOfViews();
       for(int i = 0; i < num; ++i)
       {
-         if(name == appSys->GetApplication()->GetView(i)->GetName())
+         if(name == GetApplication()->GetView(i)->GetName())
          {
-            return appSys->GetApplication()->GetView(i);
+            return GetApplication()->GetView(i);
          }
       }
       return NULL;

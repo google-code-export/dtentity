@@ -151,15 +151,6 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SetNextStatisticsType(const Arguments& args)
-   {
-      dtEntity::EntityManager* em = GetEntityManager();
-      dtEntity::ApplicationSystem* appsys;
-      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->SetNextStatisticsType();   
-      return Undefined();
-   }
-   ////////////////////////////////////////////////////////////////////////////////
    void RegisterGlobalFunctions()
    {
       HandleScope handle_scope;
@@ -173,6 +164,5 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
       context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());
       context->Global()->Set(String::New("setDataFilePathList"), FunctionTemplate::New(SetDataFilePathList)->GetFunction());
-      context->Global()->Set(String::New("setNextStatisticsType"), FunctionTemplate::New(SetNextStatisticsType)->GetFunction());
    }
 }
