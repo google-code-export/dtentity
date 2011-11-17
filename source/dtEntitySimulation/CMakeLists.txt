@@ -34,7 +34,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 TARGET_LINK_LIBRARIES(${LIB_NAME}     
                ${OSG_LIBRARIES}
                ${OPENTHREADS_LIBRARIES}
-               ${DTUTIL_LIBRARIES}
                dtEntity
 )
 

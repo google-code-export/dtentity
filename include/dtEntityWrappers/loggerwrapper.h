@@ -23,15 +23,7 @@
 #include <dtEntityWrappers/export.h>
 #include <v8.h>
 
-namespace dtUtil
-{
-   class Log;
-}
-
-
 namespace dtEntityWrappers
 {
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapLogger();
-   DTENTITY_WRAPPERS_EXPORT dtUtil::Log* UnwrapLogger(v8::Handle<v8::Value>);
-   DTENTITY_WRAPPERS_EXPORT bool IsLogger(v8::Handle<v8::Value>);
 }

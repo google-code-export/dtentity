@@ -45,7 +45,6 @@
 	#include <dtCore/scene.h>
 	#include <dtCore/system.h>
 	#include <dtCore/view.h>
-	#include <dtUtil/datetime.h>
    
 #endif
 

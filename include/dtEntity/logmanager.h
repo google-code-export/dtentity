@@ -49,7 +49,7 @@ namespace dtEntity
    {
    public:
       virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
-                      const std::string& msg) const = 0;
+                      const std::string& msg) = 0;
 
    protected:
       virtual ~LogListener() { }

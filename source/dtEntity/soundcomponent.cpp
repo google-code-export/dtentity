@@ -26,7 +26,6 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtUtil/stringutils.h>
 #include <assert.h>
 #include <iostream>
 
