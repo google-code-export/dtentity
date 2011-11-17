@@ -35,11 +35,11 @@ namespace dtEntity
    {
       enum e
       {
-         LVL_DEBUG,
-         LVL_INFO,
-         LVL_WARNING,
+         LVL_ALWAYS,
          LVL_ERROR,
-         LVL_ALWAYS
+         LVL_DEBUG,
+         LVL_WARNING,
+         LVL_INFO         
       };
    }
 
