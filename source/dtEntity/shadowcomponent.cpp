@@ -23,6 +23,7 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/lightcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/entity.h>
 #include <assert.h>
@@ -89,14 +90,14 @@ namespace dtEntity
       mShadowTexCoordIndex.Set(1);
       mBaseTexCoordIndex.Set(0);
 
-      mPSSMMapCount.Set(3);
+      mPSSMMapCount.Set(4);
       mPSSMMapRes.Set(1024);
       mPSSMMapDebugColorOn.Set(false);
-      mPSSMMinNearSplit.Set(1);
-      mPSSMMaxFarDist.Set(100);
-      mPSSMMoveVCamFactor.Set(0);
-      mPSSMPolyOffsetFactor.Set(0);
-      mPSSMPolyOffsetUnit.Set(0);
+      mPSSMMinNearSplit.Set(3);
+      mPSSMMaxFarDist.Set(200);
+      mPSSMMoveVCamFactor.Set(0.1);
+      mPSSMPolyOffsetFactor.Set(0.1);
+      mPSSMPolyOffsetUnit.Set(0.1);
 
    }
   
@@ -198,9 +199,17 @@ namespace dtEntity
 
       if(pssm)
       {
-         LOG_ALWAYS("TODO: Re-Implement!");
-         /*lightsource->getParent(0)->removeChild(lightsource);
-         GetGroup()->addChild(lightsource);*/
+         LightSystem* ls;
+         if(mEntity->GetEntityManager().GetEntitySystem(LightComponent::TYPE, ls) && ls->GetNumComponents() != 0)
+         {
+            for(LightSystem::ComponentStore::iterator i = ls->begin(); i != ls->end(); ++i)
+            {
+               LightComponent* lcomp = i->second;
+               osg::ref_ptr<osg::Group> lightsource = lcomp->GetNode()->asGroup();
+               lightsource->getParent(0)->removeChild(lightsource);
+               GetGroup()->addChild(lightsource);
+            }
+         }
       }
    }
 
