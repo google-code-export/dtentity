@@ -49,6 +49,7 @@ namespace dtEntityWrappers
       virtual void Finished();
       void OnSceneLoaded(const dtEntity::Message& msg);
       void OnResetSystem(const dtEntity::Message& msg);
+      void Tick(const dtEntity::Message& msg);
 
       void ExecuteFile(const std::string& path);
       void ExecuteScript(const std::string& script);
@@ -63,6 +64,7 @@ namespace dtEntityWrappers
       
       dtEntity::MessageFunctor mSceneLoadedFunctor;
       dtEntity::MessageFunctor mResetSystemFunctor;
+      dtEntity::MessageFunctor mTickFunctor;
 
       osg::observer_ptr<osgViewer::View> mView;
       

@@ -14,16 +14,18 @@ function round(num) {
 ////////////////////////////////////////////////////////////////////////////////
 var __TIMEOUT_IDX = 0;
 var __TIMEOUTS = {};
+var __TIMEOUTS_REGISTERED = false;
+var __TIMEOUT_NOW = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 function setTimeout(callback, delay) {
-  var now = Math.floor(applicationSystem.getRealClockTime() / 1000);
+  
   var args = [];
   for(var i = 2; i < arguments.length; ++i) {
     args.push(arguments[i]);
   }
   var timeoutId = __TIMEOUT_IDX++;
-  __TIMEOUTS[timeoutId] = [now + delay, callback, args];
+  __TIMEOUTS[timeoutId] = [__TIMEOUT_NOW + delay, callback, args];
   return timeoutId;
 }
 
@@ -35,10 +37,10 @@ function clearTimeout(timeoutId) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function __triggerTimeoutCBs(now) {
+function __triggerTimeoutCBs() {
   
   for(var k in __TIMEOUTS) {
-    if(__TIMEOUTS[k][0] <= now) {
+    if(__TIMEOUTS[k][0] <= __TIMEOUT_NOW) {
       var timeout = __TIMEOUTS[k];
       timeout[1].apply(timeout[1], timeout[2]);
       delete __TIMEOUTS[k];
@@ -51,13 +53,12 @@ var __INTERVALS = {};
 
 ////////////////////////////////////////////////////////////////////////////////
 function setInterval(callback, delay) {
-  var now = Math.floor(applicationSystem.getRealClockTime() / 1000);
   var args = [];
   for(var i = 2; i < arguments.length; ++i) {
     args.push(arguments[i]);
   }
   var intervalId = __INTERVAL_IDX++;
-  __INTERVALS[intervalId] = [now + delay, callback, args, delay];
+  __INTERVALS[intervalId] = [__TIMEOUT_NOW + delay, callback, args, delay];
   return intervalId;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,25 +69,25 @@ function clearInterval(intervalId) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function __triggerIntervalCBs(now) {
+function __triggerIntervalCBs() {
 
   for(var k in __INTERVALS) {
-    if(__INTERVALS[k][0] <= now) {
+    if(__INTERVALS[k][0] <= __TIMEOUT_NOW) {
       var timeout = __INTERVALS[k];
       timeout[1].apply(timeout[1], timeout[2]);
-      timeout[0] += timeout[3];
+      timeout[0] = __TIMEOUT_NOW + timeout[3];
     }    
   }
 }
 ////////////////////////////////////////////////////////////////////////////////
-function __executeTimeOuts(msgtype, params) 
+function __executeTimeOuts(dt, time, clocktime) 
 {
-  var now = Math.floor(applicationSystem.getRealClockTime() / 1000);
-  __triggerTimeoutCBs(now);
-  __triggerIntervalCBs(now);
+  __TIMEOUT_NOW = clocktime;
+  __triggerTimeoutCBs();
+  __triggerIntervalCBs();
 }
 
-EntityManager.registerForMessages("TickMessage", __executeTimeOuts);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 function createEntity(proto) {

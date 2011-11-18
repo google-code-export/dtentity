@@ -22,6 +22,7 @@
 #include <dtEntitySimulation/quattools.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/profile.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
@@ -151,6 +152,20 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> StartProfile(const Arguments& args)
+   {
+      CProfileManager::Start_Profile(dtEntity::SID(ToStdString(args[0])));
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> StopProfile(const Arguments& args)
+   {
+      CProfileManager::Stop_Profile();
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void RegisterGlobalFunctions()
    {
       HandleScope handle_scope;
@@ -164,5 +179,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
       context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());
       context->Global()->Set(String::New("setDataFilePathList"), FunctionTemplate::New(SetDataFilePathList)->GetFunction());
+      context->Global()->Set(String::New("startProfile"), FunctionTemplate::New(StartProfile)->GetFunction());
+      context->Global()->Set(String::New("stopProfile"), FunctionTemplate::New(StopProfile)->GetFunction());
    }
 }
