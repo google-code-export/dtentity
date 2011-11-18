@@ -102,7 +102,7 @@ namespace dtEntitySimulation
 
       mTickFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
-         mTickFunctor, dtEntity::FilterOptions::PRIORITY_DEFAULT, "GroundClampingSystem::Tick");
+         mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "GroundClampingSystem::Tick");
 
       mMapLoadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::OnMapLoaded);
       em.RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor, "GroundClampingComponent::OnMapLoaded");

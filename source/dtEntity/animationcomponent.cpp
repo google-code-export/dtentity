@@ -370,7 +370,7 @@ namespace dtEntity
       Register(UseHardwareSkinningId, &mUseHardwareSkinning);
 
       mTickFunctor = MessageFunctor(this, &AnimationSystem::Tick);
-      em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, dtEntity::FilterOptions::PRIORITY_DEFAULT, "AnimationSystem::Tick");
+      em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "AnimationSystem::Tick");
 
       dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
 

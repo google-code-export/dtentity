@@ -949,7 +949,7 @@ namespace dtEntityQtWidgets
 
       mSceneLoadedFunctor = dtEntity::MessageFunctor(this, &EntityTreeController::OnSceneLoaded);
       mEntityManager->RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor,
-         dtEntity::FilterOptions::PRIORITY_LOWEST, "EntityTreeController::OnSceneLoaded");
+         dtEntity::FilterOptions::ORDER_LATE, "EntityTreeController::OnSceneLoaded");
 
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);

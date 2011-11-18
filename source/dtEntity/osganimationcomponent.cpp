@@ -323,7 +323,7 @@ namespace dtEntity
 
       mMeshChangedFunctor = MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
       em.RegisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor,
-                            FilterOptions::PRIORITY_DEFAULT, "OSGAnimationSystem::OnMeshChanged");
+                            FilterOptions::ORDER_DEFAULT, "OSGAnimationSystem::OnMeshChanged");
       AddScriptedMethod("playAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptPlayAnimation));
       AddScriptedMethod("stopAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptStopAnimation));
       AddScriptedMethod("getAnimations", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimations));

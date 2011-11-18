@@ -471,10 +471,13 @@ namespace dtEntityWrappers
      HandleScope scope;
      Handle<Object> obj = Object::New();
 
-     obj->Set(String::New("default"), Uint32::New(dtEntity::FilterOptions::PRIORITY_DEFAULT));
+     obj->Set(String::New("default"), Uint32::New(dtEntity::FilterOptions::ORDER_DEFAULT));
      obj->Set(String::New("lowest"),  Uint32::New(dtEntity::FilterOptions::PRIORITY_LOWEST));
      obj->Set(String::New("higher"), Uint32::New(dtEntity::FilterOptions::PRIORITY_HIGHER));
      obj->Set(String::New("highest"),  Uint32::New(dtEntity::FilterOptions::PRIORITY_HIGHEST));
+     obj->Set(String::New("late"),  Uint32::New(dtEntity::FilterOptions::ORDER_LATE));
+     obj->Set(String::New("early"), Uint32::New(dtEntity::FilterOptions::ORDER_EARLY));
+     obj->Set(String::New("earliest"),  Uint32::New(dtEntity::FilterOptions::ORDER_EARLIEST));
      obj->Set(String::New("singleshot"), Uint32::New(dtEntity::FilterOptions::SINGLE_SHOT));
      return scope.Close(obj);
    }

@@ -98,7 +98,7 @@ namespace dtEntityWrappers
 
       mResetSystemFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnResetSystem);
       GetEntityManager().RegisterForMessages(dtEntity::ResetSystemMessage::TYPE, mResetSystemFunctor,
-                             dtEntity::FilterOptions::PRIORITY_HIGHER, "ScriptSystem::OnResetSystem");
+                             dtEntity::FilterOptions::ORDER_EARLY, "ScriptSystem::OnResetSystem");
 
       mTickFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::Tick);
       em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "ScriptSystem::Tick");
