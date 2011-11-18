@@ -18,11 +18,13 @@ var __TIMEOUTS_REGISTERED = false;
 var __TIMEOUT_NOW = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-function setTimeout(callback, delay) {
+function setTimeout(callback, delay, arguments) {
   
   var args = [];
-  for(var i = 2; i < arguments.length; ++i) {
-    args.push(arguments[i]);
+  if(typeof arguments != 'undefined') {
+	  for(var i = 2; i < arguments.length; ++i) {
+		args.push(arguments[i]);
+	  }
   }
   var timeoutId = __TIMEOUT_IDX++;
   __TIMEOUTS[timeoutId] = [__TIMEOUT_NOW + delay, callback, args];
@@ -52,10 +54,12 @@ var __INTERVAL_IDX = 0;
 var __INTERVALS = {};
 
 ////////////////////////////////////////////////////////////////////////////////
-function setInterval(callback, delay) {
+function setInterval(callback, delay, arguments) {
   var args = [];
-  for(var i = 2; i < arguments.length; ++i) {
-    args.push(arguments[i]);
+  if(typeof arguments != 'undefined') {
+	  for(var i = 2; i < arguments.length; ++i) {
+		args.push(arguments[i]);
+	  }
   }
   var intervalId = __INTERVAL_IDX++;
   __INTERVALS[intervalId] = [__TIMEOUT_NOW + delay, callback, args, delay];
