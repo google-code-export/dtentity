@@ -1255,6 +1255,9 @@ osg.Quat = {
     },
     
     rotate: function(q, v, result) {
+		if (result === undefined) {
+            result = [];
+        }
         var uv = [0, 0, 0];
         var uuv = [0, 0, 0];
         osg.Vec3.cross(q, v, uv);
@@ -1263,6 +1266,7 @@ osg.Quat = {
         osg.Vec3.mult(uuv, 2.0, uuv);
         osg.Vec3.add(v, uv, result);
         osg.Vec3.add(result, uuv, result);
+		return result;
     },
 
     lerp: function(t, from, to, result){

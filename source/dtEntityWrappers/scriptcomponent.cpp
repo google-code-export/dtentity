@@ -107,6 +107,8 @@ namespace dtEntityWrappers
    {
       V8::RemoveGCPrologueCallback(GCStartCallback);
       V8::RemoveGCEpilogueCallback(GCEndCallback);
+
+      WrapperManager::DestroyInstance();
    }
 
    ////////////////////////////////////////////////////////////////////////////

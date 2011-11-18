@@ -443,7 +443,8 @@ namespace dtEntityWrappers
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       if(!args[0]->IsString()) return ThrowError("usage: getEntitySystem(string)");
-      dtEntity::ComponentType t = dtEntity::SID(ToStdString(args[0]));
+      std::string str = ToStdString(args[0]);
+      dtEntity::ComponentType t = dtEntity::SID(str);
       dtEntity::EntitySystem* es = em->GetEntitySystem(t);
       if(es == NULL)
       {
