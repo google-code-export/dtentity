@@ -90,8 +90,8 @@ namespace dtEntityWrappers
       Context::Scope context_scope(context);
      
       SetupContext();
-      V8::AddGCPrologueCallback(GCStartCallback);
-      V8::AddGCEpilogueCallback(GCEndCallback);
+      //V8::AddGCPrologueCallback(GCStartCallback);
+      //V8::AddGCEpilogueCallback(GCEndCallback);
 
       mSceneLoadedFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnSceneLoaded);
       GetEntityManager().RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor, "ScriptSystem::OnSceneLoaded");
@@ -100,13 +100,16 @@ namespace dtEntityWrappers
       GetEntityManager().RegisterForMessages(dtEntity::ResetSystemMessage::TYPE, mResetSystemFunctor,
                              dtEntity::FilterOptions::PRIORITY_HIGHER, "ScriptSystem::OnResetSystem");
 
+      mTickFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::Tick);
+      em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "ScriptSystem::Tick");
+
    }  
 
    ////////////////////////////////////////////////////////////////////////////
    ScriptSystem::~ScriptSystem()
    {
-      V8::RemoveGCPrologueCallback(GCStartCallback);
-      V8::RemoveGCEpilogueCallback(GCEndCallback);
+      //V8::RemoveGCPrologueCallback(GCStartCallback);
+      //V8::RemoveGCEpilogueCallback(GCEndCallback);
 
       WrapperManager::DestroyInstance();
    }
@@ -178,6 +181,40 @@ namespace dtEntityWrappers
 
       SetupContext();
       LoadAutoStartScripts("AutoStartScripts");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::Tick(const dtEntity::Message& m)
+   {
+      HandleScope scope;
+      Handle<Context> context = GetGlobalContext();
+      Context::Scope context_scope(context);
+
+      Handle<Value> func = context->Global()->Get(String::New("__executeTimeOuts"));
+      if(!func.IsEmpty())
+      {
+         Handle<Function> f = Handle<Function>::Cast(func);
+         if(f.IsEmpty()) 
+         {
+            return;
+         }
+
+         const dtEntity::TickMessage& msg = static_cast<const dtEntity::TickMessage&>(m);
+         
+         TryCatch try_catch;
+         Handle<Value> argv[3] = { 
+            Number::New(msg.GetDeltaSimTime()),
+            Number::New(msg.GetSimulationTime()),
+            Uint32::New(osg::Timer::instance()->tick() * osg::Timer::instance()->getSecondsPerTick() * 1000)
+         };
+         
+         Handle<Value> ret = f->Call(f, 3, argv);
+
+         if(ret.IsEmpty()) 
+         {
+            ReportException(&try_catch);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
