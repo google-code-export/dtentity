@@ -163,7 +163,7 @@ namespace dtEntity
 
       mResetSystemFunctor = MessageFunctor(this, &ApplicationSystem::OnResetSystem);
       em.RegisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor,
-                             FilterOptions::PRIORITY_DEFAULT, "ApplicationSystem::OnResetSystem");
+                             FilterOptions::ORDER_DEFAULT, "ApplicationSystem::OnResetSystem");
 
       SetWindowManager(new OSGWindowManager(em));
    }

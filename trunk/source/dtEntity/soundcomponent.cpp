@@ -188,9 +188,6 @@ namespace dtEntity
       mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
       em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
-      //GetEntityManager().RegisterForMessages(TickMessage::TYPE,
-      //   mTickFunctor, FilterOptions::PRIORITY_LOWEST, "SoundSystem::OnTick");
-
       dtAudio::AudioManager::Instantiate();
    }
 

@@ -53,10 +53,14 @@ namespace dtEntity
          PRIORITY_DEFAULT                = 1,
          PRIORITY_HIGHER                 = 2,
          PRIORITY_HIGHEST                = 3,
+         ORDER_LATE                      = 0,
+         ORDER_DEFAULT                   = 1,
+         ORDER_EARLY                     = 2,
+         ORDER_EARLIEST                  = 3,
          UNREGISTERED                    = (1<<3),    
          SINGLE_SHOT                     = (1<<4),
          
-         DEFAULT  = PRIORITY_DEFAULT
+         DEFAULT  = ORDER_DEFAULT
       };
    }
 
