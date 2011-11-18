@@ -222,10 +222,7 @@ namespace dtEntityWrappers
          MakeCEGUIContextCurrent();
          window->setProperty(ToStdString(namestr),ToStdString(value));
       }
-      // don't intercept this setter. This way, the
-      // value (the JavaScript function) is stored to
-      // the JavaScript object and can be retrieved with Get()
-      return Handle<Value>();
+      return value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
