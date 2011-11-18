@@ -271,7 +271,9 @@ namespace dtEntitySimulation
          osg::Vec3d translation = transformcomp->GetTranslation();
 
          // don't do clamping if camera is too far away
-         float distToCam = (translation - campos).length();
+         float distx = translation[0] - campos[0];
+         float disty = translation[1] - campos[1];
+         float distToCam = sqrt(distx * distx + disty * disty);
          if(distToCam > component->GetMinDistToCamera())
          {
            // std::cout << "MinDistCam\n";
@@ -281,7 +283,7 @@ namespace dtEntitySimulation
          osg::Vec3d lastpos = component->GetLastClampedPosition();
         
          double distMovedX = fabs(translation[0] - lastpos[0]);
-         double distMovedY = fabs(translation[0] - lastpos[0]);
+         double distMovedY = fabs(translation[1] - lastpos[1]);
 
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
