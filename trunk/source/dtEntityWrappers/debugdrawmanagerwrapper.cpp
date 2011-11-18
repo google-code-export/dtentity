@@ -71,7 +71,7 @@ namespace dtEntityWrappers
       osg::Vec3f end = UnwrapVec3(args[1]);
 
       osg::Vec4f color(1,0,0,1);
-      if(args.Length() > 2)
+      if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
       }
@@ -124,7 +124,7 @@ namespace dtEntityWrappers
       }
       
       osg::Vec4f color(1,0,0,1);
-      if(args.Length() > 1)
+      if(args.Length() > 1 && IsVec4(args[1]))
       {
          color = UnwrapVec4(args[1]);
       }
@@ -169,7 +169,7 @@ namespace dtEntityWrappers
       osg::Vec3f max = UnwrapVec3(args[1]);
 
       osg::Vec4f color(1,0,0,1);
-      if(args.Length() > 2)
+      if(args.Length() > 2  && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
       }
@@ -285,7 +285,7 @@ namespace dtEntityWrappers
       float radius = args[1]->NumberValue();
 
       osg::Vec4f color(1,0,0,1);
-      if(args.Length() > 2)
+      if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
       }
@@ -320,7 +320,7 @@ namespace dtEntityWrappers
 		std::string text = ToStdString(args[1]);
 
       osg::Vec4f color(1,0,0,1);
-      if(args.Length() > 2)
+      if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
       }

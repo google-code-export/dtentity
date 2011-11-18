@@ -73,7 +73,7 @@ int main(int argc, char** argv)
    // screens are present. So use windowed mode by default.
    view->setUpViewInWindow(100,100,800,600);
 
-   dtEntity::EntityManager* em = new dtEntity::EntityManager();
+   osg::ref_ptr<dtEntity::EntityManager> em = new dtEntity::EntityManager();
    
    if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em, true, true))
    {

@@ -269,8 +269,18 @@ namespace dtEntityWrappers
    }
  
    ////////////////////////////////////////////////////////////////////////////////
+   void GUIDestructor(v8::Persistent<Value> v, void*)
+   {
+      dtEntity::GUI* gui = UnwrapGui(v);
+      gui->unref();
+      Handle<Object> obj = Handle<Object>::Cast(v);
+      v.Dispose();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapGui(dtEntity::GUI* v)
    {
+      v->ref();
       v8::HandleScope handle_scope;
       v8::Context::Scope context_scope(GetGlobalContext());
 
@@ -299,10 +309,14 @@ namespace dtEntityWrappers
       }
       Local<Object> instance = s_guiTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
+      
+      Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
+      pobj.MakeWeak(NULL, &GUIDestructor);
       return handle_scope.Close(instance);
 
    }
 
+   
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::GUI* UnwrapGui(v8::Handle<v8::Value> val)
    {

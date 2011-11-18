@@ -93,7 +93,7 @@ namespace dtEntityQtWidgets
             //mKeyMap[83                    ] = osgGA::GUIEventAdapter::KEY_KP_End;
             //mKeyMap[84                    ] = osgGA::GUIEventAdapter::KEY_KP_Down;
             //mKeyMap[85                    ] = osgGA::GUIEventAdapter::KEY_KP_Page_Down;
-            mKeyMap[Qt::Key_Insert        ] = osgGA::GUIEventAdapter::KEY_KP_Insert;
+            mKeyMap[Qt::Key_Insert        ] = osgGA::GUIEventAdapter::KEY_Insert;
             //mKeyMap[Qt::Key_Delete        ] = osgGA::GUIEventAdapter::KEY_KP_Delete;
 
             mKeyMap[Qt::Key_Plus           ] = osgGA::GUIEventAdapter::KEY_KP_Add;
