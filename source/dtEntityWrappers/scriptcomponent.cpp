@@ -141,6 +141,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("Screen"), WrapScreen(mView.get(), window));
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
+      context->Global()->Set(String::New("Order"), WrapPriorities());
 
    }
 
