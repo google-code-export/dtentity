@@ -213,7 +213,7 @@ namespace dtEntity
       : mEntity(NULL)
    {
       Register(EnabledId, &mEnabled);
-      mEnabled.Set(false);
+      mEnabled.Set(true);
    }
 
 
@@ -227,7 +227,7 @@ namespace dtEntity
    {
       mEntity = &entity;
       StaticMeshComponent* smc;
-      if(entity.GetComponent(smc))
+      if(mEntity->GetComponent(smc))
       {
          SetupMesh(smc->GetNode());
       }
@@ -249,11 +249,6 @@ namespace dtEntity
       node->accept(finder);
       mAnimationManager = finder._am;
       
-      if(mEnabled.Get())
-      {
-         SetEnabled(true);
-      }
-
       if(mAnimationManager == NULL)
       {
          return;
@@ -263,7 +258,7 @@ namespace dtEntity
       mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
       SetupRigGeometry switcher(sys->GetVertexShader(), sys->GetFragmentShader());
       node->accept(switcher);     
-      SetEnabled(true);
+      SetEnabled(mEnabled.Get());
    }
 
 
@@ -517,6 +512,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    Property* OSGAnimationSystem::ScriptGetAnimationPlayMode(const PropertyArgs& args)
    {
+
       if(args.size() < 2)
       {
          LOG_ERROR("Usage: getAnimationPlayMode(entityid, name)");
@@ -552,6 +548,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    Property* OSGAnimationSystem::ScriptSetAnimationPlayMode(const PropertyArgs& args)
    {
+      // WARNING: THIS METHOD SEEMS TO SCREW UP RUNNING ANIMATIONS SOMEHOW,
+      // MAYBE A THREAD ISSUE!!!
+
+
       if(args.size() < 3)
       {
          LOG_ERROR("Usage: setAnimationPlayMode(entityid, name, mode=[LOOP|ONCE|STAY|PPONG])");
@@ -568,31 +568,39 @@ namespace dtEntity
          return NULL;
       }
 
+      manager->stopAll();
+
       for(osgAnimation::AnimationList::const_iterator i = list->begin(); i != list->end(); ++i)
       {
-         if((*i)->getName() == name)
+         osg::ref_ptr<osgAnimation::Animation> anim = *i;
+         if(anim->getName() == name)
          {
+            manager->unregisterAnimation(anim);
             if(mode == "LOOP")
             {
-               (*i)->setPlayMode(osgAnimation::Animation::LOOP);
+               anim->setPlayMode(osgAnimation::Animation::LOOP);
             }
             else if(mode == "ONCE")
             {
-               (*i)->setPlayMode(osgAnimation::Animation::ONCE);
+               anim->setPlayMode(osgAnimation::Animation::ONCE);
             }
             else if(mode == "STAY")
             {
-               (*i)->setPlayMode(osgAnimation::Animation::STAY);
+               anim->setPlayMode(osgAnimation::Animation::STAY);
             }
             else if(mode == "PPONG")
             {
-               (*i)->setPlayMode(osgAnimation::Animation::PPONG);
+               anim->setPlayMode(osgAnimation::Animation::PPONG);
             }
             else
             {
                LOG_ERROR("Unknown animation play mode: " + mode);
             }
-         }        
+            manager->registerAnimation(anim);
+            anim->computeDuration();
+         }
+
+
       }
       return NULL;
    }

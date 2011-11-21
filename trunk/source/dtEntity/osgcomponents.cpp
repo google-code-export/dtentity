@@ -88,12 +88,15 @@ namespace dtEntity
                if(i != mModels.end())
                {
                   return osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::DEEP_COPY_ALL &
-                     ~osg::CopyOp::DEEP_COPY_PRIMITIVES &
-                     ~osg::CopyOp::DEEP_COPY_ARRAYS &
-                     ~osg::CopyOp::DEEP_COPY_TEXTURES
+                     osg::CopyOp::DEEP_COPY_ALL
+                     & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
+                     & ~osg::CopyOp::DEEP_COPY_ARRAYS
+                     & ~osg::CopyOp::DEEP_COPY_TEXTURES
+                     & ~osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
+                     & ~osg::CopyOp::DEEP_COPY_IMAGES
+                     &  ~osg::CopyOp::DEEP_COPY_SHAPES
+                     & ~osg::CopyOp::DEEP_COPY_UNIFORMS
                   ));
-
                }
             }
             break;
