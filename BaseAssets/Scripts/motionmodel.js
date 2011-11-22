@@ -1,9 +1,9 @@
 include_once("Scripts/osgveclib.js");
 
-var positionAttitudeTransformSystem = EntityManager.getEntitySystem("PositionAttitudeTransform");
-var layerSystem = EntityManager.getEntitySystem("Layer");
-var soundSystem = EntityManager.getEntitySystem("Sound");
-var cameraSystem = EntityManager.getEntitySystem("Camera");
+var positionAttitudeTransformSystem = getEntitySystem("PositionAttitudeTransform");
+var layerSystem = getEntitySystem("Layer");
+var soundSystem = getEntitySystem("Sound");
+var cameraSystem = getEntitySystem("Camera");
 
 var CameraTranslationSpeed = 50;
 var CameraRotationSpeed = 3;
@@ -40,7 +40,7 @@ function CameraMotionSystem() {
    this.setCameraId = function(camidnew) {
       if(camidnew !== 0) {
          camid = camidnew;
-         targetCamComp = EntityManager.getEntitySystem("Camera").getComponent(camid);
+         targetCamComp = cameraSystem.getComponent(camid);
          if(targetCamComp !== null)  {
            return;
          }

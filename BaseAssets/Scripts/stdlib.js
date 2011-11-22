@@ -141,3 +141,16 @@ function createSpawnerFromEntity(entityid) {
   }
   return spawner;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+var __ENTITYSYSTEMS = {};
+
+function getEntitySystem(name) {
+  if(name in __ENTITYSYSTEMS) {
+     return __ENTITYSYSTEMS[name];
+  }
+  var es = EntityManager.getEntitySystem(name);
+
+  __ENTITYSYSTEMS[name = es];
+  return es;
+}
