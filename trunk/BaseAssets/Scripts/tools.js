@@ -2,7 +2,8 @@
 include_once("Scripts/osgveclib.js");
 include_once("Scripts/stdlib.js");
 
-var positionAttitudeTransformSystem = EntityManager.getEntitySystem("PositionAttitudeTransform");
+var positionAttitudeTransformSystem = getEntitySystem("PositionAttitudeTransform");
+var layerSystem = getEntitySystem("Layer");
 var ddm = new DebugDrawManager(EntityManager);
 
 ///////////////////////////// Selection Manager /////////////////////////////////////
@@ -49,7 +50,7 @@ var Selection = {
     
     this.ids.push(id);
 
-    if(cameraMotionSystem.ShowSelection) {
+    if(typeof cameraMotionSystem === 'undefined' || cameraMotionSystem.ShowSelection) {
       layerSystem.addVisibleBoundingBox(id);
     }
     EntityManager.emitMessage("EntitySelectedMessage", {
@@ -212,6 +213,7 @@ var Clipboard = {
 ////////////////////////////// Prototype for tools ////////////////////////////
 
 var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
+var cameraSystem = EntityManager.getEntitySystem("Camera");
 var mainCamera = null;
 if(camid != null) {
   mainCamera = EntityManager.getEntitySystem("Camera").getComponent(camid);

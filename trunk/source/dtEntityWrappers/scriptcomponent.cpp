@@ -188,10 +188,15 @@ namespace dtEntityWrappers
    void ScriptSystem::Tick(const dtEntity::Message& m)
    {
       HandleScope scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = GetGlobalContext();      
       Context::Scope context_scope(context);
+      Handle<String> funcname = String::New("__executeTimeOuts");
+      if(!context->Global()->Has(funcname))
+      {
+         return;
+      }
 
-      Handle<Value> func = context->Global()->Get(String::New("__executeTimeOuts"));
+      Handle<Value> func = context->Global()->Get(funcname);
       if(!func.IsEmpty())
       {
          Handle<Function> f = Handle<Function>::Cast(func);
