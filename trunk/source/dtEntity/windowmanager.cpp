@@ -39,15 +39,6 @@
 #include <assert.h>
 #include <sstream>
 
-#ifdef BUILD_WITH_DELTA3D 
-	#include <dtCore/camera.h>
-	#include <dtCore/deltawin.h>
-	#include <dtCore/scene.h>
-	#include <dtCore/system.h>
-	#include <dtCore/view.h>
-   
-#endif
-
 
 namespace dtEntity
 {   
@@ -110,7 +101,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   osgViewer::View* OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
    {
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
@@ -119,7 +110,7 @@ namespace dtEntity
       if(compviewer == NULL)
       {
          LOG_ERROR("Cannot open window, use CompositeViewer class!");
-         return;
+         return NULL;
       }
       LayerAttachPointSystem* lsys;
       mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
@@ -128,27 +119,19 @@ namespace dtEntity
       if(!lsys->GetByName(layername, target))
       {
          LOG_ERROR("Layer attach point not found, cannot open window!");
-         return;
+         return NULL;
       }
 
-      //osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
-      
-      //osgViewer::GraphicsWindow* window = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
-      //window->setName(name);
-      //assert(window != NULL);
       osgViewer::View* view = new osgViewer::View();
       view->setName(name);
       view->setSceneData(target->GetGroup());
-      
-      
+
       osg::Camera* cam = new osg::Camera();   
       cam->setName(name);
       view->setCamera(cam);
-//      cam->setGraphicsContext(window);
-      //appsys->AddCameraToSceneGraph(cam);
-//      gc->realize();
       view->setUpViewInWindow(100,100,800,600);
       compviewer->addView(view);
+      return view;
       
    }
 
@@ -215,169 +198,4 @@ namespace dtEntity
       return pickray;
       
    }
-
-#ifdef BUILD_WITH_DELTA3D 
-
-   ///////////////////////////////////////////////////////////////////////////////
-   D3DWindowManager::D3DWindowManager(EntityManager& em, dtABC::Application& app)
-      : WindowManager(em)
-      , mApplication(&app)
-   {
-      ApplicationSystem* appsys;
-      em.GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      appsys->SetViewer(mApplication->GetCompositeViewer());
-      mApplication->GetCamera()->RemoveSender(&dtCore::System::GetInstance());
-      appsys->CreateSceneGraphEntities();
-
-      mTimeChangedFunctor = dtEntity::MessageFunctor(this, &D3DWindowManager::OnTimeChange);
-      em.RegisterForMessages(dtEntity::TimeChangedMessage::TYPE, mTimeChangedFunctor, "EphemerisSystem::OnTimeChange");
-
-
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   D3DWindowManager::~D3DWindowManager()
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void D3DWindowManager::OnTimeChange(const dtEntity::Message& m)
-   {
-      const TimeChangedMessage& msg = static_cast<const TimeChangedMessage&>(m);
-      dtCore::System::GetInstance().SetSimulationClockTime(msg.GetSimulationClockTime());
-      dtCore::System::GetInstance().SetSimulationTime(msg.GetSimulationTime());
-      dtCore::System::GetInstance().SetTimeScale(msg.GetTimeScale());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void D3DWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
-   {
-      OpenWindowInternal(name, layername, traits);
-      WindowCreatedMessage msg;
-      msg.SetName(name);
-      mEntityManager->EmitMessage(msg);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void D3DWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
-   {
-      LayerAttachPointSystem* lsys;
-      mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-
-      dtEntity::LayerAttachPointComponent* target;
-      if(!lsys->GetByName(layername, target))
-      {
-         LOG_ERROR("Layer attach point not found, cannot open window!");
-         return;
-      }
-
-      dtCore::DeltaWin::DeltaWinTraits t;
-      t.name = name;
-      t.x = traits.x;
-      t.y = traits.y;
-      t.width = traits.width;
-      t.height = traits.height;
-      t.showCursor = traits.useCursor;
-      //t.fullScreen = traits.fullScreen;
-      t.windowDecoration = traits.windowDecoration;
-      t.supportResize = traits.supportsResize;
-      t.inheritedWindowData = traits.inheritedWindowData;
-      t.contextToShare = traits.sharedContext;
-      t.hostName = traits.hostName;
-      t.displayNum = traits.displayNum;
-      t.screenNum = traits.screenNum;
-      //t.realizeUponCreate = traits.realizeUponCreate;
-      t.vsync = traits.vsync;
-
-      dtCore::DeltaWin* window = new dtCore::DeltaWin(t);
-
-      dtCore::View* view = new dtCore::View();
-      view->SetName(name);
-      view->GetOsgViewerView()->setName(name);
-      dtCore::Scene* scene = new dtCore::Scene();
-      scene->SetSceneNode(target->GetGroup());
-      view->SetScene(scene);
-      view->SetName(name);
-      
-      GetApplication()->AddView(*view);
-      
-      dtCore::Camera* cam = new dtCore::Camera(name);   
-      cam->SetWindow(window);
-      view->SetCamera(cam);
-      cam->GetOSGCamera()->setName(name);
-      
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void D3DWindowManager::CloseWindow(const std::string& name)
-   {
-
-      dtCore::View* v = GetD3DViewByName(name);
-      if(v)
-      {
-         GetApplication()->RemoveView(*v);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtCore::View* D3DWindowManager::GetD3DViewByName(const std::string& name)
-   {
-
-      int num = GetApplication()->GetNumberOfViews();
-      for(int i = 0; i < num; ++i)
-      {
-         if(name == GetApplication()->GetView(i)->GetName())
-         {
-            return GetApplication()->GetView(i);
-         }
-      }
-      return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaWin* D3DWindowManager::GetD3DWindowByName(const std::string& name)
-   {
-      dtCore::View* view = GetD3DViewByName(name);
-      if(view) return view->GetCamera()->GetWindow();
-      return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 D3DWindowManager::GetPickRay(const std::string& name, float x, float y)
-   {
-      osgViewer::GraphicsWindow* window = GetD3DWindowByName(name)->GetOsgViewerGraphicsWindow();
-      
-      if(!window) 
-      {
-         LOG_ERROR("Cannot get pickray for window " + name);
-         return osg::Vec3(0,1,0);
-      }
-
-      osg::Camera* cam = GetD3DViewByName(name)->GetOsgViewerView()->getCamera();
-      
-      int wx, wy, w, h;
-      window->getWindowRectangle(wx, wy, w, h);
-
-      osg::Vec2 windowCoord((w/2) * (x + 1), (h/2) * (y + 1));
-
-      // calculate pick ray
-      osg::Vec3 start = osg::Vec3(windowCoord, 0);
-      osg::Vec3 end(windowCoord, 1);
-
-      osg::Matrix matrix;
-      matrix.preMult(cam->getViewport()->computeWindowMatrix());
-      matrix.preMult(cam->getProjectionMatrix());
-      matrix.preMult(cam->getViewMatrix());
-
-      osg::Matrix inverse;
-      inverse.invert(matrix);
-
-      start = start * inverse;
-      end = end * inverse;
-      osg::Vec3 pickray = end - start;
-      pickray.normalize();
-      return pickray;
-      
-   }
-#endif
 }
