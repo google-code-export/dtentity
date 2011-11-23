@@ -1849,8 +1849,13 @@ namespace dtEntityQtWidgets
          LOG_WARNING("Cannot set additional properties on spawner: Spawner not found!");
          return;
       }
+
       spawner->SetAddToSpawnerStore(addToStore);
       spawner->SetGUICategory(category.toStdString());
       spawner->SetIconPath(iconPath.toStdString());
+      dtEntity::SpawnerModifiedMessage msg;
+      msg.SetName(spawner->GetName());
+      msg.SetMapName(spawner->GetMapName());
+      mEntityManager->EmitMessage(msg);
    }
 } 
