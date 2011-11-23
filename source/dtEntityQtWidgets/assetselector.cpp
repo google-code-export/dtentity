@@ -63,7 +63,7 @@ namespace dtEntityQtWidgets
    }
       
    ////////////////////////////////////////////////////////////////////////////////
-   AssetSelector::AssetSelector(const QString& filters, QWidget* parent)
+   AssetSelector::AssetSelector(const QString& filters, QWidget* parent, const QString& expandToPath)
       :  mModel(new QFileSystemModel())
       , mPreviewContents(NULL)
    {
@@ -102,7 +102,23 @@ namespace dtEntityQtWidgets
 
       QSettings settings;
       QStringList dataPaths = settings.value("DataPaths").toStringList();
-      QString current = settings.value("AssetSelectorCurrentDataPath", dataPaths.front()).toString();
+      QString current;
+
+      if(expandToPath == "")
+      {
+         current = settings.value("AssetSelectorCurrentDataPath", dataPaths.front()).toString();
+      }
+      else
+      {
+         QString path;
+         foreach(path, dataPaths)
+         {
+            if(expandToPath.contains(path))
+            {
+               current = path;
+            }
+         }
+      }
 
       int i = 0;
       foreach(const QString& str, dataPaths)
@@ -122,6 +138,11 @@ namespace dtEntityQtWidgets
       PopulatePathInModel(lastpath, current, mFileTree, model);
 
       connect(mDataPathSelector, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(OnDataPathChanged(const QString&)));
+
+      if(expandToPath != "")
+      {
+         mFileTree->setCurrentIndex(mModel->index(expandToPath));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +155,12 @@ namespace dtEntityQtWidgets
    QString AssetSelector::GetSelected() const
    {
       return mSelected;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QString AssetSelector::GetSelectedAbsPath() const
+   {
+      return mDataPathSelector->currentText() + QDir::separator() + mSelected;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
