@@ -53,10 +53,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    MapComponent::MapComponent()
       : mOwner(NULL)
+      , mSpawner(NULL)
+      , mSpawnerNameProp(
+           DynamicStringProperty::SetValueCB(this, &MapComponent::SetSpawnerName),
+           DynamicStringProperty::GetValueCB(this, &MapComponent::GetSpawnerName)
+        )
    {
       Register(EntityNameId, &mEntityName);
       Register(MapNameId, &mMapName);
-      Register(SpawnerNameId, &mSpawnerName);
+      Register(SpawnerNameId, &mSpawnerNameProp);
       Register(UniqueIdId, &mUniqueId);
       Register(SaveWithMapId, &mSaveWithMap);
       Register(VisibleInEntityListId, &mVisibleInEntityList);
@@ -110,6 +115,20 @@ namespace dtEntity
       {
          SetUniqueId(mUniqueId.Get());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   std::string MapComponent::GetSpawnerName() const
+   {
+      return mSpawner == NULL ? "" : mSpawner->GetName();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void MapComponent::SetSpawnerName(const std::string& name)
+   {
+      MapSystem* ms;
+      mOwner->GetEntityManager().GetEntitySystem(TYPE, ms);
+      ms->GetSpawner(name, mSpawner);
    }
 
    ////////////////////////////////////////////////////////////////////////////

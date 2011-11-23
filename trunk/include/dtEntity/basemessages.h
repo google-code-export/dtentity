@@ -310,6 +310,35 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
+   /**
+    * Gets sent when a spawner was modified
+   */
+   class DT_ENTITY_EXPORT SpawnerModifiedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId MapNameId;
+      static const StringId NameId;
+
+      SpawnerModifiedMessage();
+
+      virtual Message* Clone() const { return CloneContainer<SpawnerModifiedMessage>(); }
+
+      std::string GetMapName() const { return mMapName.Get(); }
+      void SetMapName(const std::string& v){ mMapName.Set(v); }
+
+      std::string GetName() const { return mName.Get(); }
+      void SetName(const std::string& v){ mName.Set(v); }
+
+   private:
+
+      StringProperty mName;
+      StringProperty mMapName;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
 
    /**
     * Send this message to cause the map system to spawn an entity from the given spawner.
