@@ -38,10 +38,11 @@ namespace dtEntityQtWidgets
 
    public:
       
-     AssetSelector(const QString& filters, QWidget* parent = 0);
+      AssetSelector(const QString& filters, QWidget* parent = 0, const QString& expandToPath = "");
      ~AssetSelector();
 
      QString GetSelected() const;
+     QString GetSelectedAbsPath() const;
 
      void ClearPreviewWindow();
      void ShowThumbNailImage(const QString& path);
