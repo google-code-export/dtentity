@@ -17,10 +17,12 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="mEditedItemName">
-       <property name="text">
-        <string/>
-       </property>
+      <widget class="QComboBox" name="mCategories">
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
