@@ -110,7 +110,13 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void SpawnerStoreView::OnRemoveSpawner(const QString& name)
    {
-
+      QList<QListWidgetItem*> items = mSpawnerList->findItems(name, Qt::MatchExactly);
+      QListWidgetItem* item;
+      foreach(item, items)
+      {
+         mSpawnerList->removeItemWidget(item);
+         delete item;
+      }
    }
 
 
@@ -126,7 +132,8 @@ namespace dtEntityQtWidgets
    SpawnerStoreController::~SpawnerStoreController()
    {
       mEntityManager->UnregisterForMessages(dtEntity::SpawnerAddedMessage::TYPE, mSpawnerAddedFunctor);
-      mEntityManager->UnregisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, mSpawnerRemovedFunctor);
+      mEntityManager->UnregisterForMessages(dtEntity::SpawnerAddedMessage::TYPE, mSpawnerAddedFunctor);
+      mEntityManager->UnregisterForMessages(dtEntity::SpawnerModifiedMessage::TYPE, mSpawnerModifiedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +155,9 @@ namespace dtEntityQtWidgets
 
       mSpawnerRemovedFunctor = dtEntity::MessageFunctor(this, &SpawnerStoreController::OnSpawnerRemoved);
       mEntityManager->RegisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, mSpawnerRemovedFunctor);
+
+      mSpawnerModifiedFunctor = dtEntity::MessageFunctor(this, &SpawnerStoreController::OnSpawnerModified);
+      mEntityManager->RegisterForMessages(dtEntity::SpawnerModifiedMessage::TYPE, mSpawnerModifiedFunctor);
 
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
@@ -270,6 +280,23 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreController::OnSpawnerModified(const dtEntity::Message& m)
+   {
+      const dtEntity::SpawnerModifiedMessage& msg =
+         static_cast<const dtEntity::SpawnerModifiedMessage&>(m);
+
+      dtEntity::SpawnerRemovedMessage m1;
+      m1.SetName(msg.GetName());
+      m1.SetMapName(msg.GetMapName());
+      OnSpawnerRemoved(m1);
+
+      dtEntity::SpawnerAddedMessage m2;
+      m2.SetName(msg.GetName());
+      m2.SetMapName(msg.GetMapName());
+      OnSpawnerAdded(m2);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void SpawnerStoreController::OnSpawnerRemoved(const dtEntity::Message& m)
    {
       const dtEntity::SpawnerRemovedMessage& msg =
@@ -286,10 +313,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      if(spawner->GetAddToSpawnerStore())
-      {
-         emit RemoveSpawner(spawner->GetName().c_str());
-      }
+      emit RemoveSpawner(spawner->GetName().c_str());
    }
 } 
 

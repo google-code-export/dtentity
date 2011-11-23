@@ -73,6 +73,7 @@ namespace dtEntityQtWidgets
       void SetupSlots(SpawnerStoreView* view);
 
       void OnSpawnerAdded(const dtEntity::Message& m);
+      void OnSpawnerModified(const dtEntity::Message& m);
       void OnSpawnerRemoved(const dtEntity::Message& m);
 
    signals:
@@ -87,6 +88,7 @@ namespace dtEntityQtWidgets
    private:
       dtEntity::EntityManager* mEntityManager;
       dtEntity::MessageFunctor mSpawnerAddedFunctor;
+      dtEntity::MessageFunctor mSpawnerModifiedFunctor;
       dtEntity::MessageFunctor mSpawnerRemovedFunctor;
    };
 }

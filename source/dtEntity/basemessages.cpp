@@ -57,6 +57,7 @@ namespace dtEntity
       em.RegisterMessageType<SetSystemPropertiesMessage>(SetSystemPropertiesMessage::TYPE);
       em.RegisterMessageType<SpawnEntityMessage>(SpawnEntityMessage::TYPE);
       em.RegisterMessageType<SpawnerAddedMessage>(SpawnerAddedMessage::TYPE);      
+      em.RegisterMessageType<SpawnerModifiedMessage>(SpawnerModifiedMessage::TYPE);
       em.RegisterMessageType<SpawnerRemovedMessage>(SpawnerRemovedMessage::TYPE);            
       em.RegisterMessageType<StartSystemMessage>(StartSystemMessage::TYPE); 
       em.RegisterMessageType<TickMessage>(TickMessage::TYPE);
@@ -179,6 +180,18 @@ namespace dtEntity
       this->Register(NameId, &mName);
       this->Register(MapNameId, &mMapName);
       this->Register(ParentNameId, &mParentName);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType SpawnerModifiedMessage::TYPE(SID("SpawnerModifiedMessage"));
+   const StringId SpawnerModifiedMessage::NameId(SID("Name"));
+   const StringId SpawnerModifiedMessage::MapNameId(SID("MapName"));
+
+   SpawnerModifiedMessage::SpawnerModifiedMessage()
+      : Message(TYPE)
+   {
+      this->Register(NameId, &mName);
+      this->Register(MapNameId, &mMapName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/componentpluginmanager.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/mapencoder.h>
 #include <dtEntity/message.h>
@@ -56,10 +57,6 @@ namespace dtEntity
       virtual ~MapComponent();
 
       virtual ComponentType GetType() const { return TYPE; }
-      /*virtual bool IsInstanceOf(ComponentType id) const
-      { 
-         return (id == TYPE); 
-      } */
 
       virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
@@ -75,8 +72,8 @@ namespace dtEntity
        * If entity was created from a spawner then this is set to the spawners name.
        * If string is empty then entity was not created by spawner.
        */
-      std::string GetSpawnerName() const { return mSpawnerName.Get(); }
-      void SetSpawnerName(std::string v) { mSpawnerName.Set(v); }
+      std::string GetSpawnerName() const;
+      void SetSpawnerName(const std::string& v);
    
       /**
        * name of map that entity was loaded from and that it will be stored to
@@ -100,7 +97,8 @@ namespace dtEntity
    private:
       StringProperty mEntityName;
       StringProperty mMapName;
-      StringProperty mSpawnerName;
+      DynamicStringProperty mSpawnerNameProp;
+      Spawner* mSpawner;
       StringProperty mUniqueId;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
