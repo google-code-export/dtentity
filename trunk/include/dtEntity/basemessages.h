@@ -319,23 +319,33 @@ namespace dtEntity
    public:
 
       static const MessageType TYPE;
-      static const StringId MapNameId;
+      static const StringId OldCategoryId;
+      static const StringId NewCategoryId;
       static const StringId NameId;
+      static const StringId MapNameId;
 
       SpawnerModifiedMessage();
 
       virtual Message* Clone() const { return CloneContainer<SpawnerModifiedMessage>(); }
 
+      std::string GetName() const { return mName.Get(); }
+      void SetName(const std::string& v){ mName.Set(v); }
+
       std::string GetMapName() const { return mMapName.Get(); }
       void SetMapName(const std::string& v){ mMapName.Set(v); }
 
-      std::string GetName() const { return mName.Get(); }
-      void SetName(const std::string& v){ mName.Set(v); }
+      std::string GetOldCategory() const { return mOldCategory.Get(); }
+      void SetOldCategory(const std::string& v){ mOldCategory.Set(v); }
+
+      std::string GetNewCategory() const { return mNewCategory.Get(); }
+      void SetNewCategory(const std::string& v){ mNewCategory.Set(v); }
 
    private:
 
       StringProperty mName;
       StringProperty mMapName;
+      StringProperty mOldCategory;
+      StringProperty mNewCategory;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

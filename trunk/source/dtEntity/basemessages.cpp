@@ -186,12 +186,16 @@ namespace dtEntity
    const MessageType SpawnerModifiedMessage::TYPE(SID("SpawnerModifiedMessage"));
    const StringId SpawnerModifiedMessage::NameId(SID("Name"));
    const StringId SpawnerModifiedMessage::MapNameId(SID("MapName"));
+   const StringId SpawnerModifiedMessage::OldCategoryId(SID("OldCategory"));
+   const StringId SpawnerModifiedMessage::NewCategoryId(SID("NewCategory"));
 
    SpawnerModifiedMessage::SpawnerModifiedMessage()
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
       this->Register(MapNameId, &mMapName);
+      this->Register(OldCategoryId, &mOldCategory);
+      this->Register(NewCategoryId, &mNewCategory);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

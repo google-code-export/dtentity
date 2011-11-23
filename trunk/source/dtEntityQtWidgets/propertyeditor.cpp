@@ -1849,13 +1849,15 @@ namespace dtEntityQtWidgets
          LOG_WARNING("Cannot set additional properties on spawner: Spawner not found!");
          return;
       }
-
+      std::string oldcategory = spawner->GetGUICategory();
       spawner->SetAddToSpawnerStore(addToStore);
       spawner->SetGUICategory(category.toStdString());
       spawner->SetIconPath(iconPath.toStdString());
       dtEntity::SpawnerModifiedMessage msg;
       msg.SetName(spawner->GetName());
       msg.SetMapName(spawner->GetMapName());
+      msg.SetOldCategory(oldcategory);
+      msg.SetNewCategory(spawner->GetGUICategory());
       mEntityManager->EmitMessage(msg);
    }
 } 

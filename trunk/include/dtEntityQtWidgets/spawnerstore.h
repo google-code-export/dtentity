@@ -36,6 +36,8 @@ namespace dtEntityQtWidgets
 
       SpawnerList();
       void mousePressEvent(QMouseEvent *event);
+   signals:
+      void spawnerClicked(QListWidgetItem*);
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -52,10 +54,19 @@ namespace dtEntityQtWidgets
    public slots:
 
       void OnAddSpawner(const QString& name, const QString& category, const QString& iconpath);
-      void OnRemoveSpawner(const QString& name);
+      void OnRemoveSpawner(const QString& name, const QString& category);
+      void CategoryChanged(const QString&);
+      void OnItemClicked(QListWidgetItem*);
+
+   signals:
+      void SpawnerClicked(const QString& name, const QString& category);
 
    private:
+
+      void ShowHideByCategory();
+
       QListWidget* mSpawnerList;
+      QComboBox* mCategories;
 
    }; 
 
@@ -78,13 +89,13 @@ namespace dtEntityQtWidgets
 
    signals:
       void AddSpawner(const QString& name, const QString& category, const QString& iconpath);
-      void RemoveSpawner(const QString& name);
+      void RemoveSpawner(const QString& name, const QString& category);
 
    public slots:
    
       void Init();
       void OnTextDroppedOntoGLWidget(const QPointF& pos, const QString&);
-
+      void OnSpawnerClicked(const QString& name, const QString& category);
    private:
       dtEntity::EntityManager* mEntityManager;
       dtEntity::MessageFunctor mSpawnerAddedFunctor;

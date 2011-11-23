@@ -46,9 +46,12 @@ namespace dtEntityQtWidgets
       setIconSize(QSize(80, 80));
       setMovement(QListView::Snap);
       setWrapping(true);
-      setGridSize(QSize(80,100));
+      setGridSize(QSize(120,120));
       setViewMode(QListView::IconMode);
       setWordWrap(true);
+
+      QFont sansFont("Helvetica [Cronyx]", 8);
+      setFont(sansFont);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -58,19 +61,20 @@ namespace dtEntityQtWidgets
         if (!item)
             return;
 
+        emit spawnerClicked(item);
+
         //QPoint hotSpot = event->pos() - item->pos();
 
         QByteArray itemData;
         QMimeData *mimeData = new QMimeData;
         mimeData->setData("application/x-spawner", itemData);
         mimeData->setText(QString("SPAWNER|%1").arg(item->text()));
-		
-		//TODO memory leak?
-        QDrag* drag = new QDrag(this);
-        drag->setMimeData(mimeData);
-        drag->setPixmap(item->icon().pixmap(QSize(40, 40)));
 
-        drag->exec(Qt::CopyAction);
+		  QDrag drag(this);
+		  drag.setMimeData(mimeData);
+		  drag.setPixmap(item->icon().pixmap(QSize(40, 40)));
+
+        drag.exec(Qt::CopyAction);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -80,13 +84,46 @@ namespace dtEntityQtWidgets
    {
       Ui_SpawnerStore ui;
       ui.setupUi(this);
+      mCategories = ui.mCategories;
       mSpawnerList = new SpawnerList();
       layout()->addWidget(mSpawnerList);
+      connect(mSpawnerList, SIGNAL(spawnerClicked( QListWidgetItem*)), this, SLOT(OnItemClicked(QListWidgetItem*)));
+      connect(mCategories, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(CategoryChanged(const QString&)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    SpawnerStoreView::~SpawnerStoreView()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreView::CategoryChanged(const QString& category)
+   {
+      ShowHideByCategory();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreView::OnItemClicked(QListWidgetItem* item)
+   {
+      emit SpawnerClicked(item->text(), item->data(Qt::UserRole).toString());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreView::ShowHideByCategory()
+   {
+      QString category = mCategories->currentText();
+      for(unsigned int i = 0; i < mSpawnerList->count(); ++i)
+      {
+         QListWidgetItem* item = mSpawnerList->item(i);
+         if(category == "All" || item->data(Qt::UserRole).toString() == category)
+         {
+            item->setHidden(false);
+         }
+         else
+         {
+            item->setHidden(true);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -103,20 +140,32 @@ namespace dtEntityQtWidgets
       {
          item = new QListWidgetItem(name, mSpawnerList);
       }
+      item->setData(Qt::UserRole, category);
 
       mSpawnerList->addItem(item);
+
+      if(mCategories->findText(category) == -1)
+      {
+         mCategories->addItem(category);
+      }
+      ShowHideByCategory();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnerStoreView::OnRemoveSpawner(const QString& name)
+   void SpawnerStoreView::OnRemoveSpawner(const QString& name, const QString& category)
    {
       QList<QListWidgetItem*> items = mSpawnerList->findItems(name, Qt::MatchExactly);
       QListWidgetItem* item;
       foreach(item, items)
       {
-         mSpawnerList->removeItemWidget(item);
-         delete item;
+         if(item->data(Qt::UserRole).toString() == category)
+         {
+            mSpawnerList->removeItemWidget(item);
+            delete item;
+            return;
+         }
       }
+      ShowHideByCategory();
    }
 
 
@@ -142,8 +191,12 @@ namespace dtEntityQtWidgets
       connect(this, SIGNAL(AddSpawner(const QString&, const QString&, const QString&)),
               view, SLOT(OnAddSpawner(const QString&, const QString&, const QString&)));
 
-      connect(this, SIGNAL(RemoveSpawner(const QString&)),
-              view, SLOT(OnRemoveSpawner(const QString&)));
+      connect(this, SIGNAL(RemoveSpawner(const QString&, const QString&)),
+              view, SLOT(OnRemoveSpawner(const QString&, const QString&)));
+
+      connect(view, SIGNAL(SpawnerClicked(const QString&, const QString&)),
+              this, SLOT(OnSpawnerClicked(const QString&, const QString&)));
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -254,6 +307,14 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreController::OnSpawnerClicked(const QString& name, const QString& category)
+   {
+      SpawnerSelectedMessage msg;
+      msg.SetName(name.toStdString());
+      mEntityManager->EmitMessage(msg);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void SpawnerStoreController::OnSpawnerAdded(const dtEntity::Message& m)
    {
       const dtEntity::SpawnerAddedMessage& msg =
@@ -285,10 +346,7 @@ namespace dtEntityQtWidgets
       const dtEntity::SpawnerModifiedMessage& msg =
          static_cast<const dtEntity::SpawnerModifiedMessage&>(m);
 
-      dtEntity::SpawnerRemovedMessage m1;
-      m1.SetName(msg.GetName());
-      m1.SetMapName(msg.GetMapName());
-      OnSpawnerRemoved(m1);
+      emit RemoveSpawner(msg.GetName().c_str(), msg.GetOldCategory().c_str());
 
       dtEntity::SpawnerAddedMessage m2;
       m2.SetName(msg.GetName());
@@ -313,7 +371,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      emit RemoveSpawner(spawner->GetName().c_str());
+      emit RemoveSpawner(spawner->GetName().c_str(), spawner->GetGUICategory().c_str());
    }
 } 
 
