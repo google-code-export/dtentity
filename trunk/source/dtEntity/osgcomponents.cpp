@@ -434,6 +434,15 @@ namespace dtEntity
       SetMesh(mMeshPathProperty.Get(), mCacheHint.Get());
       BaseClass::Finished();
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void StaticMeshComponent::OnAddedToEntity(Entity& entity)
+   {
+      BaseClass::OnAddedToEntity(entity);
+
+      // for picking
+      GetNode()->setUserData(NULL);
+   }
    
    ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::SetMesh(const std::string& path, StringId cacheHint)
@@ -449,7 +458,6 @@ namespace dtEntity
          mMeshNode = new osg::Node();
          mMeshNode->setName("StaticMeshComponent");
          SetNode(mMeshNode);
-         mMeshNode->setUserData(mEntity);
       }
       else
       {
@@ -480,6 +488,9 @@ namespace dtEntity
          SetStaticMesh(mMeshNode);    
       }
 
+      // don't set user data, mesh node may have multiple parents
+      mMeshNode->setUserData(NULL);
+
       MeshChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());
       msg.SetFilePath(path);
@@ -497,7 +508,7 @@ namespace dtEntity
    {
       mMeshNode = node;
       assert(mEntity != NULL);
-      mMeshNode->setUserData(mEntity);
+
       mMeshNode->setName("StaticMeshComponent");
       SetNode(mMeshNode); 
       
@@ -553,6 +564,22 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    MatrixTransformComponent::MatrixTransformComponent()
       : BaseClass(new osg::MatrixTransform())
+      , mMatrix(
+           DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
+           DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
+        )
+   {
+      Register(MatrixId, &mMatrix);
+      GetNode()->setName("MatrixTransformComponent");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   MatrixTransformComponent::MatrixTransformComponent(osg::MatrixTransform* trans)
+      : BaseClass(trans)
+      , mMatrix(
+           DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
+           DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
+        )
    {
       Register(MatrixId, &mMatrix);
       GetNode()->setName("MatrixTransformComponent");
@@ -576,9 +603,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MatrixTransformComponent::GetMatrix(osg::Matrix& m) const
+   osg::Matrix MatrixTransformComponent::GetMatrix() const
    {
-      m = GetMatrixTransform()->getMatrix();
+      return GetMatrixTransform()->getMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -587,18 +614,6 @@ namespace dtEntity
       GetMatrixTransform()->setMatrix(m);
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void MatrixTransformComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == MatrixId)
-      {
-         SetMatrix(prop.MatrixValue());
-      }
-      else
-      {
-         BaseClass::OnPropertyChanged(propname, prop);
-      }
-   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
@@ -612,17 +627,53 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    PositionAttitudeTransformComponent::PositionAttitudeTransformComponent()
       : BaseClass(new osg::PositionAttitudeTransform())
+      , mPosition(
+           DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetPosition),
+           DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetPosition)
+        )
+      , mScale(
+           DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetScale),
+           DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetScale)
+        )
+      , mAttitude(
+           DynamicQuatProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetAttitude),
+           DynamicQuatProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetAttitude)
+        )
    {
       Register(PositionId, &mPosition);
       Register(AttitudeId, &mAttitude);
       Register(ScaleId, &mScale);
       mScale.Set(osg::Vec3(1, 1, 1));
       GetNode()->setName("PositionAttitudeTransformComponent");
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    PositionAttitudeTransformComponent::~PositionAttitudeTransformComponent()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Matrix PositionAttitudeTransformComponent::GetMatrix() const
+   {
+      osg::Matrix t;
+      t.makeTranslate(GetTranslation());
+      t.setRotate(GetRotation());
+      osg::Matrix s;
+      s.makeScale(GetScale());
+      return s * t;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void PositionAttitudeTransformComponent::SetMatrix(const osg::Matrix& mat)
+   {
+      osg::Vec3d trans, scale;
+      osg::Quat rot, so;
+      mat.decompose(trans, rot, scale, so);
+      SetRotation(rot);
+      SetTranslation(trans);
+      SetScale(scale);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -638,50 +689,39 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   osg::Vec3d PositionAttitudeTransformComponent::GetPosition() const
+   {
+      return GetPositionAttitudeTransform()->getPosition();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void PositionAttitudeTransformComponent::SetPosition(const osg::Vec3d& p)
    {
-      mPosition.Set(p);
       GetPositionAttitudeTransform()->setPosition(p);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Quat PositionAttitudeTransformComponent::GetAttitude() const
+   {
+      return GetPositionAttitudeTransform()->getAttitude();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void PositionAttitudeTransformComponent::SetAttitude(const osg::Quat& p)
    {
-      mAttitude.Set(p);
       GetPositionAttitudeTransform()->setAttitude(p);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 PositionAttitudeTransformComponent::GetScale() const
+   osg::Vec3d PositionAttitudeTransformComponent::GetScale() const
    {
       return GetPositionAttitudeTransform()->getScale();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetScale(const osg::Vec3& s)
+   void PositionAttitudeTransformComponent::SetScale(const osg::Vec3d& s)
    {
-      mScale.Set(s);
       GetPositionAttitudeTransform()->setScale(s);
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == PositionId)
-      {
-         GetPositionAttitudeTransform()->setPosition(prop.Vec3dValue());
-      }
-      else if(propname == AttitudeId)
-      {
-         GetPositionAttitudeTransform()->setAttitude(prop.QuatValue());
-      }
-      else if(propname == ScaleId)
-      {
-         GetPositionAttitudeTransform()->setScale(prop.Vec3Value());
-      }
-      else
-      {
-         BaseClass::OnPropertyChanged(propname, prop);
-      }
-   }
 }

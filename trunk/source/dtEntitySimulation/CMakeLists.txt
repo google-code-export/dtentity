@@ -16,12 +16,14 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/export.h
    ${HEADER_PATH}/groundclampingcomponent.h
    ${HEADER_PATH}/messages.h
+   ${HEADER_PATH}/manipulatorcomponent.h
    ${HEADER_PATH}/quattools.h
 )
 
 SET(LIB_SOURCES
 	 ${SOURCE_PATH}/groundclampingcomponent.cpp
 	 ${SOURCE_PATH}/messages.cpp
+	 ${SOURCE_PATH}/manipulatorcomponent.cpp
 	 ${SOURCE_PATH}/pluginfactory.cpp
 )
 

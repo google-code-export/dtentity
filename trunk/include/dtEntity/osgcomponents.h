@@ -24,6 +24,7 @@
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
@@ -197,8 +198,9 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-     virtual void Finished();
+      virtual void Finished();
 
+      void OnAddedToEntity(Entity& entity);
 
       // set existing geometry as static mesh
       void SetStaticMesh(osg::Node* node);
@@ -269,8 +271,26 @@ namespace dtEntity
       virtual osg::Vec3d GetTranslation() const = 0;
       virtual void SetTranslation(const osg::Vec3d&) = 0;
 
+      virtual osg::Vec3d GetScale() const { return osg::Vec3d(1,1,1); }
+      virtual void SetScale(const osg::Vec3d&) {}
+
       virtual osg::Quat GetRotation() const = 0;
       virtual void SetRotation(const osg::Quat&) = 0;
+
+      virtual osg::Matrix GetMatrix() const
+      {
+         osg::Matrix matrix;
+         matrix.setTrans(GetTranslation());
+         matrix.setRotate(GetRotation());
+         return matrix;
+      }
+
+      virtual void SetMatrix(const osg::Matrix& mat)
+      {
+         SetTranslation(mat.getTrans());
+         SetRotation(mat.getRotate());
+      }
+
 
    private:
 
@@ -291,6 +311,7 @@ namespace dtEntity
       static const StringId MatrixId;
       
       MatrixTransformComponent();
+      MatrixTransformComponent(osg::MatrixTransform* trans);
      
       virtual ~MatrixTransformComponent();
 
@@ -302,44 +323,51 @@ namespace dtEntity
       const osg::MatrixTransform* GetMatrixTransform() const;
       osg::MatrixTransform* GetMatrixTransform();
 
-      void OnPropertyChanged(StringId propname, Property& prop);
-
-      void GetMatrix(osg::Matrix& m) const;
-      void SetMatrix(const osg::Matrix& m);
+      virtual osg::Matrix GetMatrix() const;
+      virtual void SetMatrix(const osg::Matrix& m);
       
       virtual osg::Vec3d GetTranslation() const
       {
-         osg::Matrix m;
-         GetMatrix(m);
+         osg::Matrix m = GetMatrix();
          return m.getTrans();
       }
 
       virtual void SetTranslation(const osg::Vec3d& t)
       {
-         osg::Matrix m;
-         GetMatrix(m);
+         osg::Matrix m = GetMatrix();
          m.setTrans(t);
          SetMatrix(m);
       }
 
       virtual osg::Quat GetRotation() const
       {
-         osg::Matrix m;
-         GetMatrix(m);
+         osg::Matrix m = GetMatrix();
          return m.getRotate();
       }
 
       virtual void SetRotation(const osg::Quat& q)
       {
-         osg::Matrix m;
-         GetMatrix(m);
+         osg::Matrix m = GetMatrix();
          m.setRotate(q);
+         SetMatrix(m);
+      }
+
+      virtual osg::Vec3d GetScale() const
+      {
+         osg::Matrix m = GetMatrix();
+         return m.getScale();
+      }
+
+      virtual void SetScale(const osg::Vec3d& v)
+      {
+         osg::Matrix m = GetMatrix();
+         m = m.scale(v);
          SetMatrix(m);
       }
 
    private:
 
-      MatrixProperty mMatrix;
+      DynamicMatrixProperty mMatrix;
    };
 
    
@@ -383,16 +411,14 @@ namespace dtEntity
       const osg::PositionAttitudeTransform* GetPositionAttitudeTransform() const;
       osg::PositionAttitudeTransform* GetPositionAttitudeTransform();
 
-      void OnPropertyChanged(StringId propname, Property& prop);
-
-      osg::Vec3d GetPosition() const { return mPosition.Get(); }
+      osg::Vec3d GetPosition() const;
       void SetPosition(const osg::Vec3d& p);
 
-      osg::Quat GetAttitude() const { return mAttitude.Get(); }
+      osg::Quat GetAttitude() const;
       void SetAttitude(const osg::Quat& r);
 
-      osg::Vec3 GetScale() const;
-      void SetScale(const osg::Vec3& q);
+      osg::Vec3d GetScale() const;
+      void SetScale(const osg::Vec3d& q);
 
       virtual osg::Vec3d GetTranslation() const  { return GetPosition(); }
       virtual void SetTranslation(const osg::Vec3d& t) { SetPosition(t); }
@@ -400,11 +426,14 @@ namespace dtEntity
       virtual osg::Quat GetRotation() const { return GetAttitude(); }
       virtual void SetRotation(const osg::Quat& q) { SetAttitude(q); }
 
+      virtual osg::Matrix GetMatrix() const;
+      virtual void SetMatrix(const osg::Matrix& mat);
+
    private:
 
-      Vec3dProperty mPosition;
-      QuatProperty mAttitude;
-      Vec3Property mScale;
+      DynamicVec3dProperty mPosition;
+      DynamicQuatProperty mAttitude;
+      DynamicVec3dProperty mScale;
    };
 
    ///////////////////////////////////////////////////////////////////////////

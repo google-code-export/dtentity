@@ -19,7 +19,6 @@
 */
 
 #include <dtEntityWrappers/globalfunctions.h>
-#include <dtEntitySimulation/quattools.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/profile.h>
