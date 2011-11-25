@@ -3,6 +3,7 @@ include_once("Scripts/stdlib.js");
 include_once("Scripts/selectionmanager.js");
 
 var layerSystem = getEntitySystem("Layer");
+var manipulatorSystem = getEntitySystem("Manipulator");
 var ddm = new DebugDrawManager(EntityManager);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +211,6 @@ ToolHolder.useTool("Select");
 
 
 //////////////////////////////// Translate tool /////////////////////////////
-var tmpvec = [0, 0, 0];
 
 function TranslateTool() {
   this.name = "Translate";
@@ -221,10 +221,18 @@ function TranslateTool() {
   this.doPlaceOnTerrain = false;
 
   this.activate = function () {
-
+      for (var k in Selection.ids) {
+         println("Manip " + Selection.ids[k]);
+         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
+         manip.DraggerType = "TranslateAxisDragger";
+         manip.finished();
+      }
   }
 
   this.deactivate = function () {
+      for (var k in Selection.ids) {
+         manipulatorSystem.deleteComponent(Selection.ids[k]);
+      }
   }
 
   this.onClick = function () {
@@ -246,3 +254,93 @@ function TranslateTool() {
 TranslateTool.prototype = Tool;
 var translateTool = new TranslateTool();
 ToolHolder.addTool(translateTool);
+
+//////////////////////////////// Rotate tool /////////////////////////////
+
+function RotateTool() {
+   this.name = "Rotate";
+   this.iconPath = ":icons/transform-rotate.png";
+   this.shortCut = "Ctrl+r";
+
+  this.undoOp = null;
+  this.doPlaceOnTerrain = false;
+
+  this.activate = function () {
+      for (var k in Selection.ids) {
+         println("Manip " + Selection.ids[k]);
+         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
+         manip.DraggerType = "TrackballDragger";
+         manip.finished();
+      }
+  }
+
+  this.deactivate = function () {
+      for (var k in Selection.ids) {
+         manipulatorSystem.deleteComponent(Selection.ids[k]);
+      }
+  }
+
+  this.onClick = function () {
+  }
+
+  this.onRelease = function () {
+
+  }
+
+
+  this.onDrag = function () {
+
+  }
+
+  this.update = function () {
+  }
+};
+
+RotateTool.prototype = Tool;
+var rotateTool = new RotateTool();
+ToolHolder.addTool(rotateTool);
+
+//////////////////////////////// Scale tool /////////////////////////////
+
+function ScaleTool() {
+  this.name = "Scale";
+   this.iconPath = ":icons/transform-scale.png";
+   this.shortCut = "Ctrl+s";
+
+  this.undoOp = null;
+  this.doPlaceOnTerrain = false;
+
+  this.activate = function () {
+      for (var k in Selection.ids) {
+         println("Manip " + Selection.ids[k]);
+         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
+         manip.DraggerType = "TabBoxDragger";
+         manip.finished();
+      }
+  }
+
+  this.deactivate = function () {
+      for (var k in Selection.ids) {
+         manipulatorSystem.deleteComponent(Selection.ids[k]);
+      }
+  }
+
+  this.onClick = function () {
+  }
+
+  this.onRelease = function () {
+
+  }
+
+
+  this.onDrag = function () {
+
+  }
+
+  this.update = function () {
+  }
+};
+
+ScaleTool.prototype = Tool;
+var scaleTool = new ScaleTool();
+ToolHolder.addTool(scaleTool);
