@@ -49,7 +49,7 @@ namespace dtEntity
       virtual bool operator==(const Property& other) const { return other.StringValue() == Get(); }
       void Set(const std::string& v) { mSetValueCallback(v); }
       virtual void SetString(const std::string& v) { Set(v); }
-      virtual bool SetFrom(const Property& other) { Set(other.StringValue()); }
+      virtual bool SetFrom(const Property& other) { Set(other.StringValue()); return true; }
 
    private:
 
