@@ -199,11 +199,11 @@ namespace dtEntityWrappers
          break;
       }
       case dtEntity::DataType::BOOL:
-         static_cast<dtEntity::BoolProperty*>(prop)->Set(val->BooleanValue()); break;
+         prop->SetBool(val->BooleanValue()); break;
       case dtEntity::DataType::DOUBLE:
-         static_cast<dtEntity::DoubleProperty*>(prop)->Set(val->NumberValue()); break;
+         prop->SetDouble(val->NumberValue()); break;
       case dtEntity::DataType::FLOAT:
-         static_cast<dtEntity::FloatProperty*>(prop)->Set(val->NumberValue()); break;
+         prop->SetFloat(val->NumberValue()); break;
       case dtEntity::DataType::GROUP:
       {
          if(!val->IsObject()) 
@@ -231,9 +231,9 @@ namespace dtEntityWrappers
          break;
       }
       case dtEntity::DataType::INT:
-         static_cast<dtEntity::IntProperty*>(prop)->Set(val->Int32Value()); break;
+         prop->SetInt(val->Int32Value()); break;
       case dtEntity::DataType::UINT:
-         static_cast<dtEntity::UIntProperty*>(prop)->Set(val->Uint32Value()); break;
+         prop->SetUInt(val->Uint32Value()); break;
       case dtEntity::DataType::MATRIX:
       {
          if(!IsMatrix(val))
@@ -241,7 +241,7 @@ namespace dtEntityWrappers
             return ThrowError("Property only accepts matrix values!");
          }
          osg::Matrix mat = UnwrapMatrix(val);
-         static_cast<dtEntity::MatrixProperty*>(prop)->Set(mat); break;
+         prop->SetMatrix(mat); break;
       }
       case dtEntity::DataType::QUAT:
       {
@@ -250,12 +250,12 @@ namespace dtEntityWrappers
            return ThrowError("Property only accepts quat values!");
         }
          osg::Quat q = UnwrapQuat(val);
-         static_cast<dtEntity::QuatProperty*>(prop)->Set(q); break;
+         prop->SetQuat(q); break;
       }
       case dtEntity::DataType::STRING:
-         static_cast<dtEntity::StringProperty*>(prop)->Set(ToStdString(val)); break;
+         prop->SetString(ToStdString(val)); break;
       case dtEntity::DataType::STRINGID:
-         static_cast<dtEntity::StringIdProperty*>(prop)->Set(dtEntity::SID(ToStdString(val))); break;
+         prop->SetStringId(dtEntity::SID(ToStdString(val))); break;
       case dtEntity::DataType::VEC2:
       {
         if(!IsVec2(val))
@@ -263,7 +263,7 @@ namespace dtEntityWrappers
            return ThrowError("Property only accepts vec2 values!");
         }
          osg::Vec2d vec = UnwrapVec2(val);
-         static_cast<dtEntity::Vec2Property*>(prop)->Set(vec); break;
+         prop->SetVec2(vec); break;
       }
       case dtEntity::DataType::VEC3:
       {
@@ -272,7 +272,7 @@ namespace dtEntityWrappers
             return ThrowError("Property only accepts vec3 values!" + ToStdString(val));
          }
          osg::Vec3d vec = UnwrapVec3(val);
-         static_cast<dtEntity::Vec3Property*>(prop)->Set(vec); break;
+         prop->SetVec3(vec); break;
       }
       case dtEntity::DataType::VEC4:
       {
@@ -281,7 +281,7 @@ namespace dtEntityWrappers
             return ThrowError("Property only accepts vec4 values!");
          }
          osg::Vec4d vec = UnwrapVec4(val);
-         static_cast<dtEntity::Vec4Property*>(prop)->Set(vec); break;
+         prop->SetVec4(vec); break;
       }
       case dtEntity::DataType::VEC2D:
       {
@@ -290,7 +290,7 @@ namespace dtEntityWrappers
            return ThrowError("Property only accepts vec2 values!");
         }
          osg::Vec2d vec = UnwrapVec2(val);
-         static_cast<dtEntity::Vec2dProperty*>(prop)->Set(vec); break;
+         prop->SetVec2D(vec); break;
       }
       case dtEntity::DataType::VEC3D:
       {
@@ -299,7 +299,7 @@ namespace dtEntityWrappers
             return ThrowError("Property only accepts vec3 values!" + ToStdString(val));
          }
          osg::Vec3d vec = UnwrapVec3(val);
-         static_cast<dtEntity::Vec3dProperty*>(prop)->Set(vec); break;
+         prop->SetVec3D(vec); break;
       }
       case dtEntity::DataType::VEC4D:
       {
@@ -308,7 +308,7 @@ namespace dtEntityWrappers
             return ThrowError("Property only accepts vec4 values!");
          }
          osg::Vec4d vec = UnwrapVec4(val);
-         static_cast<dtEntity::Vec4dProperty*>(prop)->Set(vec); break;
+         prop->SetVec4D(vec); break;
       }
 
       default:

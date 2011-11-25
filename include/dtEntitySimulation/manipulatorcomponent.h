@@ -31,8 +31,6 @@
 namespace dtEntitySimulation
 {
 
-   class DraggerContainer;
-
    class DT_ENTITY_SIMULATION_EXPORT ManipulatorComponent
          : public dtEntity::NodeComponent
    {
@@ -89,7 +87,7 @@ namespace dtEntitySimulation
       dtEntity::StringIdProperty mLayerProperty;
       dtEntity::StringId mAttachPoint;
       dtEntity::StringIdProperty mDraggerType;
-      osg::ref_ptr<DraggerContainer> mDraggerContainer;
+      osg::ref_ptr<osg::Group> mDraggerContainer;
       
    };
 

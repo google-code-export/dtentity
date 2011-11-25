@@ -53,20 +53,13 @@ namespace dtEntityWrappers
                                Local<Value> value,
                                const AccessorInfo& info)
    {
-
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
-      if(prop)
-      {
-         ValToProp(value, prop);
-      }
+      ValToProp(value, prop);      
       dtEntity::Component* component = UnwrapComponent(info.Holder());
-	  if(component) 
-	  {
-		component->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
-	  }
-
+      assert(component != NULL);
+	  	component->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
