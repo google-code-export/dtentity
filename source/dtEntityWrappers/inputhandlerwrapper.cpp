@@ -68,14 +68,14 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void KeyUp(const std::string& name) {
+      virtual void KeyUp(const std::string& name, bool handled) {
          if(!mKeyUpFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[1] = { String::New(name.c_str()) };
-            Handle<Value> ret = mKeyUpFunc->Call(mObject, 1, argv);
+            Handle<Value> argv[2] = { String::New(name.c_str()), Boolean::New(handled) };
+            Handle<Value> ret = mKeyUpFunc->Call(mObject, 2, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -84,15 +84,15 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void KeyDown(const std::string& name) 
+      virtual void KeyDown(const std::string& name, bool handled)
       {
          if(!mKeyDownFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[1] = { String::New(name.c_str()) };
-            Handle<Value> ret = mKeyDownFunc->Call(mObject, 1, argv);
+            Handle<Value> argv[2] = { String::New(name.c_str()), Boolean::New(handled) };
+            Handle<Value> ret = mKeyDownFunc->Call(mObject, 2, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -101,15 +101,15 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void MouseButtonUp(int button) 
+      virtual void MouseButtonUp(int button, bool handled)
       {
          if(!mMouseUpFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[1] = { Integer::New(button) };
-            Handle<Value> ret = mMouseUpFunc->Call(mObject, 1, argv);
+            Handle<Value> argv[2] = { Integer::New(button), Boolean::New(handled) };
+            Handle<Value> ret = mMouseUpFunc->Call(mObject, 2, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -118,15 +118,15 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void MouseButtonDown(int button) 
+      virtual void MouseButtonDown(int button, bool handled)
       {
          if(!mMouseDownFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[1] = { Integer::New(button) };
-            Handle<Value> ret = mMouseDownFunc->Call(mObject, 1, argv);
+            Handle<Value> argv[2] = { Integer::New(button), Boolean::New(handled) };
+            Handle<Value> ret = mMouseDownFunc->Call(mObject, 2, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -135,15 +135,15 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void MouseWheel(int dir) 
+      virtual void MouseWheel(int dir, bool handled)
       {
          if(!mMouseWheelFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[1] = { Integer::New(dir) };
-            Handle<Value> ret = mMouseWheelFunc->Call(mObject, 1, argv);
+            Handle<Value> argv[2] = { Integer::New(dir), Boolean::New(handled) };
+            Handle<Value> ret = mMouseWheelFunc->Call(mObject, 2, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -152,15 +152,15 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void MouseMove(float x, float y) 
+      virtual void MouseMove(float x, float y, bool handled)
       {
          if(!mMouseMoveFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
             TryCatch try_catch;
-            Handle<Value> argv[2] = { Number::New(x), Number::New(y) };
-            Handle<Value> ret = mMouseMoveFunc->Call(mObject, 2, argv);
+            Handle<Value> argv[3] = { Number::New(x), Number::New(y), Boolean::New(handled) };
+            Handle<Value> ret = mMouseMoveFunc->Call(mObject, 3, argv);
 
             if(ret.IsEmpty()) 
             {

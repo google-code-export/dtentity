@@ -21,6 +21,7 @@
 #include <dtEntitySimulation/export.h>
 #include <dtEntitySimulation/groundclampingcomponent.h>
 #include <dtEntitySimulation/messages.h>
+#include <dtEntitySimulation/manipulatorcomponent.h>
 #include <dtEntity/componentplugin.h>
 
 namespace dtEntitySimulation
@@ -59,13 +60,40 @@ namespace dtEntitySimulation
       {
          return "System for Ground Clamping";
       }
+   };
 
-   private:
-      virtual ~GroundClampingFactory()
+   ////////////////////////////////////////////////////////////////////////////////
+   class DT_ENTITY_SIMULATION_EXPORT ManipulatorFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+      ManipulatorFactory()
       {
-      
+
       }
 
+      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
+      {
+         es = new dtEntitySimulation::ManipulatorSystem(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "Manipulator";
+      }
+
+      virtual dtEntity::ComponentType GetType() const
+      {
+         return dtEntitySimulation::ManipulatorComponent::TYPE;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "System for osgManipulator";
+      }
    };
 }
 
@@ -79,4 +107,5 @@ extern "C" DT_ENTITY_SIMULATION_EXPORT void RegisterMessages(dtEntity::EntityMan
 extern "C" DT_ENTITY_SIMULATION_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
 {
    list.push_back(new dtEntitySimulation::GroundClampingFactory());
+   list.push_back(new dtEntitySimulation::ManipulatorFactory());
 }

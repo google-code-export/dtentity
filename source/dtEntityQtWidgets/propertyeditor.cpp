@@ -891,7 +891,7 @@ namespace dtEntityQtWidgets
       {
          AddProperties(componentItem, props);
       }
-      //emit ExpandFullTree();
+      emit ExpandFullTree();
       
    }
 

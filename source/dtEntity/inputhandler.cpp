@@ -21,7 +21,6 @@
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/basemessages.h>
 #include <dtEntity/applicationcomponent.h>
-#include <iostream>
 #include <dtEntity/log.h>
 #include <osg/Version>
 #include <osgViewer/CompositeViewer>
@@ -321,10 +320,12 @@ namespace dtEntity
                              osgGA::GUIActionAdapter& aa, 
                              osg::NodeVisitor* nv)
    {
-      if(ea.getHandled()) 
-      {
-         return false;
-      }
+
+      osg::GraphicsContext::ScreenIdentifier id;
+      osg::GraphicsContext::ScreenSettings res;
+      ea.getGraphicsContext()->getWindowingSystemInterface()->getScreenSettings(id, res);
+      int displayNum = id.displayNum;
+      int screenNum = id.screenNum;
       
       unsigned int fn = nv->getFrameStamp()->getFrameNumber();
       if(fn != mFrameNumber)
@@ -419,7 +420,7 @@ namespace dtEntity
       {
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->KeyUp(v);
+            (*i)->KeyUp(v, ea.getHandled());
          }
       }
    }
@@ -436,7 +437,7 @@ namespace dtEntity
          std::string v = mKeyNamesReverse[key];
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->KeyDown(v);
+            (*i)->KeyDown(v, ea.getHandled());
          }
       }
    }
@@ -459,7 +460,7 @@ namespace dtEntity
       {
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseButtonUp(index);
+            (*i)->MouseButtonUp(index, ea.getHandled());
          }
       }
    }
@@ -481,7 +482,7 @@ namespace dtEntity
       {
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseButtonDown(index);
+            (*i)->MouseButtonDown(index, ea.getHandled());
          }
       }
    }
@@ -489,7 +490,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseMove(const osgGA::GUIEventAdapter& ea)
    {
-      float  nx = ea.getXnormalized();
+      float nx = ea.getXnormalized();
       float ny = ea.getYnormalized();
 
       mMouseDeltaX = nx - mMouseX;
@@ -498,42 +499,49 @@ namespace dtEntity
       mMouseX = nx;
       mMouseY = ny;
 
-      int  nxr = ea.getX();
+      int nxr = ea.getX();
       int nyr = ea.getY();
 
-      if(mLockCursor && (nx > 0.5f || ny > 0.5f || nx < -0.5f || ny < -0.5f))
+      if(mLockCursor)
       {
-      
-         const osgViewer::GraphicsWindow* win = dynamic_cast<const osgViewer::GraphicsWindow*>(ea.getGraphicsContext());
-         if(win)
-         {
-            mMouseDeltaXRaw = 0;
-            mMouseDeltaYRaw = 0;
-            mMouseXRaw = (ea.getXmin()+ea.getXmax())/2.0f;
-            mMouseYRaw = (ea.getYmin()+ea.getYmax())/2.0f;
-            
-            const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw,mMouseYRaw);
-            
-            mMouseX = 0;
-            mMouseY = 0;
-           // std::cout << "warp deltax: " << mMouseDeltaXRaw<<"\n";
+         bool xmodified = true;
+         if(nx > 0.99) mMouseX = -0.98f;
+         else if(nx < -0.99) mMouseX = 0.98f;
+         else xmodified = false;
+
+         bool ymodified = true;
+         if(ny > 0.99) mMouseY = -0.98f;
+         else if(ny < -0.99) mMouseY = 0.98f;
+         else ymodified = false;
+
+         if(xmodified || ymodified) {
+            const osgViewer::GraphicsWindow* win =
+                  dynamic_cast<const osgViewer::GraphicsWindow*>(ea.getGraphicsContext());
+            if(win)
+            {
+               mMouseXRaw = ea.getXmin() + (ea.getXmax() - ea.getXmin()) * (1 + mMouseX) / 2;
+               mMouseYRaw = ea.getYmin() + (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+               int jump = ea.getYmax() - (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+
+               const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw,jump);
+               mMouseDeltaXRaw = 0;
+               mMouseDeltaYRaw = 0;
+
+               return;
+            }
          }
-         
       }
-      else
-      {
-         mMouseDeltaXRaw = nxr - mMouseXRaw;
-         mMouseDeltaYRaw = nyr - mMouseYRaw;
-         mMouseXRaw = nxr;
-         mMouseYRaw = nyr;
-        // std::cout << "deltax: " << mMouseDeltaXRaw<<"\n";
-      }
+
+      mMouseDeltaXRaw = nxr - mMouseXRaw;
+      mMouseDeltaYRaw = nyr - mMouseYRaw;
+      mMouseXRaw = nxr;
+      mMouseYRaw = nyr;
 
       if(!mCallbacks.empty())
       {
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseMove(nx, ny);
+            (*i)->MouseMove(nx, ny, ea.getHandled());
          }
       }
    }
@@ -557,7 +565,7 @@ namespace dtEntity
          }
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseWheel(dir);
+            (*i)->MouseWheel(dir, ea.getHandled());
          }
       }
    }
