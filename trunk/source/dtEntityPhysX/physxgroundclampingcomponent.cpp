@@ -174,8 +174,7 @@ namespace dtEntityPhysX
          }
          else if(GetEntityManager().GetComponent(i->first, mtcomp))
          {
-            osg::Matrix m;
-            mtcomp->GetMatrix(m);
+            osg::Matrix m = mtcomp->GetMatrix();
             translation = m.getTrans();
          }
          else
@@ -234,8 +233,7 @@ namespace dtEntityPhysX
       }
       else if(GetEntityManager().GetComponent(id, mtcomp))
       {
-         osg::Matrix m;
-         mtcomp->GetMatrix(m);
+         osg::Matrix m = mtcomp->GetMatrix();
          translation = m.getTrans();
       }
       else
@@ -266,7 +264,7 @@ namespace dtEntityPhysX
          osg::Quat rot;
          if(mtcomp)
          {
-            osg::Matrix m; mtcomp->GetMatrix(m);
+            osg::Matrix m = mtcomp->GetMatrix();
             rot = m.getRotate();
          }
          else
@@ -300,7 +298,7 @@ namespace dtEntityPhysX
       }
       if(mtcomp)
       {
-         osg::Matrix m; mtcomp->GetMatrix(m);
+         osg::Matrix m = mtcomp->GetMatrix();
          m.setTrans(nexttranslation);
          mtcomp->SetMatrix(m);
       }
