@@ -3,7 +3,6 @@ include_once("Scripts/stdlib.js");
 
 function EditorMotionModel(camera) {
 
-   var active = false;
    var movespeed = 100;
    var rotatespeed = 0.001;
    var rotatekeysspeed = 2;
@@ -33,11 +32,13 @@ function EditorMotionModel(camera) {
    }
 
    this.mouseButtonDown = function(button, handled) {
-      if(!active && !handled) {
-         active = true;
+      if(button === 1) {
          Screen.lockCursor = true;
-      } else if(button === 1) {
-         active = false;
+      }
+   }
+
+   this.mouseButtonUp = function(button, handled) {
+      if(button === 1) {
          Screen.lockCursor = false;
       }
    }
@@ -55,22 +56,23 @@ function EditorMotionModel(camera) {
 
    this.mouseMove = function(x, y, handled) {
 
-      if(!active) return;
+      if(Input.getMouseButton(1)) {
 
-      var pos = camera.Position;
-      var eyedir = camera.EyeDirection;
-      var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
-      var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
-      osg.Vec3.cross(eyedir, up, toRight);
+         var pos = camera.Position;
+         var eyedir = camera.EyeDirection;
+         var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
+         var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
+         osg.Vec3.cross(eyedir, up, toRight);
 
-      osg.Quat.makeRotate(-mouseX * rotatespeed, up[0], up[1], up[2], rotateOp);
-      osg.Quat.rotate(rotateOp, eyedir, eyedir);
-      osg.Quat.makeRotate(mouseY * rotatespeed, toRight[0], toRight[1], toRight[2], rotateOp);
-      osg.Quat.rotate(rotateOp, eyedir, eyedir);
+         osg.Quat.makeRotate(-mouseX * rotatespeed, up[0], up[1], up[2], rotateOp);
+         osg.Quat.rotate(rotateOp, eyedir, eyedir);
+         osg.Quat.makeRotate(mouseY * rotatespeed, toRight[0], toRight[1], toRight[2], rotateOp);
+         osg.Quat.rotate(rotateOp, eyedir, eyedir);
 
-      camera.Position = pos;
-      camera.EyeDirection = eyedir;
-      camera.finished();
+         camera.Position = pos;
+         camera.EyeDirection = eyedir;
+         camera.finished();
+      }
    }
 
    var self = this;
