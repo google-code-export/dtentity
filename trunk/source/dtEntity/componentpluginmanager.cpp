@@ -35,8 +35,9 @@ namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
-   ComponentPluginManager::ComponentPluginManager(dtEntity::EntityManager& em)
+   ComponentPluginManager::ComponentPluginManager(EntityManager& em, MessageFactory& mf)
       : mEntityManager(&em)
+      , mMessageFactory(&mf)
    {
    }
 
@@ -150,13 +151,13 @@ namespace dtEntity
       if (messagesaddr)
       {
          // typedef for function pointer to get factory from library
-         typedef void (*RegisterMessagesFn)(dtEntity::EntityManager&);
+         typedef void (*RegisterMessagesFn)(MessageFactory&);
 
 
          RegisterMessagesFn fn = (RegisterMessagesFn) messagesaddr;
 
          // let plugin create its factories
-         fn(*mEntityManager);
+         fn(*mMessageFactory);
 
       }
 

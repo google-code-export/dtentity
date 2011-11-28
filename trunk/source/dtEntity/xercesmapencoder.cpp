@@ -1009,16 +1009,19 @@ namespace dtEntity
       {
          EntitySystem* es = mEntityManager->GetEntitySystem(j->second->GetType());
 
-         // Get default component values. If entity was created from a spawner
-         // then overwrite component values with values from spawner
-         DynamicPropertyContainer defaultprops = es->GetComponentProperties();
-         Spawner::ComponentProperties::iterator it = spawnerprops.find(j->second->GetType());
-         if(it != spawnerprops.end())
+         if(es->StoreComponentsToMap())
          {
-            defaultprops += (it->second);
-         }
+            // Get default component values. If entity was created from a spawner
+            // then overwrite component values with values from spawner
+            DynamicPropertyContainer defaultprops = es->GetComponentProperties();
+            Spawner::ComponentProperties::iterator it = spawnerprops.find(j->second->GetType());
+            if(it != spawnerprops.end())
+            {
+               defaultprops += (it->second);
+            }
 
-         SerializeComponent(entity, j->second, defaultprops);
+            SerializeComponent(entity, j->second, defaultprops);
+         }
       }
    }
 
@@ -1786,7 +1789,10 @@ namespace dtEntity
       std::vector<const EntitySystem*>::const_iterator i;
       for(i = es.begin(); i != es.end(); ++i)
       {
-         SerializeEntitySystem(scene, *i);
+         if((*i)->StoreEntitySystemToMap())
+         {
+            SerializeEntitySystem(scene, *i);
+         }
       }
 
       std::list<std::string> maps;

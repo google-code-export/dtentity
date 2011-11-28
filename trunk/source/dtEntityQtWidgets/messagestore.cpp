@@ -25,6 +25,7 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
+#include <dtEntity/messagefactory.h>
 #include <dtEntity/spawner.h>
 #include <dtEntityQtWidgets/messages.h>
 #include "ui_messagestore.h"
@@ -277,7 +278,7 @@ namespace dtEntityQtWidgets
       mEntityManager->RegisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, mSpawnerRemovedFunctor);
 
       std::vector<dtEntity::MessageType> types;
-      mEntityManager->GetRegisteredMessageTypes(types);
+      mtsystem->GetMessageFactory().GetRegisteredMessageTypes(types);
 
       QStringList messagetypes;
       foreach(dtEntity::MessageType mtype, types)
@@ -335,7 +336,7 @@ namespace dtEntityQtWidgets
       dtEntity::Spawner* spawner = new dtEntity::Spawner(name.toStdString(), mapname);
 
       dtEntity::Message* msg;
-      success = mEntityManager->CreateMessage(dtEntity::SID(msgtype.toStdString()), msg);
+      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SID(msgtype.toStdString()), msg);
       if(!success)
       {
          LOG_ERROR("Could not create message, message type not found in registry!");
@@ -396,7 +397,7 @@ namespace dtEntityQtWidgets
       std::string msgtypename = props.GetString(msgtypenamesid);
 
       dtEntity::Message* msg;
-      success = mEntityManager->CreateMessage(dtEntity::SID(msgtypename), msg);
+      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SID(msgtypename), msg);
       if(!success)
       {
          LOG_ERROR("Cannot emit message: Message of this type is not registered: " + msgtypename);

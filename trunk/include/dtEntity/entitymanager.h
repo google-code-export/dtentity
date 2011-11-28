@@ -39,7 +39,7 @@ namespace dtEntity
    class Entity;
    class EntitySystem;
    class Message;
-   
+
    /**
     * Entity manager is a container for entity systems. 
     * Each entity system holds entity components of a specific type.
@@ -219,36 +219,6 @@ namespace dtEntity
       bool CreateComponent(EntityId eid, T*& component);
       void DeleteComponent(EntityId eid, Component& component);
 
-      /**
-       * Register a message type with the message factory
-       * The template parameter holds the message class to instantiate
-       * Usage example:
-       * mEntityManager->RegisterMessageType<TickMessage>(TickMessage::TYPE);
-       * @TODO move somewhere else?
-       * @param mtype MessageType id of message
-       */
-      template <typename T>
-      void RegisterMessageType(MessageType mtype);
-
-      /**
-       * fill up a vector with the types of all registered messages
-	   * @TODO move somewhere else?
-       */
-      void GetRegisteredMessageTypes(std::vector<MessageType>& toFill);
-      
-      /**
-       * Create a message of given type. A message class has to be registered with 
-       * RegisterMessageType before it can be instantiated with CreateMessage.
-       * Please note that you can simply create messages with 'new', this is
-       * just a factory for generic script- and tool-side access
-	   * * @TODO move somewhere else?
-       * @param msgType type id of message class
-       * @param msg Receives newly created message. Ownership of the message object
-       *        is transfered to caller - post your message or delete it!
-       * @return true if success - false if message type is not registered
-       */
-      bool CreateMessage(MessageType msgType, Message*& msg) const;
-
 	  /**
 	   * @return default message pump for inter-system communication
 	   */
@@ -327,9 +297,6 @@ namespace dtEntity
       typedef std::map<ComponentType, osg::ref_ptr<EntitySystem> > EntitySystemStore;
       EntitySystemStore mEntitySystemStore;
 
-      // factory for message objects
-      osg::ref_ptr<ObjectFactory<MessageType, Message> > mMessageFactory;
-
       // stores inheritance tree for component types
       typedef std::multimap<ComponentType, ComponentType> TypeHierarchyMap;
       TypeHierarchyMap mTypeHierarchy;
@@ -339,13 +306,6 @@ namespace dtEntity
 
    };
 
-
-   ////////////////////////////////////////////////////////////////////////////////
-   template <typename T>
-   void EntityManager::RegisterMessageType(MessageType mtype)
-   {
-      mMessageFactory->template RegisterType<T>(mtype);
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    template <typename T>
@@ -378,6 +338,7 @@ namespace dtEntity
 
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    template <typename T>
    bool EntityManager::GetEntitySystem(ComponentType id, T*& es) const
    {

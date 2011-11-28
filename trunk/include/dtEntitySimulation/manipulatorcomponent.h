@@ -104,6 +104,7 @@ namespace dtEntitySimulation
       ManipulatorSystem(dtEntity::EntityManager& em);
       ~ManipulatorSystem();
 
+      virtual bool StoreComponentsToMap() const { return false; }
    private:
 
    };

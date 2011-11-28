@@ -358,8 +358,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::grabFocusIfPointerInWindow()
    {
-      //TODO fix this so it checks for the pointer.
-      if (mQWidget != NULL)
+      if(mQWidget != NULL)
       {
          mQWidget->setFocus();
       }

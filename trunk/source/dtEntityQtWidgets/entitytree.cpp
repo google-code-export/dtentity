@@ -756,7 +756,6 @@ namespace dtEntityQtWidgets
    {
 
       QModelIndexList sel = mTreeView->selectionModel()->selectedIndexes();
-      //TODO this only works when tree has a single column. Fix it somehow
 
       EntityTreeItem* item = GetInternal(sel.front());
       if(item->GetItemType() != EntityTreeType::SPAWNER)

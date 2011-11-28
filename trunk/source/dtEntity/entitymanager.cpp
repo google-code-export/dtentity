@@ -23,27 +23,19 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/component.h>
-#include <dtEntity/componentfactories.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
 #include <dtEntity/log.h>
+#include <float.h>
 
 namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
    EntityManager::EntityManager()
-      : mMessageFactory(new ObjectFactory<MessageType, Message>)
-      , mMessagePump(new MessagePump())
+      : mMessagePump(new MessagePump())
    {     
-      // this is a required component system, so add it immediately
-      MapSystem* mapSystem = new MapSystem(*this);
-      AddEntitySystem(*mapSystem);
-      
-      // load and start standard comonent systems
-      RegisterStandardFactories(mapSystem->GetPluginManager());
-      RegisterMessages(*this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -398,19 +390,6 @@ namespace dtEntity
          return;
       }
       es->DeleteComponent(eid);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void EntityManager::GetRegisteredMessageTypes(std::vector<MessageType>& toFill)
-   {
-      mMessageFactory->GetSupportedTypes(toFill);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool EntityManager::CreateMessage(MessageType msgType, Message*& msg) const
-   {
-      msg = mMessageFactory->CreateObject(msgType);
-      return msg != NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -19,6 +19,7 @@
 */
 
 #include <dtEntityQtWidgets/messages.h>
+#include <dtEntity/messagefactory.h>
 
 namespace dtEntityQtWidgets
 {
@@ -45,7 +46,7 @@ namespace dtEntityQtWidgets
    const dtEntity::StringId ComponentDataChangedMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterMessageTypes(dtEntity::EntityManager& em)
+   void RegisterMessageTypes(dtEntity::MessageFactory& em)
    {
       em.RegisterMessageType<SpawnerSelectedMessage>(SpawnerSelectedMessage::TYPE);
       em.RegisterMessageType<EntitySystemSelectedMessage>(EntitySystemSelectedMessage::TYPE);

@@ -28,10 +28,10 @@
 #include <dtEntity/entityid.h>
 #include <dtEntity/mapencoder.h>
 #include <dtEntity/message.h>
+#include <dtEntity/messagefactory.h>
 #include <dtEntity/property.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <OpenThreads/ReadWriteMutex>
 
 namespace dtEntity
 {
@@ -273,6 +273,8 @@ namespace dtEntity
        */
       void OnEntityChangedUniqueId(EntityId id, const std::string& newUniqueid);
 
+      MessageFactory& GetMessageFactory() { return mMessageFactory; }
+
    private:
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
@@ -286,6 +288,8 @@ namespace dtEntity
       MessageFunctor mSpawnEntityFunctor;
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
+
+      MessageFactory mMessageFactory;
 
       ComponentPluginManager mPluginManager;
 

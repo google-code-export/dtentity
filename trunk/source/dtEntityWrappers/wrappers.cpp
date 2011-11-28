@@ -21,6 +21,7 @@
 #include <dtEntityWrappers/wrappers.h>
 
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/mapcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/debugdrawmanagerwrapper.h>
@@ -69,6 +70,13 @@ namespace dtEntityWrappers
         LOG_ERROR("Could not get application system!");
         return;
       }
+
+      dtEntity::MapSystem* mapsystem;
+      if(!em.GetEntitySystem(dtEntity::MapComponent::TYPE, mapsystem))
+      {
+        LOG_ERROR("Could not get map system!");
+        return;
+      }
       
       
 #if BUILD_CEGUI_WRAPPER
@@ -83,7 +91,7 @@ namespace dtEntityWrappers
       //context->Global()->Set(String::New("Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
 
       // make entity manager accessible as a global variable
-      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(&em));
+      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(&em, &mapsystem->GetMessageFactory()));
 
       context->Global()->Set(String::New("Buffer"), CreateBuffer());
       context->Global()->Set(String::New("File"), CreateFile());

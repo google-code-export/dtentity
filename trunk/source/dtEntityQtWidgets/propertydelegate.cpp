@@ -919,7 +919,6 @@ namespace dtEntityQtWidgets
    {
       setFocusPolicy(Qt::StrongFocus);
 	  
-	  // TODO Memory leak?
       QHBoxLayout* horizontalLayout = new QHBoxLayout(this);    
       horizontalLayout->setContentsMargins(0, 0, 0, 0);
       mLabel = new QLabel();
@@ -1014,8 +1013,7 @@ namespace dtEntityQtWidgets
    {
       setFocusPolicy(Qt::StrongFocus);
 	  
-	  // TODO memory leak?
-      QHBoxLayout* horizontalLayout = new QHBoxLayout(this);    
+		QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
       horizontalLayout->setContentsMargins(0, 0, 0, 0);
       mLabel = new QLabel();
       horizontalLayout->addWidget(mLabel);

@@ -74,7 +74,9 @@ namespace dtEntityEditor
       
       mViewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
       
-      dtEntityQtWidgets::RegisterMessageTypes(*mEntityManager);
+      dtEntity::MapSystem* ms;
+      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
+      dtEntityQtWidgets::RegisterMessageTypes(ms->GetMessageFactory());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

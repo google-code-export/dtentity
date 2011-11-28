@@ -81,6 +81,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/mapcomponent.h
   ${HEADER_PATH}/mapencoder.h
   ${HEADER_PATH}/message.h    
+  ${HEADER_PATH}/messagefactory.h
   ${HEADER_PATH}/messagepump.h
   ${HEADER_PATH}/nodemasks.h
   ${HEADER_PATH}/nodemaskvisitor.h
@@ -123,6 +124,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/lightcomponent.cpp
   ${SOURCE_PATH}/logmanager.cpp
   ${SOURCE_PATH}/mapcomponent.cpp	
+  ${SOURCE_PATH}/messagefactory.cpp
   ${SOURCE_PATH}/messagepump.cpp	
   ${SOURCE_PATH}/osganimationcomponent.cpp
   ${SOURCE_PATH}/osgcomponents.cpp

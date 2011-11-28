@@ -98,9 +98,9 @@ namespace dtEntitySimulation
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ENTITY_SIMULATION_EXPORT void RegisterMessages(dtEntity::EntityManager& em)
+extern "C" DT_ENTITY_SIMULATION_EXPORT void RegisterMessages(dtEntity::MessageFactory& mf)
 {
-   dtEntitySimulation::RegisterMessageTypes(em);
+   dtEntitySimulation::RegisterMessageTypes(mf);
 }
 
 

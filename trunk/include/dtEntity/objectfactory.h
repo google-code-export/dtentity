@@ -47,7 +47,7 @@ namespace dtEntity
     *   only have named constructors.
     */
    template<typename UniqueIdTypeClass,typename BaseTypeClass,typename ltCmpClass=std::less<UniqueIdTypeClass> >
-   class ObjectFactory : public osg::Referenced
+   class ObjectFactory
    {
    public:
 
@@ -61,10 +61,7 @@ namespace dtEntity
       typedef typename ObjectMap::const_iterator ObjTypeItorConst;
       ObjectFactory() {}  // constructor
 
-   protected:
-      virtual ~ObjectFactory() {}
 
-   public:
       /**
        * Registers a new type of object with the factory.
        * @return false if the type is a duplicate.

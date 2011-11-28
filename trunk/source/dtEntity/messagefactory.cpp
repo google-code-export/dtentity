@@ -1,5 +1,3 @@
-#pragma once
-
 /*
 * dtEntity Game and Simulation Engine
 *
@@ -20,24 +18,23 @@
 * Martin Scheffler
 */
 
-#include <dtEntityWrappers/export.h>
-#include <v8.h>
+#include <dtEntity/messagefactory.h>
+
 
 namespace dtEntity
 {
-   class EntityManager;
-   class MessageFactory;
-   class Message;
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MessageFactory::GetRegisteredMessageTypes(std::vector<MessageType>& toFill)
+   {
+      mMessageFactory.GetSupportedTypes(toFill);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool MessageFactory::CreateMessage(MessageType msgType, Message*& msg) const
+   {
+      msg = mMessageFactory.CreateObject(msgType);
+      return msg != NULL;
+   }
 }
 
-namespace dtEntityWrappers
-{
-
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapEntityManager
-      (dtEntity::EntityManager* v, dtEntity::MessageFactory* mf);
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapPriorities();
-   DTENTITY_WRAPPERS_EXPORT dtEntity::EntityManager* UnwrapEntityManager(v8::Handle<v8::Value>);
-   DTENTITY_WRAPPERS_EXPORT dtEntity::MessageFactory* UnwrapMessageFactory(v8::Handle<v8::Value>);
-   DTENTITY_WRAPPERS_EXPORT void UnregisterJavaScriptFromMessages();
-   DTENTITY_WRAPPERS_EXPORT void ConvertJSToMessage(v8::Handle<v8::Value> val, dtEntity::Message* msg);
-}

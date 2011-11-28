@@ -28,6 +28,11 @@
 #include <dtEntity/property.h>
 #include <osg/ref_ptr>
 
+namespace dtEntity
+{
+   class MessageFactory;
+}
+
 namespace dtEntityQtWidgets
 {   
 
@@ -201,7 +206,7 @@ namespace dtEntityQtWidgets
    
    ////////////////////////////////////////////////////////////////////////////////
     
-   void ENTITYQTWIDGETS_EXPORT RegisterMessageTypes(dtEntity::EntityManager& em);
+   void ENTITYQTWIDGETS_EXPORT RegisterMessageTypes(dtEntity::MessageFactory& mf);
 
 }
 

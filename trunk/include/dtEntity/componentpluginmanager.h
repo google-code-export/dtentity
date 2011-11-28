@@ -42,6 +42,8 @@
 
 namespace dtEntity
 {
+   class MessageFactory;
+
    /**
     * The plugin manager is responsible for loading entity system factories from plugins,
     * keep them around until they are needed, and start and stop the entity systems.
@@ -51,7 +53,7 @@ namespace dtEntity
       
    public:
 
-      ComponentPluginManager(dtEntity::EntityManager& em);
+      ComponentPluginManager(EntityManager& em, MessageFactory& mf);
       ~ComponentPluginManager();
 
       typedef std::map<ComponentType, osg::ref_ptr<ComponentPluginFactory> > PluginFactoryMap;
@@ -102,7 +104,8 @@ namespace dtEntity
       /** map from plugin name -> plugin factory */
       PluginFactoryMap mFactories;
 
-      dtEntity::EntityManager* mEntityManager;
+      EntityManager* mEntityManager;
+      MessageFactory* mMessageFactory;
 
    };
 }

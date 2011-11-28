@@ -65,7 +65,6 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void ResizerWidget::SetWidget(QWidget* widget)
    {
-   // TODO What is this? Memory leak?
       QHBoxLayout* rswLayout = new QHBoxLayout(this);
       rswLayout->setContentsMargins(0, 0, 0, 0);
       rswLayout->addWidget(widget);

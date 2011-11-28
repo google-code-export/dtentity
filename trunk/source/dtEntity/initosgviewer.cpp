@@ -25,6 +25,7 @@
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
+#include <dtEntity/componentfactories.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/logmanager.h>
@@ -168,6 +169,13 @@ namespace dtEntity
       viewer->getWindows(wins);
       wins.front()->setName("defaultView");
 
+      // this is a required component system, so add it immediately
+      MapSystem* mapSystem = new MapSystem(*em);
+      em->AddEntitySystem(*mapSystem);
+
+      // load and start standard comonent systems
+      RegisterStandardFactories(mapSystem->GetPluginManager());
+
       dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
       for(int i = 0; i < argc; ++i)
       {
@@ -178,8 +186,8 @@ namespace dtEntity
     
       em->AddEntitySystem(*appsystem);
 
-      dtEntity::MapSystem* mapSystem;
-      em->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+
+
       mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
 
       return true;
