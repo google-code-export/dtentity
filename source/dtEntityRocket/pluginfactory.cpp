@@ -24,6 +24,7 @@
 #include "rocketcomponent.h"
 #include "rocketsystemwrapper.h"
 #include <dtEntity/componentplugin.h>
+#include <dtEntity/messagefactory.h>
 
 namespace dtEntityRocket
 {
@@ -95,10 +96,10 @@ namespace dtEntityRocket
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ROCKET_EXPORT void RegisterMessages(dtEntity::EntityManager& em)
+extern "C" DT_ROCKET_EXPORT void RegisterMessages(dtEntity::MessageFactory& mf)
 {
    using namespace dtEntityRocket;
-   em.RegisterMessageType<RocketEventMessage>(RocketEventMessage::TYPE);
+   mf.RegisterMessageType<RocketEventMessage>(RocketEventMessage::TYPE);
 }
 
 

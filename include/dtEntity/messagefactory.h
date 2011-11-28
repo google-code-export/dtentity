@@ -27,7 +27,7 @@
 namespace dtEntity
 {
    
-   class MessageFactory
+   class DT_ENTITY_EXPORT MessageFactory
    {
    public:
 
