@@ -38,7 +38,7 @@
         <file>icons/media-seek-forward.png</file>
         <file>icons/media-skip-backward.png</file>
         <file>icons/media-skip-forward.png</file>
-        <file>icons/project-open.png</file>      
+        <file>icons/project-open.png</file>
         <file>icons/draw-path.png</file>
         <file>icons/component.png</file>
         <file>icons/entity.png</file>
@@ -47,5 +47,6 @@
         <file>icons/entitytree_map.png</file>
         <file>icons/entitytree_spawner.png</file>
         <file>icons/property.png</file>
+        <file>icons/coordsystems.png</file>
     </qresource>
 </RCC>

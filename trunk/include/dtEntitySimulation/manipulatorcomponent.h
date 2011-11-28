@@ -40,6 +40,7 @@ namespace dtEntitySimulation
       static const dtEntity::ComponentType TYPE;     
       static const dtEntity::StringId LayerId;
       static const dtEntity::StringId DraggerTypeId;
+      static const dtEntity::StringId OffsetFromStartId;
 
       static const dtEntity::StringId TabPlaneDraggerId;
       static const dtEntity::StringId TabPlaneTrackballDraggerId;
@@ -77,6 +78,12 @@ namespace dtEntitySimulation
       dtEntity::StringId GetDraggerType() const { return mDraggerType.Get(); }
       void SetDraggerType(dtEntity::StringId);
 
+      void SetOffsetFromStart(const osg::Vec3d& v) { mOffsetFromStart.Set(v); }
+      osg::Vec3d GetOffsetFromStart() const { return mOffsetFromStart.Get(); }
+
+      void SetUseLocalCoords(bool v);
+      bool GetUseLocalCoords() const { return mUseLocalCoords; }
+
    private:
 
       void RemoveFromParent();
@@ -87,6 +94,8 @@ namespace dtEntitySimulation
       dtEntity::StringIdProperty mLayerProperty;
       dtEntity::StringId mAttachPoint;
       dtEntity::StringIdProperty mDraggerType;
+      dtEntity::Vec3dProperty mOffsetFromStart;
+      bool mUseLocalCoords;
       osg::ref_ptr<osg::Group> mDraggerContainer;
       
    };
@@ -100,12 +109,25 @@ namespace dtEntitySimulation
       typedef dtEntity::DefaultEntitySystem<ManipulatorComponent> BaseClass;
       
    public:
-     
+
+      static const dtEntity::StringId UseLocalCoordsId;
+
       ManipulatorSystem(dtEntity::EntityManager& em);
       ~ManipulatorSystem();
 
+      // don't store manipulators to map
       virtual bool StoreComponentsToMap() const { return false; }
+
+      // don't copy manipulators with entities, also don't store to spawners
+      virtual bool AllowComponentCreationBySpawner() const { return false; }
+
+      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
+
+      void SetUseLocalCoords(bool v);
+      bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
+
    private:
 
+      dtEntity::BoolProperty mUseLocalCoords;
    };
 }

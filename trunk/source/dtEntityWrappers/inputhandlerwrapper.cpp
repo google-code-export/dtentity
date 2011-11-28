@@ -66,6 +66,10 @@ namespace dtEntityWrappers
          {
             mMouseMoveFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseMove"))));
          }
+         if(obj->Has(String::New("mouseEnterLeave")))
+         {
+            mMouseEnterLeaveFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseEnterLeave"))));
+         }
       }
 
       virtual void KeyUp(const std::string& name, bool handled) {
@@ -169,12 +173,30 @@ namespace dtEntityWrappers
          }
       }
 
+      virtual void MouseEnterLeave(bool focused, int displaynum, int screennum)
+      {
+         if(!mMouseEnterLeaveFunc.IsEmpty())
+         {
+            Context::Scope context_scope(GetGlobalContext());
+            HandleScope scope;
+            TryCatch try_catch;
+            Handle<Value> argv[3] = { Boolean::New(focused), Int32::New(displaynum), Int32::New(screennum) };
+            Handle<Value> ret = mMouseEnterLeaveFunc->Call(mObject, 3, argv);
+
+            if(ret.IsEmpty())
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
       Persistent<Function> mKeyUpFunc;
       Persistent<Function> mKeyDownFunc;
       Persistent<Function> mMouseUpFunc;
       Persistent<Function> mMouseDownFunc;
       Persistent<Function> mMouseWheelFunc;
       Persistent<Function> mMouseMoveFunc;
+      Persistent<Function> mMouseEnterLeaveFunc;
       Persistent<Object> mObject;
    };
 

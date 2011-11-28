@@ -1009,7 +1009,7 @@ namespace dtEntity
       {
          EntitySystem* es = mEntityManager->GetEntitySystem(j->second->GetType());
 
-         if(es->StoreComponentsToMap())
+         if(es->StoreComponentToMap(eid))
          {
             // Get default component values. If entity was created from a spawner
             // then overwrite component values with values from spawner
@@ -1789,7 +1789,7 @@ namespace dtEntity
       std::vector<const EntitySystem*>::const_iterator i;
       for(i = es.begin(); i != es.end(); ++i)
       {
-         if((*i)->StoreEntitySystemToMap())
+         if((*i)->StorePropertiesToScene())
          {
             SerializeEntitySystem(scene, *i);
          }

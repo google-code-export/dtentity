@@ -182,6 +182,27 @@ namespace dtEntityWrappers
          return False();
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ESStoreComponentToMap(const Arguments& args)
+   {
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      return Boolean::New(sys->StoreComponentToMap((dtEntity::EntityId)args[0]->Uint32Value()));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ESAllowComponentCreationBySpawner(const Arguments& args)
+   {
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      return Boolean::New(sys->AllowComponentCreationBySpawner());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ESStorePropertiesToScene(const Arguments& args)
+   {
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      return Boolean::New(sys->StorePropertiesToScene());
+   }
    
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESFinished(const Arguments& args)
@@ -342,6 +363,11 @@ namespace dtEntityWrappers
         proto->Set("createComponent", FunctionTemplate::New(ESCreateComponent));
         proto->Set("deleteComponent", FunctionTemplate::New(ESDeleteComponent));
         proto->Set("finished", FunctionTemplate::New(ESFinished));
+
+        proto->Set("storeComponentToMap", FunctionTemplate::New(ESStoreComponentToMap));
+        proto->Set("allowComponentCreationBySpawner", FunctionTemplate::New(ESAllowComponentCreationBySpawner));
+        proto->Set("storePropertiesToScene", FunctionTemplate::New(ESStorePropertiesToScene));
+
       }
    }   
 
