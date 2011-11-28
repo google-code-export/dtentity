@@ -134,6 +134,12 @@ namespace dtEntitySimulation
       {
       }
 
+      void SetOffsetFromStart(const osg::Vec3d& v)
+      {
+         osg::Vec3d diff = v - _offsetFromStart;
+         _offsetFromStart = v;
+         mTransform->SetMatrix(mTransform->GetMatrix() * osg::Matrix::translate(diff));
+      }
 
       virtual bool receive(const osgManipulator::MotionCommand& command)
       {
@@ -142,26 +148,27 @@ namespace dtEntitySimulation
          {
              case osgManipulator::MotionCommand::START:
              {
+                  _offsetFromStart.set(0,0,0);
+
                  // Save the current matrix
                  _startMotionMatrix = mTransform->GetMatrix();
 
-                 // Get the LocalToWorld and WorldToLocal matrix for this node.
                  osg::NodePath nodePathToRoot;
                  osgManipulator::computeNodePathToRoot(*mTransform->GetNode(), nodePathToRoot);
                  _localToWorld = osg::computeLocalToWorld(nodePathToRoot);
                  _worldToLocal = osg::Matrix::inverse(_localToWorld);
-
                  return true;
              }
              case osgManipulator::MotionCommand::MOVE:
              {
-                 // Transform the command's motion matrix into local motion matrix.
-                 osg::Matrix localMotionMatrix = _localToWorld * command.getWorldToLocal()
-                                                 * command.getMotionMatrix()
-                                                 * command.getLocalToWorld() * _worldToLocal;
+                 osg::Matrix offset;
+                 offset.makeTranslate(_offsetFromStart);
 
-                 // Transform by the localMotionMatrix
-                 mTransform->SetMatrix(localMotionMatrix * _startMotionMatrix);
+                 osg::Matrix localMotionMatrix = _localToWorld * command.getWorldToLocal()
+                                              * command.getMotionMatrix()
+                                              * command.getLocalToWorld() * _worldToLocal;
+                 mTransform->SetMatrix(localMotionMatrix * _startMotionMatrix * offset);
+
 
                  return true;
              }
@@ -181,6 +188,8 @@ namespace dtEntitySimulation
       osg::Matrix _startMotionMatrix;
       osg::Matrix _localToWorld;
       osg::Matrix _worldToLocal;
+      osg::Vec3 _offsetFromStart;
+
    };
 
    ////////////////////////////////////////////////////////////////////////////
@@ -192,6 +201,8 @@ namespace dtEntitySimulation
           , mTransform(transform)
           , _draggerSize(140.0f)
           , _active(true)
+          , _useLocalCoords(false)
+
        {
           addChild(dragger);
           _dragger->setMatrix( osg::Matrix::scale(1, 1, 1) * osg::Matrix::translate(transform->GetTranslation()) );
@@ -203,6 +214,10 @@ namespace dtEntitySimulation
        void setActive( bool b ) { _active = b; }
        bool getActive() const { return _active; }
 
+       void SetUseLocalCoords(bool v)
+       {
+          _useLocalCoords = v;
+       }
 
        void traverse( osg::NodeVisitor& nv )
        {
@@ -213,13 +228,23 @@ namespace dtEntitySimulation
                    osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(&nv);
 
                    float pixelSize = cv->pixelSize(_dragger->getBound().center(), 0.48f);
-                   if ( pixelSize!=_draggerSize )
+                   if ( pixelSize !=_draggerSize )
                    {
                        float pixelScale = pixelSize>0.0f ? _draggerSize/pixelSize : 1.0f;
                        osg::Vec3d scaleFactor(pixelScale, pixelScale, pixelScale);
 
                        osg::BoundingSphere bs = mTransform->GetNode()->getBound();
-                       _dragger->setMatrix( osg::Matrix::scale(scaleFactor) * osg::Matrix::translate(bs.center()) );
+
+                      if(_useLocalCoords)
+                      {
+                         _dragger->setMatrix( osg::Matrix::scale(scaleFactor) *
+                                              osg::Matrix::rotate(mTransform->GetRotation()) *
+                                              osg::Matrix::translate(bs.center()) );
+                      }
+                      else
+                      {
+                          _dragger->setMatrix( osg::Matrix::scale(scaleFactor) * osg::Matrix::translate(bs.center()) );
+                      }
                    }
                }
            }
@@ -231,12 +256,14 @@ namespace dtEntitySimulation
        float _draggerSize;
        bool _active;
        dtEntity::TransformComponent* mTransform;
+       bool _useLocalCoords;
    };
 
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId ManipulatorComponent::TYPE(dtEntity::SID("Manipulator"));
    const dtEntity::StringId ManipulatorComponent::LayerId(dtEntity::SID("Layer"));
    const dtEntity::StringId ManipulatorComponent::DraggerTypeId(dtEntity::SID("DraggerType"));
+   const dtEntity::StringId ManipulatorComponent::OffsetFromStartId(dtEntity::SID("OffsetFromStart"));
 
    const dtEntity::StringId ManipulatorComponent::TabPlaneDraggerId(dtEntity::SID("TabPlaneDragger"));
    const dtEntity::StringId ManipulatorComponent::TabPlaneTrackballDraggerId(dtEntity::SID("TabPlaneTrackballDragger"));
@@ -256,6 +283,7 @@ namespace dtEntitySimulation
    {
       Register(LayerId, &mLayerProperty);
       Register(DraggerTypeId, &mDraggerType);
+      Register(OffsetFromStartId, &mOffsetFromStart);
 
       mLayerProperty.Set(dtEntity::SID("default"));
 
@@ -271,6 +299,9 @@ namespace dtEntitySimulation
    void ManipulatorComponent::OnAddedToEntity(dtEntity::Entity& e)
    {
       mEntity = &e;
+      ManipulatorSystem* ms;
+      mEntity->GetEntityManager().GetEntitySystem(TYPE, ms);
+      SetUseLocalCoords(ms->GetUseLocalCoords());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -289,6 +320,24 @@ namespace dtEntitySimulation
       else if(propname == DraggerTypeId)
       {
          SetDraggerType(prop.StringIdValue());
+      }
+      else if(propname == OffsetFromStartId)
+      {
+         if(mDraggerCallback)
+         {
+            static_cast<DraggerCallback*>(mDraggerCallback.get())->SetOffsetFromStart(prop.Vec3dValue());
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorComponent::SetUseLocalCoords(bool v)
+   {
+      mUseLocalCoords = v;
+
+      if(mDraggerContainer)
+      {
+         static_cast<DraggerContainer*>(mDraggerContainer.get())->SetUseLocalCoords(v);
       }
    }
 
@@ -331,6 +380,10 @@ namespace dtEntitySimulation
 
          assert(!mDraggerContainer.valid());
          mDraggerContainer = new DraggerContainer(GetDragger(), tcomp);
+         if(mUseLocalCoords)
+         {
+            static_cast<DraggerContainer*>(mDraggerContainer.get())->SetUseLocalCoords(true);
+         }
          next->GetAttachmentGroup()->addChild(mDraggerContainer);
          mAttachPoint = mLayerProperty.Get();
       }
@@ -437,7 +490,6 @@ namespace dtEntitySimulation
       {
          mDraggerCallback = new DraggerCallback(tcomp);
          dragger->addDraggerCallback(mDraggerCallback);
-
       }
 
       SetLayer(mLayerProperty.Get());
@@ -446,14 +498,34 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
 
+   const dtEntity::StringId ManipulatorSystem::UseLocalCoordsId(dtEntity::SID("UseLocalCoords"));
+
    ManipulatorSystem::ManipulatorSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
-    {
-
+   {
+      Register(UseLocalCoordsId, &mUseLocalCoords);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    ManipulatorSystem::~ManipulatorSystem()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
+   {
+      if(propname == UseLocalCoordsId)
+      {
+         SetUseLocalCoords(prop.BoolValue());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorSystem::SetUseLocalCoords(bool v)
+   {
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         i->second->SetUseLocalCoords(v);
+      }
    }
 }

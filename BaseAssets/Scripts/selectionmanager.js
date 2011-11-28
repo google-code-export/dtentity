@@ -26,7 +26,7 @@ var Selection = {
 
   deselect : function (id) {
 
-    if (id == 0) return false;
+    if (id === 0) return false;
     var i = this.ids.lastIndexOf(id);
     if (i == -1) {
       return false;
@@ -53,7 +53,7 @@ var Selection = {
       var transcomp = positionAttitudeTransformSystem.getComponent(eid, true);
       if(transcomp !== null) {
         osg.Vec3.add(center, transcomp.Position, center);
-	++count;
+        ++count;
       }
     }
     osg.Vec3.mult(center, 1 / count, center);

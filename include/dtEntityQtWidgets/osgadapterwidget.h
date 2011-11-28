@@ -82,8 +82,8 @@ namespace dtEntityQtWidgets
       virtual void mouseMoveEvent(QMouseEvent* event);
       virtual void mouseDoubleClickEvent(QMouseEvent* event);
       virtual void wheelEvent(QWheelEvent* event);
-      virtual void focusInEvent(QFocusEvent* event);
-      virtual void focusOutEvent(QFocusEvent* event);
+      virtual void enterEvent(QEvent* event);
+      virtual void leaveEvent(QEvent* event);
 
       osg::observer_ptr<osgViewer::GraphicsWindow> mGraphicsWindow;
 

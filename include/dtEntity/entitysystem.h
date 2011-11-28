@@ -132,13 +132,18 @@ namespace dtEntity
        * Override this if components of this entity system should not
        * be stored to map
        */
-      virtual bool StoreComponentsToMap() const { return true; }
+      virtual bool StoreComponentToMap(dtEntity::EntityId) const { return true; }
+
+      /**
+       * Override to return false if no spawner should be allowed to spawn this component
+       */
+      virtual bool AllowComponentCreationBySpawner() const { return true; }
 
       /**
        * Override this if properties of this entity system should
-       * be stored to map
+       * be stored to scene file
        */
-      virtual bool StoreSystemToMap() const { return false; }
+      virtual bool StorePropertiesToScene() const { return false; }
 
    private:
 

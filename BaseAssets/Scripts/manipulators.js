@@ -43,7 +43,7 @@ var Tool = {
       }
     }
   },
-  handleToolKeys: function () {
+  /*handleToolKeys: function () {
     if (Input.getKeyDown("z") && Input.getKey("Control_L")) {
       UndoStack.undo();
     }
@@ -59,7 +59,7 @@ var Tool = {
     if (Input.getKeyDown("v") && Input.getKey("Control_L")) {
       Clipboard.paste();
     }
-  },
+  },*/
    getCameraPosition: function () {
      return mainCamera.Position;
    },
@@ -75,56 +75,101 @@ var Tool = {
 
 var ToolHolder = {
 
-  tools: {},
-  activeTool: null,
+  _tools: {},
+  _activeTool: null,
+  _focused : false,
   addTool: function (tool) {
-    this.tools[tool.name] = tool;
+    this._tools[tool.name] = tool;
 
     var toolvars = [];
-    for(var k in this.tools) {
-       var t = this.tools[k];
+    for(var k in this._tools) {
+       var t = this._tools[k];
        toolvars.push({ToolName : t.name, IconPath : t.iconPath, Shortcut: t.shortCut});
     }
     EntityManager.emitMessage("ToolsUpdatedMessage", {"Tools" : toolvars});
   },
   useTool: function (toolname) {
     var nexttool = null;
-    if (toolname in this.tools) {
-      nexttool = this.tools[toolname];
-      if (nexttool === this.activeTool) {
+    if (toolname in this._tools) {
+      nexttool = this._tools[toolname];
+      if (nexttool === this._activeTool) {
         return;
       }
     } else {
       Log.error("No tool named " + toolname + " registered!");
       return;
     }
-
-    if (this.activeTool !== null) {
-      this.activeTool.deactivate();
+    if (this._activeTool !== null) {
+      this._activeTool.deactivate();
     }
-    this.activeTool = nexttool;
 
-    if (this.activeTool !== null) {
-      this.activeTool.activate();
+    this._activeTool = nexttool;
+    if(this._focused && this._activeTool !== null) {
+       this._activeTool.activate();
     }
   },
   selectionUpdated: function (id) {
-    if (this.activeTool !== null) {
-      this.activeTool.selectionUpdated();
+    if (this._activeTool !== null) {
+      this._activeTool.selectionUpdated();
     }
   },
   update: function () {
-    if (this.activeTool !== null) {
-      this.activeTool.update();
+    if (this._focused && this._activeTool !== null) {
+      this._activeTool.update();
     }
+  },
+  keyDown : function(key, handled) {
+   if (this._activeTool !== null && typeof this._activeTool.keyDown != 'undefined') {
+      this._activeTool.keyDown(key, handled);
+    }
+  },
+  keyUp : function(key, handled) {
+   if (this._activeTool !== null && typeof this._activeTool.keyUp != 'undefined') {
+      this._activeTool.keyUp(key, handled);
+    }
+  },
+  mouseButtonDown : function(button, handled) {
+    if (this._activeTool !== null && typeof this._activeTool.mouseButtonDown != 'undefined') {
+      this._activeTool.mouseButtonDown(button, handled);
+    }
+  },
+  mouseButtonUp : function(button, handled) {
+    if (this._activeTool !== null && typeof this._activeTool.mouseButtonUp != 'undefined') {
+      this._activeTool.mouseButtonUp(button, handled);
+    }
+  },
+  mouseWheel : function(dir, handled) {
+     if (this._activeTool !== null && typeof this._activeTool.mouseWheel != 'undefined') {
+       this._activeTool.mouseWheel(dir, handled);
+     }
+  },
+  mouseMove : function(x, y, handled) {
+      if (this._activeTool !== null && typeof this._activeTool.mouseMove != 'undefined') {
+        this._activeTool.mouseMove(x, y, handled);
+      }
+  },
+  mouseEnterLeave : function(focused, displaynum, screennum) {
+   if(this._focused == focused) {
+      return;
+   }
+
+   this._focused = focused;
+
+   if(focused) {
+      if (this._activeTool !== null) {
+        this._activeTool.activate();
+      }
+   } else {
+      if (this._activeTool !== null) {
+        this._activeTool.deactivate();
+      }
+   }
   }
+
 };
 
-function updateTools() {
-  ToolHolder.update();
-}
-
-EntityManager.registerForMessages("EndOfFrameMessage", updateTools, Priority.lowest);
+setInterval(function() { ToolHolder.update(); }, 0);
+Input.addInputCallback(ToolHolder);
 
 function OnToolActivatedMessage(msgname, params) {
   var toolname = params.ToolName;
@@ -142,66 +187,61 @@ function SelectTool() {
   this.iconPath = ":icons/edit-select.png";
   this.shortCut = "Ctrl+i";
 
-  this.update = function () {
-    if (Input.getMouseButtonDown(0)) {
-    
-      var pickray = Screen.getPickRay(Input.getAxis(Axis.MouseX), Input.getAxis(Axis.MouseY));
-      var campos = this.getCameraPosition();
+   this.mouseButtonDown = function(button, handled) {
+      if(button === 0 && !handled) {
+         var pickray = Screen.getPickRay(Input.getAxis(Axis.MouseX), Input.getAxis(Axis.MouseY));
+         var campos = this.getCameraPosition();
 
-      osg.Vec3.mult(pickray, 100000, pickray);
-      var tmp = osg.Vec3.add(campos, pickray);
+         osg.Vec3.mult(pickray, 100000, pickray);
+         var tmp = osg.Vec3.add(campos, pickray);
 
-      var undoOp = {
-        oldSelection: [],
-        newSelection: [],
-        undo: function () {
+         var undoOp = {
+           oldSelection: [],
+           newSelection: [],
+           undo: function () {
 
-          // clear selection
-          for (var k in Selection.ids) {
-            Selection.deselect(Selection.ids[k]);
-          }
+             // clear selection
+             for (var k in Selection.ids) {
+               Selection.deselect(Selection.ids[k]);
+             }
 
-          for (var k in this.oldSelection) {
-            Selection.select(this.oldSelection[k]);
-          }
-        },
-        redo: function () {
+             for (var k in this.oldSelection) {
+               Selection.select(this.oldSelection[k]);
+             }
+           },
+           redo: function () {
 
-          // clear selection
-          for (var k in Selection.ids) {
-            Selection.deselect(Selection.ids[k]);
-          }
-          for (var k in this.newSelection) {
-            Selection.select(this.newSelection[k]);
-          }
-        }
-      };
+             // clear selection
+             for (var k in Selection.ids) {
+               Selection.deselect(Selection.ids[k]);
+             }
+             for (var k in this.newSelection) {
+               Selection.select(this.newSelection[k]);
+             }
+           }
+         };
 
-      for (var k in Selection.ids) {
-        undoOp.oldSelection.push(Selection.ids[k]);
+         for (var k in Selection.ids) {
+           undoOp.oldSelection.push(Selection.ids[k]);
+         }
+
+         var pick = Screen.pickEntity(campos, tmp);
+
+         if (pick === null) {
+           return;
+         }
+         var usemulti = (Input.getKey("Control_L"));
+         RequestEntitySelect("", {
+           AboutEntity: pick.Id,
+           UseMultiSelect: usemulti
+         });
+
+         for (var k in Selection.ids) {
+           undoOp.newSelection.push(Selection.ids[k]);
+         }
+         UndoStack.pushOperation(undoOp);
       }
-
-      var pick = Screen.pickEntity(campos, tmp);
-
-      if (pick === null) {
-        return;
-      }
-      println("Picked: " + pick.Id);
-      var usemulti = (Input.getKey("Control_L"));
-      RequestEntitySelect("", {
-        AboutEntity: pick.Id,
-        UseMultiSelect: usemulti
-      });
-
-      for (var k in Selection.ids) {
-        undoOp.newSelection.push(Selection.ids[k]);
-      }
-      UndoStack.pushOperation(undoOp);
-
-    } else {
-      this.handleToolKeys();
-    }
-  };
+   }
 }
 SelectTool.prototype = Tool;
 var selectTool = new SelectTool;
@@ -220,12 +260,17 @@ function TranslateTool() {
   this.undoOp = null;
   this.doPlaceOnTerrain = false;
 
+  var initialCamPos = [0,0,0];
+
+  var manipulators = [];
+
   this.activate = function () {
+
       for (var k in Selection.ids) {
-         println("Manip " + Selection.ids[k]);
-         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
-         manip.DraggerType = "TranslateAxisDragger";
-         manip.finished();
+         var manipulator = manipulatorSystem.createComponent(Selection.ids[k]);
+         manipulator.DraggerType = "TranslateAxisDragger";
+         manipulator.finished();
+         manipulators.push(manipulator);
       }
   }
 
@@ -233,21 +278,41 @@ function TranslateTool() {
       for (var k in Selection.ids) {
          manipulatorSystem.deleteComponent(Selection.ids[k]);
       }
+      manipulators = [];
   }
 
-  this.onClick = function () {
+  function switchToGlobalCoords() {
+      for (var k in Selection.ids) {
+         manipulatorSystem.getComponent(Selection.ids[k]).UseLocalCoords = false;
+      }
   }
 
-  this.onRelease = function () {
-
+  function switchToObjectCoords() {
+      for (var k in Selection.ids) {
+         manipulatorSystem.getComponent(Selection.ids[k]).UseLocalCoords = true;
+      }
   }
 
+  this.mouseButtonDown = function(button, handled) {
 
-  this.onDrag = function () {
-
+      if(button === 0) {
+         initialCamPos = this.getCameraPosition();
+         var doclone = Input.getKey("Shift_L");
+         if(doclone) {
+           Selection.clone();
+         }
+      }
   }
 
   this.update = function () {
+    if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
+      var campos = this.getCameraPosition();
+      var cammovement = osg.Vec3.sub(campos, initialCamPos);
+      for(var k in manipulators) {
+        var manipulator = manipulators[k];
+        manipulator.OffsetFromStart = cammovement;
+      }
+    }
   }
 };
 
@@ -264,13 +329,15 @@ function RotateTool() {
 
   this.undoOp = null;
   this.doPlaceOnTerrain = false;
+  var initialCamPos = [0,0,0];
+  var manipulators = [];
 
   this.activate = function () {
       for (var k in Selection.ids) {
-         println("Manip " + Selection.ids[k]);
          var manip = manipulatorSystem.createComponent(Selection.ids[k]);
          manip.DraggerType = "TrackballDragger";
          manip.finished();
+         manipulators.push(manip);
       }
   }
 
@@ -278,22 +345,29 @@ function RotateTool() {
       for (var k in Selection.ids) {
          manipulatorSystem.deleteComponent(Selection.ids[k]);
       }
+      manipulators = [];
   }
 
-  this.onClick = function () {
-  }
-
-  this.onRelease = function () {
-
-  }
-
-
-  this.onDrag = function () {
-
-  }
+   this.mouseButtonDown = function(button, handled) {
+       if(button === 0) {
+          initialCamPos = this.getCameraPosition();
+          var doclone = Input.getKey("Shift_L");
+          if(doclone) {
+            Selection.clone();
+          }
+       }
+   }
 
   this.update = function () {
-  }
+      if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
+        var campos = this.getCameraPosition();
+        var cammovement = osg.Vec3.sub(campos, initialCamPos);
+        for(var k in manipulators) {
+          var manipulator = manipulators[k];
+          manipulator.OffsetFromStart = cammovement;
+        }
+      }
+   }
 };
 
 RotateTool.prototype = Tool;
@@ -304,18 +378,20 @@ ToolHolder.addTool(rotateTool);
 
 function ScaleTool() {
   this.name = "Scale";
-   this.iconPath = ":icons/transform-scale.png";
-   this.shortCut = "Ctrl+s";
+  this.iconPath = ":icons/transform-scale.png";
+  this.shortCut = "Ctrl+s";
+  var initialCamPos = [0,0,0];
+  var manipulators = [];
 
   this.undoOp = null;
   this.doPlaceOnTerrain = false;
 
   this.activate = function () {
       for (var k in Selection.ids) {
-         println("Manip " + Selection.ids[k]);
          var manip = manipulatorSystem.createComponent(Selection.ids[k]);
          manip.DraggerType = "TabBoxDragger";
          manip.finished();
+         manipulators.push(manip);
       }
   }
 
@@ -323,21 +399,28 @@ function ScaleTool() {
       for (var k in Selection.ids) {
          manipulatorSystem.deleteComponent(Selection.ids[k]);
       }
+      manipulators = [];
   }
 
-  this.onClick = function () {
-  }
-
-  this.onRelease = function () {
-
-  }
-
-
-  this.onDrag = function () {
-
-  }
+   this.mouseButtonDown = function(button, handled) {
+       if(button === 0) {
+          initialCamPos = this.getCameraPosition();
+          var doclone = Input.getKey("Shift_L");
+          if(doclone) {
+            Selection.clone();
+          }
+       }
+   }
 
   this.update = function () {
+      if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
+        var campos = this.getCameraPosition();
+        var cammovement = osg.Vec3.sub(campos, initialCamPos);
+        for(var k in manipulators) {
+          var manipulator = manipulators[k];
+          manipulator.OffsetFromStart = cammovement;
+        }
+      }
   }
 };
 

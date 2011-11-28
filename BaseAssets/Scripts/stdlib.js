@@ -125,26 +125,6 @@ function createEntity(proto) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function createSpawnerFromEntity(entityid) {
-
-  var spawner = {};
-  var components = EntityManager.getComponents(entityid);
-
-  for(var i in components) {
-    var component = components[i];
-
-    var spawnerprops = [];
-    var props = component.properties();
-    for(var j in props) {
-      spawnerprops[j] = props[j];
-    }
-
-    spawner[i] = spawnerprops;
-  }
-  return spawner;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 var __ENTITYSYSTEMS = {};
 
 function getEntitySystem(name) {
@@ -156,3 +136,29 @@ function getEntitySystem(name) {
   __ENTITYSYSTEMS[name = es];
   return es;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+function createSpawnerFromEntity(entityid) {
+
+  var spawner = {};
+  var components = EntityManager.getComponents(entityid);
+
+  for(var componentType in components) {
+    var component = components[componentType];
+
+    var entitySystem = getEntitySystem(componentType);
+    if(entitySystem !== null && entitySystem.allowComponentCreationBySpawner()) {
+
+       var spawnerprops = [];
+       var props = component.properties();
+       for(var j in props) {
+         spawnerprops[j] = props[j];
+       }
+
+       spawner[componentType] = spawnerprops;
+    }
+  }
+  return spawner;
+}
+
+

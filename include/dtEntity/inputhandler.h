@@ -67,7 +67,16 @@ namespace dtEntity
       virtual void MouseButtonUp(int button, bool handled) {}
       virtual void MouseButtonDown(int button, bool handled) {}
       virtual void MouseWheel(int dir, bool handled) {}
-      virtual void MouseMove(float x, float y, bool handled) {};
+      virtual void MouseMove(float x, float y, bool handled) {}
+      virtual void MouseEnterLeave(bool focused, int displaynum, int screennum) {}
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // for use with GuiEventAdapter user event
+   class MouseEnterLeaveEvent : public osg::Referenced
+   {
+   public:
+      bool mFocused;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +211,7 @@ namespace dtEntity
       void HandleMouseDown(const osgGA::GUIEventAdapter& ea);
       void HandleMouseMove(const osgGA::GUIEventAdapter& ea);
       void HandleMouseWheel(const osgGA::GUIEventAdapter& ea);
+      void HandleMouseEnterLeave(const osgGA::GUIEventAdapter& ea);
 
       dtEntity::EntityManager* mEntityManager;
       bool mMultiTouchEnabled;

@@ -321,12 +321,6 @@ namespace dtEntity
                              osg::NodeVisitor* nv)
    {
 
-      osg::GraphicsContext::ScreenIdentifier id;
-      osg::GraphicsContext::ScreenSettings res;
-      ea.getGraphicsContext()->getWindowingSystemInterface()->getScreenSettings(id, res);
-      int displayNum = id.displayNum;
-      int screenNum = id.screenNum;
-      
       unsigned int fn = nv->getFrameStamp()->getFrameNumber();
       if(fn != mFrameNumber)
       {
@@ -381,6 +375,15 @@ namespace dtEntity
          case osgGA::GUIEventAdapter::SCROLL:
          {
             HandleMouseWheel(ea);
+            break;
+         }
+         case osgGA::GUIEventAdapter::USER:
+         {
+            const MouseEnterLeaveEvent* e = dynamic_cast<const MouseEnterLeaveEvent*>(ea.getUserData());
+            if(e)
+            {
+               HandleMouseEnterLeave(ea);
+            }
             break;
          }
          default: break;
@@ -608,6 +611,24 @@ namespace dtEntity
             break;
          }
          mTouches[i] = mypt;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void InputHandler::HandleMouseEnterLeave(const osgGA::GUIEventAdapter& ea)
+   {
+      const MouseEnterLeaveEvent* e = static_cast<const MouseEnterLeaveEvent*>(ea.getUserData());
+      bool focused = e->mFocused;
+
+      osg::GraphicsContext::ScreenIdentifier id;
+      osg::GraphicsContext::ScreenSettings res;
+      ea.getGraphicsContext()->getWindowingSystemInterface()->getScreenSettings(id, res);
+      int displayNum = id.displayNum;
+      int screenNum = id.screenNum;
+
+      for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
+      {
+         (*i)->MouseEnterLeave(focused, displayNum, screenNum);
       }
    }
 

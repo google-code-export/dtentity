@@ -384,7 +384,7 @@ function TranslateTool() {
       var eid = Selection.ids[k];
 
       var transcomp = positionAttitudeTransformSystem.getComponent(eid, true);
-      if(transcomp != null) {
+      if(transcomp !== null) {
         this.translations.push([eid, transcomp, transcomp.Position]);
         this.undoOp.initialTranslations.push([eid, transcomp.Position]);
       }
