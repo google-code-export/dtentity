@@ -27,12 +27,8 @@
 
 namespace dtEntitySimulation
 {
-
-   
-
-  
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void RegisterMessageTypes(dtEntity::EntityManager& em)
+   void RegisterMessageTypes(dtEntity::MessageFactory& em)
    {    
       
    }

@@ -227,11 +227,12 @@ namespace dtEntityWrappers
    Handle<Value> EMEmitMessage(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
       std::string namestr = ToStdString(args[0]);
       dtEntity::StringId pname = dtEntity::SID(namestr);
 
       dtEntity::Message* msg = NULL; 
-      bool success = em->CreateMessage(pname, msg);
+      bool success = mf->CreateMessage(pname, msg);
       
       if(!success)
       {
@@ -247,11 +248,12 @@ namespace dtEntityWrappers
    Handle<Value> EMEnqueueMessage(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
 
       dtEntity::StringId pname = dtEntity::SID(ToStdString(args[0]));      
 
       dtEntity::Message* msg = NULL; 
-      bool success = em->CreateMessage(pname, msg);
+      bool success = mf->CreateMessage(pname, msg);
       
       if(!success)
       {
@@ -483,7 +485,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapEntityManager(dtEntity::EntityManager* v)
+   v8::Handle<v8::Object> WrapEntityManager(dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
    {
 
       v8::HandleScope handle_scope;
@@ -494,7 +496,7 @@ namespace dtEntityWrappers
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_entityManagerTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("EntityManager"));
-        templt->InstanceTemplate()->SetInternalFieldCount(2);
+        templt->InstanceTemplate()->SetInternalFieldCount(3);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
@@ -516,6 +518,7 @@ namespace dtEntityWrappers
       Local<Object> instance = s_entityManagerTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       instance->SetInternalField(1, External::New(new MessageFunctorStorage()));
+      instance->SetInternalField(2, External::New(mf));
 
       return handle_scope.Close(instance);
 
@@ -526,6 +529,14 @@ namespace dtEntityWrappers
    {
       dtEntity::EntityManager* v;
       GetInternal(Handle<Object>::Cast(val), 0, v);
+      return v;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::MessageFactory* UnwrapMessageFactory(v8::Handle<v8::Value> val)
+   {
+      dtEntity::MessageFactory* v;
+      GetInternal(Handle<Object>::Cast(val), 2, v);
       return v;
    }
 

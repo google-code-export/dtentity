@@ -23,18 +23,15 @@
 #include <osg/Quat>
 #include <osg/Vec3>
 #include <dtEntitySimulation/export.h>
-#include <dtEntity/entitymanager.h>
-#include <dtEntity/message.h>
-#include <dtEntity/property.h>
+
+namespace dtEntity
+{
+   class MessageFactory;
+}
 
 namespace dtEntitySimulation
 {
-
-  
    
-   //////////////////////////////////////////////////////////////////////////////// 
-
-   void DT_ENTITY_SIMULATION_EXPORT RegisterMessageTypes(dtEntity::EntityManager& em);
-
+   void DT_ENTITY_SIMULATION_EXPORT RegisterMessageTypes(dtEntity::MessageFactory&);
   
 }

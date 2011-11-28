@@ -128,7 +128,18 @@ namespace dtEntity
       virtual void OnAddedToEntityManager(dtEntity::EntityManager& em) {}
       virtual void OnRemoveFromEntityManager(dtEntity::EntityManager& em) {}
 
-      
+      /**
+       * Override this if components of this entity system should not
+       * be stored to map
+       */
+      virtual bool StoreComponentsToMap() const { return true; }
+
+      /**
+       * Override this if properties of this entity system should
+       * be stored to map
+       */
+      virtual bool StoreSystemToMap() const { return false; }
+
    private:
 
       // no copy ctor

@@ -5,11 +5,11 @@ include_once("Scripts/motionmodel.js");
 ////////////////////////////// Variables ////////////////////////////////
 
 var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-var clamper = EntityManager.getEntitySystem("GroundClamping").createComponent(camid);
+var clamper = getEntitySystem("GroundClamping").createComponent(camid);
 clamper.ClampingMode = "KeepAboveTerrain";
 clamper.VerticalOffset = 1;
 clamper.finished();
-var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 var tempvec = [0,0,0];
 var toRight = [0,0,0];
 var movespeed = 100;

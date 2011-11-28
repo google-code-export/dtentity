@@ -119,13 +119,14 @@ namespace dtEntity
 
       virtual osg::Quat GetRotation() const 
       { 
-         //TODO implement
-         return osg::Quat();
+         osg::Quat q;
+         q.makeRotate(osg::Vec3d(0,1,0), mEyeDirection.Get());
+         return q;
       }
 
-      virtual void SetRotation(const osg::Quat&) 
+      virtual void SetRotation(const osg::Quat& q)
       { 
-         //TODO implement
+         mEyeDirection.Set(q * osg::Vec3d(0, 1, 0));
       }
 
    private:

@@ -27,12 +27,12 @@
 
 namespace dtEntity
 {
-   class EntityManager;
+   class MessageFactory;
 
    /**
     * Adds all messages to message factory
 	*/
-   void RegisterMessages(EntityManager& em);
+	void RegisterMessages(MessageFactory&);
 
    /**
     * Tick message gets sent each frame by the system.

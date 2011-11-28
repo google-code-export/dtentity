@@ -19,13 +19,13 @@
 */
 
 #include <dtEntity/basemessages.h>
-#include <dtEntity/entitymanager.h>
+#include <dtEntity/messagefactory.h>
 
 namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterMessages(EntityManager& em)
+   void RegisterMessages(MessageFactory& em)
    {
       em.RegisterMessageType<CameraAddedMessage>(CameraAddedMessage::TYPE);
       em.RegisterMessageType<CameraRemovedMessage>(CameraRemovedMessage::TYPE);

@@ -145,7 +145,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    MapSystem::MapSystem(EntityManager& em)
       : DefaultEntitySystem<MapComponent>(em)
-      , mPluginManager(em)
+      , mPluginManager(em, mMessageFactory)
       , mCurrentScene("")
    {
 
@@ -154,6 +154,7 @@ namespace dtEntity
       mDeleteEntityFunctor = MessageFunctor(this, &MapSystem::OnDeleteEntity);
       em.RegisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor, "MapSystem::OnDeleteEntity");
 
+      RegisterMessages(mMessageFactory);
    }
 
    ////////////////////////////////////////////////////////////////////////////

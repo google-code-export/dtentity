@@ -216,13 +216,15 @@ namespace dtEntityWrappers
          std::string eventName = propname.substr(2, propname.length());
          EventHandler* eh = new EventHandler(info.Holder(), eventName);
          AddEventHandler(window, eh);
+         return Handle<Value>();
       }
       else
       {
          MakeCEGUIContextCurrent();
          window->setProperty(ToStdString(namestr),ToStdString(value));
+         return value;
       }
-      return value;
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
