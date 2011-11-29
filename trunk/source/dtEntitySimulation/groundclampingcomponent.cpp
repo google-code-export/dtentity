@@ -174,8 +174,6 @@ namespace dtEntitySimulation
          return;
       }
       mSceneNode = lc->GetAttachedComponentNode();
-      const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(mSceneNode->getUserData());
-      assert(entity != NULL);
    }
 
    ////////////////////////////////////////////////////////////////////////////
