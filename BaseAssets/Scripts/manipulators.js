@@ -189,11 +189,6 @@ function SelectTool() {
 
    this.mouseButtonDown = function(button, handled) {
       if(button === 0 && !handled) {
-         var pickray = Screen.getPickRay(Input.getAxis(Axis.MouseX), Input.getAxis(Axis.MouseY));
-         var campos = this.getCameraPosition();
-
-         osg.Vec3.mult(pickray, 100000, pickray);
-         var tmp = osg.Vec3.add(campos, pickray);
 
          var undoOp = {
            oldSelection: [],
@@ -225,7 +220,9 @@ function SelectTool() {
            undoOp.oldSelection.push(Selection.ids[k]);
          }
 
-         var pick = Screen.pickEntity(campos, tmp);
+         var mouseX = Input.getAxis(Axis.MouseXRaw);
+         var mouseY = Input.getAxis(Axis.MouseYRaw);
+         var pick = Screen.pickEntity(mouseX, mouseY);
 
          if (pick === null) {
            return;

@@ -59,6 +59,17 @@ namespace dtEntity
       static const StringId PositionId;
       static const StringId EyeDirectionId;
       static const StringId UpId;
+
+      static const StringId OrthoLeftId;
+      static const StringId OrthoRightId;
+      static const StringId OrthoTopId;
+      static const StringId OrthoBottomId;
+      static const StringId OrthoZNearId;
+      static const StringId OrthoZFarId;
+
+      static const StringId ProjectionModeId;
+      static const StringId ModePerspectiveId;
+      static const StringId ModeOrthoId;
       
       CameraComponent();
      
@@ -85,6 +96,9 @@ namespace dtEntity
 
 		void SetIsMainCamera(bool v);
 
+		void SetProjectionMode(StringId);
+		StringId GetProjectionMode() const { return mProjectionMode.Get(); }
+
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);
       osg::Vec3d GetUp() const;
@@ -103,6 +117,11 @@ namespace dtEntity
 	   * Re-calculate osg camera view matrix from up, pos and eye dir vectors
 	   */
       void UpdateViewMatrix();
+
+      /**
+       * Re-calculate osg camera projection matrix from mode, near, far etc
+       */
+      void UpdateProjectionMatrix();
 
       /**
        * Set the osg node mask controlling which nodes are
@@ -145,7 +164,14 @@ namespace dtEntity
       Vec3dProperty mEyeDirection;
       Vec4Property mClearColor;
       UIntProperty mCullMask;
+      StringIdProperty mProjectionMode;
 
+      DoubleProperty mOrthoLeft;
+      DoubleProperty mOrthoRight;
+      DoubleProperty mOrthoBottom;
+      DoubleProperty mOrthoTop;
+      DoubleProperty mOrthoZNear;
+      DoubleProperty mOrthoZFar;
    };
 
    
@@ -159,7 +185,7 @@ namespace dtEntity
       CameraSystem(EntityManager& em);
 
       dtEntity::EntityId GetMainCameraEntity();
-      dtEntity::EntityId GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera);
+      dtEntity::EntityId GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera = "maps/camera.dtemap");
 
    private:
    };
