@@ -49,6 +49,16 @@ namespace dtEntity
    const StringId CameraComponent::EyeDirectionId(SID("EyeDirection"));
    const StringId CameraComponent::CullMaskId(SID("CullMask"));
 
+   const StringId CameraComponent::ProjectionModeId(SID("ProjectionMode"));
+   const StringId CameraComponent::ModePerspectiveId(SID("ModePerspective"));
+   const StringId CameraComponent::ModeOrthoId(SID("ModeOrtho"));
+
+   const StringId CameraComponent::OrthoLeftId(SID("OrthoLeft"));
+   const StringId CameraComponent::OrthoRightId(SID("OrthoRight"));
+   const StringId CameraComponent::OrthoBottomId(SID("OrthoBottom"));
+   const StringId CameraComponent::OrthoTopId(SID("OrthoTop"));
+   const StringId CameraComponent::OrthoZNearId(SID("OrthoZNear"));
+   const StringId CameraComponent::OrthoZFarId(SID("OrthoZFar"));
 
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
@@ -68,6 +78,14 @@ namespace dtEntity
       Register(EyeDirectionId, &mEyeDirection);
       Register(ClearColorId, &mClearColor);
       Register(CullMaskId, &mCullMask);
+      Register(ProjectionModeId, &mProjectionMode);
+
+      Register(OrthoLeftId, &mOrthoLeft);
+      Register(OrthoRightId, &mOrthoRight);
+      Register(OrthoBottomId, &mOrthoBottom);
+      Register(OrthoTopId, &mOrthoTop);
+      Register(OrthoZNearId, &mOrthoZNear);
+      Register(OrthoZFarId, &mOrthoZFar);
 
       mFieldOfView.Set(45);
       mAspectRatio.Set(1.3f);
@@ -80,6 +98,15 @@ namespace dtEntity
       mAspectRatio.Set(1);
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
       mCullMask.Set(0xFFFFFFFF);
+      mProjectionMode.Set(ModePerspectiveId);
+
+      mOrthoLeft.Set(-1000);
+      mOrthoRight.Set(1000);
+      mOrthoBottom.Set(-1000);
+      mOrthoTop.Set(1000);
+      mOrthoZNear.Set(-10000);
+      mOrthoZFar.Set(10000);
+      UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -108,19 +135,22 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnPropertyChanged(StringId propname, Property& prop)
    {
+
       if(propname == IsMainCameraId)
       {
          SetIsMainCamera(prop.BoolValue());
          return;
       }
+
       if(!mCamera.valid())
          return;
 
-      if(propname == PositionId || propname == EyeDirectionId)
+      if(propname == PositionId || propname == EyeDirectionId || propname == UpId)
       {
          return;
       }
-      else if(propname == CullingModeId)
+
+      if(propname == CullingModeId)
       {
          if(prop.StringIdValue() == NoAutoNearFarCullingId)
          {
@@ -142,7 +172,18 @@ namespace dtEntity
       else if(propname == FieldOfViewId || propname == AspectRatioId ||
          propname == NearClipId || propname == FarClipId)
       {
-         mCamera->setProjectionMatrixAsPerspective(mFieldOfView.Get(),  mAspectRatio.Get(), mNearClip.Get(), mFarClip.Get());
+
+      }
+      else if(propname == OrthoLeftId || propname == OrthoRightId ||
+         propname == OrthoBottomId || propname == OrthoTopId ||
+         propname == OrthoZNearId || propname == OrthoZFarId ||
+         propname == FieldOfViewId || propname == AspectRatioId ||
+         propname == NearClipId || propname == FarClipId ||
+         propname == ProjectionModeId
+
+      )
+      {
+         UpdateProjectionMatrix();
       }
       else if(propname == LODScaleId)
       {
@@ -191,6 +232,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetProjectionMode(StringId v)
+   {
+      mProjectionMode.Set(v);
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetCamera(osg::Camera* cam) 
    { 
       mCamera = cam; 
@@ -198,9 +246,8 @@ namespace dtEntity
       OnPropertyChanged(FieldOfViewId, mFieldOfView);
       OnPropertyChanged(LODScaleId, mLODScale);
       OnPropertyChanged(ClearColorId, mClearColor);
-      OnPropertyChanged(NearClipId, mNearClip);
-      OnPropertyChanged(FarClipId, mFarClip);
       OnPropertyChanged(CullMaskId, mCullMask);
+      UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -218,6 +265,28 @@ namespace dtEntity
       osg::Vec3d lookat = mPosition.Get() + mEyeDirection.Get();
       mCamera->setViewMatrixAsLookAt(mPosition.Get(), lookat, mUp.Get());
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::UpdateProjectionMatrix()
+   {
+      if(mCamera == NULL)
+      {
+         return;
+      }
+
+      if(mProjectionMode.Get() == ModePerspectiveId)
+      {
+         mCamera->setProjectionMatrixAsPerspective(mFieldOfView.Get(),  mAspectRatio.Get(), mNearClip.Get(), mFarClip.Get());
+      }
+      else if(mProjectionMode.Get() == ModeOrthoId)
+      {
+         mCamera->setProjectionMatrixAsOrtho(mOrthoLeft.Get(), mOrthoRight.Get(),
+                                             mOrthoBottom.Get(), mOrthoTop.Get(),
+                                             mOrthoZNear.Get(), mOrthoZFar.Get());
+      }
+
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetUp(const osg::Vec3d& v) 

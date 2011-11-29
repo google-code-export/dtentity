@@ -26,16 +26,17 @@ namespace dtEntity
    {
       enum e
       {
-         REFLECTION_SCENE              = (1<<0),    // OSGOcean
-         REFRACTION_SCENE              = (1<<1),    // OSGOcean
-         NORMAL_SCENE                  = (1<<2),    // OSGOcean
-         SURFACE_MASK                  = (1<<3),    // OSGOcean
-         SILT_MASK                     = (1<<4),    // OSGOcean
-         VISIBLE                       = (1 << 5),
-         PICKABLE                      = (1 << 6),
-         TERRAIN                       = (1 << 7),
-         CASTS_SHADOWS                 = (1 << 8),
-         RECEIVES_SHADOWS              = (1 << 9)
+         REFLECTION_SCENE              = (1 <<  0),    // OSGOcean
+         REFRACTION_SCENE              = (1 <<  1),    // OSGOcean
+         NORMAL_SCENE                  = (1 <<  2),    // OSGOcean
+         SURFACE_MASK                  = (1 <<  3),    // OSGOcean
+         SILT_MASK                     = (1 <<  4),    // OSGOcean
+         VISIBLE                       = (1 <<  5),
+         PICKABLE                      = (1 <<  6),
+         TERRAIN                       = (1 <<  7),
+         CASTS_SHADOWS                 = (1 <<  8),
+         RECEIVES_SHADOWS              = (1 <<  9),
+         MANIPULATOR                   = (1 << 10)
       };
    }
 

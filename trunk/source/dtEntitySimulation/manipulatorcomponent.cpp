@@ -21,7 +21,7 @@
 #include <dtEntitySimulation/manipulatorcomponent.h>
 #include <osg/MatrixTransform>
 #include <dtEntity/layerattachpointcomponent.h>
-
+#include <dtEntity/nodemasks.h>
 #include <osgManipulator/TabBoxDragger>
 #include <osgManipulator/TabBoxTrackballDragger>
 #include <osgManipulator/TabPlaneDragger>
@@ -69,6 +69,12 @@ namespace dtEntitySimulation
          _xDragger->addChild(lineGeode);
          _yDragger->addChild(lineGeode);
          _zDragger->addChild(lineGeode);
+
+         unsigned int nodemask = dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::MANIPULATOR;
+         _xDragger->setNodeMask(nodemask);
+         _yDragger->setNodeMask(nodemask);
+         _zDragger->setNodeMask(nodemask);
+
 
           osg::Geode* geodex = new osg::Geode();
           osg::Geode* geodey = new osg::Geode();

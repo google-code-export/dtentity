@@ -184,6 +184,54 @@ namespace dtEntityWrappers
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRPickEntity(const Arguments& args)
+   {
+      if(args.Length() < 2)
+      {
+         return ThrowError("usage: computeIntersections(x, y)");
+      }
+
+      osgViewer::View* view = UnwrapScreenView(args.Holder());
+
+      osgUtil::LineSegmentIntersector::Intersections intersections;
+
+      dtEntity::EntityManager* entityManager = GetEntityManager();
+
+
+      double x = args[0]->NumberValue();
+      double y = args[1]->NumberValue();
+      if (view->computeIntersections(x, y, intersections))
+      {
+         HandleScope scope;
+
+         osgUtil::LineSegmentIntersector::Intersections::iterator i;
+         for(i = intersections.begin(); i != intersections.end(); ++i)
+         {
+            osgUtil::LineSegmentIntersector::Intersection isect = *i;
+            for(osg::NodePath::const_reverse_iterator j = isect.nodePath.rbegin(); j != isect.nodePath.rend(); ++j)
+            {
+               const osg::Node* node = *j;
+
+               const osg::Referenced* referenced = node->getUserData();
+               if(referenced == NULL) continue;
+               const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
+               if(entity != NULL &&
+                     entityManager->HasComponent(entity->GetId(), dtEntity::TransformComponent::TYPE, true))
+               {
+                  Handle<Object> o = Object::New();
+                  o->Set(String::New("Id"), Uint32::New(entity->GetId()));
+                  o->Set(String::New("Position"), WrapVec3(isect.getWorldIntersectPoint()));
+                  o->Set(String::New("Normal"), WrapVec3(isect.getWorldIntersectNormal()));
+
+                  return scope.Close(o);
+               }
+            }
+         }
+
+      }
+      return Null();
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRIntersect(const Arguments& args)
@@ -257,7 +305,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SCRPickEntity(const Arguments& args)
+   /*Handle<Value> SCRPickEntity(const Arguments& args)
    {
 
       if(args.Length() < 2 || !IsVec3(args[0]) || ! IsVec3(args[1]))
@@ -292,8 +340,6 @@ namespace dtEntityWrappers
       dtEntity::LayerAttachPointComponent* sceneLayer = laps->GetDefaultLayer();
       sceneLayer->GetGroup()->accept(iv);
 
-      Handle<Array> ret = Array::New();
-
       if(!lsi->containsIntersections())
       {
          return Null();
@@ -326,7 +372,7 @@ namespace dtEntityWrappers
       }
 
       return Null();
-   }
+   }*/
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRConvertWorldToScreenCoords(const Arguments& args)
