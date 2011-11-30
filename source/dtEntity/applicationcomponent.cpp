@@ -391,7 +391,7 @@ namespace dtEntity
          
       if(!found)
       {
-         LOG_ERROR("Cannot process SetComponentProperties message. Component not found: " 
+         LOG_WARNING("Cannot process SetComponentProperties message. Component not found: " 
             + GetStringFromSID(msg.GetComponentType()));
          return;
       }
@@ -422,7 +422,7 @@ namespace dtEntity
       EntitySystem* sys = GetEntityManager().GetEntitySystem(msg.GetComponentType());
       if(sys == NULL)
       {
-         LOG_ERROR("Cannot process SetSystemProperties message. Entity system not found: " 
+         LOG_WARNING("Cannot process SetSystemProperties message. Entity system not found: " 
             + GetStringFromSID(msg.GetComponentType()));
          return;
       }
