@@ -72,7 +72,7 @@ namespace dtEntityWrappers
          }
       }
 
-      virtual void KeyUp(const std::string& name, bool handled) {
+      virtual bool KeyUp(const std::string& name, bool handled) {
          if(!mKeyUpFunc.IsEmpty())
          {
             Context::Scope context_scope(GetGlobalContext());
@@ -85,10 +85,11 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 
-      virtual void KeyDown(const std::string& name, bool handled)
+      virtual bool KeyDown(const std::string& name, bool handled)
       {
          if(!mKeyDownFunc.IsEmpty())
          {
@@ -102,10 +103,11 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 
-      virtual void MouseButtonUp(int button, bool handled)
+      virtual bool MouseButtonUp(int button, bool handled)
       {
          if(!mMouseUpFunc.IsEmpty())
          {
@@ -119,10 +121,11 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 
-      virtual void MouseButtonDown(int button, bool handled)
+      virtual bool MouseButtonDown(int button, bool handled)
       {
          if(!mMouseDownFunc.IsEmpty())
          {
@@ -136,10 +139,11 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 
-      virtual void MouseWheel(int dir, bool handled)
+      virtual bool MouseWheel(int dir, bool handled)
       {
          if(!mMouseWheelFunc.IsEmpty())
          {
@@ -153,10 +157,11 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 
-      virtual void MouseMove(float x, float y, bool handled)
+      virtual bool MouseMove(float x, float y, bool handled)
       {
          if(!mMouseMoveFunc.IsEmpty())
          {
@@ -170,6 +175,7 @@ namespace dtEntityWrappers
             {
                ReportException(&try_catch);
             }
+            return ret->BooleanValue();
          }
       }
 

@@ -367,7 +367,11 @@ namespace dtEntity
          GetPrimaryCamera()->setName("defaultCam");
       }
      // AddCameraToSceneGraph(GetPrimaryCamera());
-      layersys->GetSceneGraphRoot()->addChild(mInputHandler);
+      dtEntity::LayerAttachPointComponent* next;
+      if(layersys->GetByName(dtEntity::LayerAttachPointSystem::RootId, next))
+      {
+         next->GetAttachmentGroup()->addChild(mInputHandler);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

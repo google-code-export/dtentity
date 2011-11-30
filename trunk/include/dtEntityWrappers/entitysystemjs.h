@@ -83,6 +83,11 @@ namespace dtEntityWrappers
       virtual void Finished();
       virtual void GetProperties(PropertyMap& toFill);
       virtual void GetProperties(ConstPropertyMap& toFill) const;
+
+      virtual bool StoreComponentToMap(dtEntity::EntityId) const;
+      virtual bool AllowComponentCreationBySpawner() const;
+      virtual bool StorePropertiesToScene() const;
+
    private:
 
       v8::Persistent<v8::Object> mSystem;

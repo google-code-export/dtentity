@@ -1027,6 +1027,7 @@ namespace dtEntity
       // type identifier of this message class
       static const MessageType TYPE;
       static const StringId NameId;
+      static const StringId ScreenNumId;
 
       WindowCreatedMessage();
 
@@ -1036,9 +1037,12 @@ namespace dtEntity
       void SetName(const std::string& v) { mName.Set(v); }
       std::string GetName() const { return mName.Get(); }
 
+      void SetScreenNum(int v) { mScreenNum.Set(v); }
+      int GetScreenNum() const { return mScreenNum.Get(); }
+
    private:
       dtEntity::StringProperty mName;
-      dtEntity::StringProperty mViewName;
+      dtEntity::IntProperty mScreenNum;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

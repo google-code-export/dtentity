@@ -152,22 +152,7 @@ namespace dtEntity
 
       if(propname == CullingModeId)
       {
-         if(prop.StringIdValue() == NoAutoNearFarCullingId)
-         {
-            mCamera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-         }
-         else if(prop.StringIdValue() == BoundingVolumeNearFarCullingId)
-         {
-            mCamera->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
-         }
-         else if(prop.StringIdValue() == PrimitiveNearFarCullingId)
-         {
-            mCamera->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
-         }
-         else
-         {
-            LOG_ERROR("Unknown culling mode: " + GetStringFromSID(prop.StringIdValue()));
-         }
+         SetCullingMode(prop.StringIdValue());
       }
       else if(propname == FieldOfViewId || propname == AspectRatioId ||
          propname == NearClipId || propname == FarClipId)
@@ -236,6 +221,32 @@ namespace dtEntity
    {
       mProjectionMode.Set(v);
       UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetCullingMode(StringId v)
+   {
+      mCullingMode.Set(v);
+      if(mCamera == NULL)
+      {
+         return;
+      }
+      else if(v == NoAutoNearFarCullingId)
+      {
+         mCamera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+      }
+      else if(v == BoundingVolumeNearFarCullingId)
+      {
+         mCamera->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
+      }
+      else if(v == PrimitiveNearFarCullingId)
+      {
+         mCamera->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
+      }
+      else
+      {
+         LOG_ERROR("Unknown culling mode: " + GetStringFromSID(v));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
