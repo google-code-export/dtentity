@@ -97,7 +97,6 @@ namespace dtEntity
       mLODScale.Set(1);
       mAspectRatio.Set(1);
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
-      mCullMask.Set(0xFFFFFFFF);
       mProjectionMode.Set(ModePerspectiveId);
 
       mOrthoLeft.Set(-1000);

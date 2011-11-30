@@ -102,14 +102,12 @@ namespace dtEntity
             current->GetGroup()->removeChild(attachedNode);           
          }
 
-         if(mVisible.Get())
+         LayerAttachPointComponent* next;
+         if(layerattsystem->GetByName(layername, next))
          {
-            LayerAttachPointComponent* next;
-            if(layerattsystem->GetByName(layername, next))
-            {
-               next->GetAttachmentGroup()->addChild(attachedNode);
-            }
+            next->GetAttachmentGroup()->addChild(attachedNode);
          }
+
       }
       mAttachPoint = layername;
       mLayerProperty.Set(layername);
@@ -145,7 +143,7 @@ namespace dtEntity
       }
 
       // remove old attachment
-      if(mAddedToScene && mVisible.Get() && mAttachPoint != StringId())
+      if(mAddedToScene && mAttachPoint != StringId())
       {
          // remove old attachment
          osg::Node* attachedNode = GetAttachedComponentNode();
@@ -160,7 +158,7 @@ namespace dtEntity
       mCurrentlyAttachedComponent = handle;
 
       // add new attachment
-      if(mVisible.Get() && mAddedToScene)
+      if(mAddedToScene)
       {
          // remove old attachment
          osg::Node* attachedNode = GetAttachedComponentNode();
@@ -169,6 +167,7 @@ namespace dtEntity
             current->GetAttachmentGroup()->addChild(attachedNode);
          }
       }
+      SetVisible(mVisible.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -204,31 +203,17 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::SetVisible(bool visible)
    {
-      if(mCurrentlyVisible == visible) return;
-
-      if(mAttachPoint != StringId() && mCurrentlyAttachedComponent != StringId())
+      mVisible.Set(visible);
+      if(mCurrentlyVisible == visible || GetAttachedComponentNode() == NULL) return;
+      if(visible)
       {
-
-         osg::Node* attachedNode = GetAttachedComponentNode();
-         if(attachedNode != NULL)
-         {
-            LayerAttachPointSystem* layerattsystem;
-            mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layerattsystem);
-            
-            LayerAttachPointComponent* current;
-            if(layerattsystem->GetByName(mAttachPoint, current))
-            {
-               if(visible)
-               {
-                  current->GetAttachmentGroup()->addChild(attachedNode);
-               }
-               else
-               {
-                  current->GetAttachmentGroup()->removeChild(attachedNode);
-               }
-            }
-         }
+         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() | dtEntity::NodeMasks::VISIBLE);
       }
+      else
+      {
+          GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() ^ dtEntity::NodeMasks::VISIBLE);
+      }
+
       mCurrentlyVisible = visible;
       VisibilityChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());
@@ -267,7 +252,7 @@ namespace dtEntity
          ls->GetByName(mAttachPoint, current);
       }
 
-      if(current != NULL && mAttachedComponent.Get() != StringId() && mVisible.Get())
+      if(current != NULL && mAttachedComponent.Get() != StringId())
       {  
          osg::Node* attachedNode = GetAttachedComponentNode();
 #ifdef _DEBUG
@@ -297,6 +282,7 @@ namespace dtEntity
             {
                static_cast<NodeComponent*>(ac)->SetParentComponent(LayerComponent::TYPE);
             }
+            SetVisible(mVisible.Get());
          }
       }
    }
@@ -306,7 +292,7 @@ namespace dtEntity
    {
       if(!mAddedToScene) return;
 
-      if(mAttachPoint != StringId() && mCurrentlyAttachedComponent != StringId() && mVisible.Get())
+      if(mAttachPoint != StringId() && mCurrentlyAttachedComponent != StringId())
       {
          osg::Node* attachedNode = GetAttachedComponentNode();
          LayerAttachPointSystem* ls;
