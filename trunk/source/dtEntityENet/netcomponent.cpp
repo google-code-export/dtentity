@@ -23,6 +23,8 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/mapcomponent.h>
+#include <dtEntity/messagefactory.h>
 #include <enet/enet.h>
 #include <sstream>
 #include <QtCore/QtGlobal>
@@ -140,7 +142,11 @@ namespace dtEntityENet
       ins >> mType;
       dtEntity::MessageType messageType = dtEntity::SID(mType);
       dtEntity::Message* message;
-      bool success = GetEntityManager().CreateMessage((dtEntity::MessageType)messageType, message);
+	  
+	  dtEntity::MapSystem* mapsys;
+	  GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapsys);
+	  
+      bool success = mapsys->GetMessageFactory().CreateMessage((dtEntity::MessageType)messageType, message);
       if(!success)
       {
          LOG_ERROR("Error decoding network packet: Unknown message type encountered");
