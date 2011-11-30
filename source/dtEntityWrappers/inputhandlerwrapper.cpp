@@ -87,6 +87,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual bool KeyDown(const std::string& name, bool handled)
@@ -105,6 +106,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual bool MouseButtonUp(int button, bool handled)
@@ -123,6 +125,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual bool MouseButtonDown(int button, bool handled)
@@ -141,6 +144,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual bool MouseWheel(int dir, bool handled)
@@ -159,6 +163,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual bool MouseMove(float x, float y, bool handled)
@@ -177,6 +182,7 @@ namespace dtEntityWrappers
             }
             return ret->BooleanValue();
          }
+         return false;
       }
 
       virtual void MouseEnterLeave(bool focused, int displaynum, int screennum)

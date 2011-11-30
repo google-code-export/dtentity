@@ -112,7 +112,7 @@ namespace dtEntityQtWidgets
    void SpawnerStoreView::ShowHideByCategory()
    {
       QString category = mCategories->currentText();
-      for(unsigned int i = 0; i < mSpawnerList->count(); ++i)
+      for(int i = 0; i < mSpawnerList->count(); ++i)
       {
          QListWidgetItem* item = mSpawnerList->item(i);
          if(category == "All" || item->data(Qt::UserRole).toString() == category)
