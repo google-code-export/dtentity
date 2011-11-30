@@ -471,8 +471,8 @@ namespace dtEntityWrappers
    {
       
       dtEntity::Component* comp;
-      const_cast<EntitySystemJS*>(this)->CreateComponent(0, comp);
-
+      bool success = const_cast<EntitySystemJS*>(this)->CreateComponent(0, comp);
+      assert(success);
       ConstPropertyMap m;
       comp->GetProperties(m);
       dtEntity::DynamicPropertyContainer c;
@@ -544,6 +544,76 @@ namespace dtEntityWrappers
             delete prop;
          }         
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EntitySystemJS::StoreComponentToMap(dtEntity::EntityId id) const
+   {
+      HandleScope scope;
+      if(!mSystem->Has(String::New("storeComponentToMap")))
+      {
+         return true;
+      }
+
+      Context::Scope context_scope(GetGlobalContext());
+
+      TryCatch try_catch;
+      Handle<Value> argv[1] = { Uint32::New(id)};
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("storeComponentToMap")));
+      Handle<Value> ret = fun->Call(mSystem, 1, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+         return false;
+      }
+      return ret->BooleanValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EntitySystemJS::AllowComponentCreationBySpawner() const
+   {
+      HandleScope scope;
+      if(!mSystem->Has(String::New("allowComponentCreationBySpawner")))
+      {
+         return true;
+      }
+
+      Context::Scope context_scope(GetGlobalContext());
+
+      TryCatch try_catch;
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("allowComponentCreationBySpawner")));
+      Handle<Value> ret = fun->Call(mSystem, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+         return false;
+      }
+      return ret->BooleanValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EntitySystemJS::StorePropertiesToScene() const
+   {
+      HandleScope scope;
+      if(!mSystem->Has(String::New("storePropertiesToScene")))
+      {
+         return true;
+      }
+
+      Context::Scope context_scope(GetGlobalContext());
+
+      TryCatch try_catch;
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("storePropertiesToScene")));
+      Handle<Value> ret = fun->Call(mSystem, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+         return false;
+      }
+      return ret->BooleanValue();
    }
  
 }

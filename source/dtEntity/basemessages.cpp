@@ -462,11 +462,13 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    const MessageType WindowCreatedMessage::TYPE(dtEntity::SID("WindowCreatedMessage"));
    const StringId WindowCreatedMessage::NameId(dtEntity::SID("Name"));
+   const StringId WindowCreatedMessage::ScreenNumId(dtEntity::SID("ScreenNum"));
    
    WindowCreatedMessage::WindowCreatedMessage() 
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
+      this->Register(ScreenNumId, &mScreenNum);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

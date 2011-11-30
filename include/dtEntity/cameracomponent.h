@@ -99,6 +99,9 @@ namespace dtEntity
 		void SetProjectionMode(StringId);
 		StringId GetProjectionMode() const { return mProjectionMode.Get(); }
 
+		void SetCullingMode(StringId);
+		StringId GetCullingMode() const { return mCullingMode.Get(); }
+
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);
       osg::Vec3d GetUp() const;

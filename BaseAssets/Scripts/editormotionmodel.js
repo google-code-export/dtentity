@@ -82,12 +82,14 @@ function EditorMotionComponent(eid) {
    this.mouseButtonDown = function(button, handled) {
       if(button === 1) {
          Screen.lockCursor = true;
+         return true;
       }
    }
 
    this.mouseButtonUp = function(button, handled) {
       if(button === 1) {
          Screen.lockCursor = false;
+         return true;
       }
    }
 
@@ -160,6 +162,7 @@ function EditorMotionComponent(eid) {
             camera.OrthoBottom = zoom * 1000;
             camera.finished();
          }
+         return true;
       }
    }
 
@@ -276,7 +279,6 @@ function EditorMotionSystem() {
 
   // ----------------------------
   this.createComponent = function(eid) {
-    if(eid === 0) return;
     if(self.hasComponent(eid)) {
       Log.error("EditorMotion component with id " + eid + " already exists!");
       return;
@@ -312,6 +314,8 @@ function EditorMotionSystem() {
   // -----------------------------------------
   this.onPropertyChanged = function(propname) {
   }
+
+   //this.storeComponentToMap = function(eid) { return false; }
 };
 
 EntityManager.addEntitySystem(new EditorMotionSystem());

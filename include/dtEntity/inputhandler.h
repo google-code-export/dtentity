@@ -61,13 +61,13 @@ namespace dtEntity
    {
    public:
       virtual ~InputCallbackInterface() {}
-      virtual void KeyUp(const std::string& name, bool handled) {}
-      virtual void KeyDown(const std::string& name, bool handled) {}
+      virtual bool KeyUp(const std::string& name, bool handled) {}
+      virtual bool KeyDown(const std::string& name, bool handled) {}
 
-      virtual void MouseButtonUp(int button, bool handled) {}
-      virtual void MouseButtonDown(int button, bool handled) {}
-      virtual void MouseWheel(int dir, bool handled) {}
-      virtual void MouseMove(float x, float y, bool handled) {}
+      virtual bool MouseButtonUp(int button, bool handled) {}
+      virtual bool MouseButtonDown(int button, bool handled) {}
+      virtual bool MouseWheel(int dir, bool handled) {}
+      virtual bool MouseMove(float x, float y, bool handled) {}
       virtual void MouseEnterLeave(bool focused, int displaynum, int screennum) {}
    };
 

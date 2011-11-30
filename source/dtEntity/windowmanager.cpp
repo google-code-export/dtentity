@@ -128,9 +128,31 @@ namespace dtEntity
 
       osg::Camera* cam = new osg::Camera();   
       cam->setName(name);
+
       view->setCamera(cam);
-      view->setUpViewInWindow(100,100,800,600);
       compviewer->addView(view);
+      view->setUpViewInWindow(100,100,800,600, traits.screenNum);
+
+
+      dtEntity::Entity* entity;
+      mEntityManager->CreateEntity(entity);
+
+      CameraComponent* camcomp;
+      entity->CreateComponent(camcomp);
+      camcomp->SetCullingMode(dtEntity::CameraComponent::NoAutoNearFarCullingId);
+      camcomp->SetClearColor(osg::Vec4(1,0,0,1));
+      camcomp->SetCamera(cam);
+      camcomp->Finished();
+      dtEntity::MapComponent* mapcomp;
+      entity->CreateComponent(mapcomp);
+      std::ostringstream os;
+      os << "cam_" << traits.screenNum;
+      mapcomp->SetEntityName(os.str());
+      mapcomp->SetUniqueId(os.str());
+      mapcomp->SetMapName("maps/cameras.dtemap");
+      mapcomp->Finished();
+      mEntityManager->AddToScene(entity->GetId());
+
       return view;
       
    }

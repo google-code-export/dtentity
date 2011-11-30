@@ -418,14 +418,20 @@ namespace dtEntity
       mKeyUpSet.insert(key);
       mKeyPressedSet.erase(key);
 
-      std::string v = mKeyNamesReverse[key];
+
       if(!mCallbacks.empty())
       {
+         std::string v = mKeyNamesReverse[key];
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->KeyUp(v, ea.getHandled());
+            handled |= (*i)->KeyUp(v, handled);
          }
-      }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
+         }
+      }      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -438,9 +444,14 @@ namespace dtEntity
       if(!mCallbacks.empty())
       {
          std::string v = mKeyNamesReverse[key];
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->KeyDown(v, ea.getHandled());
+            handled |= (*i)->KeyDown(v, handled);
+         }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
          }
       }
    }
@@ -461,9 +472,14 @@ namespace dtEntity
 
       if(!mCallbacks.empty())
       {
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseButtonUp(index, ea.getHandled());
+            handled |= (*i)->MouseButtonUp(index, handled);
+         }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
          }
       }
    }
@@ -483,9 +499,14 @@ namespace dtEntity
       mMouseButtonDown[index] = true;
       if(!mCallbacks.empty())
       {
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseButtonDown(index, ea.getHandled());
+            handled |= (*i)->MouseButtonDown(index, handled);
+         }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
          }
       }
    }
@@ -542,9 +563,14 @@ namespace dtEntity
 
       if(!mCallbacks.empty())
       {
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseMove(nx, ny, ea.getHandled());
+            handled |= (*i)->MouseMove(nx, ny, handled);
+         }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
          }
       }
    }
@@ -566,9 +592,14 @@ namespace dtEntity
          default:
             return;
          }
+         bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            (*i)->MouseWheel(dir, ea.getHandled());
+            handled |= (*i)->MouseWheel(dir, handled);
+         }
+         if(handled && !ea.getHandled())
+         {
+            ea.setHandled(true);
          }
       }
    }

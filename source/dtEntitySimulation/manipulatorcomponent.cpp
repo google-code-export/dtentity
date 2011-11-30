@@ -291,7 +291,7 @@ namespace dtEntitySimulation
       Register(DraggerTypeId, &mDraggerType);
       Register(OffsetFromStartId, &mOffsetFromStart);
 
-      mLayerProperty.Set(dtEntity::SID("default"));
+      mLayerProperty.Set(dtEntity::SID("root"));
 
       SetDraggerType(TabBoxDraggerId);
    }
