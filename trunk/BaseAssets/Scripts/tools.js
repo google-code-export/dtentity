@@ -36,7 +36,7 @@ function closestPointOnZAxis(starta, dira) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
-var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
+var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
 var cameraSystem = EntityManager.getEntitySystem("Camera");
 var mainCamera = null;
 if(camid != null) {

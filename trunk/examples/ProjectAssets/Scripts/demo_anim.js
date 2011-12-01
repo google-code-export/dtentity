@@ -46,7 +46,7 @@ function changeAnimation(animname) {
 ////////////////////////////////////////////////////////////////////////////////
 function startAnimDemo() {
   
-  var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
+  var camid = mapSystem.getEntityIdByUniqueId("cam_0");
   var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [6, 8, -14];
