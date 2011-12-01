@@ -230,7 +230,7 @@ namespace dtEntitySimulation
          return;
       }
 
-      dtEntity::EntityId camid = mMapSystem->GetEntityIdByUniqueId("defaultCam");
+      dtEntity::EntityId camid = mMapSystem->GetEntityIdByUniqueId("cam_0");
       dtEntity::CameraComponent* cam;
       
       if(!GetEntityManager().GetComponent(camid, cam))

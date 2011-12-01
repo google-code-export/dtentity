@@ -22,7 +22,7 @@ function startSpiral() {
   showHelp(text);
     
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 0];
   cameraComponent.EyeDirection = [0, 1, 0];

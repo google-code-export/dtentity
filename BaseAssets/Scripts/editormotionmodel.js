@@ -7,22 +7,26 @@ include_once("Scripts/stdlib.js");
 function EditorMotionComponent(eid) {
 
   this.Projection = "3d";
-
-  var self = this;
-
-  var camera = null;
+  this.Enabled = true;
   this.movespeed = 100;
   this.rotatespeed = 0.001;
   this.rotatekeysspeed = 2;
+
   var rotateOp = [0, 0, 0, 1];
   var toRight = [0,0,0];
   var tempvec = [0,0,0];
   var zoom = 1;
-
+  var pivot = [0,0,0];
   var last3dEyeDirection = [0,1,0];
+
+  var self = this;
+  var camera = null;
+  var contextId = 0;
 
   this.finished = function() {
      camera = getEntitySystem("Camera").getComponent(eid);
+     contextId = camera.ContextId;
+      println("setting context id to " + contextId);
   }
 
   this.onPropertyChanged = function(propname) {
@@ -59,8 +63,9 @@ function EditorMotionComponent(eid) {
   this.destruct = function() {
   }
 
-   this.keyDown = function(key, handled) {
-      if(!handled) {
+   this.keyDown = function(key, handled, cid) {
+      println("KEyDown on " + cid + ": " + key + " this.contextId: " + contextId);
+      if(!handled && this.Enabled && cid == contextId) {
 
          switch(key) {
             case "1": self.movespeed = 5; break;
@@ -79,27 +84,45 @@ function EditorMotionComponent(eid) {
       }
    }
 
-   this.mouseButtonDown = function(button, handled) {
+   this.mouseButtonDown = function(button, handled, cid) {
+      if(!this.Enabled || cid != contextId) return;
       if(button === 1) {
          Screen.lockCursor = true;
+         return true;
+      } else if(button === 2) {
+         Screen.lockCursor = true;
+         var mouseX = Input.getAxis(Axis.MouseXRaw);
+         var mouseY = Input.getAxis(Axis.MouseYRaw);
+         var pick = Screen.pickEntity(mouseX, mouseY);
+
+         if (pick === null) {
+
+            pivot = osg.Vec3.add(camera.Position,
+                                 osg.Vec3.mult(Screen.getPickRay(Input.getAxis(Axis.MouseX),
+                                                                 Input.getAxis(Axis.MouseY)), 100));
+         } else {
+            pivot = pick.Position;
+         }
          return true;
       }
    }
 
-   this.mouseButtonUp = function(button, handled) {
-      if(button === 1) {
+   this.mouseButtonUp = function(button, handled, cid) {
+      if(!this.Enabled || cid != contextId) return;
+      if(button === 1 || button === 2) {
          Screen.lockCursor = false;
          return true;
       }
    }
 
-   this.mouseWheel = function(dir, handled) {
-      if(!handled && camera !== null) {
+   this.mouseWheel = function(dir, handled, cid) {
+      if(!this.Enabled) return;
+      if(!handled && camera !== null && cid == contexId) {
 
          if(self.Projection == "3d") {
             var pos = camera.Position;
             var eyedir = camera.EyeDirection;
-            osg.Vec3.mult(eyedir, dir * self.movespeed, tempvec);
+            osg.Vec3.mult(eyedir, dir * 20, tempvec);
             osg.Vec3.add(tempvec, pos, pos);
             camera.Position = pos;
             camera.finished();
@@ -121,16 +144,18 @@ function EditorMotionComponent(eid) {
       }
    }
 
-   this.mouseMove = function(x, y, handled) {
+   this.mouseMove = function(x, y, handled, cid) {
 
-      if(Input.getMouseButton(1) && camera !== null) {
+      if(camera === null || !this.Enabled || contextId != cid) return;
 
-         var pos = camera.Position;
-         var up = camera.Up;
-         var eyedir = camera.EyeDirection;
-         var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
-         var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
-         osg.Vec3.cross(eyedir, up, toRight);
+      var pos = camera.Position;
+      var up = camera.Up;
+      var eyedir = camera.EyeDirection;
+      var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
+      var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
+      osg.Vec3.cross(eyedir, up, toRight);
+
+      if(Input.getMouseButton(1)) {
 
          if(self.Projection == "3d") {
 
@@ -163,13 +188,29 @@ function EditorMotionComponent(eid) {
             camera.finished();
          }
          return true;
+
+      } else if(Input.getMouseButton(2) && self.Projection == "3d") {
+
+
+         var pivotToCam = osg.Vec3.sub(pos, pivot);
+         osg.Quat.makeRotate(mouseX * -0.001, up[0], up[1], up[2], rotateOp);
+         osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
+         osg.Quat.makeRotate(mouseY * 0.001, toRight[0], toRight[1], toRight[2], rotateOp);
+         osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
+         camera.Position = osg.Vec3.add(pivotToCam, pivot);
+         osg.Vec3.mult(pivotToCam, -1, pivotToCam);
+         osg.Vec3.normalize(pivotToCam, pivotToCam);
+         camera.EyeDirection = pivotToCam;
+         camera.finished();
+         return true;
+
       }
    }
 
    this.update = function() {
 
       var dt = FRAME_DELTA_TIME;
-       if(camera === null) {
+       if(camera === null || !this.Enabled) {
           return;
        }
 
@@ -286,9 +327,9 @@ function EditorMotionSystem() {
 
     var c = new EditorMotionComponent(eid);
     components[eid] = c;
-
+    println("adding input callback");
     Input.addInputCallback(c);
-
+    c.finished();
     return c;
   }
 
@@ -315,7 +356,6 @@ function EditorMotionSystem() {
   this.onPropertyChanged = function(propname) {
   }
 
-   //this.storeComponentToMap = function(eid) { return false; }
 };
 
 EntityManager.addEntitySystem(new EditorMotionSystem());

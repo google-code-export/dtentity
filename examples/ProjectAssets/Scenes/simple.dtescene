@@ -16,13 +16,6 @@
 	</entitysystem>
 	<entitysystem type="PickShape"/>
 	<entitysystem type="PositionAttitudeTransform"/>
-	<entitysystem type="CameraMotion">
-		<boolproperty name="Enabled" value="true"/>
-		<boolproperty name="KeepUpright" value="false"/>
-		<boolproperty name="MouseEnabled" value="true"/>
-		<boolproperty name="MoveParallelToGround" value="false"/>
-		<boolproperty name="ShowSelection" value="true"/>
-	</entitysystem>
 	<entitysystem type="Group"/>
 	<entitysystem type="SkyBox"/>
 	<entitysystem type="LayerAttachPoint"/>

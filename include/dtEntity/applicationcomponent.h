@@ -27,7 +27,6 @@
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/component.h>
-#include <dtEntity/inputhandler.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
@@ -38,6 +37,7 @@ namespace osgViewer
    class View;
    class Window;
    class ViewerBase;
+   class GraphicsWindow;
 }
 
 namespace dtEntity
@@ -112,12 +112,9 @@ namespace dtEntity
       /** reacts to ResetSystemMessage */
       void OnResetSystem(const Message& msg);
       
-      /** create entities for scene graph root and default camera */
-      void CreateSceneGraphEntities();
 
-      //void AddCameraToSceneGraph(osg::Camera*);
+      void InstallUpdateCallback();
 
-      InputHandler& GetInputHandler() { return *mInputHandler.get(); }
 
       void SetWindowManager(WindowManager* wm);
       WindowManager* GetWindowManager() const;
@@ -173,7 +170,7 @@ namespace dtEntity
 
       Property* ScriptChangeTimeSettings(const PropertyArgs& args);
 
-      osg::ref_ptr<InputHandler> mInputHandler;
+
       
       // string holding country code
       //StringProperty mLocale;

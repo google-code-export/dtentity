@@ -20,7 +20,7 @@ function changeTool(value) {
 function startToolsDemo() {
   
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 2];
   cameraComponent.EyeDirection = osg.Vec3.normalize([0.2, 1, -0.2]);
@@ -121,6 +121,8 @@ function startToolsDemo() {
     ddm.addLine([i, -10, 0], [i, 10, 0], [1,1,1,1], 1, 100000);
     ddm.addLine([-10, i, 0], [10, i, 0], [1,1,1,1], 1, 100000);
   }
+
+  motionComp.Enabled = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +146,7 @@ function stopToolsDemo() {
   }
   hideHelp();
   ddm.clear();
+  motionComp.Enabled = false;
 }
 
 addDemo("Tools", startToolsDemo, stopToolsDemo);

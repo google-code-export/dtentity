@@ -17,7 +17,7 @@ function updateLayerObj(msgname, params) {
 function startLayerSystem() {
   
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 0];
   cameraComponent.EyeDirection = [0, 1, 0];
@@ -43,7 +43,7 @@ function startLayerSystem() {
       AttachedComponent : "PositionAttitudeTransform"
     }
   });
-  layerEntity1Trans = EntityManager.getEntitySystem("PositionAttitudeTransform").getComponent(layerEntity1);
+  layerEntity1Trans = getEntitySystem("PositionAttitudeTransform").getComponent(layerEntity1);
   EntityManager.addToScene(layerEntity1);
   
   // The smiley face. The name value of the layer component is set to the name of
@@ -62,7 +62,7 @@ function startLayerSystem() {
       AttachedComponent : "PositionAttitudeTransform"
     }
   });
-  layerEntity2Trans = EntityManager.getEntitySystem("PositionAttitudeTransform").getComponent(layerEntity2);
+  layerEntity2Trans = getEntitySystem("PositionAttitudeTransform").getComponent(layerEntity2);
   EntityManager.addToScene(layerEntity2);
 
   // start updating the rotation values

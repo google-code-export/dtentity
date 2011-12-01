@@ -32,6 +32,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/windowmanager.h>
 #include <osgGA/GUIEventAdapter>
 #include <osg/Notify>
 
@@ -136,39 +137,8 @@ namespace dtEntity
 
       /////////////////////////////////////////////////////////////////////
 
-    // create new entity manager and register with system
+      // create new entity manager and register with system
       
-      osg::ref_ptr<osg::Group> sceneNode = new osg::Group();
-      sceneNode->setName("Scene Graph Root");
-      
-      osgViewer::ViewerBase::Views views;
-      viewer->getViews(views);
-      if(views.empty())
-      {
-         LOG_ERROR("OSG Viewer has to have at least one view!");
-         return false;
-      }
-   
-      osgViewer::View* view = views.front();
-      view->setName("defaultView");
-      view->setSceneData(sceneNode);
-      
-
-      if(addStatsHandler)
-      {
-         osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
-         stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
-         stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
-         view->addEventHandler(stats);
-         
-      }
-      viewer->realize();
-      
-
-      osgViewer::ViewerBase::Windows wins;
-      viewer->getWindows(wins);
-      wins.front()->setName("defaultView");
-
       // this is a required component system, so add it immediately
       MapSystem* mapSystem = new MapSystem(*em);
       em->AddEntitySystem(*mapSystem);
@@ -177,16 +147,47 @@ namespace dtEntity
       RegisterStandardFactories(mapSystem->GetPluginManager());
 
       dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
+      em->AddEntitySystem(*appsystem);
+
       for(int i = 0; i < argc; ++i)
       {
          appsystem->AddCmdLineArg(argv[i]);
       }
       appsystem->SetViewer(viewer);
-      appsystem->CreateSceneGraphEntities();
-    
-      em->AddEntitySystem(*appsystem);
 
 
+      dtEntity::LayerAttachPointSystem* layersys;
+      em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      layersys->CreateSceneGraphRootEntity(new osg::Group());
+
+      osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+      osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
+
+      traits->windowDecoration = true;
+      traits->doubleBuffer = true;
+      traits->sharedContext = 0;
+
+      traits->x = 100;
+      traits->y = 100;
+      traits->width = 800;
+      traits->height = 600;
+
+      appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
+      appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
+      appsystem->InstallUpdateCallback();
+
+      if(addStatsHandler)
+      {
+         osgViewer::ViewerBase::Views views;
+         viewer->getViews(views);
+         for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
+         {
+            osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
+            stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
+            stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
+            (*i)->addEventHandler(stats);
+         }
+      }
 
       mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
 

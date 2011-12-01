@@ -9,11 +9,11 @@ var CameraTranslationSpeed = 50;
 var CameraRotationSpeed = 3;
 
 
-function CameraMotionSystem() {
+function MotionComponent(eid) {
 
    // public members
    this.componentType = "CameraMotion";
-   this.Enabled = false;
+   this.Enabled = true;
    this.MouseEnabled = true;
 
    this.KeepUpright = false;
@@ -21,7 +21,7 @@ function CameraMotionSystem() {
    this.MoveParallelToGround = false;
 
    // private members
-   var camid = 0;
+
    var targetCamComp = null;
    var currentlyEnabled = false;
    var self = this; // not all callbacks receive a correct 'this'
@@ -30,38 +30,23 @@ function CameraMotionSystem() {
    this.getCameraEyeDir = function() { return targetCamComp.EyeDirection; }
    this.getCameraUp = function() { return targetCamComp.Up; }
 
-   // entity system stuff
-   this.hasComponent = function(eid) { return false; };
-   this.getComponent = function(eid) { return null; }
-   this.createComponent = function(eid) { return null; }
-   this.deleteComponent = function(eid) { return false; }
-   this.getEntitiesInSystem = function() { return []; }
-
-   this.setCameraId = function(camidnew) {
-      if(camidnew !== 0) {
-         camid = camidnew;
-         targetCamComp = cameraSystem.getComponent(camid);
-         if(targetCamComp !== null)  {
-           return;
-         }
-      }
-      camid = null;
-      targetCamComp = null;
+   this.finished = function() {
+      targetCamComp = getEntitySystem("Camera").getComponent(eid);
    }
 
-   this.getCameraId = function() { return camid; }
+   this.setEnabled = function(doit) {
+      this.Enabled = doit;
+      if(this.Enabled && !currentlyEnabled) {
+         currentlyEnabled = true;
+      }
+      else if(!self.Enabled && currentlyEnabled) {
+         currentlyEnabled = false;
+      }
+   }
 
    this.onPropertyChanged = function(propname) {
-
       if(propname == "Enabled") {
-         if(self.Enabled && !currentlyEnabled) {
-            EntityManager.registerForMessages("EndOfFrameMessage", update, Priority.default);
-            currentlyEnabled = true;
-         }
-         else if(!self.Enabled && currentlyEnabled) {
-            currentlyEnabled = false;
-            EntityManager.unregisterForMessages("EndOfFrameMessage", update);
-         }
+         self.setEnabled(this.Enabled);
       }
    }
 
@@ -71,13 +56,12 @@ function CameraMotionSystem() {
 
 
    /////////////////// camera transform update loop /////////////////////
-   function update(msgname, params) {
+   this.update = function(dt) {
       if(self.Enabled === false || targetCamComp === null) {
          return;
       }
       var mouseX = Input.getAxis(Axis.MouseX);
       var mouseY = Input.getAxis(Axis.MouseY);
-      var dt = params.DeltaSimTime;
       var up = targetCamComp.Up;
       var pos = targetCamComp.Position;
       var eyedir = targetCamComp.EyeDirection;
@@ -104,6 +88,7 @@ function CameraMotionSystem() {
          osg.Quat.rotate(rotateOp, eyedir, eyedir);
       }
       if(Input.getKey("Up")) {
+         println("Up!");
          if(eyedir[2] < 0.99) {
             osg.Vec3.cross(up, eyedir, tempVec);
             osg.Quat.makeRotate(-rotate_delta, tempVec[0], tempVec[1], tempVec[2], rotateOp);
@@ -218,7 +203,6 @@ function CameraMotionSystem() {
          }
       }
 
-
       targetCamComp.Position = pos;
       targetCamComp.EyeDirection = eyedir;
       targetCamComp.Up = up;
@@ -226,7 +210,7 @@ function CameraMotionSystem() {
       targetCamComp.finished();
 
       // update sound
-      if(soundSystem != null) {
+      if(soundSystem !== null) {
         soundSystem.ListenerTranslation = targetCamComp.Position;
         soundSystem.ListenerUp = targetCamComp.Up;
         soundSystem.ListenerEyeDirection = targetCamComp.EyeDirection;
@@ -234,28 +218,12 @@ function CameraMotionSystem() {
       }
    }
 
-   // make sure to register for ticks
-   this.Enabled = true;
-   this.onPropertyChanged("Enabled");
-
-
-
    /////////////////// react to EnableMotionModelMessages ////////////////////
 
    function enabledisable(msgname, params) {
-      if(params.Enable && self.Enabled === false) {
-         self.Enabled = true;
-         self.onPropertyChanged("Enabled");
-
-      }
-      else if(!params.Enable && self.Enabled === true) {
-         self.Enabled = false;
-         self.onPropertyChanged("Enabled");
-
-      }
+      self.setEnabled(params.Enabled);
    }
    EntityManager.registerForMessages("EnableMotionModelMessage", enabledisable, Priority.highest);
-   enabledisable("", {Enable: true});
 
    
    ////////////////////////////////// modify speed on keyboard number presses ////////////////////////////////
@@ -314,7 +282,76 @@ function CameraMotionSystem() {
    
 }
 
-var cameraMotionSystem = new CameraMotionSystem();
+
+////////////////////////////////////////////////////////////////////////////////
+function MotionSystem() {
+
+  var self = this;
+  // -----------------------------------------
+  var components = [];
+
+  this.componentType = "Motion";
+
+  setInterval(function() {
+    for(k in components) {
+      components[k].update(FRAME_DELTA_TIME);
+    }
+  }, 0);
+
+  // -----------------------------------------
+  this.hasComponent = function(eid) {
+
+    return (components[eid]) ? true : false;
+  };
+
+  // -----------------------------------------
+  this.getComponent = function(eid) {
+    return components[eid];
+  }
+
+  // ----------------------------
+  this.createComponent = function(eid) {
+    if(self.hasComponent(eid)) {
+      Log.error("Motion component with id " + eid + " already exists!");
+      return;
+    }
+
+    var c = new MotionComponent(eid);
+    components[eid] = c;
+
+    Input.addInputCallback(c);
+
+    return c;
+  }
+
+  // -----------------------------------------
+  this.deleteComponent = function(eid) {
+    if(self.hasComponent(eid)) {
+      var comp = components[eid];
+      comp.destruct();
+      Input.removeInputCallback(comp);
+      delete components[eid];
+    }
+  }
+
+  // -----------------------------------------
+  this.getEntitiesInSystem = function() {
+    var arr = [];
+    for(var key in components) {
+       arr.push(parseInt(key));
+    }
+    return arr;
+  }
+
+  // -----------------------------------------
+  this.onPropertyChanged = function(propname) {
+  }
+
+};
+
+EntityManager.addEntitySystem(new MotionSystem());
+
+/*var cameraMotionSystem = new CameraMotionSystem();
 EntityManager.addEntitySystem(cameraMotionSystem);
 
 // create camera motion system when camera is created
@@ -338,3 +375,4 @@ function onCameraRemoved(name, params) {
 
 }
 EntityManager.registerForMessages("CameraRemovedMessage", onCameraRemoved);
+*/

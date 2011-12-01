@@ -331,11 +331,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType CameraAddedMessage::TYPE(SID("CameraAddedMessage"));
    const StringId CameraAddedMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId CameraAddedMessage::ContextIdId(SID("ContextId"));
 
    CameraAddedMessage::CameraAddedMessage()
       : Message(TYPE)
    {
       this->Register(AboutEntityId, &mAboutEntityId);
+      this->Register(ContextIdId, &mContextId);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -460,15 +462,27 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   const MessageType CloseWindowMessage::TYPE(dtEntity::SID("CloseWindowMessage"));
+   const StringId CloseWindowMessage::NameId(dtEntity::SID("Name"));
+
+   CloseWindowMessage::CloseWindowMessage()
+      : Message(TYPE)
+   {
+      this->Register(NameId, &mName);
+ }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
    const MessageType WindowCreatedMessage::TYPE(dtEntity::SID("WindowCreatedMessage"));
    const StringId WindowCreatedMessage::NameId(dtEntity::SID("Name"));
-   const StringId WindowCreatedMessage::ScreenNumId(dtEntity::SID("ScreenNum"));
+   const StringId WindowCreatedMessage::ContextIdId(dtEntity::SID("ContextId"));
+   const StringId WindowCreatedMessage::CameraEntityIdId(dtEntity::SID("CameraEntityId"));
    
    WindowCreatedMessage::WindowCreatedMessage() 
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
-      this->Register(ScreenNumId, &mScreenNum);
+      this->Register(ContextIdId, &mContextId);
+      this->Register(CameraEntityIdId, &mCameraEntityId);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

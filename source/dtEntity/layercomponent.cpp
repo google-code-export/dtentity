@@ -379,26 +379,26 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerSystem::OnEnterWorld(const Message& msg)
+   void LayerSystem::OnEnterWorld(const Message& m)
    {
-      EntityId id = (EntityId) msg.Get(EntityAddedToSceneMessage::AboutEntityId)->UIntValue();
-      LayerComponent* comp;
-      bool found = GetEntityManager().GetComponent(id, comp);
-      if(found)
+      const EntityAddedToSceneMessage& msg = static_cast<const EntityAddedToSceneMessage&>(m);
+
+      ComponentStore::iterator i = mComponents.find(msg.GetAboutEntityId());
+      if(i != mComponents.end())
       {
-         comp->OnAddedToScene();
+         i->second->OnAddedToScene();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerSystem::OnLeaveWorld(const Message& msg)
+   void LayerSystem::OnLeaveWorld(const Message& m)
    {
-      EntityId id = (EntityId) msg.Get(EntityAddedToSceneMessage::AboutEntityId)->UIntValue();
-      LayerComponent* comp;
-      bool found = GetEntityManager().GetComponent(id, comp);
-      if(found)
+      const EntityRemovedFromSceneMessage& msg = static_cast<const EntityRemovedFromSceneMessage&>(m);
+
+      ComponentStore::iterator i = mComponents.find(msg.GetAboutEntityId());
+      if(i != mComponents.end())
       {
-         comp->OnRemovedFromScene();
+         i->second->OnRemovedFromScene();
       }
    }
 
