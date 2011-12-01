@@ -26,7 +26,6 @@ function EditorMotionComponent(eid) {
   this.finished = function() {
      camera = getEntitySystem("Camera").getComponent(eid);
      contextId = camera.ContextId;
-      println("setting context id to " + contextId);
   }
 
   this.onPropertyChanged = function(propname) {
@@ -64,7 +63,7 @@ function EditorMotionComponent(eid) {
   }
 
    this.keyDown = function(key, handled, cid) {
-      println("KEyDown on " + cid + ": " + key + " this.contextId: " + contextId);
+
       if(!handled && this.Enabled && cid == contextId) {
 
          switch(key) {
@@ -327,7 +326,7 @@ function EditorMotionSystem() {
 
     var c = new EditorMotionComponent(eid);
     components[eid] = c;
-    println("adding input callback");
+
     Input.addInputCallback(c);
     c.finished();
     return c;

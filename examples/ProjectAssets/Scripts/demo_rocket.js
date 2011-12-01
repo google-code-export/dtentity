@@ -17,7 +17,7 @@ function moveSphere(name, params) {
 ////////////////////////////////////////////////////////////////////////////////
 function startRocket() {
 
-  var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
+  var camid = mapSystem.getEntityIdByUniqueId("cam_0");
   var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 2];

@@ -4,7 +4,7 @@ include_once("Scripts/motionmodel.js");
 
 ////////////////////////////// Variables ////////////////////////////////
 
-var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
+var camid = mapSystem.getEntityIdByUniqueId("cam_0");
 var clamper = getEntitySystem("GroundClamping").createComponent(camid);
 clamper.ClampingMode = "KeepAboveTerrain";
 clamper.VerticalOffset = 1;

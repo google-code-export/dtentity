@@ -9,8 +9,8 @@ var camid = createEntity({
     FarClip: 100000
   },
   Map: {
-    EntityName : "defaultCam",
-    UniqueId : "defaultCam"
+    EntityName : "cam_0",
+    UniqueId : "cam_0"
   },
   Motion : {
     Enabled : false

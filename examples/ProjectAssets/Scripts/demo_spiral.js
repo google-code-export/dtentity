@@ -21,7 +21,7 @@ function startSpiral() {
   var text = "Demonstrates entity creation and setting properties.";
   showHelp(text);
     
-  var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
+  var camid = mapSystem.getEntityIdByUniqueId("cam_0");
   var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 0];

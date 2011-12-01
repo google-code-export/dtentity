@@ -149,6 +149,7 @@ namespace dtEntity
       view->setSceneData(target->GetGroup());
 
       osg::Camera* cam = view->getCamera();
+      cam->setAllowEventFocus(true);
 
       traits.readDISPLAY();
       if (traits.displayNum<0) traits.displayNum = 0;
