@@ -29,6 +29,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <osgViewer/View>
 #include <osgViewer/GraphicsWindow>
+#include <sstream>
 
 namespace dtEntity
 {
@@ -217,11 +218,28 @@ namespace dtEntity
             {
                return;
             }
+            mCamera = NULL;
             if(cameras.size() > 1)
             {
-               LOG_ERROR("More than one camera on window!");
+               std::ostringstream wantedname;
+               wantedname << "cam_" << mContextId.Get();
+
+               for( osg::GraphicsContext::Cameras::iterator i = cameras.begin(); i != cameras.end(); ++i)
+               {
+                  std::string name = (*i)->getName();
+                  if(name == wantedname.str())
+                  {
+                     mCamera = *i;
+                     break;
+                  }
+               }
             }
-            mCamera = cameras.front();
+
+            if(mCamera == NULL)
+            {
+               mCamera = cameras.front();
+            }
+
             OnPropertyChanged(CullingModeId, mCullingMode);
             OnPropertyChanged(FieldOfViewId, mFieldOfView);
             OnPropertyChanged(LODScaleId, mLODScale);
