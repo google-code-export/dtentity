@@ -52,11 +52,20 @@ namespace dtEntity
    public:
       WindowManager(EntityManager& em)
          : mEntityManager(&em)
+         , mInputHandler(new InputHandler(em))
+
       {
 
       }
 
-      virtual void OpenWindow(const std::string& name,
+      /**
+       * Opens a new window if used viewer is a composite viewer.
+       * @param name Name of osg nodes for window, view and camera to set
+       * @param layerName Name of layer attach point to show
+       * @param traits OSG GraphicsWindow traits to use
+       * @return context id of newly created context
+       */
+      virtual unsigned int OpenWindow(const std::string& name,
          dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits) = 0;
 
       virtual void CloseWindow(const std::string& name) = 0;
@@ -70,9 +79,12 @@ namespace dtEntity
       virtual osgViewer::View* GetViewByName(const std::string& name);
       virtual osgViewer::GraphicsWindow* GetWindowByName(const std::string& name);
 
+      InputHandler& GetInputHandler() { return *mInputHandler.get(); }
+
    protected:
 
       EntityManager* mEntityManager;
+      osg::ref_ptr<InputHandler> mInputHandler;
 
    };	
 
@@ -83,13 +95,21 @@ namespace dtEntity
    {     
    public:
       OSGWindowManager(EntityManager& em);
+      ~OSGWindowManager();
 
-      virtual void OpenWindow(const std::string& name,
+      /**
+       * Opens a new window if used viewer is a composite viewer.
+       * @param name Name of osg nodes for window, view and camera to set
+       * @param layerName Name of layer attach point to show
+       * @param traits OSG GraphicsWindow traits to use
+       * @return context id of newly created context
+       */
+      virtual unsigned int OpenWindow(const std::string& name,
          dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits);
 
       virtual void CloseWindow(const std::string& name);
 
-
+      void OnCloseWindow(const Message& msg);
 
       /**
        * Get pick ray at given screen position
@@ -99,7 +119,9 @@ namespace dtEntity
    protected:
 
       osgViewer::View* OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits);
-   
+
+   private:
+      MessageFunctor mCloseWindowFunctor;
    };	
 
 

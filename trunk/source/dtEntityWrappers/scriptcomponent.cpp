@@ -29,6 +29,8 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/windowmanager.h>
+#include <dtEntity/inputhandler.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/screenwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
@@ -133,10 +135,11 @@ namespace dtEntityWrappers
       mView = as->GetPrimaryView();
       osgViewer::GraphicsWindow* window = as->GetPrimaryWindow();
 
+      dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
 
-      context->Global()->Set(String::New("Axis"), WrapAxes(&as->GetInputHandler()));
-      context->Global()->Set(String::New("Input"), WrapInputHandler(&as->GetInputHandler()));
-      context->Global()->Set(String::New("Key"), WrapKeys(&as->GetInputHandler()));
+      context->Global()->Set(String::New("Axis"), WrapAxes(input));
+      context->Global()->Set(String::New("Input"), WrapInputHandler(input));
+      context->Global()->Set(String::New("Key"), WrapKeys(input));
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
       context->Global()->Set(String::New("Screen"), WrapScreen(mView.get(), window));
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());

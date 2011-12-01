@@ -1,12 +1,9 @@
 include_once("Scripts/stdlib.js");
-
-
 include_once("Scripts/motionmodel.js");
-
-
-createEntity({
+include_once("Scripts/editormotionmodel.js");
+var camid = createEntity({
   Camera : {
-    IsMainCamera : true,
+    ContextId : 0,
     CullingMode : "NoAutoNearFarCulling",
     NearClip : 1,
     FarClip: 100000
@@ -14,12 +11,19 @@ createEntity({
   Map: {
     EntityName : "defaultCam",
     UniqueId : "defaultCam"
+  },
+  Motion : {
+    Enabled : false
+  },
+  EditorMotion : {
+    Enabled : false
   }
 });
-
+EntityManager.addToScene(camid);
 include_once("Scripts/demolist.js");
 
-
+var motionComp = getEntitySystem("Motion").getComponent(camid);
+var editorMotionComp = getEntitySystem("EditorMotion").getComponent(camid);
 
 if(demolist_initialized) {
 

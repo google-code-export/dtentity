@@ -30,6 +30,7 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <dtEntity/applicationcomponent.h>
+#include <osgViewer/GraphicsWindow>
 
 using namespace v8;
 

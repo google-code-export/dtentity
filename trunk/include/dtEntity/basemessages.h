@@ -1018,7 +1018,7 @@ namespace dtEntity
       UIntProperty mAboutEntity;
    };
 
-    ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT WindowCreatedMessage
       : public Message
    {
@@ -1027,7 +1027,8 @@ namespace dtEntity
       // type identifier of this message class
       static const MessageType TYPE;
       static const StringId NameId;
-      static const StringId ScreenNumId;
+      static const StringId ContextIdId;
+      static const StringId CameraEntityIdId;
 
       WindowCreatedMessage();
 
@@ -1037,12 +1038,40 @@ namespace dtEntity
       void SetName(const std::string& v) { mName.Set(v); }
       std::string GetName() const { return mName.Get(); }
 
-      void SetScreenNum(int v) { mScreenNum.Set(v); }
-      int GetScreenNum() const { return mScreenNum.Get(); }
+      void SetContextId(unsigned int v) { mContextId.Set(v); }
+      unsigned int GetContextId() const { return mContextId.Get(); }
+
+      void SetCameraEntityId(unsigned int v) { mCameraEntityId.Set(v); }
+      unsigned int GetCameraEntityId() const { return mCameraEntityId.Get(); }
 
    private:
       dtEntity::StringProperty mName;
-      dtEntity::IntProperty mScreenNum;
+      dtEntity::UIntProperty mContextId;
+      dtEntity::UIntProperty mCameraEntityId;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // used internally to asynchronously close window
+   class DT_ENTITY_EXPORT CloseWindowMessage
+      : public Message
+   {
+   public:
+
+      // type identifier of this message class
+      static const MessageType TYPE;
+      static const StringId NameId;
+
+      CloseWindowMessage();
+
+      // Create a copy of this message on the heap
+      virtual dtEntity::Message* Clone() const { return CloneContainer<CloseWindowMessage>(); }
+
+      void SetName(const std::string& v) { mName.Set(v); }
+      std::string GetName() const { return mName.Get(); }
+
+   private:
+      dtEntity::StringProperty mName;
+
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1057,6 +1086,8 @@ namespace dtEntity
 
       static const MessageType TYPE;
       static const StringId AboutEntityId;
+      static const StringId ContextIdId;
+
       CameraAddedMessage();
 
       virtual Message* Clone() const { return CloneContainer<CameraAddedMessage>(); }
@@ -1064,9 +1095,13 @@ namespace dtEntity
       EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
       void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
 
+      void SetContextId(unsigned int v) { mContextId.Set(v); }
+      unsigned int GetContextId() const { return mContextId.Get(); }
+
    private:
 
       UIntProperty mAboutEntityId;
+      dtEntity::UIntProperty mContextId;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

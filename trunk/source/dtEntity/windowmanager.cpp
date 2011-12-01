@@ -34,6 +34,7 @@
 #include <osg/NodeVisitor>
 #include <osgViewer/View>
 #include <osgViewer/GraphicsWindow>
+#include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
@@ -87,17 +88,32 @@ namespace dtEntity
 
    ///////////////////////////////////////////////////////////////////////////////
    OSGWindowManager::OSGWindowManager(EntityManager& em)
-      :WindowManager(em)
+      : WindowManager(em)
    {
+      mCloseWindowFunctor = MessageFunctor(this, &OSGWindowManager::OnCloseWindow);
+      em.RegisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor,"OSGWindowManager::OSGWindowManager");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   OSGWindowManager::~OSGWindowManager()
+   {
+      mEntityManager->UnregisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   unsigned int OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
    {
       OpenWindowInternal(name, layername, traits);
+      osgViewer::GraphicsWindow* gw = GetWindowByName(name);
+      if(gw)
+      {
+         gw->realize();
+      }
       WindowCreatedMessage msg;
       msg.SetName(name);
+      msg.SetContextId(gw->getState()->getContextID());
       mEntityManager->EmitMessage(msg);
+      return gw->getState()->getContextID();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -106,11 +122,16 @@ namespace dtEntity
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
 
+      osgViewer::View* view;
       osgViewer::CompositeViewer* compviewer = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());
       if(compviewer == NULL)
       {
-         LOG_ERROR("Cannot open window, use CompositeViewer class!");
-         return NULL;
+         view = dynamic_cast<osgViewer::Viewer*>(appsys->GetViewer());
+      }
+      else
+      {
+         view = new osgViewer::View();
+         compviewer->addView(view);
       }
       LayerAttachPointSystem* lsys;
       mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
@@ -122,16 +143,49 @@ namespace dtEntity
          return NULL;
       }
 
-      osgViewer::View* view = new osgViewer::View();
+
       view->setName(name);
       view->setSceneData(target->GetGroup());
 
-      osg::Camera* cam = new osg::Camera();   
-      cam->setName(name);
+      osg::Camera* cam = view->getCamera();
 
-      view->setCamera(cam);
-      compviewer->addView(view);
-      view->setUpViewInWindow(100,100,800,600, traits.screenNum);
+      traits.readDISPLAY();
+      if (traits.displayNum<0) traits.displayNum = 0;
+
+      osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
+
+      cam->setGraphicsContext(gc.get());
+
+      osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
+      if (gw)
+      {
+          OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
+          gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
+          gw->setName(name);
+      }
+      else
+      {
+          LOG_ERROR("GraphicsWindow has not been created successfully.");
+      }
+
+      double fovy, aspectRatio, zNear, zFar;
+      cam->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+
+      double newAspectRatio = double(traits.width) / double(traits.height);
+      double aspectRatioChange = newAspectRatio / aspectRatio;
+      if (aspectRatioChange != 1.0)
+      {
+          cam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange,1.0,1.0);
+      }
+
+      cam->setViewport(new osg::Viewport(0, 0, traits.width, traits.height));
+
+      GLenum buffer = traits.doubleBuffer ? GL_BACK : GL_FRONT;
+
+      cam->setDrawBuffer(buffer);
+      cam->setReadBuffer(buffer);
+
+      cam->addChild(mInputHandler);
 
 
       dtEntity::Entity* entity;
@@ -139,17 +193,28 @@ namespace dtEntity
 
       CameraComponent* camcomp;
       entity->CreateComponent(camcomp);
+      camcomp->SetContextId(gw->getState()->getContextID());
       camcomp->SetCullingMode(dtEntity::CameraComponent::NoAutoNearFarCullingId);
-      camcomp->SetClearColor(osg::Vec4(1,0,0,1));
-      camcomp->SetCamera(cam);
+      camcomp->SetClearColor(osg::Vec4(0.2f,0.2f,0.2f,1));
       camcomp->Finished();
+
+      MapSystem* mapSystem;
+      mEntityManager->GetEntitySystem(MapComponent::TYPE, mapSystem);
+
+      std::string cameramapname = "maps/default.dtemap";
+      if(!mapSystem->GetLoadedMaps().empty())
+      {
+         cameramapname = mapSystem->GetLoadedMaps().front();
+      }
+
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);
       std::ostringstream os;
-      os << "cam_" << traits.screenNum;
-      mapcomp->SetEntityName(os.str());
-      mapcomp->SetUniqueId(os.str());
-      mapcomp->SetMapName("maps/cameras.dtemap");
+      os << "cam_" << gw->getState()->getContextID();
+      std::string camname = os.str();
+      mapcomp->SetEntityName(camname);
+      mapcomp->SetUniqueId(camname);
+      mapcomp->SetMapName(cameramapname);
       mapcomp->Finished();
       mEntityManager->AddToScene(entity->GetId());
 
@@ -158,8 +223,9 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::CloseWindow(const std::string& name)
+   void OSGWindowManager::OnCloseWindow(const Message& m)
    {
+      const CloseWindowMessage& msg = static_cast<const CloseWindowMessage&>(m);
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
 
@@ -170,13 +236,38 @@ namespace dtEntity
          return;
       }
 
-      osgViewer::View* view = GetViewByName(name);
-      if(!view) 
+      osgViewer::GraphicsWindow* window = GetWindowByName(msg.GetName());
+
+      CameraSystem* camsys;
+      mEntityManager->GetEntitySystem(CameraComponent::TYPE, camsys);
+      EntityId camid = camsys->GetCameraEntityByContextId(window->getState()->getContextID());
+      if(camid != EntityId())
       {
-         LOG_ERROR("Cannot close view, not found: " + name);
+         mEntityManager->RemoveFromScene(camid);
+         mEntityManager->KillEntity(camid);
+      }
+
+      osgViewer::View* view = GetViewByName(msg.GetName());
+      if(!view)
+      {
+         LOG_ERROR("Cannot close view, not found: " + msg.GetName());
          return;
       }
+      view->setSceneData(NULL);
+      compview->stopThreading();
       compview->removeView(view);
+      compview->startThreading();
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void OSGWindowManager::CloseWindow(const std::string& name)
+   {
+      // closing window from an event handler creates a crash.
+      // Closing window at time of message processing works OK.
+      CloseWindowMessage msg;
+      msg.SetName(name);
+      mEntityManager->EnqueueMessage(msg);
    }
 
 

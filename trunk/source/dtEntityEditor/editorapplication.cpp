@@ -41,7 +41,7 @@
 #include <osgViewer/View>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
-#include <osgViewer/CompositeViewer>
+#include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <GL/gl.h>
 #include <iostream>
@@ -65,15 +65,14 @@ namespace dtEntityEditor
       mPluginPaths.push_back("dteplugins");
 
       osg::ArgumentParser arguments(&argc,argv);
-      mViewer = new osgViewer::CompositeViewer(arguments);
-
-      osgViewer::View* v = new osgViewer::View();
-      mViewer->addView(v);
-      v->setUpViewInWindow(100,100,800,600);
-      dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
-      
+      mViewer = new osgViewer::Viewer(arguments);
       mViewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
-      
+
+      //osgViewer::View* v = new osgViewer::View();
+      //mViewer->addView(v);
+      //v->setUpViewInWindow(100,100,800,600);
+      dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
+
       dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
       dtEntityQtWidgets::RegisterMessageTypes(ms->GetMessageFactory());
@@ -268,15 +267,6 @@ namespace dtEntityEditor
       if(mapSystem->GetCurrentScene().size() != 0)
       {
          mapSystem->UnloadScene();
-         dtEntity::CameraSystem* camsys;
-         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
-
-         dtEntity::EntityId camid = camsys->GetMainCameraEntity();
-         if(camid != dtEntity::EntityId())
-         {
-            GetEntityManager().RemoveFromScene(camid);
-            GetEntityManager().KillEntity(camid);
-         }
       }
 
       mapSystem->LoadScene(path.toStdString());
@@ -286,10 +276,30 @@ namespace dtEntityEditor
       {
          cameramapname = mapSystem->GetLoadedMaps().front();
       }
+
       // create a main camera entity if it was not loaded from map
-      dtEntity::CameraSystem* camsys;
-      mEntityManager->GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
-      camsys->GetOrCreateMainCameraEntity(cameramapname);
+      dtEntity::ApplicationSystem* appsys;
+      GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+
+      dtEntity::Entity* entity;
+      mEntityManager->CreateEntity(entity);
+
+      unsigned int contextId = appsys->GetPrimaryWindow()->getState()->getContextID();
+      dtEntity::CameraComponent* camcomp;
+      entity->CreateComponent(camcomp);
+      camcomp->SetContextId(contextId);
+      camcomp->SetClearColor(osg::Vec4(0,0,0,1));
+      camcomp->Finished();
+
+      dtEntity::MapComponent* mapcomp;
+      entity->CreateComponent(mapcomp);
+      std::ostringstream os;
+      os << "cam_" << contextId;
+      mapcomp->SetEntityName(os.str());
+      mapcomp->SetUniqueId(os.str());
+      mapcomp->SetMapName("maps/camera.dtemap");
+      mapcomp->Finished();
+      GetEntityManager().AddToScene(entity->GetId());
 
       emit SceneLoaded(path);
 
@@ -337,8 +347,8 @@ namespace dtEntityEditor
       std::string source = ""
           "include_once(\"Scripts/osgveclib.js\");\n"
           "include_once(\"Scripts/stdlib.js\");\n"
-          "include_once(\"Scripts/motionmodel.js\");\n"
-          "include_once(\"Scripts/tools.js\");\n";
+          "include_once(\"Scripts/editormotionmodel.js\");\n"
+          "include_once(\"Scripts/manipulators.js\");\n";
 
       ss->ExecuteScript(source);
 

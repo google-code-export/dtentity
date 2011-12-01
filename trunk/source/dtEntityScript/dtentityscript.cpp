@@ -66,12 +66,6 @@ int main(int argc, char** argv)
 
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::CompositeViewer viewer(arguments);
-   osgViewer::View* view = new osgViewer::View();
-   viewer.addView(view);
-  
-   // fullscreen mode has some problems with mouse coordinates if multiple
-   // screens are present. So use windowed mode by default.
-   view->setUpViewInWindow(100,100,800,600);
 
    osg::ref_ptr<dtEntity::EntityManager> em = new dtEntity::EntityManager();
    
@@ -80,8 +74,6 @@ int main(int argc, char** argv)
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
-   
-   //viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded); 
    
    dtEntityWrappers::ScriptSystem* scriptsys = new dtEntityWrappers::ScriptSystem(*em);
    em->AddEntitySystem(*scriptsys);

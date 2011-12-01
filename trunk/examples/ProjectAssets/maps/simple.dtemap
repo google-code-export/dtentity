@@ -41,11 +41,13 @@
 			<stringproperty name="UniqueId">111</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="2.3000000000" z="3.3000000000" w="3.3000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 				<stringproperty name="1">TextLabel</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="1.1300789118" y="28.1094169617" z="2.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
 		<component type="TextLabel">
@@ -77,6 +79,7 @@
 				<stringproperty name="0">StaticMesh</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="4.4398598671" y="27.6024589539" z="1.0326000452"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh">
 			<stringproperty name="Mesh">StaticMeshes/articulation_test.ive</stringproperty>
@@ -89,20 +92,24 @@
 			<stringproperty name="UniqueId">MyEntity1</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="2.3000000000" z="3.3000000000" w="3.3000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="3.4707899094" y="27.6024589539" z="3.5141999722"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
 	</entity>
 	<entity>
 		<component type="Layer">
 			<stringproperty name="AttachedComponent">SkyBox</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
 		</component>
 		<component type="Map">
 			<stringproperty name="EntityName">SkyBox</stringproperty>
 			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">SkyBox</stringproperty>
 		</component>
 		<component type="SkyBox">
@@ -118,15 +125,17 @@
 		<component type="Camera">
 			<stringproperty name="CullingMode">NoAutoNearFarCulling</stringproperty>
 			<vec3property name="EyeDirection" x="0.9698496995" y="-0.2433103193" z="-0.0138437315"/>
-			<boolproperty name="IsMainCamera" value="true"/>
 			<doubleproperty name="NearClip" value="4.0000000000"/>
 			<vec3property name="Position" x="-13.5959175672" y="30.8884023018" z="2.1082273157"/>
+			<uintproperty name="ContextId" value="0" />
 		</component>
 		<component type="Map">
-			<stringproperty name="EntityName">defaultCam</stringproperty>
+			<stringproperty name="EntityName">cam_0</stringproperty>
 			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
-			<stringproperty name="UniqueId">defaultCam</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">cam_0</stringproperty>
 		</component>
+		<component type="EditorMotion" />
 	</entity>
 </map>
 

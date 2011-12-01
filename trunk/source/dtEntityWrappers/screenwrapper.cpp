@@ -305,76 +305,6 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   /*Handle<Value> SCRPickEntity(const Arguments& args)
-   {
-
-      if(args.Length() < 2 || !IsVec3(args[0]) || ! IsVec3(args[1]))
-      {
-         return ThrowError("usage: pickEntity(number[3] from, number[3] to, [int32 nodemask])");
-      }
-
-      HandleScope scope;
-      Handle<Context> context = GetGlobalContext();
-      Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
-      dtEntity::EntityManager* entityManager = UnwrapEntityManager(emh);
-
-      osg::Vec3 from = UnwrapVec3(args[0]);
-      osg::Vec3 to = UnwrapVec3(args[1]);
-
-      osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
-      lsi = new osgUtil::LineSegmentIntersector(from, to);
-
-      osgUtil::IntersectionVisitor iv(lsi.get());
-      iv.setUseKdTreeWhenAvailable(true);
-
-      if(args.Length() >= 3)
-      {
-         iv.setTraversalMask(args[2]->Uint32Value());
-      }
-      else
-      {
-         iv.setTraversalMask(dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN);
-      }
-      dtEntity::LayerAttachPointSystem* laps;
-      entityManager->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, laps);
-      dtEntity::LayerAttachPointComponent* sceneLayer = laps->GetDefaultLayer();
-      sceneLayer->GetGroup()->accept(iv);
-
-      if(!lsi->containsIntersections())
-      {
-         return Null();
-      }
-
-      osgUtil::LineSegmentIntersector::Intersections::iterator i;
-      for(i = lsi->getIntersections().begin(); i != lsi->getIntersections().end(); ++i)
-      {
-         osgUtil::LineSegmentIntersector::Intersection isect = *i;
-         for(osg::NodePath::const_reverse_iterator j = isect.nodePath.rbegin(); j != isect.nodePath.rend(); ++j)
-         {
-            const osg::Node* node = *j;
-            if(node == sceneLayer->GetGroup())
-            {
-               continue;
-            }
-            const osg::Referenced* referenced = node->getUserData();
-            if(referenced == NULL) continue;
-            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL)
-            {
-               Handle<Object> o = Object::New();
-               o->Set(String::New("Id"), Uint32::New(entity->GetId()));
-               o->Set(String::New("Position"), WrapVec3(isect.getWorldIntersectPoint()));
-               o->Set(String::New("Normal"), WrapVec3(isect.getWorldIntersectNormal()));
-
-               return scope.Close(o);
-            }
-         }
-      }
-
-      return Null();
-   }*/
-
-   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRConvertWorldToScreenCoords(const Arguments& args)
    {
       osgViewer::View* view = UnwrapScreenView(args.This());
@@ -400,28 +330,33 @@ namespace dtEntityWrappers
          layername = dtEntity::SID(ToStdString(args[1]));
       }
 
-      osg::GraphicsContext::Traits traits;
+      osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+      osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
+
+      traits->windowDecoration = true;
+      traits->doubleBuffer = true;
+      traits->sharedContext = 0;
 
       if(args.Length() > 2)
       {
          Handle<Object> traitsin = Handle<Object>::Cast(args[2]);
-         if(traitsin->Has(String::New("x"))) traits.x = traitsin->Get(String::New("x"))->Int32Value();
-         if(traitsin->Has(String::New("y"))) traits.y = traitsin->Get(String::New("y"))->Int32Value();
-         if(traitsin->Has(String::New("width"))) traits.width = traitsin->Get(String::New("width"))->Int32Value();
-         if(traitsin->Has(String::New("height"))) traits.height = traitsin->Get(String::New("height"))->Int32Value();
-         if(traitsin->Has(String::New("windowDecoration"))) traits.windowDecoration = traitsin->Get(String::New("windowDecoration"))->BooleanValue();
-         if(traitsin->Has(String::New("hostName"))) traits.hostName = ToStdString(traitsin->Get(String::New("hostName")));
-         if(traitsin->Has(String::New("displayNum"))) traits.displayNum = traitsin->Get(String::New("displayNum"))->Int32Value();
-         if(traitsin->Has(String::New("screenNum"))) traits.screenNum = traitsin->Get(String::New("screenNum"))->Int32Value();
-         if(traitsin->Has(String::New("vsync"))) traits.vsync = traitsin->Get(String::New("vsync"))->BooleanValue();
+         if(traitsin->Has(String::New("x"))) traits->x = traitsin->Get(String::New("x"))->Int32Value();
+         if(traitsin->Has(String::New("y"))) traits->y = traitsin->Get(String::New("y"))->Int32Value();
+         if(traitsin->Has(String::New("width"))) traits->width = traitsin->Get(String::New("width"))->Int32Value();
+         if(traitsin->Has(String::New("height"))) traits->height = traitsin->Get(String::New("height"))->Int32Value();
+         if(traitsin->Has(String::New("windowDecoration"))) traits->windowDecoration = traitsin->Get(String::New("windowDecoration"))->BooleanValue();
+         if(traitsin->Has(String::New("hostName"))) traits->hostName = ToStdString(traitsin->Get(String::New("hostName")));
+         if(traitsin->Has(String::New("displayNum"))) traits->displayNum = traitsin->Get(String::New("displayNum"))->Int32Value();
+         if(traitsin->Has(String::New("screenNum"))) traits->screenNum = traitsin->Get(String::New("screenNum"))->Int32Value();
+         if(traitsin->Has(String::New("vsync"))) traits->vsync = traitsin->Get(String::New("vsync"))->BooleanValue();
       }
 
       dtEntity::EntityManager* entityManager = GetEntityManager();
       dtEntity::ApplicationSystem* appsys;
       entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
 
-      appsys->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, traits);
-      return Undefined();
+      unsigned int contextid = appsys->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits);
+      return Uint32::New(contextid);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

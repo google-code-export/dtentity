@@ -24,6 +24,7 @@
 #include <dtEntity/log.h>
 #include <osg/Version>
 #include <osgViewer/CompositeViewer>
+#include <iostream>
 
 namespace dtEntity
 {
@@ -418,14 +419,13 @@ namespace dtEntity
       mKeyUpSet.insert(key);
       mKeyPressedSet.erase(key);
 
-
-      if(!mCallbacks.empty())
+     if(!mCallbacks.empty())
       {
          std::string v = mKeyNamesReverse[key];
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->KeyUp(v, handled);
+            handled |= (*i)->KeyUp(v, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -437,7 +437,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleKeyDown(const osgGA::GUIEventAdapter& ea)
    {
-     int key = ea.getUnmodifiedKey();
+      int key = ea.getUnmodifiedKey();
       mKeyDownSet.insert(key);
       mKeyPressedSet.insert(key);
       mInputString << mKeyNamesReverse[key];
@@ -447,7 +447,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->KeyDown(v, handled);
+            handled |= (*i)->KeyDown(v, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -475,7 +475,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseButtonUp(index, handled);
+            handled |= (*i)->MouseButtonUp(index, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -502,7 +502,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseButtonDown(index, handled);
+            handled |= (*i)->MouseButtonDown(index, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -566,7 +566,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseMove(nx, ny, handled);
+            handled |= (*i)->MouseMove(nx, ny, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -578,6 +578,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseWheel(const osgGA::GUIEventAdapter& ea)
    {
+
+      unsigned int  ci = ea.getGraphicsContext()->getState()->getContextID();
       mMouseScroll = ea.getScrollingMotion();
       
       if(!mCallbacks.empty())
@@ -595,7 +597,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseWheel(dir, handled);
+            handled |= (*i)->MouseWheel(dir, handled, ea.getGraphicsContext()->getState()->getContextID());
          }
          if(handled && !ea.getHandled())
          {
@@ -651,15 +653,9 @@ namespace dtEntity
       const MouseEnterLeaveEvent* e = static_cast<const MouseEnterLeaveEvent*>(ea.getUserData());
       bool focused = e->mFocused;
 
-      osg::GraphicsContext::ScreenIdentifier id;
-      osg::GraphicsContext::ScreenSettings res;
-      ea.getGraphicsContext()->getWindowingSystemInterface()->getScreenSettings(id, res);
-      int displayNum = id.displayNum;
-      int screenNum = id.screenNum;
-
       for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
       {
-         (*i)->MouseEnterLeave(focused, displayNum, screenNum);
+         (*i)->MouseEnterLeave(focused, ea.getGraphicsContext()->getState()->getContextID());
       }
    }
 

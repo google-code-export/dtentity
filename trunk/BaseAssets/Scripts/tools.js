@@ -281,7 +281,9 @@ function SelectTool() {
         undoOp.oldSelection.push(Selection.ids[k]);
       }
 
-      var pick = Screen.pickEntity(campos, tmp);
+      var mouseX = Input.getAxis(Axis.MouseXRaw);
+      var mouseY = Input.getAxis(Axis.MouseYRaw);
+      var pick = Screen.pickEntity(mouseX, mouseY);
 
       if (pick === null  || !positionAttitudeTransformSystem.hasComponent(pick.Id, true)) {
         return;

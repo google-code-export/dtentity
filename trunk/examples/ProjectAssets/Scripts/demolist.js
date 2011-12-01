@@ -1,18 +1,22 @@
 include_once("Scripts/stdlib.js");
 include_once("Scripts/osgveclib.js");
-var staticMeshSystem = EntityManager.getEntitySystem("StaticMesh");
-var layerSystem = EntityManager.getEntitySystem("Layer");
-var transformSystem = EntityManager.getEntitySystem("PositionAttitudeTransform");
-var mapSystem = EntityManager.getEntitySystem("Map");
+var staticMeshSystem = getEntitySystem("StaticMesh");
+var layerSystem = getEntitySystem("Layer");
+var transformSystem = getEntitySystem("PositionAttitudeTransform");
+var mapSystem = getEntitySystem("Map");
 
 // use libRocket or CEGUI?
-var rocketSystem = EntityManager.getEntitySystem("Rocket");
+
 var demolist_initialized = false;
+var rocketSystem = getEntitySystem("Rocket");
 if(rocketSystem !== null) {
+  println("Starting libRocket demo gui");
   initRocket();
   demolist_initialized = true;
-} else if(typeof GUI != "undefined") {
-    initCegui();
+} else
+if(typeof GUI != "undefined") {
+   println("Starting CEGUI demo gui");
+   initCegui();
 	demolist_initialized = true;
 }
 else {

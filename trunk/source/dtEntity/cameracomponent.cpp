@@ -20,6 +20,7 @@
 
 #include <dtEntity/cameracomponent.h>
 
+#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -27,13 +28,15 @@
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/applicationcomponent.h>
 #include <osgViewer/View>
+#include <osgViewer/GraphicsWindow>
 
 namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
    const StringId CameraComponent::TYPE(SID("Camera"));
-   const StringId CameraComponent::IsMainCameraId(SID("IsMainCamera"));
+
+   const StringId CameraComponent::ContextIdId(SID("ContextId"));
    const StringId CameraComponent::CullingModeId(SID("CullingMode"));
    const StringId CameraComponent::NoAutoNearFarCullingId(SID("NoAutoNearFarCulling"));
    const StringId CameraComponent::BoundingVolumeNearFarCullingId(SID("BoundingVolumeNearFarCulling"));
@@ -66,7 +69,7 @@ namespace dtEntity
       , mCullMask(NodeMasks::VISIBLE)
    {
 
-      Register(IsMainCameraId, &mIsMainCamera);
+      Register(ContextIdId, &mContextId);
       Register(CullingModeId, &mCullingMode);
       Register(FieldOfViewId, &mFieldOfView);
       Register(AspectRatioId, &mAspectRatio);
@@ -86,6 +89,8 @@ namespace dtEntity
       Register(OrthoTopId, &mOrthoTop);
       Register(OrthoZNearId, &mOrthoZNear);
       Register(OrthoZFarId, &mOrthoZFar);
+
+      mContextId.Set(0);
 
       mFieldOfView.Set(45);
       mAspectRatio.Set(1.3f);
@@ -130,16 +135,10 @@ namespace dtEntity
       }
    }
 
-
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnPropertyChanged(StringId propname, Property& prop)
    {
 
-      if(propname == IsMainCameraId)
-      {
-         SetIsMainCamera(prop.BoolValue());
-         return;
-      }
 
       if(!mCamera.valid())
          return;
@@ -194,24 +193,49 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::SetIsMainCamera(bool v)
+   void CameraComponent::FetchCamera()
    {
-      mIsMainCamera.Set(v);
-      if(mCamera == NULL)
+      if(!mEntity)
       {
-         if(v)
+         return;
+      }
+      ApplicationSystem* appsys;
+      mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
+
+      osgViewer::ViewerBase* viewer = appsys->GetViewer();
+
+      osgViewer::ViewerBase::Windows windows;
+      viewer->getWindows(windows);
+      for(int i = 0; i < windows.size(); ++i)
+      {
+         osgViewer::GraphicsWindow* window = windows[i];
+
+         if(window->getState()->getContextID() ==  mContextId.Get())
          {
-            ApplicationSystem* appsys;
-            mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
-            SetCamera(appsys->GetPrimaryCamera());
+            osg::GraphicsContext::Cameras cameras = window->getCameras();
+            if(cameras.size() == 0)
+            {
+               return;
+            }
+            if(cameras.size() > 1)
+            {
+               LOG_ERROR("More than one camera on window!");
+            }
+            mCamera = cameras.front();
+            OnPropertyChanged(CullingModeId, mCullingMode);
+            OnPropertyChanged(FieldOfViewId, mFieldOfView);
+            OnPropertyChanged(LODScaleId, mLODScale);
+            OnPropertyChanged(ClearColorId, mClearColor);
+            OnPropertyChanged(CullMaskId, mCullMask);
+            UpdateProjectionMatrix();
+            UpdateViewMatrix();
+
+            CameraAddedMessage msg;
+            msg.SetAboutEntityId(mEntity->GetId());
+            msg.SetContextId(mContextId.Get());
+            mEntity->GetEntityManager().EmitMessage(msg);
+            return;
          }
-         else
-         {
-            SetCamera(new osg::Camera());
-         }
-         CameraAddedMessage msg;
-         msg.SetAboutEntityId(mEntity->GetId());
-         mEntity->GetEntityManager().EmitMessage(msg);
       }
    }
 
@@ -249,18 +273,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::SetCamera(osg::Camera* cam) 
-   { 
-      mCamera = cam; 
-      OnPropertyChanged(CullingModeId, mCullingMode);
-      OnPropertyChanged(FieldOfViewId, mFieldOfView);
-      OnPropertyChanged(LODScaleId, mLODScale);
-      OnPropertyChanged(ClearColorId, mClearColor);
-      OnPropertyChanged(CullMaskId, mCullMask);
-      UpdateProjectionMatrix();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::Finished()
    {
       if(mCamera.valid())
@@ -294,7 +306,6 @@ namespace dtEntity
                                              mOrthoBottom.Get(), mOrthoTop.Get(),
                                              mOrthoZNear.Get(), mOrthoZFar.Get());
       }
-
    }
 
 
@@ -357,47 +368,34 @@ namespace dtEntity
    CameraSystem::CameraSystem(EntityManager& em)
       : DefaultEntitySystem<CameraComponent>(em, dtEntity::TransformComponent::TYPE)
    {
+      mEnterWorldFunctor = MessageFunctor(this, &CameraSystem::OnEnterWorld);
+      em.RegisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor,"CameraSystem::OnEnterWorld");
+
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraSystem::OnEnterWorld(const Message& m)
+   {
+      const EntityAddedToSceneMessage& msg = static_cast<const EntityAddedToSceneMessage&>(m);
+
+      ComponentStore::iterator i = mComponents.find(msg.GetAboutEntityId());
+      if(i != mComponents.end())
+      {
+         i->second->FetchCamera();
+      }
+   }
 
    ////////////////////////////////////////////////////////////////////////////
-   dtEntity::EntityId CameraSystem::GetMainCameraEntity()
+   EntityId CameraSystem::GetCameraEntityByContextId(unsigned int id)
    {
+
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         if(i->second->GetIsMainCamera())
+         if(i->second->GetContextId() == id)
          {
             return i->first;
          }
       }
-      return dtEntity::EntityId();
+      return EntityId();
    }
-
-   ////////////////////////////////////////////////////////////////////////////
-   dtEntity::EntityId CameraSystem::GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera)
-   {
-      dtEntity::EntityId id = GetMainCameraEntity();
-
-      if(id != dtEntity::EntityId())
-      {
-         return id;
-      }
-      dtEntity::Entity* entity;
-      GetEntityManager().CreateEntity(entity);
-
-      CameraComponent* camcomp;
-      entity->CreateComponent(camcomp);
-      camcomp->SetIsMainCamera(true);
-      camcomp->SetClearColor(osg::Vec4(0,0,0,1));
-      camcomp->Finished();
-      dtEntity::MapComponent* mapcomp;
-      entity->CreateComponent(mapcomp);
-      mapcomp->SetEntityName("defaultCam");
-      mapcomp->SetUniqueId("defaultCam");
-      mapcomp->SetMapName(mapToSaveCamera);
-      mapcomp->Finished();
-      GetEntityManager().AddToScene(entity->GetId());
-      return entity->GetId();
-   }
-
 }

@@ -27,6 +27,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <iostream>
 #include <sstream>
+#include <osgViewer/GraphicsWindow>
 
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUICoordConverter.h>

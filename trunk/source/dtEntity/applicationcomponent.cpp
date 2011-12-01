@@ -140,7 +140,6 @@ namespace dtEntity
    ApplicationSystem::ApplicationSystem(EntityManager& em)
       : EntitySystem(TYPE, em)
       , mImpl(new ApplicationImpl())
-      , mInputHandler(new InputHandler(em))
    {
       Register(TimeScaleId, &mTimeScale);
       Register(CmdLineArgsId, &mArgvArray);
@@ -223,13 +222,6 @@ namespace dtEntity
    void ApplicationSystem::SetViewer(osgViewer::ViewerBase* viewer)
    {
       mImpl->mViewer = viewer;
-      
-      if(!mImpl->mUpdateCallback.valid())
-      {
-         mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
-      }
-      GetPrimaryView()->getSceneData()->addUpdateCallback(mImpl->mUpdateCallback);
-
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -356,22 +348,14 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::CreateSceneGraphEntities()
+   void ApplicationSystem::InstallUpdateCallback()
    {
-      dtEntity::LayerAttachPointSystem* layersys;
-      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      layersys->CreateSceneGraphRootEntity(GetPrimaryView()->getSceneData()->asGroup());      
-      
-      if(GetPrimaryCamera()->getName() == "")
+      if(!mImpl->mUpdateCallback.valid())
       {
-         GetPrimaryCamera()->setName("defaultCam");
+         mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
       }
-     // AddCameraToSceneGraph(GetPrimaryCamera());
-      dtEntity::LayerAttachPointComponent* next;
-      if(layersys->GetByName(dtEntity::LayerAttachPointSystem::RootId, next))
-      {
-         next->GetAttachmentGroup()->addChild(mInputHandler);
-      }
+      GetPrimaryView()->getSceneData()->addUpdateCallback(mImpl->mUpdateCallback);
+      GetPrimaryView()->getSceneData()->asGroup()->addChild(&GetWindowManager()->GetInputHandler());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -480,8 +464,6 @@ namespace dtEntity
            GetEntityManager().RemoveEntitySystem(**i);
          }
       }
-
-      CreateSceneGraphEntities();
 
       if(m.GetSceneName() != "")
       {

@@ -44,7 +44,7 @@ namespace dtEntity
    public:
 
       static const ComponentType TYPE;
-      static const StringId IsMainCameraId;
+      static const StringId ContextIdId;
       static const StringId CullingModeId;
       static const StringId CullMaskId;
       static const StringId NoAutoNearFarCullingId;
@@ -84,17 +84,14 @@ namespace dtEntity
       virtual void OnRemovedFromEntity(Entity& entity);
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
-      void SetCamera(osg::Camera* cam);
       osg::Camera* GetCamera() const { return mCamera.get(); }
 
       virtual void Finished();
 
-		bool GetIsMainCamera() const
-		{
-			return mIsMainCamera.Get();
-		}
+      void FetchCamera();
 
-		void SetIsMainCamera(bool v);
+      void SetContextId(unsigned int id) { mContextId.Set(id); }
+      unsigned int GetContextId() const { return mContextId.Get(); }
 
 		void SetProjectionMode(StringId);
 		StringId GetProjectionMode() const { return mProjectionMode.Get(); }
@@ -155,7 +152,9 @@ namespace dtEntity
 
       Entity* mEntity;
       osg::ref_ptr<osg::Camera> mCamera;
-      BoolProperty mIsMainCamera;
+
+      UIntProperty mContextId;
+
       StringIdProperty mCullingMode;
       DoubleProperty mFieldOfView;
       DoubleProperty mAspectRatio;
@@ -187,9 +186,14 @@ namespace dtEntity
 
       CameraSystem(EntityManager& em);
 
-      dtEntity::EntityId GetMainCameraEntity();
-      dtEntity::EntityId GetOrCreateMainCameraEntity(const std::string& mapToSaveCamera = "maps/camera.dtemap");
+      void OnEnterWorld(const Message&);
+      void OnLeaveWorld(const Message&);
+
+      EntityId GetCameraEntityByContextId(unsigned int id);
 
    private:
+
+      MessageFunctor mEnterWorldFunctor;
+
    };
 }

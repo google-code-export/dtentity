@@ -1,7 +1,6 @@
 include_once("Scripts/stdlib.js");
 
-var hudSystem = EntityManager.getEntitySystem("HUD");
-var rocketSystem = EntityManager.getEntitySystem("Rocket");
+var hudSystem = getEntitySystem("HUD");
 
 var guiId = 0;
 var sphereId = 0;
@@ -19,7 +18,7 @@ function moveSphere(name, params) {
 function startRocket() {
 
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [0, -10, 2];
   cameraComponent.EyeDirection = [0, 1, 0];
@@ -114,14 +113,14 @@ function startRocket() {
   
   EntityManager.addToScene(guiId);
   
-  var mapsys = EntityManager.getEntitySystem("Map");
+  var mapsys = getEntitySystem("Map");
   mapsys.loadMap("maps/fpsdemo.dtemap");
   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 function stopRocket() {
-  var mapsys = EntityManager.getEntitySystem("Map");
+  var mapsys = getEntitySystem("Map");
   mapsys.unloadMap("maps/fpsdemo.dtemap");
   EntityManager.removeFromScene(guiId);
   EntityManager.killEntity(guiId);

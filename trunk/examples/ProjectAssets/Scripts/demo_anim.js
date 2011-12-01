@@ -5,7 +5,7 @@ include_once("Scripts/osgveclib.js");
 var animEntity = 0;
 var animlist = null;
 var playing = "";
-var animsystem = EntityManager.getEntitySystem("OSGAnimation");
+var animsystem = getEntitySystem("OSGAnimation");
 
 function addAnimation(position) {
 
@@ -47,7 +47,7 @@ function changeAnimation(animname) {
 function startAnimDemo() {
   
   var camid = mapSystem.getEntityIdByUniqueId("defaultCam");
-  var cameraComponent = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
   cameraComponent.Position = [6, 8, -14];
   cameraComponent.EyeDirection = [-1, -1, -0.2];
@@ -57,7 +57,7 @@ function startAnimDemo() {
   cameraComponent.Up = [0, 0, 1];
   cameraComponent.finished();
   
-  var animsystem = EntityManager.getEntitySystem("OSGAnimation");
+  var animsystem = getEntitySystem("OSGAnimation");
   if(animsystem === null) {
     Log.error("Cannot start animation demo: No animation system found!");
     return;
@@ -73,7 +73,8 @@ function startAnimDemo() {
   }*/
   playing = "run";
   animsystem.playAnimation(animEntity, playing);
-  if(rocketSystem) {
+  if(rocketSystem !== null) {
+
      var animbox = window.getElementById("animationbox");
      animbox.style = "visibility:visible;"
 
@@ -115,7 +116,7 @@ function startAnimDemo() {
   }
   var text = "Shows how to load an animated mesh and to start / stop animations. Free model from www.3drt.com";
   showHelp(text);
-  var mapsys = EntityManager.getEntitySystem("Map");
+  var mapsys = getEntitySystem("Map");
   mapsys.loadMap("maps/fpsdemo.dtemap");
 }
 
@@ -125,14 +126,15 @@ function stopAnimDemo() {
   EntityManager.killEntity(animEntity);
   animEntity = 0;
 
-   if(rocketSystem) {
+
+   if(rocketSystem !== null) {
       var animbox = window.getElementById("animationbox");
       animbox.style = "visibility:hidden;"
    } else {
     GUI.destroyWidget(animlist);
   }
   hideHelp();
-  var mapsys = EntityManager.getEntitySystem("Map");
+  var mapsys = getEntitySystem("Map");
   mapsys.unloadMap("maps/fpsdemo.dtemap");
 }
 if(EntityManager.hasEntitySystem("OSGAnimation")) {

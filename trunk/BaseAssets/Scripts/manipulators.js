@@ -9,7 +9,7 @@ var ddm = new DebugDrawManager(EntityManager);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
-var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("defaultCam");
+var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
 var cameraSystem = EntityManager.getEntitySystem("Camera");
 var mainCamera = null;
 if(camid !== null) {
@@ -355,6 +355,20 @@ function RotateTool() {
        }
    }
 
+   this.keyDown = function(key, handled) {
+      if(!handled && key == "Space") {
+
+         for(var k in Selection.ids) {
+            var transcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[k]);
+            if(transcomp !== null) {
+               transcomp.Attitude = [0, 0, 0, 1];
+               transcomp.finished();
+            }
+         }
+         return true;
+      }
+   }
+
   this.update = function () {
       if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
         var campos = this.getCameraPosition();
@@ -407,6 +421,20 @@ function ScaleTool() {
             Selection.clone();
           }
        }
+   }
+
+   this.keyDown = function(key, handled) {
+      if(!handled && key == "Space") {
+
+         for(var k in Selection.ids) {
+            var transcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[k]);
+            if(transcomp !== null) {
+               transcomp.Scale = [1, 1, 1];
+               transcomp.finished();
+            }
+         }
+         return true;
+      }
    }
 
   this.update = function () {

@@ -35,7 +35,7 @@ namespace dtEntity
 
 namespace osgViewer
 {
-   class CompositeViewer;
+   class Viewer;
 }
 
 namespace dtEntityEditor
@@ -130,7 +130,7 @@ namespace dtEntityEditor
       EditorMainWindow* mMainWindow;
       QTimer* mTimer;
       osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
-      osg::ref_ptr<osgViewer::CompositeViewer> mViewer;
+      osg::ref_ptr<osgViewer::Viewer> mViewer;
       std::vector<std::string> mPluginPaths;
       osg::Timer_t mStartOfFrameTick;
       double mTimeScale;
