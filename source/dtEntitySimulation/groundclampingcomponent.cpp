@@ -235,8 +235,18 @@ namespace dtEntitySimulation
       
       if(!GetEntityManager().GetComponent(camid, cam))
       {
-         LOG_ERROR("No primary camera found in ground clamping system!");
-         return;
+         dtEntity::CameraSystem* camsys;
+         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+         if(camsys->GetNumComponents() != 0)
+         {
+            camid = camsys->begin()->first;
+            cam = camsys->begin()->second;
+         }
+         else
+         {
+            LOG_ERROR("No primary camera found in ground clamping system!");
+            return;
+         }
       }
 
       osg::Vec3d campos = cam->GetPosition();

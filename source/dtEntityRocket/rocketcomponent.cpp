@@ -238,6 +238,7 @@ namespace dtEntityRocket
         // create a camera that will be rendered after the main OSG scene.
        // This is adapted from osghud example
        osg::ref_ptr<osg::Camera> cam = new osg::Camera();
+       cam->setName("Rocket HUD");
        cam->setClearMask(GL_DEPTH_BUFFER_BIT);
        cam->setRenderOrder(osg::Camera::POST_RENDER, 100);
        cam->setAllowEventFocus(false);
