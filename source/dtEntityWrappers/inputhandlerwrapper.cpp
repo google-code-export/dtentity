@@ -218,21 +218,36 @@ namespace dtEntityWrappers
    Handle<Value> IHGetKey(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetKey(ToStdString(args[0])));
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetKey(ToStdString(args[0]), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKeyUp(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetKeyUp(ToStdString(args[0])));
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetKeyUp(ToStdString(args[0]), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKeyDown(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetKeyDown(ToStdString(args[0])));
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetKeyDown(ToStdString(args[0]), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -253,21 +268,38 @@ namespace dtEntityWrappers
    Handle<Value> IHGetMouseButton(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetMouseButton(args[0]->Int32Value()));
+
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetMouseButton(args[0]->Int32Value(), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseButtonUp(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetMouseButtonUp(args[0]->Int32Value()));
+
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetMouseButtonUp(args[0]->Int32Value(), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseButtonDown(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Boolean::New(input->GetMouseButtonDown(args[0]->Int32Value()));
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      return Boolean::New(input->GetMouseButtonDown(args[0]->Int32Value(), contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +313,12 @@ namespace dtEntityWrappers
    Handle<Value> IHGetMouseWheelState(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Integer::New((int)input->GetMouseWheelState());
+      unsigned int contextId = 0;
+      if(args.Length() > 0)
+      {
+         contextId = args[0]->Uint32Value();
+      }
+      return Integer::New((int)input->GetMouseWheelState(contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

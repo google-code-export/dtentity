@@ -195,7 +195,8 @@ namespace dtEntity
       cam->setDrawBuffer(buffer);
       cam->setReadBuffer(buffer);
 
-      cam->addChild(mInputHandler);
+      //cam->addChild(mInputHandler);
+      cam->addEventCallback(mInputHandler);
 
 
       dtEntity::Entity* entity;
@@ -252,6 +253,14 @@ namespace dtEntity
    void OSGWindowManager::OnCloseWindow(const Message& m)
    {
       const CloseWindowMessage& msg = static_cast<const CloseWindowMessage&>(m);
+
+      osgViewer::GraphicsWindow* window = GetWindowByName(msg.GetName());
+
+      if(window == NULL)
+      {
+         return;
+      }
+
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
 
@@ -261,8 +270,6 @@ namespace dtEntity
          LOG_ERROR("Cannot open window, use CompositeViewer class!");
          return;
       }
-
-      osgViewer::GraphicsWindow* window = GetWindowByName(msg.GetName());
 
       CameraSystem* camsys;
       mEntityManager->GetEntitySystem(CameraComponent::TYPE, camsys);

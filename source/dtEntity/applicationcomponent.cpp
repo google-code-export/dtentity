@@ -355,7 +355,7 @@ namespace dtEntity
          mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
       }
       GetPrimaryView()->getSceneData()->addUpdateCallback(mImpl->mUpdateCallback);
-      GetPrimaryView()->getSceneData()->asGroup()->addChild(&GetWindowManager()->GetInputHandler());
+      //GetPrimaryView()->getSceneData()->asGroup()->addChild(&GetWindowManager()->GetInputHandler());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
