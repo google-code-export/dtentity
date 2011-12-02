@@ -97,10 +97,6 @@ namespace dtEntity
        */
       bool IsAddedToScene() const { return mAddedToScene; }
 
-      /**
-       * Helper method to get bounds of attached component
-       */
-      osg::BoundingSphere GetBoundingSphere(dtEntity::EntityId eid) const;
 
       /**
        * Get OSG node of attached component
@@ -150,6 +146,8 @@ namespace dtEntity
          RemoveVisibleBoundingBox(args[0]->UIntValue());
          return NULL;
       }
+
+      Property* ScriptGetBoundingSphere(const PropertyArgs& args);
 
       MessageFunctor mEnterWorldFunctor;
       MessageFunctor mLeaveWorldFunctor;

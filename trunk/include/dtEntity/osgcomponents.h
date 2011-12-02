@@ -213,7 +213,7 @@ namespace dtEntity
       /**
        * Load mesh from path
        */
-      virtual void SetMesh(const std::string& path, StringId cacheHint);
+      virtual void SetMesh(const std::string& path, StringId cacheHint = CacheAllId);
 
       void SetCacheHint(StringId v) { mCacheHint.Set(v); }
       StringId GetCacheHint() const { return mCacheHint.Get(); }

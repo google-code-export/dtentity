@@ -376,6 +376,7 @@ namespace dtEntity
 
       AddScriptedMethod("addVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
       AddScriptedMethod("removeVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
+      AddScriptedMethod("getBoundingSphere", ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -517,5 +518,24 @@ namespace dtEntity
             return;
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Property* LayerSystem::ScriptGetBoundingSphere(const PropertyArgs& args)
+   {
+      if(args.size() < 1)
+      {
+         LOG_ERROR("Usage: getBoundingSphere(entityid)");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      LayerComponent* lc = GetComponent(id);
+      osg::Node* att = lc->GetAttachedComponentNode();
+      if(att == NULL)
+      {
+          return new Vec4dProperty(osg::Vec4d());
+      }
+      osg::BoundingSphere bs = att->getBound();
+      return new Vec4dProperty(osg::Vec4d(bs.center(), bs.radius()));
    }
 }

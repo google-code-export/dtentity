@@ -36,5 +36,6 @@ if(demolist_initialized) {
 	include("Scripts/demo_tools.js");
 	//include("Scripts/demo_filesystem.js");
 	include("Scripts/demo_windowmanagement.js");
+	include("Scripts/demo_objectmotionmodel.js");
 
 }

@@ -257,7 +257,7 @@ namespace dtEntityQtWidgets
       osg::Vec3 pickray = appsys->GetWindowManager()->GetPickRay("defaultView", pos.x(), pos.y());
       
       dtEntity::CameraComponent* cam;
-      mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("defaultCam"), cam);
+      mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), cam);
       osg::Vec3 start = cam->GetPosition();
      
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi = new osgUtil::LineSegmentIntersector(start, start + pickray * 100000);

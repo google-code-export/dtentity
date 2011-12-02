@@ -394,6 +394,7 @@ namespace dtEntityWrappers
          {
             dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
             ih->RemoveInputCallback(*i);
+            s_inputCallbackWrappers.erase(i);
             return True();
          }
       }
