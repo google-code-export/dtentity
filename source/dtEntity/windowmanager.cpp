@@ -206,45 +206,7 @@ namespace dtEntity
       std::ostringstream os;
       os << "cam_"  << contextid;
       cam->setName(os.str());
-      /*unsigned int contextid = gw->getState()->getContextID();
-      CameraSystem* camsys;
-      mEntityManager->GetEntitySystem(CameraComponent::TYPE, camsys);
-      EntityId cameid = camsys->GetCameraEntityByContextId(contextid);
-      if(cameid == EntityId())
-      {
-         CameraComponent* camcomp;
-         entity->CreateComponent(camcomp);
-         camcomp->SetContextId(gw->getState()->getContextID());
-         camcomp->SetCullingMode(dtEntity::CameraComponent::NoAutoNearFarCullingId);
-         camcomp->SetClearColor(osg::Vec4(0.2f,0.2f,0.2f,1));
-         camcomp->Finished();
 
-         MapSystem* mapSystem;
-         mEntityManager->GetEntitySystem(MapComponent::TYPE, mapSystem);
-
-         std::string cameramapname = "maps/default.dtemap";
-         if(!mapSystem->GetLoadedMaps().empty())
-         {
-            cameramapname = mapSystem->GetLoadedMaps().front();
-         }
-
-         dtEntity::MapComponent* mapcomp;
-         entity->CreateComponent(mapcomp);
-         std::ostringstream os;
-         os << "cam_" << gw->getState()->getContextID();
-         std::string camname = os.str();
-         mapcomp->SetEntityName(camname);
-         mapcomp->SetUniqueId(camname);
-         mapcomp->SetMapName(cameramapname);
-         mapcomp->Finished();
-         mEntityManager->AddToScene(entity->GetId());
-      }
-      else
-      {
-         CameraComponent* camcomp;
-         mEntityManager->GetComponent(cameid, camcomp);
-         camcomp->FetchCamera();
-      }*/
       return view;
       
    }
