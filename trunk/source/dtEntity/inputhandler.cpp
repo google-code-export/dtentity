@@ -60,11 +60,7 @@ namespace dtEntity
       , mNumTouches(0)
       , mFrameNumber(0)
    {
-      setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
-
-      mMouseButtonPressed.resize(3);
-      mMouseButtonUp.resize(3);
-      mMouseButtonDown.resize(3);
+      //setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
 
       mKeyNames["0"] = osgGA::GUIEventAdapter::KEY_0;
       mKeyNames["1"] = osgGA::GUIEventAdapter::KEY_1;
@@ -271,29 +267,28 @@ namespace dtEntity
    InputHandler::~InputHandler()
    {
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
-   void InputHandler::traverse(osg::NodeVisitor& nv)
+   void InputHandler::operator()(osg::Node* node, osg::NodeVisitor* nv)
    {
-
-      // handle events after subgraph was traversed. This way, 
-      // GUIs can handle the events and mark them as handled.
-      osg::Node::traverse(nv);
-
-      if(nv.getVisitorType() == osg::NodeVisitor::EVENT_VISITOR)
-      {
-         osgGA::EventVisitor* ev = static_cast<osgGA::EventVisitor*>(&nv);
-         for(osgGA::EventQueue::Events::iterator itr = ev->getEvents().begin();
-             itr != ev->getEvents().end();
-             ++itr)
-         {
-            osgGA::GUIEventAdapter* ea = itr->get();
-            if (handle(*ea, *(ev->getActionAdapter()), &nv))
-            {
-               ea->setHandled(true);
-            }
-         }
-      }
+       // note, callback is responsible for scenegraph traversal so
+       // they must call traverse(node,nv) to ensure that the
+       // scene graph subtree (and associated callbacks) are traversed.
+       traverse(node,nv);
+       if(nv->getVisitorType() == osg::NodeVisitor::EVENT_VISITOR)
+       {
+          osgGA::EventVisitor* ev = static_cast<osgGA::EventVisitor*>(nv);
+          for(osgGA::EventQueue::Events::iterator itr = ev->getEvents().begin();
+              itr != ev->getEvents().end();
+              ++itr)
+          {
+             osgGA::GUIEventAdapter* ea = itr->get();
+             if (handle(*ea, *(ev->getActionAdapter()), nv))
+             {
+                ea->setHandled(true);
+             }
+          }
+       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -397,12 +392,8 @@ namespace dtEntity
    {
       mKeyUpSet.clear();
       mKeyDownSet.clear();
-      mMouseButtonUp[0] = false;
-      mMouseButtonUp[1] = false;
-      mMouseButtonUp[2] = false;
-      mMouseButtonDown[0] = false;
-      mMouseButtonDown[1] = false;
-      mMouseButtonDown[2] = false;
+      mMouseButtonUp.clear();
+      mMouseButtonDown.clear();
       mMouseDeltaX = 0;
       mMouseDeltaY = 0;
       mMouseDeltaXRaw = 0;
@@ -415,9 +406,11 @@ namespace dtEntity
    void InputHandler::HandleKeyUp(const osgGA::GUIEventAdapter& ea)
    {
       int key = ea.getUnmodifiedKey();
+      unsigned int contextId = ea.getGraphicsContext()->getState()->getContextID();
 
-      mKeyUpSet.insert(key);
-      mKeyPressedSet.erase(key);
+      std::pair<unsigned int, int> pair(contextId, key);
+      mKeyUpSet.insert(pair);
+      mKeyPressedSet.erase(pair);
 
      if(!mCallbacks.empty())
       {
@@ -425,7 +418,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->KeyUp(v, handled, ea.getGraphicsContext()->getState()->getContextID());
+            handled |= (*i)->KeyUp(v, handled, contextId);
          }
          if(handled && !ea.getHandled())
          {
@@ -438,8 +431,12 @@ namespace dtEntity
    void InputHandler::HandleKeyDown(const osgGA::GUIEventAdapter& ea)
    {
       int key = ea.getUnmodifiedKey();
-      mKeyDownSet.insert(key);
-      mKeyPressedSet.insert(key);
+      unsigned int contextId = ea.getGraphicsContext()->getState()->getContextID();
+
+      std::pair<unsigned int, int> pair(contextId, key);
+
+      mKeyDownSet.insert(pair);
+      mKeyPressedSet.insert(pair);
       mInputString << mKeyNamesReverse[key];
       if(!mCallbacks.empty())
       {
@@ -447,7 +444,7 @@ namespace dtEntity
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->KeyDown(v, handled, ea.getGraphicsContext()->getState()->getContextID());
+            handled |= (*i)->KeyDown(v, handled, contextId);
          }
          if(handled && !ea.getHandled())
          {
@@ -459,6 +456,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseUp(const osgGA::GUIEventAdapter& ea)
    {
+      unsigned int contextId = ea.getGraphicsContext()->getState()->getContextID();
+
       int index;
       switch(ea.getButton())
       {
@@ -467,15 +466,16 @@ namespace dtEntity
          case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON: index = 1; break;
       }
 
-      mMouseButtonPressed[index] = false;
-      mMouseButtonUp[index] = true;
+      std::pair<unsigned int, int> pair(contextId, index);
+      mMouseButtonPressed.erase(pair);
+      mMouseButtonUp.insert(pair);
 
       if(!mCallbacks.empty())
       {
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseButtonUp(index, handled, ea.getGraphicsContext()->getState()->getContextID());
+            handled |= (*i)->MouseButtonUp(index, handled, contextId);
          }
          if(handled && !ea.getHandled())
          {
@@ -487,6 +487,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void InputHandler::HandleMouseDown(const osgGA::GUIEventAdapter& ea)
    {
+      unsigned int contextId = ea.getGraphicsContext()->getState()->getContextID();
       int index;
       switch(ea.getButton())
       {
@@ -495,14 +496,16 @@ namespace dtEntity
          case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON: index = 1; break;
       }
 
-      mMouseButtonPressed[index] = true;
-      mMouseButtonDown[index] = true;
+      std::pair<unsigned int, int> pair(contextId, index);
+
+      mMouseButtonPressed.insert(pair);
+      mMouseButtonDown.insert(pair);
       if(!mCallbacks.empty())
       {
          bool handled = ea.getHandled();
          for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
          {
-            handled |= (*i)->MouseButtonDown(index, handled, ea.getGraphicsContext()->getState()->getContextID());
+            handled |= (*i)->MouseButtonDown(index, handled, contextId);
          }
          if(handled && !ea.getHandled())
          {
@@ -579,8 +582,9 @@ namespace dtEntity
    void InputHandler::HandleMouseWheel(const osgGA::GUIEventAdapter& ea)
    {
 
-      unsigned int  ci = ea.getGraphicsContext()->getState()->getContextID();
+      unsigned int  contextId = ea.getGraphicsContext()->getState()->getContextID();
       mMouseScroll = ea.getScrollingMotion();
+      mMouseScrollContext = contextId;
       
       if(!mCallbacks.empty())
       {
@@ -671,21 +675,24 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetKey(const std::string& v)  const
+   bool InputHandler::GetKey(const std::string& v, unsigned int contextId)  const
    {  
-      return (mKeyPressedSet.find(GetKeySymbol(v)) != mKeyPressedSet.end());
+      std::pair<unsigned int, int> pair(contextId, GetKeySymbol(v));
+      return (mKeyPressedSet.find(pair) != mKeyPressedSet.end());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetKeyUp(const std::string& v)  const
+   bool InputHandler::GetKeyUp(const std::string& v, unsigned int contextId)  const
    {
-      return (mKeyUpSet.find(GetKeySymbol(v)) != mKeyUpSet.end());
+      std::pair<unsigned int, int> pair(contextId, GetKeySymbol(v));
+      return (mKeyUpSet.find(pair) != mKeyUpSet.end());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetKeyDown(const std::string& v)  const
+   bool InputHandler::GetKeyDown(const std::string& v, unsigned int contextId)  const
    {
-      return (mKeyDownSet.find(GetKeySymbol(v)) != mKeyDownSet.end());
+      std::pair<unsigned int, int> pair(contextId, GetKeySymbol(v));
+      return (mKeyDownSet.find(pair) != mKeyDownSet.end());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -701,21 +708,24 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetMouseButton(int button) const
+   bool InputHandler::GetMouseButton(int button, unsigned int contextId) const
    {
-      return mMouseButtonPressed[button];
+      std::pair<unsigned int, int> pair(contextId, button);
+      return mMouseButtonPressed.find(pair) != mMouseButtonPressed.end();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetMouseButtonDown(int button) const
+   bool InputHandler::GetMouseButtonDown(int button, unsigned int contextId) const
    {
-      return mMouseButtonDown[button];
+      std::pair<unsigned int, int> pair(contextId, button);
+      return mMouseButtonDown.find(pair) != mMouseButtonDown.end();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::GetMouseButtonUp(int button) const
+   bool InputHandler::GetMouseButtonUp(int button, unsigned int contextId) const
    {
-      return mMouseButtonUp[button];
+      std::pair<unsigned int, int> pair(contextId, button);
+      return mMouseButtonUp.find(pair) != mMouseButtonUp.end();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -755,5 +765,18 @@ namespace dtEntity
       }
       LOG_ERROR("Unknown axis:" + GetStringFromSID(axisname));
       return 0;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osgGA::GUIEventAdapter::ScrollingMotion InputHandler::GetMouseWheelState(unsigned int contextId) const
+   {
+      if(contextId == mMouseScrollContext)
+      {
+         return mMouseScroll;
+      }
+      else
+      {
+         return osgGA::GUIEventAdapter::SCROLL_NONE;
+      }
    }
 }

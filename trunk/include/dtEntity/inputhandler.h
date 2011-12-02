@@ -81,7 +81,7 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT InputHandler : public osg::Node
+   class DT_ENTITY_EXPORT InputHandler : public osg::NodeCallback
    {
    public:
 
@@ -99,7 +99,7 @@ namespace dtEntity
    
       InputHandler(dtEntity::EntityManager& em);
 
-      virtual void traverse(osg::NodeVisitor& nv);
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
 
       void AddInputCallback(InputCallbackInterface*);
       bool RemoveInputCallback(InputCallbackInterface*);
@@ -126,17 +126,17 @@ namespace dtEntity
       /**
        * Return true if key is pressed, else false
        */
-      bool GetKey(const std::string& name) const;
+      bool GetKey(const std::string& name, unsigned int contextId = 0) const;
       
       /**
        * Return true if key was released this frame, else false
        */
-      bool GetKeyUp(const std::string& name) const;
+      bool GetKeyUp(const std::string& name, unsigned int contextId = 0) const;
       
       /**
        * Return true if key was pressed down this frame, else false
        */
-      bool GetKeyDown(const std::string& name) const;
+      bool GetKeyDown(const std::string& name, unsigned int contextId = 0) const;
 
       /**
        * Returns true if any keyboard key is currently pressed
@@ -152,19 +152,19 @@ namespace dtEntity
        * Return true if given mouse button is currently pressed.
        * 0 for left button, 1 for right, 2 for center
        */
-      bool GetMouseButton(int button) const;
+      bool GetMouseButton(int button, unsigned int contextId = 0) const;
       
       /**
        * Return true if given mouse button was pressed this frame.
        * 0 for left button, 1 for right, 2 for center
        */
-      bool GetMouseButtonDown(int button) const;
+      bool GetMouseButtonDown(int button, unsigned int contextId = 0) const;
       
       /**
        * Return true if given mouse button was released this frame.
        * 0 for left button, 1 for right, 2 for center
        */
-      bool GetMouseButtonUp(int button) const;
+      bool GetMouseButtonUp(int button, unsigned int contextId = 0) const;
 
       /**
        * Return axis value from -1 to 1
@@ -175,7 +175,7 @@ namespace dtEntity
       /**
        * Return current mouse wheel state
        */
-      osgGA::GUIEventAdapter::ScrollingMotion GetMouseWheelState() const { return mMouseScroll; }
+      osgGA::GUIEventAdapter::ScrollingMotion GetMouseWheelState(unsigned int contextId = 0) const;
 
       /**
        * Return a list containing names of all registered keys
@@ -198,6 +198,7 @@ namespace dtEntity
       virtual bool handle(const osgGA::GUIEventAdapter& ea, 
                           osgGA::GUIActionAdapter& aa, 
                           osg::NodeVisitor *);
+
 
    protected:
 
@@ -223,16 +224,19 @@ namespace dtEntity
       typedef std::vector<osg::ref_ptr<InputCallbackInterface> > Callbacks;
       Callbacks mCallbacks;
       
-      std::set<int> mKeyPressedSet;
-      std::set<int> mKeyUpSet;
-      std::set<int> mKeyDownSet;
+      // pair of context id, key
+      typedef std::set<std::pair<unsigned int, int> > ContextKeyMap;
+      ContextKeyMap mKeyPressedSet;
+      ContextKeyMap mKeyUpSet;
+      ContextKeyMap mKeyDownSet;
 
       KeyNames mKeyNames;
       KeyNamesReverse mKeyNamesReverse;
 
-      std::vector<bool> mMouseButtonPressed;
-      std::vector<bool> mMouseButtonUp;
-      std::vector<bool> mMouseButtonDown;
+      typedef std::set<std::pair<unsigned int, int> > ContextButtonMap;
+      ContextButtonMap mMouseButtonPressed;
+      ContextButtonMap mMouseButtonUp;
+      ContextButtonMap mMouseButtonDown;
 
       float mMouseX;
       float mMouseY;
@@ -245,6 +249,7 @@ namespace dtEntity
       float mMouseDeltaY;
 
       osgGA::GUIEventAdapter::ScrollingMotion mMouseScroll;
+      unsigned int mMouseScrollContext;
       std::ostringstream mInputString;
       unsigned int mFrameNumber;
    };

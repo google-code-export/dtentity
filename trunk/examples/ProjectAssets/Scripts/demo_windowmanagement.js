@@ -13,19 +13,32 @@ function startWindowManagementDemo() {
 
   var contextid = Screen.openWindow("MyWindow", "root", {width : 400, height: 600});
   editorMotionComp.Enabled = true;
+
+   var camid = createEntity({
+     Camera : {
+       ContextId : contextid,
+       CullingMode : "NoAutoNearFarCulling",
+       NearClip : 1,
+       FarClip: 100000
+     },
+     Map: {
+       EntityName : "cam_0",
+       UniqueId : "cam_0"
+     },
+     EditorMotion : {
+       Enabled : true
+     }
+   });
+   EntityManager.addToScene(camid);
 }
 
-EntityManager.registerForMessages("CameraAddedMessage", function(name, params) {
-   println("Adding camera motion for " + params.AboutEntity);
-   getEntitySystem("EditorMotion").createComponent(params.AboutEntity);
-  }
-);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 function stopWindowManagementDemo() {
 
   hideHelp();
-  Screen.closeWindow("MyWindow");
+  //Screen.closeWindow("MyWindow");
   ddm.clear();
 
   getEntitySystem("Map").unloadMap("maps/fpsdemo.dtemap");

@@ -39,18 +39,20 @@ function closestPointOnZAxis(starta, dira) {
 var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
 var cameraSystem = EntityManager.getEntitySystem("Camera");
 var mainCamera = null;
-if(camid != null) {
+if(camid !== null) {
   mainCamera = EntityManager.getEntitySystem("Camera").getComponent(camid);
 }
 
 // create camera motion system when camera is created
 function onCameraAdded(name, params) {
 
-  camid = params.AboutEntity;
-  var cam = cameraSystem.getComponent(camid);
-  if(cam && cam.IsMainCamera) {
-    mainCamera = cam;
-  }
+   if(params.ContextId === 0) {
+     camid = params.AboutEntity;
+     var cam = cameraSystem.getComponent(camid);
+     if(cam && cam.IsMainCamera) {
+       mainCamera = cam;
+     }
+   }
 }
 EntityManager.registerForMessages("CameraAddedMessage", onCameraAdded);
 
@@ -61,14 +63,11 @@ var Tool = {
   update: function () {},
   selectionUpdated: function () {},
   disableMotionSystem: function () {
-    if (typeof cameraMotionSystem !== 'undefined') {
-      cameraMotionSystem.MouseEnabled = false;
-    }
+   println("camid: " + camid);
+    getEntitySystem("Motion").getComponent(camid).Enabled = false;
   },
   enableMotionSystem: function () {
-    if (typeof cameraMotionSystem !== 'undefined') {
-      cameraMotionSystem.MouseEnabled = true;
-    }
+    getEntitySystem("Motion").getComponent(camid).Enabled = true;
   },
   getCameraPosition: function () {
     return mainCamera.Position;

@@ -64,6 +64,7 @@ function EditorMotionComponent(eid) {
 
    this.keyDown = function(key, handled, cid) {
 
+      //println("K: " + key + " cid: " + cid + " this: " + contextId);
       if(!handled && this.Enabled && cid == contextId) {
 
          switch(key) {
@@ -116,7 +117,7 @@ function EditorMotionComponent(eid) {
 
    this.mouseWheel = function(dir, handled, cid) {
       if(!this.Enabled) return;
-      if(!handled && camera !== null && cid == contexId) {
+      if(!handled && camera !== null && cid == contextId) {
 
          if(self.Projection == "3d") {
             var pos = camera.Position;
@@ -154,7 +155,7 @@ function EditorMotionComponent(eid) {
       var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
       osg.Vec3.cross(eyedir, up, toRight);
 
-      if(Input.getMouseButton(1)) {
+      if(Input.getMouseButton(1, contextId)) {
 
          if(self.Projection == "3d") {
 
@@ -188,7 +189,7 @@ function EditorMotionComponent(eid) {
          }
          return true;
 
-      } else if(Input.getMouseButton(2) && self.Projection == "3d") {
+      } else if(Input.getMouseButton(2, contextId) && self.Projection == "3d") {
 
 
          var pivotToCam = osg.Vec3.sub(pos, pivot);
@@ -220,62 +221,62 @@ function EditorMotionComponent(eid) {
       osg.Vec3.cross(eyedir, up, toRight);
 
       var speed = self.movespeed;
-      if(Input.getKey("Shift_L")) {
+      if(Input.getKey("Shift_L", contextId)) {
         speed *= 4;
       }
 
       var modified = false;
-      if(Input.getKey("w")) {
+      if(Input.getKey("w", contextId)) {
         osg.Vec3.mult(eyedir, dt * speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
-      if(Input.getKey("s")) {
+      if(Input.getKey("s", contextId)) {
         osg.Vec3.mult(eyedir, dt * -speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
-      if(Input.getKey("a")) {
+      if(Input.getKey("a", contextId)) {
         osg.Vec3.mult(toRight, dt * -speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
-      if(Input.getKey("d")) {
+      if(Input.getKey("d", contextId)) {
         osg.Vec3.mult(toRight, dt * speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
-      if(Input.getKey("q")) {
+      if(Input.getKey("q", contextId)) {
         osg.Vec3.cross(toRight, eyedir, tempvec);
         osg.Vec3.mult(tempvec, dt * -speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
-      if(Input.getKey("e")) {
+      if(Input.getKey("e", contextId)) {
         osg.Vec3.cross(toRight, eyedir, tempvec);
         osg.Vec3.mult(tempvec, dt * speed, tempvec);
         osg.Vec3.add(tempvec, pos, pos);
         modified = true;
       }
 
-      if(Input.getKey("Left")) {
+      if(Input.getKey("Left", contextId)) {
         osg.Quat.makeRotate(dt * self.rotatekeysspeed, up[0], up[1], up[2], rotateOp);
         osg.Quat.rotate(rotateOp, eyedir, eyedir);
         modified = true;
       }
-      if(Input.getKey("Right")) {
+      if(Input.getKey("Right", contextId)) {
         osg.Quat.makeRotate(-dt * self.rotatekeysspeed, up[0], up[1], up[2], rotateOp);
         osg.Quat.rotate(rotateOp, eyedir, eyedir);
         modified = true;
       }
-      if(Input.getKey("Up") && eyedir[2] < 0.99) {
+      if(Input.getKey("Up", contextId) && eyedir[2] < 0.99) {
 
         osg.Vec3.cross(up, eyedir, tempvec);
         osg.Quat.makeRotate(-dt * self.rotatekeysspeed, tempvec[0], tempvec[1], tempvec[2], rotateOp);
         osg.Quat.rotate(rotateOp, eyedir, eyedir);
         modified = true;
       }
-      if(Input.getKey("Down") && eyedir[2] > -0.99) {
+      if(Input.getKey("Down", contextId) && eyedir[2] > -0.99) {
         osg.Vec3.cross(up, eyedir, tempvec);
         osg.Quat.makeRotate(dt * self.rotatekeysspeed, tempvec[0], tempvec[1], tempvec[2], rotateOp);
         osg.Quat.rotate(rotateOp, eyedir, eyedir);
