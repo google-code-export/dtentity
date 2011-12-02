@@ -89,13 +89,24 @@ namespace dtEntity
        }
 
        int curArg = 0;
+       int screenNum = -1;
 
        while (curArg < argc)
        {
           std::string curArgv = argv[curArg];
           if (!curArgv.empty())
           {
-             if (curArgv == "--projectAssets")
+             if (curArgv == "--screen")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> screenNum;
+                }
+
+             }
+             else if (curArgv == "--projectAssets")
              {
                 ++curArg;
                 if (curArg < argc)
@@ -111,7 +122,6 @@ namespace dtEntity
                 {
                    baseassets = argv[curArg];
                 }
-
              }
            }
           ++curArg;
@@ -167,10 +177,42 @@ namespace dtEntity
       traits->doubleBuffer = true;
       traits->sharedContext = 0;
 
-      traits->x = 100;
-      traits->y = 100;
-      traits->width = 800;
-      traits->height = 600;
+      if(screenNum == -1)
+      {
+         traits->x = 100;
+         traits->y = 100;
+         traits->width = 800;
+         traits->height = 600;
+      }
+      else
+      {
+         osg::GraphicsContext::ScreenIdentifier si;
+         si.readDISPLAY();
+
+         // displayNum has not been set so reset it to 0.
+         if (si.displayNum < 0) si.displayNum = 0;
+
+         si.screenNum = screenNum;
+
+         unsigned int width = 800;
+         unsigned int  height = 60;
+         osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
+         if (wsi)
+         {
+            wsi->getScreenResolution(si, width, height);
+         }
+         else
+         {
+             OSG_NOTICE<<"View::setUpViewOnSingleScreen() : Error, no WindowSystemInterface available, cannot create windows."<<std::endl;
+         }
+
+         traits->screenNum = screenNum;
+         traits->x = 0;
+         traits->y = 0;
+         traits->width = width;
+         traits->height = height;
+         traits->windowDecoration = false;
+      }
 
       appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
       appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
