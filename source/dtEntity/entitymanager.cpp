@@ -84,6 +84,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::AddToScene(EntityId eid)
    {
+      if(mEntities.find(eid) == mEntities.end())
+      {
+         LOG_ERROR("Cannot add to scene: Entity with this ID not found!");
+         return false;
+      }
       EntityAddedToSceneMessage msg;
       msg.SetUInt(EntityAddedToSceneMessage::AboutEntityId, eid);
       EmitMessage(msg);
@@ -93,6 +98,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::RemoveFromScene(EntityId eid)
    {
+      if(mEntities.find(eid) == mEntities.end())
+      {
+         LOG_ERROR("Cannot remove from scene: Entity with this ID not found!");
+         return false;
+      }
       EntityRemovedFromSceneMessage msg;
       msg.SetUInt(EntityRemovedFromSceneMessage::AboutEntityId, eid);
       EmitMessage(msg);

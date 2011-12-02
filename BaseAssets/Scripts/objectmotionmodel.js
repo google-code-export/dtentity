@@ -4,10 +4,11 @@ include_once("Scripts/stdlib.js");
 
 
 ////////////////////////////////////////////////////////////////////////////////
-function EditorMotionComponent(eid) {
+function ObjectMotionComponent(eid) {
 
-  this.Projection = "3d";
   this.Enabled = true;
+  this.TargetEntityId = 0;
+
   this.movespeed = 100;
   this.rotatespeed = 0.001;
   this.rotatekeysspeed = 2;
@@ -15,54 +16,31 @@ function EditorMotionComponent(eid) {
   var rotateOp = [0, 0, 0, 1];
   var toRight = [0,0,0];
   var tempvec = [0,0,0];
-  var zoom = 1;
+
   var pivot = [0,0,0];
-  var last3dEyeDirection = [0,1,0];
 
   var self = this;
   var camera = null;
   var contextId = 0;
+  var radius = 1;
 
   this.finished = function() {
      camera = getEntitySystem("Camera").getComponent(eid);
      if(camera) {
         contextId = camera.ContextId;
      }
+
+     println("TargetId: " + this.TargetEntityId);
+     if(this.TargetEntityId !== 0)
+     {
+        var bounds = getEntitySystem("Layer").getBoundingSphere(this.TargetEntityId);
+        osg.Vec3.copy(bounds, pivot);
+        radius = bounds[3];
+        camera.Position = [bounds[0], bounds[1] - radius * 4, bounds[2]];
+        camera.EyeDirection = [0, 1, 0];
+        camera.finished();
+     }
    }
-
-  this.onPropertyChanged = function(propname) {
-      if(propname == "Projection") {
-
-         if(this.Projection == "3d") {
-            camera.ProjectionMode = "ModePerspective";
-            camera.EyeDirection = last3dEyeDirection;
-         }
-         else
-         {
-            if(camera.ProjectionMode == "ModePerspective") {
-               last3dEyeDirection = camera.EyeDirection;
-            }
-            camera.ProjectionMode = "ModeOrtho";
-            if(this.Projection == "x") {
-               camera.EyeDirection = [-1,0,0];
-               camera.Up = [0, 0, 1];
-            }
-            else if(this.Projection == "y") {
-               camera.EyeDirection = [0, -1,0];
-               camera.Up = [0, 0, 1];
-            }
-            else if(this.Projection == "z") {
-               camera.EyeDirection = [0, 0, -1];
-               camera.Up = [0, 1, 0];
-            }
-         }
-         camera.finished();
-      }
-  }
-
-
-  this.destruct = function() {
-  }
 
    this.keyDown = function(key, handled, cid) {
 
@@ -88,30 +66,15 @@ function EditorMotionComponent(eid) {
 
    this.mouseButtonDown = function(button, handled, cid) {
       if(!this.Enabled || cid != contextId) return;
-      if(button === 1) {
+      if(button === 0) {
          Screen.lockCursor = true;
-         return true;
-      } else if(button === 2) {
-         Screen.lockCursor = true;
-         var mouseX = Input.getAxis(Axis.MouseXRaw);
-         var mouseY = Input.getAxis(Axis.MouseYRaw);
-         var pick = Screen.pickEntity(mouseX, mouseY);
-
-         if (pick === null) {
-
-            pivot = osg.Vec3.add(camera.Position,
-                                 osg.Vec3.mult(Screen.getPickRay(Input.getAxis(Axis.MouseX),
-                                                                 Input.getAxis(Axis.MouseY)), 100));
-         } else {
-            pivot = pick.Position;
-         }
          return true;
       }
    }
 
    this.mouseButtonUp = function(button, handled, cid) {
       if(!this.Enabled || cid != contextId) return;
-      if(button === 1 || button === 2) {
+      if(button === 0) {
          Screen.lockCursor = false;
          return true;
       }
@@ -121,28 +84,12 @@ function EditorMotionComponent(eid) {
       if(!this.Enabled) return;
       if(!handled && camera !== null && cid == contextId) {
 
-         if(self.Projection == "3d") {
-            var pos = camera.Position;
-            var eyedir = camera.EyeDirection;
-            osg.Vec3.mult(eyedir, dir * 20, tempvec);
-            osg.Vec3.add(tempvec, pos, pos);
-            camera.Position = pos;
-            camera.finished();
-         } else {
-
-            var orthoZoomSpeed = 1.2;
-            if(dir < 0) {
-               zoom /= orthoZoomSpeed;
-            } else {
-               zoom *= orthoZoomSpeed;
-            }
-
-            camera.OrthoLeft = -zoom * 1000;
-            camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = -zoom * 1000;
-            camera.OrthoBottom = zoom * 1000;
-
-         }
+         var pos = camera.Position;
+         var eyedir = camera.EyeDirection;
+         osg.Vec3.mult(eyedir, dir * radius / 4, tempvec);
+         osg.Vec3.add(tempvec, pos, pos);
+         camera.Position = pos;
+         camera.finished();
       }
    }
 
@@ -157,41 +104,7 @@ function EditorMotionComponent(eid) {
       var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
       osg.Vec3.cross(eyedir, up, toRight);
 
-      if(Input.getMouseButton(1, contextId)) {
-
-         if(self.Projection == "3d") {
-
-            osg.Quat.makeRotate(-mouseX * self.rotatespeed, up[0], up[1], up[2], rotateOp);
-            osg.Quat.rotate(rotateOp, eyedir, eyedir);
-            osg.Quat.makeRotate(mouseY * self.rotatespeed, toRight[0], toRight[1], toRight[2], rotateOp);
-            osg.Quat.rotate(rotateOp, eyedir, eyedir);
-
-            camera.Position = pos;
-            camera.EyeDirection = eyedir;
-            osg.Vec3.cross(eyedir, up, toRight);
-            camera.Up = [0, 0, 1];
-
-            camera.finished();
-         } else {
-
-            osg.Vec3.copy(toRight, tempvec);
-            osg.Vec3.mult(tempvec, -mouseX * zoom * 4, tempvec);
-            osg.Vec3.add(pos, tempvec, pos);
-
-            osg.Vec3.cross(toRight, eyedir, tempvec);
-            osg.Vec3.mult(tempvec, mouseY * zoom * 4, tempvec);
-            osg.Vec3.add(pos, tempvec, pos);
-
-            camera.Position = pos
-            camera.OrthoLeft = -zoom * 1000;
-            camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = -zoom * 1000;
-            camera.OrthoBottom = zoom * 1000;
-            camera.finished();
-         }
-         return true;
-
-      } else if(Input.getMouseButton(2, contextId) && self.Projection == "3d") {
+      if(Input.getMouseButton(0, contextId)) {
 
 
          var pivotToCam = osg.Vec3.sub(pos, pivot);
@@ -288,20 +201,20 @@ function EditorMotionComponent(eid) {
       if(modified) {
          camera.Position = pos;
          camera.EyeDirection = eyedir;
-         camera.Up = [0,0,1];
+
          camera.finished();
       }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function EditorMotionSystem() {
+function ObjectMotionSystem() {
 
   var self = this;
   // -----------------------------------------
   var components = [];
 
-  this.componentType = "EditorMotion";
+  this.componentType = "ObjectMotion";
 
   setInterval(function() {
     for(k in components) {
@@ -323,11 +236,11 @@ function EditorMotionSystem() {
   // ----------------------------
   this.createComponent = function(eid) {
     if(self.hasComponent(eid)) {
-      Log.error("EditorMotion component with id " + eid + " already exists!");
+      Log.error("ObjectMotion component with id " + eid + " already exists!");
       return self.getComponent(eid);
     }
 
-    var c = new EditorMotionComponent(eid);
+    var c = new ObjectMotionComponent(eid);
     components[eid] = c;
 
     Input.addInputCallback(c);
@@ -339,7 +252,6 @@ function EditorMotionSystem() {
   this.deleteComponent = function(eid) {
     if(self.hasComponent(eid)) {
       var comp = components[eid];
-      comp.destruct();
       Input.removeInputCallback(comp);
       delete components[eid];
     }
@@ -360,4 +272,4 @@ function EditorMotionSystem() {
 
 };
 
-EntityManager.addEntitySystem(new EditorMotionSystem());
+EntityManager.addEntitySystem(new ObjectMotionSystem());

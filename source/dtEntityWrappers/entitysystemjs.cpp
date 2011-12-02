@@ -412,7 +412,13 @@ namespace dtEntityWrappers
       Handle<Value> argv[1] = { Integer::New(eid) };
       Handle<Value> ret = mCreateCompFun->Call(mSystem, 1, argv);
 
-      if(ret.IsEmpty() || !ret->IsObject()) 
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+         return false;
+      }
+
+      if(!ret->IsObject())
       {
          return false;
       }

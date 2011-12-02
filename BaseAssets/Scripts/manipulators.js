@@ -10,10 +10,16 @@ var ddm = new DebugDrawManager(EntityManager);
 ////////////////////////////// Prototype for tools ////////////////////////////
 
 var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
-var cameraSystem = EntityManager.getEntitySystem("Camera");
+var cameraSystem = getEntitySystem("Camera");
 var mainCamera = null;
-if(camid !== null) {
-  mainCamera = EntityManager.getEntitySystem("Camera").getComponent(camid);
+if(camid === null) {
+   var cameras = cameraSystem.getEntitiesInSystem();
+   if(cameras.Length !== 0) {
+      camid = cameras.front();
+      mainCamera = cameraSystem.getComponent(camid);
+   }
+} else {
+  mainCamera = cameraSystem.getComponent(camid);
 }
 
 // create camera motion system when camera is created
@@ -21,7 +27,7 @@ function onCameraAdded(name, params) {
 
   camid = params.AboutEntity;
   var cam = cameraSystem.getComponent(camid);
-  if(cam && cam.IsMainCamera) {
+  if(cam && cam.ContextId === 0) {
     mainCamera = cam;
   }
 }
@@ -291,7 +297,6 @@ function TranslateTool() {
   }
 
   this.mouseButtonDown = function(button, handled) {
-
       if(button === 0) {
          initialCamPos = this.getCameraPosition();
          var doclone = Input.getKey("Shift_L");
