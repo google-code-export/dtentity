@@ -338,7 +338,7 @@ namespace dtEntityEditor
       {
          QDockWidget* entityTreeDock = new QDockWidget("Entity Tree");
          entityTreeDock->setObjectName("EntityTreeDock");
-         EntityTreeModel* model = new EntityTreeModel();
+         EntityTreeModel* model = new EntityTreeModel(mApplication->GetEntityManager());
          EntityTreeView* view = new EntityTreeView();
          view->SetModel(model);
          EntityTreeController* controller = new EntityTreeController(&mApplication->GetEntityManager());
