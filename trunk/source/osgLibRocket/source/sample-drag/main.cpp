@@ -60,12 +60,12 @@ int main(int argc, char** argv)
    {
       std::string curArgv = argv[curArg];
 
-      if (curArgv == "--assetsPath")
+      if (curArgv == "--projectAssets")
       {
          ++curArg;
          if (curArg < argc)
-         {
-            osgDB::setDataFilePathList(argv[curArg]);
+         {            
+            osgDB::setDataFilePathList(argv[curArg] + std::string("/LibRocket"));
          }
       }
       ++curArg;
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 
    if(osgDB::findDataFile("window.rml") == "")
    {
-      std::cout << "Cannot find data files. Please add parameter --assetsPath <assetsdir>\n";
+      std::cout << "Cannot find data files. Please add parameter --projectAssets <assetsdir>\n";
       return -1;
    }
 
