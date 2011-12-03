@@ -159,6 +159,10 @@ namespace dtEntity
       
       static const MessageType TYPE;
       static const StringId AboutEntityId;
+      static const StringId EntityNameId;
+      static const StringId UniqueIdId;
+      static const StringId MapNameId;
+
       EntityAddedToSceneMessage();      
       
       virtual Message* Clone() const { return CloneContainer<EntityAddedToSceneMessage>(); }
@@ -166,9 +170,21 @@ namespace dtEntity
       EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
       void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
 
+      std::string GetEntityName() const { return mEntityName.Get(); }
+      void SetEntityName(const std::string& v) { mEntityName.Set(v); }
+
+      std::string GetUniqueId() const { return mUniqueId.Get(); }
+      void SetUniqueId(const std::string& v) { mUniqueId.Set(v); }
+
+      std::string GetMapName() const { return mMapName.Get(); }
+      void SetMapName(const std::string& v) { mMapName.Set(v); }
+
    private:
 
       UIntProperty mAboutEntityId;
+      StringProperty mEntityName;
+      StringProperty mUniqueId;
+      StringProperty mMapName;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -185,6 +201,10 @@ namespace dtEntity
       
       static const MessageType TYPE;
       static const StringId AboutEntityId;
+      static const StringId EntityNameId;
+      static const StringId UniqueIdId;
+      static const StringId MapNameId;
+
       EntityRemovedFromSceneMessage();      
       
       virtual Message* Clone() const { return CloneContainer<EntityRemovedFromSceneMessage>(); }
@@ -192,9 +212,21 @@ namespace dtEntity
       EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
       void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
 
+      std::string GetEntityName() const { return mEntityName.Get(); }
+      void SetEntityName(const std::string& v) { mEntityName.Set(v); }
+
+      std::string GetUniqueId() const { return mUniqueId.Get(); }
+      void SetUniqueId(const std::string& v) { mUniqueId.Set(v); }
+
+      std::string GetMapName() const { return mMapName.Get(); }
+      void SetMapName(const std::string& v) { mMapName.Set(v); }
+
    private:
 
       UIntProperty mAboutEntityId;
+      StringProperty mEntityName;
+      StringProperty mUniqueId;
+      StringProperty mMapName;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -209,6 +241,8 @@ namespace dtEntity
       
       static const MessageType TYPE;
       static const StringId ComponentTypeId;
+      static const StringId ComponentTypeStringId;
+
       EntitySystemAddedMessage();      
       
       virtual Message* Clone() const { return CloneContainer<EntitySystemAddedMessage>(); }
@@ -216,9 +250,13 @@ namespace dtEntity
       StringId GetComponentType() const { return mComponentType.Get(); }
       void SetComponentType(StringId v) { mComponentType.Set(v); }
 
+      std::string GetComponentTypeString() const { return mComponentTypeString.Get(); }
+      void SetComponentTypeString(const std::string& v) { mComponentTypeString.Set(v); }
+
    private:
 
       StringIdProperty mComponentType;
+      StringProperty mComponentTypeString;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -233,15 +271,22 @@ namespace dtEntity
       
       static const MessageType TYPE;
       static const StringId ComponentTypeId;
+      static const StringId ComponentTypeStringId;
+
       EntitySystemRemovedMessage();      
       
       virtual Message* Clone() const { return CloneContainer<EntitySystemRemovedMessage>(); }
 
       StringId GetComponentType() const { return mComponentType.Get(); }
+      void SetComponentType(StringId v) { mComponentType.Set(v); }
+
+      std::string GetComponentTypeString() const { return mComponentTypeString.Get(); }
+      void SetComponentTypeString(const std::string& v) { mComponentTypeString.Set(v); }
 
    private:
 
       StringIdProperty mComponentType;
+      StringProperty mComponentTypeString;
    };
 
 

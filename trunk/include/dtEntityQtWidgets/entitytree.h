@@ -101,16 +101,33 @@ namespace dtEntityQtWidgets
 
    public:
 
-      EntityTreeModel();
+      EntityTreeModel(dtEntity::EntityManager& em);
       ~EntityTreeModel();
+
+      dtEntity::EntityManager& GetEntityManager() { return *mEntityManager; }
 
       // for changing selection of items
       QModelIndex GetMapIndex(const QString& mapName);
       QModelIndex GetEntityIndex(dtEntity::EntityId id);
       QModelIndex GetSpawnerIndex(EntityTreeItem* item, const QString& spawnerName);
 
+      void EnqueueMessage(const dtEntity::Message& m);
+
+      void OnEnterWorld(const dtEntity::Message& msg);
+      void OnLeaveWorld(const dtEntity::Message& msg);
+      void OnMapBeginAdd(const dtEntity::Message& msg);
+      void OnMapRemoved(const dtEntity::Message& msg);
+      void OnEntitySystemAdded(const dtEntity::Message& msg);
+      void OnEntitySystemRemoved(const dtEntity::Message& msg);
+      void OnSpawnerAdded(const dtEntity::Message& msg);
+      void OnSpawnerRemoved(const dtEntity::Message& msg);
+      void OnSceneLoaded(const dtEntity::Message& m);
+
+      dtEntity::MessagePump& GetMessagePump() { return mMessagePump; }
+
    public slots:      
      
+      void ProcessMessages();
       QModelIndex parent(const QModelIndex &index) const;
       QModelIndex index(int row, int column, const QModelIndex &parent) const;
       int rowCount(const QModelIndex &parent) const;
@@ -118,28 +135,19 @@ namespace dtEntityQtWidgets
       QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
       QVariant headerData(int section, Qt::Orientation orientation, int role) const;
       bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-
-      void OnEntityAdded(const EntityEntry& data);
-      void OnEntityRemoved(const EntityEntry& data);
-
-      void OnMapBeginAdd(const QString& data);
-      void OnMapRemoved(const QString& data);
-
-      void OnEntitySystemAdded(const QString& data);
-      void OnEntitySystemRemoved(const QString& data);      
-
-      void OnSpawnerAdded(const QString& name, const QString& parentname, const QString& mapname);
-      void OnSpawnerRemoved(const QString& name, const QString& mapname);      
-      
       void OnShowErrorMessage(const QString&);
 
    signals:
 
       void ExpandTree(const QModelIndex&);
+      void SceneLoaded();
 
    private:
       void RemoveEntryFromRoot(const QString& name, EntityTreeType::e t);
       EntityTreeItem* mRootItem;
+      dtEntity::MessagePump mMessagePump;
+      dtEntity::MessageFunctor mEnqueueFunctor;
+      dtEntity::EntityManager* mEntityManager;
    };
 
 
@@ -234,17 +242,7 @@ namespace dtEntityQtWidgets
    public:      
 
       EntityTreeController(dtEntity::EntityManager*);
-      virtual ~EntityTreeController();
-
-      void OnEnterWorld(const dtEntity::Message& msg);
-      void OnLeaveWorld(const dtEntity::Message& msg);
-      void OnMapBeginAdd(const dtEntity::Message& msg);
-      void OnMapRemoved(const dtEntity::Message& msg);
-      void OnEntitySystemAdded(const dtEntity::Message& msg);
-      void OnEntitySystemRemoved(const dtEntity::Message& msg);
-      void OnSpawnerAdded(const dtEntity::Message& msg);
-      void OnSpawnerRemoved(const dtEntity::Message& msg);
-      void OnSceneLoaded(const dtEntity::Message& m);
+      virtual ~EntityTreeController();      
       
       void SetupSlots(EntityTreeModel* model, EntityTreeView*);
 
@@ -252,13 +250,6 @@ namespace dtEntityQtWidgets
 
       void Init();
       
-      void OnEntitySelected(dtEntity::EntityId);
-      void OnEntityDeselected(dtEntity::EntityId);
-
-      void OnEntitySystemSelected(const QString&);
-      void OnMapSelected(const QString&);
-      void OnSpawnerSelected(const QString&);
-
       void OnDeleteEntity(dtEntity::EntityId id);
       void OnDeleteSpawner(const QString& name);
       void OnSpawnSpawner(const QString& spawnername, const QString& entityname);
@@ -273,30 +264,10 @@ namespace dtEntityQtWidgets
 
    signals:
 
-      void EntityAdd(const EntityEntry& data);
-      void EntityRemove(const EntityEntry& data);
-      void MapBeginAdd(const QString& name);
-      void MapRemove(const QString& name);
-      void EntitySystemAdd(const QString& name);
-      void EntitySystemRemove(const QString& name);
-      void SpawnerAdd(const QString& name, const QString& parentname, const QString& mapname);
-      void SpawnerRemove(const QString& name, const QString& mapname);
-      void ShowErrorMessage(const QString&);
-      void SceneLoaded();
+     void ShowErrorMessage(const QString&);     
 
    private:
 
       dtEntity::EntityManager* mEntityManager;
-      dtEntity::MessageFunctor mEnterWorldFunctor;
-      dtEntity::MessageFunctor mLeaveWorldFunctor;
-      dtEntity::MessageFunctor mMapBeginAddFunctor;
-      dtEntity::MessageFunctor mMapRemovedFunctor;
-      dtEntity::MessageFunctor mEntitySystemAddedFunctor;
-      dtEntity::MessageFunctor mEntitySystemRemovedFunctor;
-      dtEntity::MessageFunctor mSpawnerAddedFunctor;
-      dtEntity::MessageFunctor mSpawnerRemovedFunctor;
-      dtEntity::MessageFunctor mSceneLoadedFunctor;
-
    };
-
 }

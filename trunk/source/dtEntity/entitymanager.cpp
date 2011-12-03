@@ -91,6 +91,15 @@ namespace dtEntity
       }
       EntityAddedToSceneMessage msg;
       msg.SetUInt(EntityAddedToSceneMessage::AboutEntityId, eid);
+
+      MapComponent* mc;
+      if(GetComponent(eid, mc))
+      {
+         msg.SetMapName(mc->GetMapName());
+         msg.SetEntityName(mc->GetEntityName());
+         msg.SetUniqueId(mc->GetUniqueId());
+      }
+
       EmitMessage(msg);
       return true;
    }
@@ -105,6 +114,13 @@ namespace dtEntity
       }
       EntityRemovedFromSceneMessage msg;
       msg.SetUInt(EntityRemovedFromSceneMessage::AboutEntityId, eid);
+      MapComponent* mc;
+      if(GetComponent(eid, mc))
+      {
+         msg.SetMapName(mc->GetMapName());
+         msg.SetEntityName(mc->GetEntityName());
+         msg.SetUniqueId(mc->GetUniqueId());
+      }
       EmitMessage(msg);
       return true;
    }
@@ -200,7 +216,9 @@ namespace dtEntity
 
       s.OnAddedToEntityManager(*this);
       EntitySystemAddedMessage msg;
-      msg.SetStringId(EntitySystemAddedMessage::ComponentTypeId, s.GetComponentType());
+      msg.SetComponentType(s.GetComponentType());
+      msg.SetComponentTypeString(GetStringFromSID(s.GetComponentType()));
+
       EmitMessage(msg);      
    }
 
@@ -214,7 +232,8 @@ namespace dtEntity
 
       s.OnRemoveFromEntityManager(*this);
       EntitySystemRemovedMessage msg;
-      msg.SetStringId(EntitySystemAddedMessage::ComponentTypeId, s.GetComponentType());
+      msg.SetComponentType(s.GetComponentType());
+      msg.SetComponentTypeString(GetStringFromSID(s.GetComponentType()));
       EmitMessage(msg);
       mEntitySystemStore.erase(mEntitySystemStore.find(s.GetComponentType()));
 

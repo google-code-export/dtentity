@@ -131,41 +131,57 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType EntityAddedToSceneMessage::TYPE(SID("EntityAddedToSceneMessage"));
    const StringId EntityAddedToSceneMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId EntityAddedToSceneMessage::EntityNameId(SID("EntityName"));
+   const StringId EntityAddedToSceneMessage::UniqueIdId(SID("UniqueId"));
+   const StringId EntityAddedToSceneMessage::MapNameId(SID("MapName"));
 
    EntityAddedToSceneMessage::EntityAddedToSceneMessage() 
       : Message(TYPE)
    {
       this->Register(AboutEntityId, &mAboutEntityId);
+      this->Register(EntityNameId, &mEntityName);
+      this->Register(UniqueIdId, &mUniqueId);
+      this->Register(MapNameId, &mMapName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType EntityRemovedFromSceneMessage::TYPE(SID("EntityRemovedFromSceneMessage"));
    const StringId EntityRemovedFromSceneMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId EntityRemovedFromSceneMessage::EntityNameId(SID("EntityName"));
+   const StringId EntityRemovedFromSceneMessage::UniqueIdId(SID("UniqueId"));
+   const StringId EntityRemovedFromSceneMessage::MapNameId(SID("MapName"));
 
    EntityRemovedFromSceneMessage::EntityRemovedFromSceneMessage() 
       : Message(TYPE)
    {
       this->Register(AboutEntityId, &mAboutEntityId);
+      this->Register(EntityNameId, &mEntityName);
+      this->Register(UniqueIdId, &mUniqueId);
+      this->Register(MapNameId, &mMapName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType EntitySystemAddedMessage::TYPE(SID("EntitySystemAddedMessage"));
    const StringId EntitySystemAddedMessage::ComponentTypeId(SID("ComponentType"));
+   const StringId EntitySystemAddedMessage::ComponentTypeStringId(SID("ComponentTypeString"));
 
    EntitySystemAddedMessage::EntitySystemAddedMessage() 
       : Message(TYPE)
    {
       this->Register(ComponentTypeId, &mComponentType);
+      this->Register(ComponentTypeStringId, &mComponentTypeString);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType EntitySystemRemovedMessage::TYPE(SID("EntitySystemRemovedMessage"));
    const StringId EntitySystemRemovedMessage::ComponentTypeId(SID("ComponentType"));
+   const StringId EntitySystemRemovedMessage::ComponentTypeStringId(SID("ComponentTypeString"));
 
    EntitySystemRemovedMessage::EntitySystemRemovedMessage() 
       : Message(TYPE)
    {
       this->Register(ComponentTypeId, &mComponentType);
+      this->Register(ComponentTypeStringId, &mComponentTypeString);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
