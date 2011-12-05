@@ -41,6 +41,8 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
    SpawnerList::SpawnerList()
+      : mDeleteSpawnerAction(new QAction(tr("Delete Spawner"), this))
+      , mSelected(NULL)
    {
       setDragEnabled(true);
       setIconSize(QSize(80, 80));
@@ -52,29 +54,56 @@ namespace dtEntityQtWidgets
 
       QFont sansFont("Helvetica [Cronyx]", 8);
       setFont(sansFont);
+
+      connect(mDeleteSpawnerAction, SIGNAL(triggered()), this, SLOT(DeleteSelectedSpawners()));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerList::DeleteSelectedSpawners()
+   {
+      if(mSelected != NULL)
+      {
+         emit DeleteSpawner(mSelected->text());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SpawnerList::mousePressEvent(QMouseEvent *event)
     {
-        QListWidgetItem* item = itemAt(event->pos());
-        if (!item)
-            return;
+        if(event->button() == Qt::LeftButton)
+        {
+           QListWidgetItem* item = itemAt(event->pos());
+           if (!item)
+           {
+              return;
+           }
+           emit spawnerClicked(item);
 
-        emit spawnerClicked(item);
+           //QPoint hotSpot = event->pos() - item->pos();
 
-        //QPoint hotSpot = event->pos() - item->pos();
+           QByteArray itemData;
+           QMimeData *mimeData = new QMimeData;
+           mimeData->setData("application/x-spawner", itemData);
+           mimeData->setText(QString("SPAWNER|%1").arg(item->text()));
 
-        QByteArray itemData;
-        QMimeData *mimeData = new QMimeData;
-        mimeData->setData("application/x-spawner", itemData);
-        mimeData->setText(QString("SPAWNER|%1").arg(item->text()));
+           QDrag drag(this);
+           drag.setMimeData(mimeData);
+           drag.setPixmap(item->icon().pixmap(QSize(40, 40)));
 
-		  QDrag drag(this);
-		  drag.setMimeData(mimeData);
-		  drag.setPixmap(item->icon().pixmap(QSize(40, 40)));
-
-        drag.exec(Qt::CopyAction);
+           drag.exec(Qt::CopyAction);
+        }
+        else
+        {
+           QListWidgetItem* item = itemAt(event->pos());
+           if (!item)
+           {
+               return;
+           }
+           mSelected = item;
+           QMenu menu(this);
+           menu.addAction(mDeleteSpawnerAction);
+           menu.exec(mapToGlobal(event->pos()));
+        }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -88,6 +117,7 @@ namespace dtEntityQtWidgets
       mSpawnerList = new SpawnerList();
       layout()->addWidget(mSpawnerList);
       connect(mSpawnerList, SIGNAL(spawnerClicked( QListWidgetItem*)), this, SLOT(OnItemClicked(QListWidgetItem*)));
+      connect(mSpawnerList, SIGNAL(DeleteSpawner(QString)), this, SIGNAL(DeleteSpawner(QString)));
       connect(mCategories, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(CategoryChanged(const QString&)));
    }
 
@@ -158,7 +188,9 @@ namespace dtEntityQtWidgets
       QListWidgetItem* item;
       foreach(item, items)
       {
-         if(item->data(Qt::UserRole).toString() == category)
+         QString txt = item->text();
+         QString cat = item->data(Qt::UserRole).toString();
+         if(cat == category || (category == "" && cat == "default"))
          {
             mSpawnerList->removeItemWidget(item);
             delete item;
@@ -188,14 +220,16 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void SpawnerStoreController::SetupSlots(SpawnerStoreView* view)
    {
-      connect(this, SIGNAL(AddSpawner(const QString&, const QString&, const QString&)),
-              view, SLOT(OnAddSpawner(const QString&, const QString&, const QString&)));
+      connect(this, SIGNAL(AddSpawner(QString, QString, QString)),
+              view, SLOT(OnAddSpawner(QString, QString, QString)));
 
-      connect(this, SIGNAL(RemoveSpawner(const QString&, const QString&)),
-              view, SLOT(OnRemoveSpawner(const QString&, const QString&)));
+      connect(this, SIGNAL(RemoveSpawner(QString, QString)),
+              view, SLOT(OnRemoveSpawner(QString, QString)));
 
-      connect(view, SIGNAL(SpawnerClicked(const QString&, const QString&)),
-              this, SLOT(OnSpawnerClicked(const QString&, const QString&)));
+      connect(view, SIGNAL(SpawnerClicked(QString, QString)),
+              this, SLOT(OnSpawnerClicked(QString, QString)));
+
+      connect(view, SIGNAL(DeleteSpawner(QString)), this, SLOT(SpawnerDeleted(QString)));
 
    }
 
@@ -315,6 +349,18 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreController::SpawnerDeleted(const QString& name)
+   {
+      dtEntity::MapSystem* mtsystem;
+      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
+      bool success = mtsystem->DeleteSpawner(name.toStdString());
+      if(!success)
+      {
+         LOG_WARNING("Could not delete spawner!");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void SpawnerStoreController::OnSpawnerAdded(const dtEntity::Message& m)
    {
       const dtEntity::SpawnerAddedMessage& msg =
@@ -363,15 +409,9 @@ namespace dtEntityQtWidgets
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
       assert(success);
+      mtsystem->SaveMap(msg.GetMapName());
 
-      std::map<std::string, dtEntity::Spawner*> spawners;
-      dtEntity::Spawner* spawner;
-      if(!mtsystem->GetSpawner(msg.GetName(), spawner))
-      {
-         return;
-      }
-
-      emit RemoveSpawner(spawner->GetName().c_str(), spawner->GetGUICategory().c_str());
+      emit RemoveSpawner(msg.GetName().c_str(), msg.GetCategory().c_str());
    }
 } 
 

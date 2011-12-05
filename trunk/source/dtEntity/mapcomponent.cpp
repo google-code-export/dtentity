@@ -356,6 +356,7 @@ namespace dtEntity
             SpawnerRemovedMessage msg;
             msg.SetName(i->first);
             msg.SetMapName(spawner->GetMapName());
+            msg.SetCategory(spawner->GetGUICategory());
             GetEntityManager().EmitMessage(msg);
          }
       }
@@ -546,17 +547,24 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    bool MapSystem::DeleteSpawner(const std::string& name)
    {
-      SpawnerRemovedMessage msg;
+      if(mSpawners.find(name) != mSpawners.end()) {
+         SpawnerRemovedMessage msg;
 
-      SpawnerStorage::iterator i = mSpawners.find(name);
-      if(i == mSpawners.end()) return false;
-      msg.SetName(name);
+         SpawnerStorage::iterator i = mSpawners.find(name);
+         if(i == mSpawners.end()) return false;
+         msg.SetName(name);
 
-      msg.SetMapName(i->second->GetMapName());
-      mSpawners.erase(i);
+         msg.SetMapName(i->second->GetMapName());
+         mSpawners.erase(i);
 
-      GetEntityManager().EmitMessage(msg);
-      return true;
+         GetEntityManager().EmitMessage(msg);
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////

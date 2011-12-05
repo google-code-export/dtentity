@@ -218,12 +218,14 @@ namespace dtEntity
    const MessageType SpawnerRemovedMessage::TYPE(SID("SpawnerRemovedMessage"));
    const StringId SpawnerRemovedMessage::NameId(SID("Name"));
    const StringId SpawnerRemovedMessage::MapNameId(SID("MapName"));
+   const StringId SpawnerRemovedMessage::CategoryId(SID("Category"));
 
    SpawnerRemovedMessage::SpawnerRemovedMessage() 
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
       this->Register(MapNameId, &mMapName);
+      this->Register(CategoryId, &mCategory);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
