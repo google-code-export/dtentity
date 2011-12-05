@@ -337,6 +337,7 @@ namespace dtEntity
       static const MessageType TYPE;
       static const StringId MapNameId;
       static const StringId NameId;
+      static const StringId CategoryId;
       
       SpawnerRemovedMessage();      
       
@@ -348,10 +349,14 @@ namespace dtEntity
       std::string GetName() const { return mName.Get(); }
       void SetName(const std::string& v){ mName.Set(v); }
 
+      std::string GetCategory() const { return mCategory.Get(); }
+      void SetCategory(const std::string& v){ mCategory.Set(v); }
+
    private:
 
       StringProperty mName;
       StringProperty mMapName;
+      StringProperty mCategory;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
