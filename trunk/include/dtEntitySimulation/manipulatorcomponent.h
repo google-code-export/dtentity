@@ -89,10 +89,10 @@ namespace dtEntitySimulation
       void RemoveFromParent();
       void AddToLayer();
 
-      dtEntity::Entity* mEntity;
       osg::ref_ptr<osgManipulator::DraggerCallback> mDraggerCallback;
       dtEntity::StringIdProperty mLayerProperty;
       dtEntity::StringId mAttachPoint;
+      dtEntity::Entity* mEntity;
       dtEntity::StringIdProperty mDraggerType;
       dtEntity::Vec3dProperty mOffsetFromStart;
       bool mUseLocalCoords;

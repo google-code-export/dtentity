@@ -103,6 +103,7 @@ namespace dtEntityEditor
 
    protected slots:
 
+      void OnToggleCoordSystem(bool v);
       void OnToolActionTriggered(QAction* action );
       void OnChooseScene();
       void OnNewScene();

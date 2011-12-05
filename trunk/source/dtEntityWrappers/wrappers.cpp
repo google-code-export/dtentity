@@ -23,6 +23,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/nodemasks.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/debugdrawmanagerwrapper.h>
 #include <dtEntityWrappers/buffer.h>
@@ -54,6 +55,27 @@
 namespace dtEntityWrappers
 {
    using namespace v8;
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> WrapNodeMasks()
+   {
+      HandleScope scope;
+      Handle<Object> o = Object::New();
+
+      o->Set(String::New("REFLECTION_SCENE"), Uint32::New(dtEntity::NodeMasks::REFLECTION_SCENE));
+      o->Set(String::New("REFRACTION_SCENE"), Uint32::New(dtEntity::NodeMasks::REFRACTION_SCENE));
+      o->Set(String::New("NORMAL_SCENE"),     Uint32::New(dtEntity::NodeMasks::NORMAL_SCENE));
+      o->Set(String::New("SURFACE_MASK"),     Uint32::New(dtEntity::NodeMasks::SURFACE_MASK));
+      o->Set(String::New("SILT_MASK"),        Uint32::New(dtEntity::NodeMasks::SILT_MASK));
+      o->Set(String::New("VISIBLE"),          Uint32::New(dtEntity::NodeMasks::VISIBLE));
+      o->Set(String::New("PICKABLE"),         Uint32::New(dtEntity::NodeMasks::PICKABLE));
+      o->Set(String::New("TERRAIN"),          Uint32::New(dtEntity::NodeMasks::TERRAIN));
+      o->Set(String::New("CASTS_SHADOWS"),    Uint32::New(dtEntity::NodeMasks::CASTS_SHADOWS));
+      o->Set(String::New("RECEIVES_SHADOWS"), Uint32::New(dtEntity::NodeMasks::RECEIVES_SHADOWS));
+      o->Set(String::New("MANIPULATOR"),      Uint32::New(dtEntity::NodeMasks::MANIPULATOR));
+
+      return scope.Close(o);
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void InitializeAllWrappers(dtEntity::EntityManager& em)
@@ -92,6 +114,8 @@ namespace dtEntityWrappers
 
       // make entity manager accessible as a global variable
       context->Global()->Set(String::New("EntityManager"), WrapEntityManager(&em, &mapsystem->GetMessageFactory()));
+
+      context->Global()->Set(String::New("NodeMasks"), WrapNodeMasks());
 
       context->Global()->Set(String::New("Buffer"), CreateBuffer());
       context->Global()->Set(String::New("File"), CreateFile());

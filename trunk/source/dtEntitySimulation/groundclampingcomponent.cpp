@@ -92,11 +92,11 @@ namespace dtEntitySimulation
 
    GroundClampingSystem::GroundClampingSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
-      , mSceneNode(NULL)
-      , mTerrainId(0)
+      , mRootNode(NULL)
       , mIntersectorGroup(new osgUtil::IntersectorGroup())
+      , mCamera(NULL)
    {
-      //mIntersectionVisitor.setReadCallback(mLos.getDatabaseCacheReadCallback());
+
       Register(EnabledId, &mEnabled);
       mEnabled.Set(true);
 
@@ -104,19 +104,36 @@ namespace dtEntitySimulation
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "GroundClampingSystem::Tick");
 
-      mMapLoadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::OnMapLoaded);
-      em.RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor, "GroundClampingComponent::OnMapLoaded");
+      mCameraAddedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::CameraAdded);
+      GetEntityManager().RegisterForMessages(dtEntity::CameraAddedMessage::TYPE,
+         mCameraAddedFunctor, "GroundClampingSystem::CameraAdded");
 
-      mMapUnloadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::OnMapUnloaded);
-      em.RegisterForMessages(dtEntity::MapBeginUnloadMessage::TYPE, mMapUnloadedFunctor, "GroundClampingComponent::OnMapUnloaded");
+      mCameraRemovedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::CameraRemoved);
+      GetEntityManager().RegisterForMessages(dtEntity::CameraRemovedMessage::TYPE,
+         mCameraAddedFunctor, "GroundClampingSystem::CameraRemoved");
 
       AddScriptedMethod("getTerrainHeight", dtEntity::ScriptMethodFunctor(this, &GroundClampingSystem::ScriptGetTerrainHeight));
 
-      if(em.GetEntitySystem(dtEntity::MapComponent::TYPE, mMapSystem) && mMapSystem->GetCurrentScene() != "") 
+      dtEntity::LayerAttachPointSystem* layersys;
+      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      mRootNode = layersys->GetSceneGraphRoot();
+
+      dtEntity::MapSystem* mapsys;
+      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapsys);
+      dtEntity::EntityId camid = mapsys->GetEntityIdByUniqueId("cam_0");
+      if(camid != dtEntity::EntityId())
       {
-         dtEntity::SceneLoadedMessage msg;
-         OnMapLoaded(msg);
-      }      
+         GetEntityManager().GetComponent(camid, mCamera);
+      }
+      else
+      {
+         dtEntity::CameraSystem* camsys;
+         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+         if(camsys->GetNumComponents() != 0)
+         {
+            mCamera = camsys->begin()->second;
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -128,10 +145,8 @@ namespace dtEntitySimulation
    void GroundClampingSystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
      GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
-
-    em.UnregisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor);
-
-
+     GetEntityManager().UnregisterForMessages(dtEntity::CameraAddedMessage::TYPE, mCameraAddedFunctor);
+     GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -155,37 +170,9 @@ namespace dtEntitySimulation
    } 
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroundClampingSystem::OnMapLoaded(const dtEntity::Message& msg)
-   {
-
-      mTerrainId = mMapSystem->GetEntityIdByUniqueId("Terrain");
-      if(mTerrainId == 0) 
-      {
-         LOG_DEBUG("Cannot find terrain entity, ground clamping not possible!");
-         mSceneNode = NULL;
-         return;
-      }
-      dtEntity::LayerComponent* lc;
-      if(!GetEntityManager().GetComponent(mTerrainId, lc))
-      {
-         LOG_ERROR("Terrain entity has no layer component!");
-         mSceneNode = NULL;
-         mTerrainId = 0;
-         return;
-      }
-      mSceneNode = lc->GetAttachedComponentNode();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void GroundClampingSystem::OnMapUnloaded(const dtEntity::Message& msg)
-   {
-      OnMapLoaded(msg);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    bool GroundClampingSystem::ClampToTerrain(osg::Vec3d& v, int voffset)
    {
-      if(!mSceneNode.valid())
+      if(!mRootNode.valid())
       {
          return false;
       }
@@ -194,7 +181,9 @@ namespace dtEntitySimulation
          new osgUtil::LineSegmentIntersector(osg::Vec3d(v[0], v[1], v[2] + voffset),
          osg::Vec3d(v[0], v[1], v[2] - voffset));
       mIntersectionVisitor.setIntersector(intersector);
-      mSceneNode->accept(mIntersectionVisitor);
+      mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
+
+      mRootNode->accept(mIntersectionVisitor);
 
       osgUtil::LineSegmentIntersector::Intersections::const_iterator isect;
       for(isect = intersector->getIntersections().begin(); isect != intersector->getIntersections().end(); ++isect)
@@ -207,13 +196,13 @@ namespace dtEntitySimulation
 
             if(referenced == NULL) continue;
             const dtEntity::Entity* entity = static_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL && entity->GetId() == mTerrainId)
+            if(entity != NULL)
             {
                osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
                v[2] = isectpos[2];
                return true;
             }
-            if(mSceneNode.get() == node)
+            if(mRootNode.get() == node)
             {
                return false;
             }
@@ -223,38 +212,34 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::CameraAdded(const dtEntity::Message& m)
+   {
+      const dtEntity::CameraAddedMessage& msg = static_cast<const dtEntity::CameraAddedMessage&>(m);
+      if(msg.GetContextId() == 0)
+      {
+         GetEntityManager().GetComponent(msg.GetAboutEntityId(), mCamera);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::CameraRemoved(const dtEntity::Message& m)
+   {
+      const dtEntity::CameraAddedMessage& msg = static_cast<const dtEntity::CameraAddedMessage&>(m);
+      if(msg.GetContextId() == 0)
+      {
+         mCamera = NULL;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::Tick(const dtEntity::Message& msg)
    {
-      if(!mSceneNode.valid() || mComponents.empty() || !mEnabled.Get())
+      if(!mRootNode.valid() || mCamera == NULL || !mEnabled.Get() || mComponents.empty() )
       {
          return;
       }
 
-      dtEntity::EntityId camid = mMapSystem->GetEntityIdByUniqueId("cam_0");
-      dtEntity::CameraComponent* cam;
-      
-      if(!GetEntityManager().GetComponent(camid, cam))
-      {
-         dtEntity::CameraSystem* camsys;
-         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
-         if(camsys->GetNumComponents() != 0)
-         {
-            camid = camsys->begin()->first;
-            cam = camsys->begin()->second;
-         }
-         else
-         {
-            LOG_ERROR("No primary camera found in ground clamping system!");
-            return;
-         }
-      }
-
-      osg::Vec3d campos = cam->GetPosition();
-
-      dtEntity::LayerAttachPointSystem* layersys;
-      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
-      mSceneNode = sceneLayer->GetGroup();
+      osg::Vec3d campos = mCamera->GetPosition();
 
       mIntersectorGroup->clear();
       mIntersectorGroup->reset();
@@ -314,7 +299,7 @@ namespace dtEntitySimulation
 
       mIntersectionVisitor.reset();
       mIntersectionVisitor.setIntersector(mIntersectorGroup.get());
-      mSceneNode->accept(mIntersectionVisitor);
+      mRootNode->accept(mIntersectionVisitor);
       
       for(ISectToCompMap::iterator i = iSectToCompMap.begin(); i != iSectToCompMap.end(); ++i)
       {
@@ -338,7 +323,7 @@ namespace dtEntitySimulation
 
             if(referenced == NULL) continue;
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL && entity->GetId() == mTerrainId)
+            if(entity != NULL)
             {
                osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
          

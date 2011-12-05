@@ -330,6 +330,7 @@ namespace dtEntity
       em.AddEntitySystem(*new LayerAttachPointSystem(em));
       em.AddEntitySystem(*new GroupSystem(em));
       em.AddEntitySystem(*new StaticMeshSystem(em));
+      em.AddEntitySystem(*new TransformSystem(em));
       em.AddEntitySystem(*new MatrixTransformSystem(em));
       em.AddEntitySystem(*new PositionAttitudeTransformSystem(em));
 

@@ -269,6 +269,16 @@ namespace dtEntityEditor
       mToolsToolbar->clear();
       dtEntity::PropertyArray props = msg.GetTools();
 
+      QAction* coordsysaction = mToolsToolbar->addAction(QIcon(":icons/coordsystems.png"), "Use local coord system");
+      coordsysaction->setCheckable(true);
+      coordsysaction->setChecked(true);
+      connect(coordsysaction, SIGNAL(toggled(bool)), this, SLOT(OnToggleCoordSystem(bool)));
+      OnToggleCoordSystem(true);
+
+      mToolsToolbar->addSeparator();
+
+      QActionGroup* toolsActionGroup = new QActionGroup(mToolsToolbar);
+
       for(dtEntity::PropertyArray::iterator i = props.begin(); i != props.end(); ++i)
       {
          const dtEntity::GroupProperty* grp = dynamic_cast<const dtEntity::GroupProperty*>(*i);
@@ -308,9 +318,18 @@ namespace dtEntityEditor
          a->setData(name);
          a->setShortcut(QKeySequence(shortcut));
          a->setToolTip(QString("%1 (%2)").arg(name).arg(shortcut));
-
+         toolsActionGroup->addAction(a);
 
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnToggleCoordSystem(bool v)
+   {
+      dtEntity::BoolProperty b(v);
+      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SID("Manipulator"),
+         dtEntity::SID("UseLocalCoords"), b);
+      mApplication->GetEntityManager().EnqueueMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

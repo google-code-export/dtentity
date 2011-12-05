@@ -192,6 +192,12 @@ namespace dtEntityWrappers
          return ThrowError("usage: computeIntersections(x, y)");
       }
 
+      unsigned int nodemask = dtEntity::NodeMasks::PICKABLE;
+      if(args.Length() > 2)
+      {
+         nodemask = args[2]->Uint32Value();
+      }
+
       osgViewer::View* view = UnwrapScreenView(args.Holder());
 
       osgUtil::LineSegmentIntersector::Intersections intersections;
@@ -201,7 +207,7 @@ namespace dtEntityWrappers
 
       double x = args[0]->NumberValue();
       double y = args[1]->NumberValue();
-      if (view->computeIntersections(x, y, intersections))
+      if (view->computeIntersections(x, y, intersections, nodemask))
       {
          HandleScope scope;
 

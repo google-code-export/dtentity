@@ -27,7 +27,7 @@
 #include <dtEntity/log.h>
 #include <iostream>
 #include <osg/Version>
-
+#include <QtCore/QtDebug>
 
 namespace dtEntityQtWidgets
 {
@@ -85,6 +85,8 @@ namespace dtEntityQtWidgets
             mKeyMap[Qt::Key_multiply      ] = osgGA::GUIEventAdapter::KEY_KP_Multiply;
             mKeyMap[Qt::Key_Minus         ] = '-';
             mKeyMap[Qt::Key_Plus          ] = '+';
+
+
             //mKeyMap[Qt::Key_H              ] = osgGA::GUIEventAdapter::KEY_KP_Home;
             //mKeyMap[Qt::Key_                    ] = osgGA::GUIEventAdapter::KEY_KP_Up;
             //mKeyMap[92                    ] = osgGA::GUIEventAdapter::KEY_KP_Page_Up;
@@ -99,6 +101,36 @@ namespace dtEntityQtWidgets
 
             mKeyMap[Qt::Key_Plus           ] = osgGA::GUIEventAdapter::KEY_KP_Add;
             mKeyMap[Qt::Key_Minus          ] = osgGA::GUIEventAdapter::KEY_KP_Subtract;
+
+
+            mKeyMap[Qt::Key_A] = osgGA::GUIEventAdapter::KEY_A;
+            mKeyMap[Qt::Key_B] = osgGA::GUIEventAdapter::KEY_B;
+            mKeyMap[Qt::Key_C] = osgGA::GUIEventAdapter::KEY_C;
+            mKeyMap[Qt::Key_D] = osgGA::GUIEventAdapter::KEY_D;
+            mKeyMap[Qt::Key_E] = osgGA::GUIEventAdapter::KEY_E;
+            mKeyMap[Qt::Key_F] = osgGA::GUIEventAdapter::KEY_F;
+            mKeyMap[Qt::Key_G] = osgGA::GUIEventAdapter::KEY_G;
+            mKeyMap[Qt::Key_H] = osgGA::GUIEventAdapter::KEY_H;
+            mKeyMap[Qt::Key_I] = osgGA::GUIEventAdapter::KEY_I;
+            mKeyMap[Qt::Key_J] = osgGA::GUIEventAdapter::KEY_J;
+            mKeyMap[Qt::Key_K] = osgGA::GUIEventAdapter::KEY_K;
+            mKeyMap[Qt::Key_L] = osgGA::GUIEventAdapter::KEY_L;
+            mKeyMap[Qt::Key_M] = osgGA::GUIEventAdapter::KEY_M;
+            mKeyMap[Qt::Key_N] = osgGA::GUIEventAdapter::KEY_N;
+            mKeyMap[Qt::Key_O] = osgGA::GUIEventAdapter::KEY_O;
+            mKeyMap[Qt::Key_P] = osgGA::GUIEventAdapter::KEY_P;
+            mKeyMap[Qt::Key_Q] = osgGA::GUIEventAdapter::KEY_Q;
+            mKeyMap[Qt::Key_R] = osgGA::GUIEventAdapter::KEY_R;
+            mKeyMap[Qt::Key_S] = osgGA::GUIEventAdapter::KEY_S;
+            mKeyMap[Qt::Key_T] = osgGA::GUIEventAdapter::KEY_T;
+            mKeyMap[Qt::Key_U] = osgGA::GUIEventAdapter::KEY_U;
+            mKeyMap[Qt::Key_V] = osgGA::GUIEventAdapter::KEY_V;
+            mKeyMap[Qt::Key_W] = osgGA::GUIEventAdapter::KEY_W;
+            mKeyMap[Qt::Key_X] = osgGA::GUIEventAdapter::KEY_X;
+            mKeyMap[Qt::Key_Y] = osgGA::GUIEventAdapter::KEY_Y;
+            mKeyMap[Qt::Key_Z] = osgGA::GUIEventAdapter::KEY_Z;
+
+
 
          }
 

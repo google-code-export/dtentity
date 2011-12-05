@@ -127,6 +127,11 @@ namespace dtEntitySimulation
          _xDragger->setColor(osg::Vec4(1.0f,0.0f,0.0f,1.0f));
          _yDragger->setColor(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
          _zDragger->setColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
+
+         setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+         _xDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+         _yDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+         _zDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
       }
    };
 
@@ -259,9 +264,9 @@ namespace dtEntitySimulation
 
    protected:
        osg::ref_ptr<osgManipulator::Dragger> _dragger;
+       dtEntity::TransformComponent* mTransform;
        float _draggerSize;
        bool _active;
-       dtEntity::TransformComponent* mTransform;
        bool _useLocalCoords;
    };
 
