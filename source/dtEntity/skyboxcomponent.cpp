@@ -272,9 +272,9 @@ namespace dtEntity
 
      
       osg::ClearNode* clearNode = static_cast<osg::ClearNode*>(GetNode());
-      //  clearNode->setRequiresClear(false);
+      clearNode->setRequiresClear(false);
       clearNode->setCullCallback(new TexMatCallback(*tm));
-      clearNode->setNodeMask(dtEntity::NodeMasks::VISIBLE);
+      clearNode->setNodeMask(0xFFFFFFFF);
       clearNode->addChild(transform);
       clearNode->addChild(mDrawables);
    }

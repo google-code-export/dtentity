@@ -398,6 +398,7 @@ namespace dtEntity
    const StringId StaticMeshComponent::TYPE(SID("StaticMesh"));
    const StringId StaticMeshComponent::MeshId(SID("Mesh"));
    const StringId StaticMeshComponent::OptimizeId(SID("Optimize"));
+   const StringId StaticMeshComponent::IsTerrainId(SID("IsTerrain"));
    const StringId StaticMeshComponent::CacheHintId(SID("CacheHint"));
 
    const StringId StaticMeshComponent::CacheNoneId(SID("None"));
@@ -413,6 +414,7 @@ namespace dtEntity
       Register(MeshId, &mMeshPathProperty);
       Register(CacheHintId, &mCacheHint);
       Register(OptimizeId, &mOptimize);
+      Register(IsTerrainId, &mIsTerrain);
       
       GetNode()->setName("StaticMeshComponent");
       GetNode()->setNodeMask(
@@ -512,8 +514,13 @@ namespace dtEntity
       mMeshNode->setName("StaticMeshComponent");
       SetNode(mMeshNode); 
       
-      SetNodeMask(NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
-         NodeMasks::RECEIVES_SHADOWS, true);
+      unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
+            NodeMasks::RECEIVES_SHADOWS;
+      if(mIsTerrain.Get())
+      {
+         nm |= NodeMasks::TERRAIN;
+      }
+      SetNodeMask(nm, true);
     
    }
 

@@ -128,6 +128,15 @@ var ToolHolder = {
    if (this._activeTool !== null && typeof this._activeTool.keyDown != 'undefined') {
       this._activeTool.keyDown(key, handled);
     }
+    if (!handled && key == "c" && Input.getKey("Control_L")) {
+       Clipboard.copy();
+    }
+    if (!handled && key == "x" && Input.getKey("Control_L")) {
+      Clipboard.cut();
+    }
+    if (!handled && key == "v" && Input.getKey("Control_L")) {
+      Clipboard.paste();
+    }
   },
   keyUp : function(key, handled) {
    if (this._activeTool !== null && typeof this._activeTool.keyUp != 'undefined') {
@@ -265,15 +274,16 @@ function TranslateTool() {
 
   var initialCamPos = [0,0,0];
 
-  var manipulators = [];
+  var heights = {};
+  var clamper = getEntitySystem("GroundClamping");
 
   this.activate = function () {
 
       for (var k in Selection.ids) {
-         var manipulator = manipulatorSystem.createComponent(Selection.ids[k]);
+         var id = Selection.ids[k];
+         var manipulator = manipulatorSystem.createComponent(id);
          manipulator.DraggerType = "TranslateAxisDragger";
          manipulator.finished();
-         manipulators.push(manipulator);
       }
   }
 
@@ -281,7 +291,6 @@ function TranslateTool() {
       for (var k in Selection.ids) {
          manipulatorSystem.deleteComponent(Selection.ids[k]);
       }
-      manipulators = [];
   }
 
   function switchToGlobalCoords() {
@@ -299,6 +308,20 @@ function TranslateTool() {
   this.mouseButtonDown = function(button, handled) {
       if(button === 0) {
          initialCamPos = this.getCameraPosition();
+         heights = [];
+         for (var k in Selection.ids) {
+            var id = Selection.ids[k];
+            var manipulator = manipulatorSystem.getComponent(id);
+
+            var center = getEntitySystem("Layer").getBoundingSphere(id);
+            var height = clamper.getTerrainHeight(center);
+            if(height === null) {
+               height = center[2];
+            }
+
+            heights.push([id, height, manipulator]);
+         }
+
          var doclone = Input.getKey("Shift_L");
          if(doclone) {
            Selection.clone();
@@ -310,9 +333,24 @@ function TranslateTool() {
     if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
       var campos = this.getCameraPosition();
       var cammovement = osg.Vec3.sub(campos, initialCamPos);
-      for(var k in manipulators) {
-        var manipulator = manipulators[k];
-        manipulator.OffsetFromStart = cammovement;
+      cammovement[2] = 0;
+      var offs = [0,0,0];
+
+      for(var k in heights) {
+         var val = heights[k];
+         var id = val[0];
+         var lastheight = val[1];
+         var manipulator = val[2];
+         var center = getEntitySystem("Layer").getBoundingSphere(id);
+         var newheight = clamper.getTerrainHeight(center);
+         if(newheight === null) {
+            newheight = lastheight;
+         }
+         var dist = newheight - lastheight;
+
+         osg.Vec3.copy(cammovement, offs);
+         offs[2] += dist;
+         manipulator.OffsetFromStart = offs;
       }
     }
   }

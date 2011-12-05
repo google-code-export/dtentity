@@ -187,6 +187,7 @@ namespace dtEntity
       static const StringId MeshId;
       static const StringId CacheHintId;
       static const StringId OptimizeId;
+      static const StringId IsTerrainId;
 
       static const StringId CacheNoneId;
       static const StringId CacheAllId;
@@ -221,12 +222,16 @@ namespace dtEntity
       bool GetOptimize() const { return mOptimize.Get(); }
       void SetOptimize(bool v) { mOptimize.Set(v); }
 
+      bool GetIsTerrain() const { return mIsTerrain.Get(); }
+      void SetIsTerrain(bool v) { mIsTerrain.Set(v); }
+
    protected:
      
       // path to loaded script file
       StringProperty mMeshPathProperty;
       StringIdProperty mCacheHint;
       BoolProperty mOptimize;
+      BoolProperty mIsTerrain;
       osg::ref_ptr<osg::Node> mMeshNode;
       std::string mLoadedMesh;
    };
@@ -294,6 +299,17 @@ namespace dtEntity
 
    private:
 
+   };
+
+   ///////////////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT TransformSystem
+      : public EntitySystem
+   {
+   public:
+      TransformSystem(EntityManager& em)
+         : EntitySystem(TransformComponent::TYPE, em)
+      {
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////
@@ -432,8 +448,8 @@ namespace dtEntity
    private:
 
       DynamicVec3dProperty mPosition;
-      DynamicQuatProperty mAttitude;
       DynamicVec3dProperty mScale;
+      DynamicQuatProperty mAttitude;
    };
 
    ///////////////////////////////////////////////////////////////////////////

@@ -207,7 +207,7 @@ namespace dtEntity
 
       osgViewer::ViewerBase::Windows windows;
       viewer->getWindows(windows);
-      for(int i = 0; i < windows.size(); ++i)
+      for(unsigned int i = 0; i < windows.size(); ++i)
       {
          osgViewer::GraphicsWindow* window = windows[i];
 

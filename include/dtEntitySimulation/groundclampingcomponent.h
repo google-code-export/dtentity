@@ -22,6 +22,7 @@
 
 
 #include <dtEntitySimulation/export.h>
+#include <dtEntity/cameracomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
@@ -120,6 +121,8 @@ namespace dtEntitySimulation
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
 
       void Tick(const dtEntity::Message& msg);
+      void CameraAdded(const dtEntity::Message& msg);
+      void CameraRemoved(const dtEntity::Message& msg);
       void OnMapLoaded(const dtEntity::Message& msg);
       void OnMapUnloaded(const dtEntity::Message& msg);
 
@@ -135,14 +138,14 @@ namespace dtEntitySimulation
          const osgUtil::LineSegmentIntersector::Intersections& intersections);
 
       dtEntity::MessageFunctor mTickFunctor;
-      dtEntity::MessageFunctor mMapLoadedFunctor;
-      dtEntity::MessageFunctor mMapUnloadedFunctor;
+      dtEntity::MessageFunctor mCameraAddedFunctor;
+      dtEntity::MessageFunctor mCameraRemovedFunctor;
       osgUtil::IntersectionVisitor mIntersectionVisitor;
-      osg::observer_ptr<osg::Node> mSceneNode;
-      dtEntity::EntityId mTerrainId;
+      osg::observer_ptr<osg::Node> mRootNode;
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;
       dtEntity::BoolProperty mEnabled;
       osgSim::LineOfSight mLos;
-      dtEntity::MapSystem* mMapSystem;
+      dtEntity::CameraComponent* mCamera;
+
    };
 }
