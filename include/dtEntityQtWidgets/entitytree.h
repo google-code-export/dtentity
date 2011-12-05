@@ -113,6 +113,8 @@ namespace dtEntityQtWidgets
 
       void EnqueueMessage(const dtEntity::Message& m);
 
+      void OnEntitySelected(const dtEntity::Message& msg);
+      void OnEntityDeselected(const dtEntity::Message& msg);
       void OnEnterWorld(const dtEntity::Message& msg);
       void OnLeaveWorld(const dtEntity::Message& msg);
       void OnMapBeginAdd(const dtEntity::Message& msg);
@@ -141,6 +143,8 @@ namespace dtEntityQtWidgets
 
       void ExpandTree(const QModelIndex&);
       void SceneLoaded();
+      void EntityWasSelected(const QModelIndex&);
+      void EntityWasDeselected(const QModelIndex&);
 
    private:
       void RemoveEntryFromRoot(const QString& name, EntityTreeType::e t);
@@ -194,6 +198,8 @@ namespace dtEntityQtWidgets
    public slots:
 
       void OnSceneLoaded();
+      void EntityWasSelected(const QModelIndex&);
+      void EntityWasDeselected(const QModelIndex&);
 
    protected slots:
 

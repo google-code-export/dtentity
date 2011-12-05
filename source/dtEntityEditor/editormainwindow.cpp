@@ -442,7 +442,7 @@ namespace dtEntityEditor
    void EditorMainWindow::CreateDockWidgets()
    {      
       CreateEntityTree();
-      CreateMessageStore();
+     // CreateMessageStore();
       CreateSpawners();
       CreatePropertyEditor();
    }

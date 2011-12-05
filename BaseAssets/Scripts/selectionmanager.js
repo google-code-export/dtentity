@@ -40,7 +40,14 @@ var Selection = {
       return true;
     }
   },
-
+  deselectAllExcept : function(id) {
+   for (var k in this.ids) {
+     var eid = this.ids[k];
+     if(id != eid) {
+        this.deselect(eid);
+     }
+   }
+  },
   calcCenter : function (center) {
     center[0] = 0;
     center[1] = 0;
@@ -75,9 +82,7 @@ function RequestEntitySelect(msgname, params) {
   var id = params.AboutEntity;
 
   if (!params.UseMultiSelect) {
-    while (Selection.ids.length > 0) {
-      Selection.deselect(Selection.ids[0]);
-    }
+    Selection.deselectAllExcept(id);
   }
 
   if (!Selection.isEntitySelected(id)) {
