@@ -75,12 +75,15 @@ namespace dtEntityEditor
    EditorMainWindow::EditorMainWindow(EditorApplication* app, QWidget* parent)
       : QMainWindow(parent) 
       , mApplication(app)
+      , mEntityTreeDock(NULL)
+      , mMessageStoreDock(NULL)
+      , mSpawnersDock(NULL)
+      , mPropertyEditorDock(NULL)
    {
 
-      {
-         dtEntity::MessageFunctor functor(this, &EditorMainWindow::ToolsUpdated);
-         mMessagePump.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
-      }
+      dtEntity::MessageFunctor functor(this, &EditorMainWindow::ToolsUpdated);
+      mMessagePump.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
+
 
       mUpdateTimer = new QTimer(this);
       connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(EmitQueuedMessages()));
@@ -214,9 +217,11 @@ namespace dtEntityEditor
       mFileMenu->addAction(mExitAct);
 
       //mEditMenu = menuBar()->addMenu(tr("&Edit"));
-      //mViewMenu = menuBar()->addMenu(tr("&View"));
-      
+
+      mViewMenu = menuBar()->addMenu(tr("&View"));
+
    }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::createToolBars()
@@ -331,78 +336,115 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::CreateDockWidgets()
+   void EditorMainWindow::CreateEntityTree()
    {
+
+      mEntityTreeDock = new QDockWidget("Entity Tree");
+      mEntityTreeDock->setObjectName("EntityTreeDock");
       using namespace dtEntityQtWidgets;
 
-      {
-         QDockWidget* entityTreeDock = new QDockWidget("Entity Tree");
-         entityTreeDock->setObjectName("EntityTreeDock");
-         EntityTreeModel* model = new EntityTreeModel(mApplication->GetEntityManager());
-         EntityTreeView* view = new EntityTreeView();
-         view->SetModel(model);
-         EntityTreeController* controller = new EntityTreeController(&mApplication->GetEntityManager());
+      EntityTreeModel* model = new EntityTreeModel(mApplication->GetEntityManager());
+      EntityTreeView* view = new EntityTreeView();
+      view->SetModel(model);
+      EntityTreeController* controller = new EntityTreeController(&mApplication->GetEntityManager());
 
-         controller->moveToThread(mApplication->thread());
-         controller->SetupSlots(model, view);
+      controller->moveToThread(mApplication->thread());
+      controller->SetupSlots(model, view);
 
-         QTimer::singleShot(0, controller, SLOT(Init()));
-         
-         entityTreeDock->setWidget(view);
+      QTimer::singleShot(0, controller, SLOT(Init()));
 
-         addDockWidget(Qt::LeftDockWidgetArea, entityTreeDock);
-      }
+      mEntityTreeDock->setWidget(view);
 
-      {
-         QDockWidget* messageStoreDock = new QDockWidget("Message Store");
-         messageStoreDock->setObjectName("MessageStoreDock");
+      addDockWidget(Qt::LeftDockWidgetArea, mEntityTreeDock);
+      mViewMenu->addAction(mEntityTreeDock->toggleViewAction());
 
-         MessageStoreView* view = new MessageStoreView();
-         MessageStoreController* controller = new MessageStoreController(&mApplication->GetEntityManager());
+   }
 
-         controller->moveToThread(mApplication->thread());
-         controller->SetupSlots(view);
-         QTimer::singleShot(0, controller, SLOT(Init()));
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::CreateMessageStore()
+   {
 
-         messageStoreDock->setWidget(view);
-         addDockWidget(Qt::LeftDockWidgetArea, messageStoreDock);
-      }
+      mMessageStoreDock = new QDockWidget("Message Store");
+      mMessageStoreDock->setObjectName("MessageStoreDock");
 
-      {
-         QDockWidget* spawnerStoreDock = new QDockWidget("Spawners");
-         spawnerStoreDock->setObjectName("SpawnerStoreDock");
+      using namespace dtEntityQtWidgets;
 
-         SpawnerStoreView* view = new SpawnerStoreView();
-         SpawnerStoreController* controller = new SpawnerStoreController(&mApplication->GetEntityManager());
+      MessageStoreView* view = new MessageStoreView();
+      MessageStoreController* controller = new MessageStoreController(&mApplication->GetEntityManager());
 
-         controller->moveToThread(mApplication->thread());
-         controller->SetupSlots(view);
-         connect(this, SIGNAL(TextDroppedOntoGLWidget(const QPointF&, const QString&)),
-                 controller, SLOT(OnTextDroppedOntoGLWidget(const QPointF&, const QString&)));
-         QTimer::singleShot(0, controller, SLOT(Init()));
+      controller->moveToThread(mApplication->thread());
+      controller->SetupSlots(view);
+      QTimer::singleShot(0, controller, SLOT(Init()));
 
-         spawnerStoreDock->setWidget(view);
-         addDockWidget(Qt::LeftDockWidgetArea, spawnerStoreDock);
-      }
+      mMessageStoreDock->setWidget(view);
+      addDockWidget(Qt::LeftDockWidgetArea, mMessageStoreDock);
 
-      {
-         QDockWidget* propertyEditorDock = new QDockWidget("Property Editor");
-         propertyEditorDock->setObjectName("PropertyEditorDock");
-         PropertyEditorModel* model = new PropertyEditorModel();
-         PropertyEditorView* view = new PropertyEditorView();
-         view->SetModel(model);
+      mViewMenu->addAction(mMessageStoreDock->toggleViewAction());
 
-         PropertyEditorController* controller = new PropertyEditorController(&mApplication->GetEntityManager());
-         
-         controller->moveToThread(mApplication->thread());
-         controller->SetupSlots(model, view);
+   }
 
-         QTimer::singleShot(0, controller, SLOT(Init()));
-         
-         propertyEditorDock->setWidget(view);
-         
-         addDockWidget(Qt::RightDockWidgetArea, propertyEditorDock);
-      }
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::CreateSpawners()
+   {
+
+      mSpawnersDock = new QDockWidget("Spawners");
+      mSpawnersDock->setObjectName("SpawnersDoc");
+
+      using namespace dtEntityQtWidgets;
+
+
+      SpawnerStoreView* view = new SpawnerStoreView();
+      SpawnerStoreController* controller = new SpawnerStoreController(&mApplication->GetEntityManager());
+
+      controller->moveToThread(mApplication->thread());
+      controller->SetupSlots(view);
+      connect(this, SIGNAL(TextDroppedOntoGLWidget(const QPointF&, const QString&)),
+              controller, SLOT(OnTextDroppedOntoGLWidget(const QPointF&, const QString&)));
+      QTimer::singleShot(0, controller, SLOT(Init()));
+
+      mSpawnersDock->setWidget(view);
+      addDockWidget(Qt::LeftDockWidgetArea, mSpawnersDock);
+
+      mViewMenu->addAction(mSpawnersDock->toggleViewAction());
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::CreatePropertyEditor()
+   {
+
+      mPropertyEditorDock = new QDockWidget("Property Editor");
+      mPropertyEditorDock->setObjectName("PropertyEditorDock");
+
+      using namespace dtEntityQtWidgets;
+
+
+      PropertyEditorModel* model = new PropertyEditorModel();
+      PropertyEditorView* view = new PropertyEditorView();
+      view->SetModel(model);
+
+      PropertyEditorController* controller = new PropertyEditorController(&mApplication->GetEntityManager());
+
+      controller->moveToThread(mApplication->thread());
+      controller->SetupSlots(model, view);
+
+      QTimer::singleShot(0, controller, SLOT(Init()));
+
+      mPropertyEditorDock->setWidget(view);
+
+      addDockWidget(Qt::RightDockWidgetArea, mPropertyEditorDock);
+
+      mViewMenu->addAction(mPropertyEditorDock->toggleViewAction());
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::CreateDockWidgets()
+   {      
+      CreateEntityTree();
+      CreateMessageStore();
+      CreateSpawners();
+      CreatePropertyEditor();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

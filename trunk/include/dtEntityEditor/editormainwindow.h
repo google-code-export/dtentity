@@ -96,6 +96,11 @@ namespace dtEntityEditor
       void OnTextDroppedOntoGLWidget(const QPointF& pos, const QString&);
       void ShutDown();
 
+      void CreateEntityTree();
+      void CreateMessageStore();
+      void CreateSpawners();
+      void CreatePropertyEditor();
+
    protected slots:
 
       void OnToolActionTriggered(QAction* action );
@@ -124,6 +129,7 @@ namespace dtEntityEditor
       QMenu* mFileMenu;
       QMenu* mEditMenu;
       QMenu* mViewMenu;
+
       QToolBar* mToolsToolbar;
       QActionGroup* mToolsActionGroup;
 
@@ -143,6 +149,11 @@ namespace dtEntityEditor
 
       dtEntity::MessagePump mMessagePump;
       QTimer* mUpdateTimer;
+
+      QDockWidget* mEntityTreeDock;
+      QDockWidget* mMessageStoreDock;
+      QDockWidget* mSpawnersDock;
+      QDockWidget* mPropertyEditorDock;
    };
 
 }

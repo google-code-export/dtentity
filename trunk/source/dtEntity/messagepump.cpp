@@ -43,7 +43,7 @@ namespace dtEntity
    }
   
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void MessagePump::RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, unsigned int options, const std::string& funcname)
+   void MessagePump::RegisterForMessages(MessageType msgtype, MessageFunctor ftr, unsigned int options, const std::string& funcname)
    {
       MsgRegistryEntry e;
       e.mOptions = options;

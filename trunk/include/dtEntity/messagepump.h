@@ -114,7 +114,7 @@ namespace dtEntity
       * @param funcname name for debugging and profiling purposes
       *
       */
-      virtual void RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, unsigned int options = FilterOptions::DEFAULT, const std::string& funcname = "unnamed");
+      virtual void RegisterForMessages(MessageType msgtype, MessageFunctor ftr, unsigned int options = FilterOptions::DEFAULT, const std::string& funcname = "unnamed");
 
       /**
       * Unregister functor from message
