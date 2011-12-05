@@ -273,36 +273,40 @@ namespace dtEntityEditor
 
       mapSystem->LoadScene(path.toStdString());
 
-      std::string cameramapname = "maps/default.dtemap";
-      if(!mapSystem->GetLoadedMaps().empty())
+      dtEntity::CameraSystem* camsys;
+      GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+      if(camsys->GetNumComponents() == 0)
       {
-         cameramapname = mapSystem->GetLoadedMaps().front();
+         std::string cameramapname = "maps/default.dtemap";
+         if(!mapSystem->GetLoadedMaps().empty())
+         {
+            cameramapname = mapSystem->GetLoadedMaps().front();
+         }
+
+         // create a main camera entity if it was not loaded from map
+         dtEntity::ApplicationSystem* appsys;
+         GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+
+         dtEntity::Entity* entity;
+         mEntityManager->CreateEntity(entity);
+
+         unsigned int contextId = appsys->GetPrimaryWindow()->getState()->getContextID();
+         dtEntity::CameraComponent* camcomp;
+         entity->CreateComponent(camcomp);
+         camcomp->SetContextId(contextId);
+         camcomp->SetClearColor(osg::Vec4(0,0,0,1));
+         camcomp->Finished();
+
+         dtEntity::MapComponent* mapcomp;
+         entity->CreateComponent(mapcomp);
+         std::ostringstream os;
+         os << "cam_" << contextId;
+         mapcomp->SetEntityName(os.str());
+         mapcomp->SetUniqueId(os.str());
+         mapcomp->SetMapName(cameramapname);
+         mapcomp->Finished();
+         GetEntityManager().AddToScene(entity->GetId());
       }
-
-      // create a main camera entity if it was not loaded from map
-      dtEntity::ApplicationSystem* appsys;
-      GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-
-      dtEntity::Entity* entity;
-      mEntityManager->CreateEntity(entity);
-
-      unsigned int contextId = appsys->GetPrimaryWindow()->getState()->getContextID();
-      dtEntity::CameraComponent* camcomp;
-      entity->CreateComponent(camcomp);
-      camcomp->SetContextId(contextId);
-      camcomp->SetClearColor(osg::Vec4(0,0,0,1));
-      camcomp->Finished();
-
-      dtEntity::MapComponent* mapcomp;
-      entity->CreateComponent(mapcomp);
-      std::ostringstream os;
-      os << "cam_" << contextId;
-      mapcomp->SetEntityName(os.str());
-      mapcomp->SetUniqueId(os.str());
-      mapcomp->SetMapName("maps/camera.dtemap");
-      mapcomp->Finished();
-      GetEntityManager().AddToScene(entity->GetId());
-
       emit SceneLoaded(path);
 
    }

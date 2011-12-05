@@ -42,9 +42,12 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    EntityTreeModel::EntityTreeModel(dtEntity::EntityManager& em)
-      : mEntityManager(&em)
-      , mRootItem(new EntityTreeItem(NULL, EntityTreeType::ROOT))
+      : mRootItem(new EntityTreeItem(NULL, EntityTreeType::ROOT))
+      , mEntityManager(&em)
    {
+
+      mMessagePump.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntitySelected));
+      mMessagePump.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntityDeselected));
 
       mMessagePump.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEnterWorld));
       mMessagePump.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnLeaveWorld));
@@ -57,6 +60,8 @@ namespace dtEntityQtWidgets
       mMessagePump.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnSceneLoaded));
 
       mEnqueueFunctor = dtEntity::MessageFunctor(this, &EntityTreeModel::EnqueueMessage);
+      em.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EntitySelected");
+      em.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EntityDeselected");
       em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
@@ -87,6 +92,22 @@ namespace dtEntityQtWidgets
    {
       mMessagePump.EnqueueMessage(m);
       QMetaObject::invokeMethod(this, "ProcessMessages", Qt::QueuedConnection);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeModel::OnEntitySelected(const dtEntity::Message& m)
+   {
+      const dtEntity::EntitySelectedMessage& msg = static_cast<const dtEntity::EntitySelectedMessage&>(m);
+      QModelIndex idx = GetEntityIndex(msg.GetAboutEntityId());
+      emit EntityWasSelected(idx);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeModel::OnEntityDeselected(const dtEntity::Message& m)
+   {
+      const dtEntity::EntityDeselectedMessage& msg = static_cast<const dtEntity::EntityDeselectedMessage&>(m);
+      QModelIndex idx = GetEntityIndex(msg.GetAboutEntityId());
+      emit EntityWasDeselected(idx);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -231,8 +252,6 @@ namespace dtEntityQtWidgets
       const dtEntity::EntitySystemAddedMessage& msg = 
          static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
       
-      dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(msg.GetComponentType());
-
       unsigned int size = mRootItem->childCount();
       beginInsertRows(QModelIndex(), size, size);
       
@@ -721,8 +740,9 @@ namespace dtEntityQtWidgets
             {
             case EntityTreeType::ENTITY: 
             {
-               dtEntity::EntitySelectedMessage msg;
+               dtEntity::RequestEntitySelectMessage msg;
                msg.SetAboutEntityId(item->mEntityId);
+               msg.SetUseMultiSelect(true);
                em.EnqueueMessage(msg);   
                break;
             }
@@ -763,7 +783,7 @@ namespace dtEntityQtWidgets
             {
             case EntityTreeType::ENTITY: 
             {
-               dtEntity::EntityDeselectedMessage msg;
+               dtEntity::RequestEntityDeselectMessage msg;
                msg.SetAboutEntityId(item->mEntityId);
                em.EnqueueMessage(msg);   
                break;
@@ -975,6 +995,18 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeView::EntityWasSelected(const QModelIndex& idx)
+   {
+      mTreeView->selectionModel()->select(idx, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeView::EntityWasDeselected(const QModelIndex& idx)
+   {
+      mTreeView->selectionModel()->select(idx, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
    EntityTreeController::EntityTreeController(dtEntity::EntityManager* entityManager)
       : mEntityManager(entityManager)
@@ -1005,7 +1037,9 @@ namespace dtEntityQtWidgets
       connect(view, SIGNAL(UnloadMap(const QString&)), this, SLOT(OnUnloadMap(const QString&)));
       connect(view, SIGNAL(SaveMap(const QString&)), this, SLOT(OnSaveMap(const QString&)));
       connect(view, SIGNAL(SaveMapCopy(const QString&, const QString&)), this, SLOT(OnSaveMapCopy(const QString&, const QString&)));
-      connect(model, SIGNAL(ExpandTree(const QModelIndex&)), view->GetTreeView(), SLOT(expand(const QModelIndex&)));
+      connect(model, SIGNAL(ExpandTree(QModelIndex)), view->GetTreeView(), SLOT(expand(QModelIndex)));
+      connect(model, SIGNAL(EntityWasSelected(QModelIndex)), view, SLOT(EntityWasSelected(QModelIndex)));
+      connect(model, SIGNAL(EntityWasDeselected(QModelIndex)), view, SLOT(EntityWasDeselected(QModelIndex)));
 
       connect(model, SIGNAL(SceneLoaded()), view, SLOT(OnSceneLoaded()));
 
