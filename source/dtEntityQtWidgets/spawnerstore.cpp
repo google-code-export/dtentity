@@ -406,11 +406,6 @@ namespace dtEntityQtWidgets
       const dtEntity::SpawnerRemovedMessage& msg =
          static_cast<const dtEntity::SpawnerRemovedMessage&>(m);
 
-      dtEntity::MapSystem* mtsystem;
-      bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
-      assert(success);
-      mtsystem->SaveMap(msg.GetMapName());
-
       emit RemoveSpawner(msg.GetName().c_str(), msg.GetCategory().c_str());
    }
 } 

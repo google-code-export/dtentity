@@ -129,7 +129,6 @@ namespace dtEntityEditor
       EditorApplication* mApplication;
 
       QMenu* mFileMenu;
-      QMenu* mEditMenu;
       QMenu* mViewMenu;
 
       QToolBar* mToolsToolbar;
