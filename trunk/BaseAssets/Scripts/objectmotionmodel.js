@@ -119,7 +119,27 @@ function ObjectMotionComponent(eid) {
          camera.finished();
          return true;
 
+      } else if(Input.getMouseButton(1, contextId)) {
+
+
+         var pos = camera.Position;
+         var eyedir = camera.EyeDirection;
+         osg.Vec3.mult(eyedir, mouseY * radius / 40, tempvec);
+         osg.Vec3.add(tempvec, pos, pos);
+         camera.Position = pos;
+         camera.finished();
+
+      } else if(Input.getMouseButton(2, contextId)) {
+
+        var d = -mouseY * radius / 40;
+
+        pivot[2] += d;
+        var p = camera.Position;
+        p[2] += d;
+        camera.Position = p;
+        camera.finished();
       }
+
    }
 
    this.update = function() {

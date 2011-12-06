@@ -126,9 +126,16 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void MapComponent::SetSpawnerName(const std::string& name)
    {
-      MapSystem* ms;
-      mOwner->GetEntityManager().GetEntitySystem(TYPE, ms);
-      ms->GetSpawner(name, mSpawner);
+      if(name == "")
+      {
+         mSpawner = NULL;
+      }
+      else
+      {
+         MapSystem* ms;
+         mOwner->GetEntityManager().GetEntitySystem(TYPE, ms);
+         ms->GetSpawner(name, mSpawner);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -552,9 +559,19 @@ namespace dtEntity
 
          SpawnerStorage::iterator i = mSpawners.find(name);
          if(i == mSpawners.end()) return false;
+
+         for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+         {
+            MapComponent* mc = i->second;
+            if(mc->GetSpawnerName() == name)
+            {
+               mc->SetSpawnerName("");
+            }
+         }
          msg.SetName(name);
 
          msg.SetMapName(i->second->GetMapName());
+         msg.SetCategory(i->second->GetGUICategory());
          mSpawners.erase(i);
 
          GetEntityManager().EmitMessage(msg);
@@ -571,7 +588,10 @@ namespace dtEntity
    bool MapSystem::GetSpawner(const std::string& name, Spawner*& spawner) const
    {
       SpawnerStorage::const_iterator i = mSpawners.find(name);
-      if(i == mSpawners.end()) return false;
+      if(i == mSpawners.end()) {
+         spawner = NULL;
+         return false;
+      }
       spawner = i->second.get();
       return true;
    }
