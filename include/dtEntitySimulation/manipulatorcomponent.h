@@ -50,6 +50,7 @@ namespace dtEntitySimulation
       static const dtEntity::StringId Translate2DDraggerId;
       static const dtEntity::StringId TranslateAxisDraggerId;
       static const dtEntity::StringId TabBoxDraggerId;
+      static const dtEntity::StringId TerrainTranslateDraggerId;
 
 
       ManipulatorComponent();
@@ -96,6 +97,7 @@ namespace dtEntitySimulation
       dtEntity::StringIdProperty mDraggerType;
       dtEntity::Vec3dProperty mOffsetFromStart;
       bool mUseLocalCoords;
+
       osg::ref_ptr<osg::Group> mDraggerContainer;
       
    };
@@ -111,6 +113,7 @@ namespace dtEntitySimulation
    public:
 
       static const dtEntity::StringId UseLocalCoordsId;
+      static const dtEntity::StringId UseGroundClampingId;
 
       ManipulatorSystem(dtEntity::EntityManager& em);
       ~ManipulatorSystem();
@@ -126,8 +129,12 @@ namespace dtEntitySimulation
       void SetUseLocalCoords(bool v);
       bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
 
+      void SetUseGroundClamping(bool v) { mUseGroundClamping.Set(v); }
+      bool GetUseGroundClamping() const { return mUseGroundClamping.Get(); }
+
    private:
 
       dtEntity::BoolProperty mUseLocalCoords;
+      dtEntity::BoolProperty mUseGroundClamping;
    };
 }

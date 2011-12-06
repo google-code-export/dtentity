@@ -258,7 +258,6 @@ namespace dtEntityEditor
          addToolBar(Qt::TopToolBarArea, mToolsToolbar);
          mToolsActionGroup = new QActionGroup(this);
 
-         connect(mToolsToolbar, SIGNAL(actionTriggered(QAction*)), this, SLOT(OnToolActionTriggered(QAction*)));
       }
    }
 
@@ -272,8 +271,14 @@ namespace dtEntityEditor
       QAction* coordsysaction = mToolsToolbar->addAction(QIcon(":icons/coordsystems.png"), "Use local coord system");
       coordsysaction->setCheckable(true);
       coordsysaction->setChecked(true);
-      connect(coordsysaction, SIGNAL(toggled(bool)), this, SLOT(OnToggleCoordSystem(bool)));
+      connect(coordsysaction, SIGNAL(triggered(bool)), this, SLOT(OnToggleCoordSystem(bool)));
       OnToggleCoordSystem(true);
+
+      QAction* clampaction = mToolsToolbar->addAction(QIcon(":icons/go-bottom.png"), "Clamp");
+      clampaction->setCheckable(true);
+      clampaction->setChecked(true);
+      connect(clampaction, SIGNAL(triggered(bool)), this, SLOT(OnToggleGroundClamp(bool)));
+      OnToggleGroundClamp(true);
 
       mToolsToolbar->addSeparator();
 
@@ -319,7 +324,7 @@ namespace dtEntityEditor
          a->setShortcut(QKeySequence(shortcut));
          a->setToolTip(QString("%1 (%2)").arg(name).arg(shortcut));
          toolsActionGroup->addAction(a);
-
+         connect(a, SIGNAL(triggered(bool)), this, SLOT(OnToolActionTriggered(bool)));
       }
    }
 
@@ -333,21 +338,19 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::OnToolActionTriggered(QAction* action)
+   void EditorMainWindow::OnToggleGroundClamp(bool v)
    {
-      QList<QAction*> actions = mToolsToolbar->actions();
-      QAction* a;
-      foreach(a, actions)
-      {
-         if(a == action)
-         {
-            a->setChecked(true);
-         }
-         else
-         {
-            a->setChecked(false);
-         }
-      }
+      dtEntity::BoolProperty b(v);
+      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SID("Manipulator"),
+         dtEntity::SID("UseGroundClamping"), b);
+      mApplication->GetEntityManager().EnqueueMessage(msg);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnToolActionTriggered(bool)
+   {
+      QAction* action = dynamic_cast<QAction*>(sender());
+      if(!action) return;
 
       dtEntity::ToolActivatedMessage msg;
       msg.SetToolName(action->text().toStdString());

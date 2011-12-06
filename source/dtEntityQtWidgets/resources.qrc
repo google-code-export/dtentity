@@ -48,5 +48,6 @@
         <file>icons/entitytree_spawner.png</file>
         <file>icons/property.png</file>
         <file>icons/coordsystems.png</file>
+        <file>icons/go-bottom.png</file>
     </qresource>
 </RCC>

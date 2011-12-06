@@ -19,6 +19,8 @@
 */
 
 #include <dtEntitySimulation/manipulatorcomponent.h>
+
+#include <dtEntitySimulation/manipulators.h>
 #include <osg/MatrixTransform>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
@@ -36,104 +38,6 @@
 
 namespace dtEntitySimulation
 {
-
-   class MyTranslateAxisDragger : public osgManipulator::TranslateAxisDragger
-   {
-   public:
-      virtual void setupDefaultGeometry()
-      {
-         // Create a line.
-         osg::Geode* lineGeode = new osg::Geode;
-         {
-             osg::Geometry* geometry = new osg::Geometry();
-
-             osg::Vec3Array* vertices = new osg::Vec3Array(2);
-             (*vertices)[0] = osg::Vec3(0.0f,0.0f,0.0f);
-             (*vertices)[1] = osg::Vec3(0.0f,0.0f,1.0f);
-
-             geometry->setVertexArray(vertices);
-             geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES,0,2));
-
-             lineGeode->addDrawable(geometry);
-         }
-
-         // Turn of lighting for line and set line width.
-         {
-             osg::LineWidth* linewidth = new osg::LineWidth();
-             linewidth->setWidth(5.0f);
-             lineGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
-             lineGeode->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-         }
-
-         // Add line to all the individual 1D draggers.
-         _xDragger->addChild(lineGeode);
-         _yDragger->addChild(lineGeode);
-         _zDragger->addChild(lineGeode);
-
-         unsigned int nodemask = dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::MANIPULATOR;
-         _xDragger->setNodeMask(nodemask);
-         _yDragger->setNodeMask(nodemask);
-         _zDragger->setNodeMask(nodemask);
-
-
-          osg::Geode* geodex = new osg::Geode();
-          osg::Geode* geodey = new osg::Geode();
-          osg::Geode* geodez = new osg::Geode();
-
-          osg::ShapeDrawable* conex = new osg::ShapeDrawable(new osg::Cone (osg::Vec3(0.0f, 0.0f, 1.0f), 0.05f, 0.20f));
-          osg::ShapeDrawable* coney = new osg::ShapeDrawable(new osg::Cone (osg::Vec3(0.0f, 0.0f, 1.0f), 0.05f, 0.20f));
-          osg::ShapeDrawable* conez = new osg::ShapeDrawable(new osg::Cone (osg::Vec3(0.0f, 0.0f, 1.0f), 0.05f, 0.20f));
-
-          conex->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-          coney->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-          conez->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-
-          conex->setColor(osg::Vec4(1.0f,0.0f,0.0f,1.0f));
-          coney->setColor(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-          conez->setColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
-
-          geodex->addDrawable(conex);
-          geodey->addDrawable(coney);
-          geodez->addDrawable(conez);
-
-         // Create an invisible cylinder for picking the line.
-         {
-             osg::Cylinder* cylinder = new osg::Cylinder (osg::Vec3(0.0f,0.0f,0.5f), 0.1f, 1.0f);
-             osg::Drawable* geometry = new osg::ShapeDrawable(cylinder);
-             osgManipulator::setDrawableToAlwaysCull(*geometry);
-             geodex->addDrawable(geometry);
-             geodey->addDrawable(geometry);
-             geodez->addDrawable(geometry);
-         }
-
-         // Add geode to all 1D draggers.
-         _xDragger->addChild(geodex);
-         _yDragger->addChild(geodey);
-         _zDragger->addChild(geodez);
-
-         // Rotate X-axis dragger appropriately.
-         {
-             osg::Quat rotation; rotation.makeRotate(osg::Vec3(0.0f, 0.0f, 1.0f), osg::Vec3(1.0f, 0.0f, 0.0f));
-             _xDragger->setMatrix(osg::Matrix(rotation));
-         }
-
-         // Rotate Y-axis dragger appropriately.
-         {
-             osg::Quat rotation; rotation.makeRotate(osg::Vec3(0.0f, 0.0f, 1.0f), osg::Vec3(0.0f, 1.0f, 0.0f));
-             _yDragger->setMatrix(osg::Matrix(rotation));
-         }
-
-         // Send different colors for each dragger.
-         _xDragger->setColor(osg::Vec4(1.0f,0.0f,0.0f,1.0f));
-         _yDragger->setColor(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-         _zDragger->setColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
-
-         setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-         _xDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-         _yDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-         _zDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-      }
-   };
 
    ////////////////////////////////////////////////////////////////////////////
    class DraggerCallback : public osgManipulator::DraggerCallback
@@ -284,6 +188,7 @@ namespace dtEntitySimulation
    const dtEntity::StringId ManipulatorComponent::Translate2DDraggerId(dtEntity::SID("Translate2DDragger"));
    const dtEntity::StringId ManipulatorComponent::TranslateAxisDraggerId(dtEntity::SID("TranslateAxisDragger"));
    const dtEntity::StringId ManipulatorComponent::TabBoxDraggerId(dtEntity::SID("TabBoxDragger"));
+   const dtEntity::StringId ManipulatorComponent::TerrainTranslateDraggerId(dtEntity::SID("TerrainTranslateDragger"));
 
    ////////////////////////////////////////////////////////////////////////////
    ManipulatorComponent::ManipulatorComponent()
@@ -390,6 +295,7 @@ namespace dtEntitySimulation
          mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true);
 
          assert(!mDraggerContainer.valid());
+         assert(dynamic_cast<osgManipulator::Dragger*>(GetNode()) != NULL);
          mDraggerContainer = new DraggerContainer(GetDragger(), tcomp);
          if(mUseLocalCoords)
          {
@@ -457,7 +363,11 @@ namespace dtEntitySimulation
       }
       else if(draggerType == TranslateAxisDraggerId)
       {
-         SetNode(new MyTranslateAxisDragger());
+         SetNode(new osgManipulator::TranslateAxisDragger());
+      }
+      else if(draggerType == TerrainTranslateDraggerId)
+      {
+         SetNode(new TerrainTranslateDragger());
       }
       else
       {
@@ -470,10 +380,11 @@ namespace dtEntitySimulation
       osg::StateSet* ss = dragger->getOrCreateStateSet();
       ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
       ss->setRenderBinDetails(80, "RenderBin");
+      ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+
       dragger->setupDefaultGeometry();
       dragger->setHandleEvents(true);
-      //dragger->setActivationModKeyMask(osgGA::GUIEventAdapter::MODKEY_CTRL);
-      //dragger->setActivationKeyEvent('a');
+
       if(mEntity != NULL)
       {
          AddToLayer();
@@ -510,11 +421,14 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
 
    const dtEntity::StringId ManipulatorSystem::UseLocalCoordsId(dtEntity::SID("UseLocalCoords"));
+   const dtEntity::StringId ManipulatorSystem::UseGroundClampingId(dtEntity::SID("UseGroundClamping"));
 
    ManipulatorSystem::ManipulatorSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
    {
       Register(UseLocalCoordsId, &mUseLocalCoords);
+      Register(UseGroundClampingId, &mUseGroundClamping);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
