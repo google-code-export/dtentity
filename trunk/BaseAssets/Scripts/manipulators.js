@@ -49,23 +49,7 @@ var Tool = {
       }
     }
   },
-  /*handleToolKeys: function () {
-    if (Input.getKeyDown("z") && Input.getKey("Control_L")) {
-      UndoStack.undo();
-    }
-    if (Input.getKeyDown("y") && Input.getKey("Control_L")) {
-      UndoStack.redo();
-    }
-    if (Input.getKeyDown("c") && Input.getKey("Control_L")) {
-      Clipboard.copy();
-    }
-    if (Input.getKeyDown("x") && Input.getKey("Control_L")) {
-      Clipboard.cut();
-    }
-    if (Input.getKeyDown("v") && Input.getKey("Control_L")) {
-      Clipboard.paste();
-    }
-  },*/
+
    getCameraPosition: function () {
      return mainCamera.Position;
    },
@@ -128,15 +112,24 @@ var ToolHolder = {
    if (this._activeTool !== null && typeof this._activeTool.keyDown != 'undefined') {
       this._activeTool.keyDown(key, handled);
     }
-    if (!handled && key == "c" && Input.getKey("Control_L")) {
-       Clipboard.copy();
-    }
-    if (!handled && key == "x" && Input.getKey("Control_L")) {
-      Clipboard.cut();
-    }
-    if (!handled && key == "v" && Input.getKey("Control_L")) {
-      Clipboard.paste();
-    }
+   if(!handled) {
+       if(key == "c" && Input.getKey("Control_L")) {
+          Clipboard.copy();
+       }
+       if(key == "x" && Input.getKey("Control_L")) {
+         Clipboard.cut();
+       }
+       if(key == "v" && Input.getKey("Control_L")) {
+         Clipboard.paste();
+       }
+       if(key == "z" && Input.getKey("Control_L")) {
+         UndoStack.undo();
+       }
+       if(key == "y" && Input.getKey("Control_L")) {
+         UndoStack.redo();
+       }
+   }
+
   },
   keyUp : function(key, handled) {
    if (this._activeTool !== null && typeof this._activeTool.keyUp != 'undefined') {
@@ -281,9 +274,11 @@ function TranslateTool() {
 
       for (var k in Selection.ids) {
          var id = Selection.ids[k];
-         var manipulator = manipulatorSystem.createComponent(id);
-         manipulator.DraggerType = "TranslateAxisDragger";
-         manipulator.finished();
+         if(getEntitySystem("Transform").getComponent(id, true) !== null) {
+            var manipulator = manipulatorSystem.createComponent(id);
+            manipulator.DraggerType = "TerrainTranslateDragger";
+            manipulator.finished();
+         }
       }
   }
 
@@ -293,17 +288,6 @@ function TranslateTool() {
       }
   }
 
-  function switchToGlobalCoords() {
-      for (var k in Selection.ids) {
-         manipulatorSystem.getComponent(Selection.ids[k]).UseLocalCoords = false;
-      }
-  }
-
-  function switchToObjectCoords() {
-      for (var k in Selection.ids) {
-         manipulatorSystem.getComponent(Selection.ids[k]).UseLocalCoords = true;
-      }
-  }
 
   this.mouseButtonDown = function(button, handled) {
       if(button === 0) {
@@ -312,11 +296,13 @@ function TranslateTool() {
          for (var k in Selection.ids) {
             var id = Selection.ids[k];
             var manipulator = manipulatorSystem.getComponent(id);
-
+            if(manipulator === null) continue;
             var center = getEntitySystem("Layer").getBoundingSphere(id);
-            var height = clamper.getTerrainHeight(center);
-            if(height === null) {
-               height = center[2];
+
+            var height = center[2];
+            if(manipulatorSystem.UseGroundClamping)  {
+               var h = clamper.getTerrainHeight(center);
+               if(h !== null) height = h;
             }
 
             heights.push([id, height, manipulator]);
@@ -342,9 +328,10 @@ function TranslateTool() {
          var lastheight = val[1];
          var manipulator = val[2];
          var center = getEntitySystem("Layer").getBoundingSphere(id);
-         var newheight = clamper.getTerrainHeight(center);
-         if(newheight === null) {
-            newheight = lastheight;
+         var newheight = lastheight;
+         if(manipulatorSystem.UseGroundClamping) {
+           var h = clamper.getTerrainHeight(center);
+            if(h !== null) newheight = h;
          }
          var dist = newheight - lastheight;
 
@@ -374,10 +361,12 @@ function RotateTool() {
 
   this.activate = function () {
       for (var k in Selection.ids) {
-         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
-         manip.DraggerType = "TrackballDragger";
-         manip.finished();
-         manipulators.push(manip);
+         if(getEntitySystem("Transform").getComponent(Selection.ids[k], true) !== null) {
+            var manip = manipulatorSystem.createComponent(Selection.ids[k]);
+            manip.DraggerType = "TrackballDragger";
+            manip.finished();
+            manipulators.push(manip);
+         }
       }
   }
 
@@ -442,10 +431,12 @@ function ScaleTool() {
 
   this.activate = function () {
       for (var k in Selection.ids) {
-         var manip = manipulatorSystem.createComponent(Selection.ids[k]);
-         manip.DraggerType = "TabBoxDragger";
-         manip.finished();
-         manipulators.push(manip);
+         if(getEntitySystem("Transform").getComponent(Selection.ids[k], true) !== null) {
+            var manip = manipulatorSystem.createComponent(Selection.ids[k]);
+            manip.DraggerType = "TabBoxDragger";
+            manip.finished();
+            manipulators.push(manip);
+         }
       }
   }
 
