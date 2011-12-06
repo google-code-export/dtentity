@@ -86,11 +86,11 @@ namespace dtEntityQtWidgets
            mimeData->setData("application/x-spawner", itemData);
            mimeData->setText(QString("SPAWNER|%1").arg(item->text()));
 
-           QDrag drag(this);
-           drag.setMimeData(mimeData);
-           drag.setPixmap(item->icon().pixmap(QSize(40, 40)));
+           QDrag* drag = new QDrag(this);
+           drag->setMimeData(mimeData);
+           drag->setPixmap(item->icon().pixmap(QSize(40, 40)));
 
-           drag.exec(Qt::CopyAction);
+           drag->exec(Qt::CopyAction);
         }
         else
         {
