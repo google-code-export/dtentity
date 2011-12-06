@@ -5,7 +5,7 @@ include_once("Scripts/selectionmanager.js");
 var layerSystem = getEntitySystem("Layer");
 var manipulatorSystem = getEntitySystem("Manipulator");
 var ddm = new DebugDrawManager(EntityManager);
-
+var patSystem = getEntitySystem("PositionAttitudeTransform");
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
@@ -254,7 +254,6 @@ var selectTool = new SelectTool;
 ToolHolder.addTool(selectTool);
 ToolHolder.useTool("Select");
 
-
 //////////////////////////////// Translate tool /////////////////////////////
 
 function TranslateTool() {
@@ -292,6 +291,42 @@ function TranslateTool() {
   this.mouseButtonDown = function(button, handled) {
       if(button === 0) {
          initialCamPos = this.getCameraPosition();
+
+         var doclone = Input.getKey("Shift_L");
+         var clones = [];
+         if(doclone) {
+           clones = Selection.clone();
+         }
+
+         this.undoOp = {
+           beforePos : [],
+           afterPos : [],
+           undo: function () {
+             if(doclone) {
+                for(var k in clones) {
+                  EntityManager.removeFromScene(clones[k]);
+                  EntityManager.killEntity(clones[k]);
+                }
+             }
+             for(var k in this.beforePos) {
+                var id = this.beforePos[k][0];
+                var pos = this.beforePos[k][1];
+                patSystem.getComponent(id).Position = pos;
+             }
+           },
+           redo: function () {
+            if(doclone) {
+              Selection.clone();
+            }
+            for(var k in this.afterPos) {
+               var id = this.afterPos[k][0];
+               var pos = this.afterPos[k][1];
+               patSystem.getComponent(id).Position = pos;
+            }
+
+           }
+         };
+
          heights = [];
          for (var k in Selection.ids) {
             var id = Selection.ids[k];
@@ -306,14 +341,29 @@ function TranslateTool() {
             }
 
             heights.push([id, height, manipulator]);
+
+            var patcomp = patSystem.getComponent(id);
+            if(patcomp !== null) {
+               this.undoOp.beforePos.push([id, patcomp.Position]);
+            }
          }
 
-         var doclone = Input.getKey("Shift_L");
-         if(doclone) {
-           Selection.clone();
-         }
+
       }
   }
+
+   this.mouseButtonUp = function(button, handled) {
+     if(this.undoOp !== null) {
+        for (var k in Selection.ids) {
+           var id = Selection.ids[k];
+           var patcomp = patSystem.getComponent(id);
+           if(patcomp !== null) {
+              this.undoOp.afterPos.push([id, patcomp.Position]);
+           }
+           UndoStack.pushOperation(this.undoOp);
+        }
+     }
+   }
 
   this.update = function () {
     if (Input.getMouseButton(0) && !Input.getMouseButtonDown(0)) {
@@ -378,25 +428,113 @@ function RotateTool() {
   }
 
    this.mouseButtonDown = function(button, handled) {
+      var doclone = Input.getKey("Shift_L");
+      var clones = [];
+      if(doclone) {
+        clones = Selection.clone();
+      }
+
        if(button === 0) {
-          initialCamPos = this.getCameraPosition();
-          var doclone = Input.getKey("Shift_L");
-          if(doclone) {
-            Selection.clone();
+          this.undoOp = {
+
+            beforeRot : [],
+            afterRot : [],
+            undo: function () {
+               if(doclone) {
+                  for(var k in clones) {
+                    EntityManager.removeFromScene(clones[k]);
+                    EntityManager.killEntity(clones[k]);
+                  }
+               }
+              for(var k in this.beforeRot) {
+                 var id = this.beforeRot[k][0];
+                 var rot = this.beforeRot[k][1];
+                 var pos = this.beforeRot[k][2];
+                 patSystem.getComponent(id).Attitude = rot;
+                 patSystem.getComponent(id).Position = pos;
+              }
+            },
+            redo: function () {
+             if(doclone) {
+               Selection.clone();
+             }
+             for(var k in this.afterRot) {
+                var id = this.afterRot[k][0];
+                var rot = this.afterRot[k][1];
+                var pos = this.afterRot[k][2];
+                patSystem.getComponent(id).Attitude = rot;
+                patSystem.getComponent(id).Position = pos;
+             }
+
+            }
+          };
+
+          for (var k in Selection.ids) {
+             var id = Selection.ids[k];
+
+             var patcomp = patSystem.getComponent(id);
+             if(patcomp !== null) {
+                this.undoOp.beforeRot.push([id, patcomp.Attitude, patcomp.Position]);
+             }
           }
+
+          initialCamPos = this.getCameraPosition();
+
        }
+   }
+
+   this.mouseButtonUp = function(button, handled) {
+     if(this.undoOp !== null) {
+        for (var k in Selection.ids) {
+           var id = Selection.ids[k];
+           var patcomp = patSystem.getComponent(id);
+           if(patcomp !== null) {
+              this.undoOp.afterRot.push([id, patcomp.Attitude, patcomp.Position]);
+           }
+           UndoStack.pushOperation(this.undoOp);
+        }
+     }
    }
 
    this.keyDown = function(key, handled) {
       if(!handled && key == "Space") {
 
+         this.undoOp = {
+
+           beforeRot : [],
+           afterRot : [],
+           undo: function () {
+             for(var k in this.beforeRot) {
+                var id = this.beforeRot[k][0];
+                var rot = this.beforeRot[k][1];
+                var pos = this.beforeRot[k][2];
+                patSystem.getComponent(id).Attitude = rot;
+                patSystem.getComponent(id).Position = pos;
+             }
+           },
+           redo: function () {
+            for(var k in this.afterRot) {
+               var id = this.afterRot[k][0];
+               var rot = this.afterRot[k][1];
+               var pos = this.afterRot[k][2];
+               patSystem.getComponent(id).Attitude = rot;
+               patSystem.getComponent(id).Position = pos;
+            }
+
+           }
+         };
+
          for(var k in Selection.ids) {
-            var transcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[k]);
-            if(transcomp !== null) {
-               transcomp.Attitude = [0, 0, 0, 1];
-               transcomp.finished();
+            var id = Selection.ids[k];
+            var patcomp = getEntitySystem("PositionAttitudeTransform").getComponent(id);
+            if(patcomp !== null) {
+               this.undoOp.beforeRot.push([id, patcomp.Attitude, patcomp.Position]);
+               patcomp.Attitude = [0, 0, 0, 1];
+               patcomp.finished();
+               this.undoOp.afterRot.push([id, patcomp.Attitude, patcomp.Position]);
             }
          }
+         UndoStack.pushOperation(this.undoOp);
          return true;
       }
    }
@@ -450,21 +588,111 @@ function ScaleTool() {
    this.mouseButtonDown = function(button, handled) {
        if(button === 0) {
           initialCamPos = this.getCameraPosition();
-          var doclone = Input.getKey("Shift_L");
+
+          var doclone = Input.getKey("Shift_L");if(doclone) {
+             for(var k in clones) {
+               EntityManager.removeFromScene(clones[k]);
+               EntityManager.killEntity(clones[k]);
+             }
+          }
+          var clones = [];
           if(doclone) {
-            Selection.clone();
+            clones = Selection.clone();
+          }
+
+          this.undoOp = {
+
+            beforeScale : [],
+            afterScale : [],
+            undo: function () {
+               if(doclone) {
+                  for(var k in clones) {
+                    EntityManager.removeFromScene(clones[k]);
+                    EntityManager.killEntity(clones[k]);
+                  }
+               }
+              for(var k in this.beforeScale) {
+                 var id = this.beforeScale[k][0];
+                 var scale = this.beforeScale[k][1];
+                 var pos = this.beforeScale[k][2];
+                 patSystem.getComponent(id).Scale = scale;
+                 patSystem.getComponent(id).Position = pos;
+              }
+            },
+            redo: function () {
+             if(doclone) {
+               Selection.clone();
+             }
+             for(var k in this.afterScale) {
+                var id = this.afterScale[k][0];
+                var scale = this.afterScale[k][1];
+                var pos = this.afterScale[k][2];
+                patSystem.getComponent(id).Scale = scale;
+                patSystem.getComponent(id).Position = pos;
+             }
+
+            }
+          };
+
+          for (var k in Selection.ids) {
+             var id = Selection.ids[k];
+
+             var patcomp = patSystem.getComponent(id);
+             if(patcomp !== null) {
+                this.undoOp.beforeScale.push([id, patcomp.Scale, patcomp.Position]);
+             }
           }
        }
+   }
+
+   this.mouseButtonUp = function(button, handled) {
+     if(this.undoOp !== null) {
+        for (var k in Selection.ids) {
+           var id = Selection.ids[k];
+           var patcomp = patSystem.getComponent(id);
+           if(patcomp !== null) {
+              this.undoOp.afterScale.push([id, patcomp.Scale, patcomp.Position]);
+           }
+           UndoStack.pushOperation(this.undoOp);
+        }
+     }
    }
 
    this.keyDown = function(key, handled) {
       if(!handled && key == "Space") {
 
+         this.undoOp = {
+
+           beforeScale : [],
+           afterScale : [],
+           undo: function () {
+             for(var k in this.beforeScale) {
+                var id = this.beforeScale[k][0];
+                var scale = this.beforeScale[k][1];
+                var pos = this.beforeScale[k][2];
+                patSystem.getComponent(id).Scale = scale;
+                patSystem.getComponent(id).Position = pos;
+             }
+           },
+           redo: function () {
+            for(var k in this.afterScale) {
+               var id = this.afterScale[k][0];
+               var scale = this.afterScale[k][1];
+               var pos = this.afterScale[k][2];
+               patSystem.getComponent(id).Scale = scale;
+               patSystem.getComponent(id).Position = pos;
+            }
+
+           }
+         };
          for(var k in Selection.ids) {
-            var transcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[k]);
-            if(transcomp !== null) {
-               transcomp.Scale = [1, 1, 1];
-               transcomp.finished();
+            var id = Selection.ids[k];
+            var patcomp = getEntitySystem("PositionAttitudeTransform").getComponent(id);
+            if(patcomp !== null) {
+               this.undoOp.beforeScale.push([id, patcomp.Scale, patcomp.Position]);
+               patcomp.Scale = [1, 1, 1];
+               patcomp.finished();
+               this.undoOp.afterScale.push([id, patcomp.Scale, patcomp.Position]);
             }
          }
          return true;
