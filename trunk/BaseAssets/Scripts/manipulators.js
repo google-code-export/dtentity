@@ -276,6 +276,7 @@ function TranslateTool() {
          if(getEntitySystem("Transform").getComponent(id, true) !== null) {
             var manipulator = manipulatorSystem.createComponent(id);
             manipulator.DraggerType = "TerrainTranslateDragger";
+            manipulator.PivotAtBottom = true;
             manipulator.finished();
          }
       }
@@ -571,7 +572,9 @@ function ScaleTool() {
       for (var k in Selection.ids) {
          if(getEntitySystem("Transform").getComponent(Selection.ids[k], true) !== null) {
             var manip = manipulatorSystem.createComponent(Selection.ids[k]);
-            manip.DraggerType = "TabBoxDragger";
+            manip.DraggerType = "ScaleDragger";
+            manip.KeepSizeConstant = false;
+            manip.PivotAtBottom = true;
             manip.finished();
             manipulators.push(manip);
          }

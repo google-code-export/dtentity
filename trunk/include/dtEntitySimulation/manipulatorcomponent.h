@@ -41,6 +41,9 @@ namespace dtEntitySimulation
       static const dtEntity::StringId LayerId;
       static const dtEntity::StringId DraggerTypeId;
       static const dtEntity::StringId OffsetFromStartId;
+      static const dtEntity::StringId KeepSizeConstantId;
+      static const dtEntity::StringId UseLocalCoordsId;
+      static const dtEntity::StringId PivotAtBottomId;
 
       static const dtEntity::StringId TabPlaneDraggerId;
       static const dtEntity::StringId TabPlaneTrackballDraggerId;
@@ -51,6 +54,7 @@ namespace dtEntitySimulation
       static const dtEntity::StringId TranslateAxisDraggerId;
       static const dtEntity::StringId TabBoxDraggerId;
       static const dtEntity::StringId TerrainTranslateDraggerId;
+      static const dtEntity::StringId ScaleDraggerId;
 
 
       ManipulatorComponent();
@@ -83,7 +87,13 @@ namespace dtEntitySimulation
       osg::Vec3d GetOffsetFromStart() const { return mOffsetFromStart.Get(); }
 
       void SetUseLocalCoords(bool v);
-      bool GetUseLocalCoords() const { return mUseLocalCoords; }
+      bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
+
+      void SetKeepSizeConstant(bool v);
+      bool GetKeepSizeConstant() const { return mKeepSizeConstant.Get(); }
+
+      void SetPivotAtBottom(bool v);
+      bool GetPivotAtBottom() const { return mPivotAtBottom.Get(); }
 
    private:
 
@@ -96,7 +106,9 @@ namespace dtEntitySimulation
       dtEntity::Entity* mEntity;
       dtEntity::StringIdProperty mDraggerType;
       dtEntity::Vec3dProperty mOffsetFromStart;
-      bool mUseLocalCoords;
+      dtEntity::BoolProperty mKeepSizeConstant;
+      dtEntity::BoolProperty mUseLocalCoords;
+      dtEntity::BoolProperty mPivotAtBottom;
 
       osg::ref_ptr<osg::Group> mDraggerContainer;
       

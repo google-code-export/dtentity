@@ -31,22 +31,59 @@
 #include <osgManipulator/Translate1DDragger>
 #include <osgManipulator/Translate2DDragger>
 #include <osgManipulator/TranslateAxisDragger>
+#include <osgManipulator/Scale1DDragger>
+#include <osgManipulator/ScaleAxisDragger>
 
 namespace dtEntitySimulation
 {
 
    class TerrainTranslateDragger : public osgManipulator::CompositeDragger
    {
+      typedef osgManipulator::CompositeDragger BaseClass;
 
    public:
 
       TerrainTranslateDragger();
       virtual void setupDefaultGeometry();
+      virtual bool handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
 
    private:
       osg::ref_ptr<osgManipulator::Translate1DDragger> _xDragger;
       osg::ref_ptr<osgManipulator::Translate1DDragger> _yDragger;
       osg::ref_ptr<osgManipulator::Translate1DDragger> _zDragger;
       osg::ref_ptr<osgManipulator::Translate2DDragger > _translate2DDragger;
+   };
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class ScaleAllDragger : public osgManipulator::Dragger
+   {
+    public:
+        virtual bool handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+
+    protected:
+        osg::Vec2 _startPoint;
+        osg::Matrix _localToWorld;
+        osg::Matrix _worldToLocal;
+   };
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class ScaleDragger : public osgManipulator::CompositeDragger
+   {
+      typedef osgManipulator::CompositeDragger BaseClass;
+
+   public:
+
+      ScaleDragger();
+      virtual void setupDefaultGeometry();
+      virtual bool handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+   private:
+      void setupGeometry(osgManipulator::Scale1DDragger*, const osg::Vec4& color);
+      osg::ref_ptr<osgManipulator::Scale1DDragger> _xDragger;
+      osg::ref_ptr<osgManipulator::Scale1DDragger> _yDragger;
+      osg::ref_ptr<osgManipulator::Scale1DDragger> _zDragger;
+      osg::ref_ptr<ScaleAllDragger> _scaleAllDragger;
    };
 }

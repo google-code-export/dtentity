@@ -72,7 +72,7 @@ namespace dtEntityQtWidgets
       }
 
       mAdapter->SetGraphicsWindow(*mWindow);
-      mAdapter->setFocusPolicy(Qt::StrongFocus);
+      mAdapter->setFocusPolicy(Qt::WheelFocus);
 
    }
 
