@@ -5,11 +5,8 @@ include_once("Scripts/motionmodel.js");
 ////////////////////////////// Variables ////////////////////////////////
 
 var camid = mapSystem.getEntityIdByUniqueId("cam_0");
-var clamper = getEntitySystem("GroundClamping").createComponent(camid);
-clamper.ClampingMode = "KeepAboveTerrain";
-clamper.VerticalOffset = 1;
-clamper.finished();
-var cameraComponent = getEntitySystem("Camera").getComponent(camid);
+
+var fps_camcomponent = null;
 var tempvec = [0,0,0];
 var toRight = [0,0,0];
 var movespeed = 100;
@@ -22,8 +19,8 @@ var inputCallback = {};
 
 inputCallback.mouseMove = function(x, y, handled) {
 
-   var pos = cameraComponent.Position;
-   var eyedir = cameraComponent.EyeDirection;
+   var pos = fps_camcomponent.Position;
+   var eyedir = fps_camcomponent.EyeDirection;
    osg.Vec3.cross(eyedir, up, toRight);
 
    var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
@@ -34,16 +31,16 @@ inputCallback.mouseMove = function(x, y, handled) {
    osg.Quat.makeRotate(mouseY * rotatespeed, toRight[0], toRight[1], toRight[2], rotateOp);
    osg.Quat.rotate(rotateOp, eyedir, eyedir);
 
-   cameraComponent.Position = pos;
-   cameraComponent.EyeDirection = eyedir;
-   cameraComponent.finished();
+   fps_camcomponent.Position = pos;
+   fps_camcomponent.EyeDirection = eyedir;
+   fps_camcomponent.finished();
 }
 
 function update() {
    var dt = FRAME_DELTA_TIME;
 
-   var pos = cameraComponent.Position;
-   var eyedir = cameraComponent.EyeDirection;
+   var pos = fps_camcomponent.Position;
+   var eyedir = fps_camcomponent.EyeDirection;
 
    osg.Vec3.cross(eyedir, up, toRight);
 
@@ -84,9 +81,9 @@ function update() {
      Screen.lockCursor = false;
    }
 
-   cameraComponent.Position = pos;
-   cameraComponent.EyeDirection = eyedir;
-   cameraComponent.finished();
+   fps_camcomponent.Position = pos;
+   fps_camcomponent.EyeDirection = eyedir;
+   fps_camcomponent.finished();
 }
 
 
@@ -96,15 +93,15 @@ function startFPSDemo() {
 
 
   var camid = mapSystem.getEntityIdByUniqueId("cam_0");
-  var cameraComponent = getEntitySystem("Camera").getComponent(camid);
-  cameraComponent.Position = [0, 0, 2];
-  cameraComponent.EyeDirection = [0, 1, 0];
-  cameraComponent.FieldOfView = 80;
-  cameraComponent.CullingMode = "NoAutoNearFarCulling";
-  cameraComponent.NearClip = 0.1;
-  cameraComponent.FarClip = 10000;
-  cameraComponent.Up = [0, 0, 1];
-  cameraComponent.finished();
+  fps_camcomponent = getEntitySystem("Camera").getComponent(camid);
+  fps_camcomponent.Position = [0, 0, 2];
+  fps_camcomponent.EyeDirection = [0, 1, 0];
+  fps_camcomponent.FieldOfView = 80;
+  fps_camcomponent.CullingMode = "NoAutoNearFarCulling";
+  fps_camcomponent.NearClip = 0.1;
+  fps_camcomponent.FarClip = 10000;
+  fps_camcomponent.Up = [0, 0, 1];
+  fps_camcomponent.finished();
   
   Screen.lockCursor = true;
   Screen.fullScreen = true;
@@ -120,6 +117,11 @@ function startFPSDemo() {
   text +=    "The mouse cursor is hidden and centered to the screen.\n";
   text +=    "Press space key to exit.\n";
   showHelp(text);  
+
+   var clamper = getEntitySystem("GroundClamping").createComponent(camid);
+   clamper.ClampingMode = "KeepAboveTerrain";
+   clamper.VerticalOffset = 1;
+   clamper.finished();
 
 
 }

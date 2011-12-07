@@ -84,7 +84,7 @@ namespace dtEntity
       virtual void OnRemovedFromEntity(Entity& entity);
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
-      osg::Camera* GetCamera() const { return mCamera.get(); }
+      osg::Camera* GetCamera();
 
       virtual void Finished();
 
@@ -147,6 +147,9 @@ namespace dtEntity
       { 
          mEyeDirection.Set(q * osg::Vec3d(0, 1, 0));
       }
+
+      void SetFieldOfView(double v) { mFieldOfView.Set(v); }
+      double GetFieldOfView() const { return mFieldOfView.Get(); }
 
    private:
 

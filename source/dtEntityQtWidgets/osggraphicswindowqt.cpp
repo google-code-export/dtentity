@@ -90,6 +90,8 @@ namespace dtEntityQtWidgets
 
       _traits = traits;
 
+      setWindowRectangle(0, 0, traits->width, traits->height);
+
       QGLWidget* sharedContextWidget = NULL;
       if (traits->sharedContext != NULL)
       {
@@ -152,6 +154,7 @@ namespace dtEntityQtWidgets
       }
 
       mQWidget = qwidget;
+
       mValid = mQWidget != NULL;
 
       if (valid())

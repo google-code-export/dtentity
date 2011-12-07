@@ -16,12 +16,13 @@ function startObjMotionModel() {
   var cameraComponent = getEntitySystem("Camera").getComponent(camid);
 
 
-  cameraComponent.Position = [6, 8, -14];
+  cameraComponent.Position = [60, 8, -14];
   cameraComponent.EyeDirection = [-1, -1, -0.2];
   cameraComponent.CullingMode = "NoAutoNearFarCulling";
   cameraComponent.NearClip = 0.1;
   cameraComponent.FarClip = 10000;
   cameraComponent.Up = [0, 0, 1];
+  cameraComponent.FieldOfViewId = 45;
   cameraComponent.finished();
 
    var mapsys = getEntitySystem("Map");
@@ -35,7 +36,7 @@ function startObjMotionModel() {
      },
      PositionAttitudeTransform : {
        Children : ["StaticMesh"],
-       Scale:[10,10,10]
+       Scale:[1,1,1]
      },
      StaticMesh : {
        Mesh : "StaticMeshes/physics_crate.ive",
