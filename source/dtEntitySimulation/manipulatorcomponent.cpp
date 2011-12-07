@@ -115,8 +115,9 @@ namespace dtEntitySimulation
           : _dragger(dragger)
           , mTransform(transform)
           , _draggerSize(140.0f)
-          , _active(true)
+          , _keepSizeConstant(true)
           , _useLocalCoords(false)
+          , _pivotAtBottom(false)
 
        {
           addChild(dragger);
@@ -126,8 +127,11 @@ namespace dtEntitySimulation
        void setDraggerSize( float size ) { _draggerSize = size; }
        float getDraggerSize() const { return _draggerSize; }
 
-       void setActive( bool b ) { _active = b; }
-       bool getActive() const { return _active; }
+       void setKeepSizeConstant( bool b ) { _keepSizeConstant = b; }
+       bool getKeepSizeConstant() const { return _keepSizeConstant; }
+
+       void setPivotAtBottom( bool b ) { _pivotAtBottom = b; }
+       bool getPivotAtBottom() const { return _pivotAtBottom; }
 
        void SetUseLocalCoords(bool v)
        {
@@ -138,27 +142,52 @@ namespace dtEntitySimulation
        {
            if ( _dragger.valid() )
            {
-               if ( _active && nv.getVisitorType()==osg::NodeVisitor::CULL_VISITOR )
+               if (nv.getVisitorType()==osg::NodeVisitor::CULL_VISITOR )
                {
                    osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(&nv);
 
-                   float pixelSize = cv->pixelSize(_dragger->getBound().center(), 0.48f);
-                   if ( pixelSize !=_draggerSize )
+                   osg::BoundingSphere bs = mTransform->GetNode()->getBound();
+                   osg::Vec3d pivot = bs.center();
+                   if(_pivotAtBottom)
                    {
-                       float pixelScale = pixelSize>0.0f ? _draggerSize/pixelSize : 1.0f;
-                       osg::Vec3d scaleFactor(pixelScale, pixelScale, pixelScale);
+                     pivot[2] = mTransform->GetTranslation()[2];
+                   }
 
-                       osg::BoundingSphere bs = mTransform->GetNode()->getBound();
+                   if(_keepSizeConstant)
+                   {
+                      float pixelSize = cv->pixelSize(_dragger->getBound().center(), 0.48f);
+                      if ( pixelSize !=_draggerSize )
+                      {
+                          float pixelScale = pixelSize>0.0f ? _draggerSize/pixelSize : 1.0f;
+                          osg::Vec3d scaleFactor(pixelScale, pixelScale, pixelScale);
 
+
+
+                         if(_useLocalCoords)
+                         {
+                            _dragger->setMatrix( osg::Matrix::scale(scaleFactor) *
+                                                 osg::Matrix::rotate(mTransform->GetRotation()) *
+                                                 osg::Matrix::translate(pivot) );
+                         }
+                         else
+                         {
+                             _dragger->setMatrix( osg::Matrix::scale(scaleFactor) * osg::Matrix::translate(pivot) );
+                         }
+                      }
+                   }
+                   else
+                   {
+                      osg::Vec3d scaleFactor(bs.radius(), bs.radius(), bs.radius());
                       if(_useLocalCoords)
                       {
+
                          _dragger->setMatrix( osg::Matrix::scale(scaleFactor) *
                                               osg::Matrix::rotate(mTransform->GetRotation()) *
-                                              osg::Matrix::translate(bs.center()) );
+                                              osg::Matrix::translate(pivot) );
                       }
                       else
                       {
-                          _dragger->setMatrix( osg::Matrix::scale(scaleFactor) * osg::Matrix::translate(bs.center()) );
+                          _dragger->setMatrix(osg::Matrix::scale(scaleFactor) *osg::Matrix::translate(pivot) );
                       }
                    }
                }
@@ -170,8 +199,9 @@ namespace dtEntitySimulation
        osg::ref_ptr<osgManipulator::Dragger> _dragger;
        dtEntity::TransformComponent* mTransform;
        float _draggerSize;
-       bool _active;
+       bool _keepSizeConstant;
        bool _useLocalCoords;
+       bool _pivotAtBottom;
    };
 
    ////////////////////////////////////////////////////////////////////////////
@@ -179,6 +209,9 @@ namespace dtEntitySimulation
    const dtEntity::StringId ManipulatorComponent::LayerId(dtEntity::SID("Layer"));
    const dtEntity::StringId ManipulatorComponent::DraggerTypeId(dtEntity::SID("DraggerType"));
    const dtEntity::StringId ManipulatorComponent::OffsetFromStartId(dtEntity::SID("OffsetFromStart"));
+   const dtEntity::StringId ManipulatorComponent::UseLocalCoordsId(dtEntity::SID("UseLocalCoords"));
+   const dtEntity::StringId ManipulatorComponent::KeepSizeConstantId(dtEntity::SID("KeepSizeConstant"));
+   const dtEntity::StringId ManipulatorComponent::PivotAtBottomId(dtEntity::SID("PivotAtBottom"));
 
    const dtEntity::StringId ManipulatorComponent::TabPlaneDraggerId(dtEntity::SID("TabPlaneDragger"));
    const dtEntity::StringId ManipulatorComponent::TabPlaneTrackballDraggerId(dtEntity::SID("TabPlaneTrackballDragger"));
@@ -189,6 +222,7 @@ namespace dtEntitySimulation
    const dtEntity::StringId ManipulatorComponent::TranslateAxisDraggerId(dtEntity::SID("TranslateAxisDragger"));
    const dtEntity::StringId ManipulatorComponent::TabBoxDraggerId(dtEntity::SID("TabBoxDragger"));
    const dtEntity::StringId ManipulatorComponent::TerrainTranslateDraggerId(dtEntity::SID("TerrainTranslateDragger"));
+   const dtEntity::StringId ManipulatorComponent::ScaleDraggerId(dtEntity::SID("ScaleDragger"));
 
    ////////////////////////////////////////////////////////////////////////////
    ManipulatorComponent::ManipulatorComponent()
@@ -200,9 +234,13 @@ namespace dtEntitySimulation
       Register(LayerId, &mLayerProperty);
       Register(DraggerTypeId, &mDraggerType);
       Register(OffsetFromStartId, &mOffsetFromStart);
-
+      Register(UseLocalCoordsId, &mUseLocalCoords);
+      Register(KeepSizeConstantId, &mKeepSizeConstant);
+      Register(PivotAtBottomId, &mPivotAtBottom);
       mLayerProperty.Set(dtEntity::SID("root"));
 
+      mKeepSizeConstant.Set(true);
+      mUseLocalCoords.Set(false);
       SetDraggerType(TabBoxDraggerId);
    }
     
@@ -237,6 +275,18 @@ namespace dtEntitySimulation
       {
          SetDraggerType(prop.StringIdValue());
       }
+      else if(propname == UseLocalCoordsId)
+      {
+         SetUseLocalCoords(prop.BoolValue());
+      }
+      else if(propname == KeepSizeConstantId)
+      {
+         SetKeepSizeConstant(prop.BoolValue());
+      }
+      else if(propname == PivotAtBottomId)
+      {
+         SetPivotAtBottom(prop.BoolValue());
+      }
       else if(propname == OffsetFromStartId)
       {
          if(mDraggerCallback)
@@ -244,16 +294,39 @@ namespace dtEntitySimulation
             static_cast<DraggerCallback*>(mDraggerCallback.get())->SetOffsetFromStart(prop.Vec3dValue());
          }
       }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::SetUseLocalCoords(bool v)
    {
-      mUseLocalCoords = v;
+      mUseLocalCoords.Set(v);
 
       if(mDraggerContainer)
       {
          static_cast<DraggerContainer*>(mDraggerContainer.get())->SetUseLocalCoords(v);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorComponent::SetKeepSizeConstant(bool v)
+   {
+      mKeepSizeConstant.Set(v);
+
+      if(mDraggerContainer)
+      {
+         static_cast<DraggerContainer*>(mDraggerContainer.get())->setKeepSizeConstant(v);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorComponent::SetPivotAtBottom(bool v)
+   {
+      mPivotAtBottom.Set(v);
+
+      if(mDraggerContainer)
+      {
+         static_cast<DraggerContainer*>(mDraggerContainer.get())->setPivotAtBottom(v);
       }
    }
 
@@ -296,11 +369,13 @@ namespace dtEntitySimulation
 
          assert(!mDraggerContainer.valid());
          assert(dynamic_cast<osgManipulator::Dragger*>(GetNode()) != NULL);
-         mDraggerContainer = new DraggerContainer(GetDragger(), tcomp);
-         if(mUseLocalCoords)
-         {
-            static_cast<DraggerContainer*>(mDraggerContainer.get())->SetUseLocalCoords(true);
-         }
+         DraggerContainer* dc = new DraggerContainer(GetDragger(), tcomp);
+         mDraggerContainer = dc;
+
+         dc->SetUseLocalCoords(mUseLocalCoords.Get());
+         dc->setKeepSizeConstant(mKeepSizeConstant.Get());
+         dc->setPivotAtBottom(mPivotAtBottom.Get());
+
          next->GetAttachmentGroup()->addChild(mDraggerContainer);
          mAttachPoint = mLayerProperty.Get();
       }
@@ -368,6 +443,10 @@ namespace dtEntitySimulation
       else if(draggerType == TerrainTranslateDraggerId)
       {
          SetNode(new TerrainTranslateDragger());
+      }
+      else if(draggerType == ScaleDraggerId)
+      {
+         SetNode(new ScaleDragger());
       }
       else
       {

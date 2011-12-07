@@ -29,27 +29,6 @@
 namespace dtEntitySimulation
 {
 
-  /* ////////////////////////////////////////////////////////////////////////////////
-   bool TranslateXYPlaneDragger::handle(const osgManipulator::PointerInfo& pointer, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
-   {
-       // Check if the dragger node is in the nodepath.
-       if (!pointer.contains(this)) return false;
-
-       bool handled = false;
-
-        if (_translate2DDragger->handle(pointer, ea, aa))
-            handled = true;
-
-       return handled;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void TranslateXYPlaneDragger::setupDefaultGeometry()
-   {
-
-   }*/
-
-
    ////////////////////////////////////////////////////////////////////////////////
    TerrainTranslateDragger::TerrainTranslateDragger()
    {
@@ -72,6 +51,9 @@ namespace dtEntitySimulation
       addDragger(_translate2DDragger.get());
 
       setParentDragger(getParentDragger());
+      setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+
+      getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -150,10 +132,6 @@ namespace dtEntitySimulation
        osg::ShapeDrawable* coney = new osg::ShapeDrawable(new osg::Cone (osg::Vec3(0.0f, 0.0f, 1.0f), 0.05f, 0.20f));
        osg::ShapeDrawable* conez = new osg::ShapeDrawable(new osg::Cone (osg::Vec3(0.0f, 0.0f, 1.0f), 0.05f, 0.20f));
 
-       conex->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-       coney->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-       conez->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-
        conex->setColor(osg::Vec4(1.0f,0.0f,0.0f,1.0f));
        coney->setColor(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
        conez->setColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
@@ -194,10 +172,172 @@ namespace dtEntitySimulation
       _yDragger->setColor(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
       _zDragger->setColor(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
 
+
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool TerrainTranslateDragger::handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+   {
+      if(ea.getEventType() == osgGA::GUIEventAdapter::PUSH && ea.getButton() != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
+      {
+         return false;
+      }
+      return BaseClass::handle(pi, ea, aa);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ScaleAllDragger::handle(const osgManipulator::PointerInfo& pointer, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+   {
+      // Check if the dragger node is in the nodepath.
+      if (!pointer.contains(this)) return false;
+
+      switch (ea.getEventType())
+      {
+          // Pick start.
+          case (osgGA::GUIEventAdapter::PUSH):
+          {
+             osg::NodePath nodePathToRoot;
+             computeNodePathToRoot(*this,nodePathToRoot);
+             _localToWorld = osg::computeLocalToWorld(nodePathToRoot);
+             _worldToLocal = osg::Matrix::inverse(_localToWorld);
+
+             _startPoint = osg::Vec2(ea.getXnormalized(), ea.getYnormalized());
+
+             osg::ref_ptr<osgManipulator::ScaleUniformCommand> cmd = new osgManipulator::ScaleUniformCommand();
+             cmd->setStage(osgManipulator::MotionCommand::START);
+             cmd->setLocalToWorldAndWorldToLocal(_localToWorld,_worldToLocal);
+             dispatch(*cmd);
+             return true;
+          }
+
+          // Pick move.
+          case (osgGA::GUIEventAdapter::DRAG):
+           {
+               osg::Vec2 move = osg::Vec2(ea.getXnormalized(), ea.getYnormalized()) - _startPoint;
+
+               osg::ref_ptr<osgManipulator::ScaleUniformCommand> cmd = new osgManipulator::ScaleUniformCommand();
+               cmd->setStage(osgManipulator::MotionCommand::MOVE);
+               cmd->setLocalToWorldAndWorldToLocal(_localToWorld,_worldToLocal);
+               cmd->setScale(1 + move[0] + move[1]);
+               cmd->setScaleCenter(osg::Vec3());
+               dispatch(*cmd);
+               return true;
+           }
+
+          // Pick finish.
+          case (osgGA::GUIEventAdapter::RELEASE):
+           {
+               osg::ref_ptr<osgManipulator::ScaleUniformCommand> cmd = new osgManipulator::ScaleUniformCommand();
+
+               cmd->setStage(osgManipulator::MotionCommand::FINISH);
+               cmd->setLocalToWorldAndWorldToLocal(_localToWorld,_worldToLocal);
+               dispatch(*cmd);
+
+               return true;
+           }
+          default:
+              return false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ScaleDragger::ScaleDragger()
+   {
+      _xDragger = new osgManipulator::Scale1DDragger();
+      addChild(_xDragger.get());
+      addDragger(_xDragger.get());
+
+      _yDragger = new osgManipulator::Scale1DDragger();
+      addChild(_yDragger.get());
+      addDragger(_yDragger.get());
+
+      _zDragger = new osgManipulator::Scale1DDragger();
+      addChild(_zDragger.get());
+      addDragger(_zDragger.get());
+
+      _scaleAllDragger = new ScaleAllDragger();
+      addChild(_scaleAllDragger.get());
+      addDragger(_scaleAllDragger.get());
+
+      setParentDragger(getParentDragger());
       setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-      _xDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-      _yDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-      _zDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-      _translate2DDragger->setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+
+      getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ScaleDragger::setupGeometry(osgManipulator::Scale1DDragger* dragger, const osg::Vec4& color)
+   {
+      unsigned int nodemask = dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::MANIPULATOR;
+      dragger->setNodeMask(nodemask);
+      dragger->setColor(color);
+      osg::Geode* lineGeode = new osg::Geode;
+
+      osg::Geometry* geometry = new osg::Geometry();
+
+      osg::Vec3Array* vertices = new osg::Vec3Array(2);
+      (*vertices)[0] = osg::Vec3(0.1f,0.0f,0.0f);
+      (*vertices)[1] = osg::Vec3(0.5f,0.0f,0.0f);
+
+      geometry->setVertexArray(vertices);
+      geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES,0,2));
+
+      lineGeode->addDrawable(geometry);
+
+      osg::LineWidth* linewidth = new osg::LineWidth();
+      linewidth->setWidth(5.0f);
+      lineGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+      lineGeode->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+
+      dragger->addChild(lineGeode);
+
+
+      osg::Geode* geode = new osg::Geode();
+      dragger->addChild(geode);
+      osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(0.5f, 0.0f, 0.0f), 0.05f));
+      box->setColor(color);
+
+      geode->addDrawable(box);
+
+     // Create an invisible box for picking the line.
+     {
+         osg::Box* col = new osg::Box (osg::Vec3(0.3f,0.0f,0.0f), 0.4f, 0.05f, 0.05f);
+         osg::Drawable* geometry = new osg::ShapeDrawable(col);
+         osgManipulator::setDrawableToAlwaysCull(*geometry);
+         geode->addDrawable(geometry);
+     }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ScaleDragger::setupDefaultGeometry()
+   {
+      //_scaleAllDragger->setupDefaultGeometry();
+      setupGeometry(_xDragger, osg::Vec4(1.0f,0.0f,0.0f,1.0f));
+      setupGeometry(_yDragger, osg::Vec4(0.0f,1.0f,0.0f,1.0f));
+      setupGeometry(_zDragger, osg::Vec4(0.0f,0.0f,1.0f,1.0f));
+
+      osg::Quat rotation; rotation.makeRotate(osg::Vec3(1.0f, 0.0f, 0.0f), osg::Vec3(0.0f, 1.0f, 0.0f));
+      _xDragger->setMatrix(osg::Matrix(rotation));
+
+      osg::Quat rotation2; rotation2.makeRotate(osg::Vec3(1.0f, 0.0f, 0.0f), osg::Vec3(0.0f, 0.0f, 1.0f));
+      _yDragger->setMatrix(osg::Matrix(rotation2));
+
+      osg::Geode* geode = new osg::Geode();
+      _scaleAllDragger->addChild(geode);
+      osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(), 0.05f));
+      box->setColor(osg::Vec4(1,1,1,1));
+      geode->addDrawable(box);
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ScaleDragger::handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+   {
+      if(ea.getEventType() == osgGA::GUIEventAdapter::PUSH && ea.getButton() != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
+      {
+         return false;
+      }
+      return BaseClass::handle(pi, ea, aa);
    }
 }

@@ -68,7 +68,7 @@ namespace dtEntityEditor
       QHBoxLayout* rswLayout = new QHBoxLayout(this);
       rswLayout->setContentsMargins(0, 0, 0, 0);
       rswLayout->addWidget(widget);
-      widget->adjustSize();
+      //widget->adjustSize();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ namespace dtEntityEditor
       connect(this, SIGNAL(AddScene(const QString&)), app, SLOT(AddScene(const QString&)));
       connect(this, SIGNAL(SaveScene(const QString&)), app, SLOT(SaveScene(const QString&)));
       connect(this, SIGNAL(SaveAll(const QString&)), app, SLOT(SaveAll(const QString&)));
-      ReadSettings();
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +148,8 @@ namespace dtEntityEditor
 
       resize(settings.value("size", QSize(1024, 800)).toSize());
       move(settings.value("pos").toPoint());
+
+
       settings.endGroup();
    }
 
@@ -227,7 +229,7 @@ namespace dtEntityEditor
    void EditorMainWindow::createToolBars()
    {
       {
-         QToolBar* maintoolbar = new QToolBar(this);
+         QToolBar* maintoolbar = new QToolBar("Commands", this);
          maintoolbar->setObjectName("MainToolBar");
          //tool->setGeometry(0,0,200,20);
 
@@ -249,7 +251,7 @@ namespace dtEntityEditor
       }
 
       {
-         mToolsToolbar = new QToolBar(this);
+         mToolsToolbar = new QToolBar("Tools", this);
          mToolsToolbar->setObjectName("ToolsToolBar");
 
          mToolsToolbar->setMovable(true);
@@ -595,18 +597,22 @@ namespace dtEntityEditor
    {      
       dtEntityQtWidgets::OSGAdapterWidget* glwidget =
             dynamic_cast<dtEntityQtWidgets::OSGAdapterWidget*>(osgGraphWindow->GetQGLWidget());
+      glwidget->setObjectName("glwidget_main");
       connect(glwidget, SIGNAL(TextDropped(const QPointF&, const QString&)),
               this, SLOT(OnTextDroppedOntoGLWidget(const QPointF&, const QString&)));
 
       glwidget->setMinimumSize(800,600);
+      glwidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
       ResizerWidget* r = new ResizerWidget();
-      r->SetWidget(glwidget);  
-      r->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+      r->SetWidget(glwidget);
+
+      r->setObjectName("Resizer");
       QObject::connect(r, SIGNAL(Resized(const QSize&)), this, SLOT(OnViewResized(const QSize&)));
       QObject::connect(r, SIGNAL(Closing()), this, SLOT(OnViewClosing()));
 
       setCentralWidget(r);
 
+      ReadSettings();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
