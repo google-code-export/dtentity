@@ -51,8 +51,9 @@ namespace dtEntitySimulation
       addDragger(_translate2DDragger.get());
 
       setParentDragger(getParentDragger());
+#ifdef OSGMANIPULATOR_PATCHED
       setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-
+#endif
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    }
 
@@ -261,8 +262,9 @@ namespace dtEntitySimulation
       addDragger(_scaleAllDragger.get());
 
       setParentDragger(getParentDragger());
+#ifdef OSGMANIPULATOR_PATCHED
       setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-
+#endif
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    }
 
