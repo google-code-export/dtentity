@@ -9,7 +9,7 @@ function ObjectMotionComponent(eid) {
   this.Enabled = true;
   this.TargetEntityId = 0;
 
-  this.movespeed = 100;
+  this.movespeed = 10;
   this.rotatespeed = 0.001;
   this.rotatekeysspeed = 2;
 
@@ -30,13 +30,16 @@ function ObjectMotionComponent(eid) {
         contextId = camera.ContextId;
      }
 
-     println("TargetId: " + this.TargetEntityId);
      if(this.TargetEntityId !== 0)
      {
         var bounds = getEntitySystem("Layer").getBoundingSphere(this.TargetEntityId);
         osg.Vec3.copy(bounds, pivot);
         radius = bounds[3];
-        camera.Position = [bounds[0], bounds[1] - radius * 4, bounds[2]];
+
+        // tan(5/8 * pi), don't ask
+        var dist = 2.41421356 * radius;
+
+        camera.Position = [bounds[0], bounds[1] - dist, bounds[2]];
         camera.EyeDirection = [0, 1, 0];
         camera.finished();
      }
@@ -98,6 +101,7 @@ function ObjectMotionComponent(eid) {
       if(camera === null || !this.Enabled || contextId != cid) return;
 
       var pos = camera.Position;
+
       var up = camera.Up;
       var eyedir = camera.EyeDirection;
       var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
@@ -105,7 +109,6 @@ function ObjectMotionComponent(eid) {
       osg.Vec3.cross(eyedir, up, toRight);
 
       if(Input.getMouseButton(0, contextId)) {
-
 
          var pivotToCam = osg.Vec3.sub(pos, pivot);
          osg.Quat.makeRotate(mouseX * -0.001, up[0], up[1], up[2], rotateOp);
@@ -121,7 +124,6 @@ function ObjectMotionComponent(eid) {
 
       } else if(Input.getMouseButton(1, contextId)) {
 
-
          var pos = camera.Position;
          var eyedir = camera.EyeDirection;
          osg.Vec3.mult(eyedir, mouseY * radius / 40, tempvec);
@@ -136,6 +138,10 @@ function ObjectMotionComponent(eid) {
         pivot[2] += d;
         var p = camera.Position;
         p[2] += d;
+
+        osg.Vec3.mult(toRight, -mouseX * radius / 40, tempvec);
+        osg.Vec3.add(tempvec, p, p);
+
         camera.Position = p;
         camera.finished();
       }
@@ -219,6 +225,7 @@ function ObjectMotionComponent(eid) {
       }
 
       if(modified) {
+
          camera.Position = pos;
          camera.EyeDirection = eyedir;
 
@@ -231,15 +238,11 @@ function ObjectMotionComponent(eid) {
 function ObjectMotionSystem() {
 
   var self = this;
-  // -----------------------------------------
   var components = [];
-
   this.componentType = "ObjectMotion";
 
   setInterval(function() {
-    for(k in components) {
-      components[k].update();
-    }
+    for(k in components) { components[k].update(); }
   }, 0);
 
   // -----------------------------------------
@@ -285,11 +288,6 @@ function ObjectMotionSystem() {
     }
     return arr;
   }
-
-  // -----------------------------------------
-  this.onPropertyChanged = function(propname) {
-  }
-
 };
 
 EntityManager.addEntitySystem(new ObjectMotionSystem());

@@ -220,6 +220,7 @@ namespace dtEntity
 
       if(window == NULL)
       {
+         LOG_ERROR("Cannot close window!");
          return;
       }
 
@@ -229,7 +230,7 @@ namespace dtEntity
       osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());
       if(compview == NULL)
       {
-         LOG_ERROR("Cannot open window, use CompositeViewer class!");
+         LOG_ERROR("Cannot close window, use CompositeViewer class!");
          return;
       }
 
@@ -250,6 +251,7 @@ namespace dtEntity
       }
       view->setSceneData(NULL);
       compview->stopThreading();
+      window->close();
       compview->removeView(view);
       compview->startThreading();
 

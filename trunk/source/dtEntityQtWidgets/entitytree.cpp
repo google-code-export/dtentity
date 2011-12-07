@@ -193,7 +193,7 @@ namespace dtEntityQtWidgets
          for(; i < parentItem->childCount(); ++i)
          {
             entityitem = parentItem->child(i);
-            if(entityitem->GetItemType() == EntityTreeType::ENTITY && entityitem->mEntityId == entry.mEntityId)
+            if(entityitem->GetItemType() == EntityTreeType::ENTITY && entityitem->mEntityId == eid)
             {
                found = true;
                break;

@@ -291,6 +291,16 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   osg::Camera* CameraComponent::GetCamera()
+   {
+      if(mCamera == NULL)
+      {
+         FetchCamera();
+      }
+      return mCamera;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::Finished()
    {
       if(mCamera.valid())
