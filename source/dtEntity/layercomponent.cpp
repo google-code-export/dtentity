@@ -300,7 +300,7 @@ namespace dtEntity
          LayerAttachPointComponent* current = NULL;
          ls->GetByName(mAttachPoint, current);
          
-         if(attachedNode != NULL && current != NULL)
+         if(attachedNode != NULL && current != NULL && current->GetGroup() != NULL)
          {
             bool success = current->GetGroup()->removeChild(attachedNode);
             if(!success)
