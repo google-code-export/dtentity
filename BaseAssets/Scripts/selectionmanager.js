@@ -41,11 +41,15 @@ var Selection = {
     }
   },
   deselectAllExcept : function(id) {
+   var todeselect = [];
    for (var k in this.ids) {
      var eid = this.ids[k];
      if(id != eid) {
-        this.deselect(eid);
+        todeselect.push(eid);
      }
+   }
+   for(var k in todeselect) {
+      this.deselect(todeselect[k]);
    }
   },
   calcCenter : function (center) {
@@ -149,15 +153,23 @@ var UndoStack = {
 ///////////////////////////////////// Copy & Paste system //////////////////////////////////////
 var Clipboard = {
   spawnerbuffer : [],
-  cut: function () {
-      this.copy();
+  del: function () {
+      var todel = [];
+
       for (var k in Selection.ids) {
-        var id = Selection.ids[k];
+         todel.push(Selection.ids[k]);
+      }
+      for(var k in todel) {
+        var id = todel[k];
         Selection.deselect(id);
         EntityManager.removeFromScene(id);
         EntityManager.killEntity(id);
       }
   },
+   cut: function () {
+       this.copy();
+       this.del();
+   },
   copy: function () {
 
     this.spawnerbuffer = [];

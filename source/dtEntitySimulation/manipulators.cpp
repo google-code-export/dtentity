@@ -340,4 +340,14 @@ namespace dtEntitySimulation
       }
       return BaseClass::handle(pi, ea, aa);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool TrackballDragger::handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+   {
+      if(ea.getEventType() == osgGA::GUIEventAdapter::PUSH && ea.getButton() != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
+      {
+         return false;
+      }
+      return BaseClass::handle(pi, ea, aa);
+   }
 }

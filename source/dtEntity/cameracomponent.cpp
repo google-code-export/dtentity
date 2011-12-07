@@ -153,18 +153,12 @@ namespace dtEntity
       {
          SetCullingMode(prop.StringIdValue());
       }
-      else if(propname == FieldOfViewId || propname == AspectRatioId ||
-         propname == NearClipId || propname == FarClipId)
-      {
-
-      }
       else if(propname == OrthoLeftId || propname == OrthoRightId ||
          propname == OrthoBottomId || propname == OrthoTopId ||
          propname == OrthoZNearId || propname == OrthoZFarId ||
          propname == FieldOfViewId || propname == AspectRatioId ||
          propname == NearClipId || propname == FarClipId ||
          propname == ProjectionModeId
-
       )
       {
          UpdateProjectionMatrix();

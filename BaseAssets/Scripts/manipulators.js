@@ -128,6 +128,9 @@ var ToolHolder = {
        if(key == "y" && Input.getKey("Control_L")) {
          UndoStack.redo();
        }
+       if(key == "Delete") {
+         Clipboard.del();
+       }
    }
 
   },
@@ -189,6 +192,58 @@ EntityManager.registerForMessages("ToolActivatedMessage", OnToolActivatedMessage
 
 //////////////////////////////// Select tool /////////////////////////////
 
+function doSelection() {
+   var mouseX = Input.getAxis(Axis.MouseXRaw);
+   var mouseY = Input.getAxis(Axis.MouseYRaw);
+   var pick = Screen.pickEntity(mouseX, mouseY);
+
+   if (pick === null) {
+     return false;
+   }
+
+    var undoOp = {
+      oldSelection: [],
+      newSelection: [],
+      undo: function () {
+
+        // clear selection
+        for (var k in Selection.ids) {
+          Selection.deselect(Selection.ids[k]);
+        }
+
+        for (var k in this.oldSelection) {
+          Selection.select(this.oldSelection[k]);
+        }
+      },
+      redo: function () {
+
+        // clear selection
+        for (var k in Selection.ids) {
+          Selection.deselect(Selection.ids[k]);
+        }
+        for (var k in this.newSelection) {
+          Selection.select(this.newSelection[k]);
+        }
+      }
+    };
+
+    for (var k in Selection.ids) {
+      undoOp.oldSelection.push(Selection.ids[k]);
+    }
+
+
+    var usemulti = (Input.getKey("Control_L"));
+    RequestEntitySelect("", {
+      AboutEntity: pick.Id,
+      UseMultiSelect: usemulti
+    });
+
+    for (var k in Selection.ids) {
+      undoOp.newSelection.push(Selection.ids[k]);
+    }
+    UndoStack.pushOperation(undoOp);
+    return true;
+};
 
 function SelectTool() {
   this.name = "Select";
@@ -198,53 +253,7 @@ function SelectTool() {
    this.mouseButtonDown = function(button, handled) {
       if(button === 0 && !handled) {
 
-         var undoOp = {
-           oldSelection: [],
-           newSelection: [],
-           undo: function () {
-
-             // clear selection
-             for (var k in Selection.ids) {
-               Selection.deselect(Selection.ids[k]);
-             }
-
-             for (var k in this.oldSelection) {
-               Selection.select(this.oldSelection[k]);
-             }
-           },
-           redo: function () {
-
-             // clear selection
-             for (var k in Selection.ids) {
-               Selection.deselect(Selection.ids[k]);
-             }
-             for (var k in this.newSelection) {
-               Selection.select(this.newSelection[k]);
-             }
-           }
-         };
-
-         for (var k in Selection.ids) {
-           undoOp.oldSelection.push(Selection.ids[k]);
-         }
-
-         var mouseX = Input.getAxis(Axis.MouseXRaw);
-         var mouseY = Input.getAxis(Axis.MouseYRaw);
-         var pick = Screen.pickEntity(mouseX, mouseY);
-
-         if (pick === null) {
-           return;
-         }
-         var usemulti = (Input.getKey("Control_L"));
-         RequestEntitySelect("", {
-           AboutEntity: pick.Id,
-           UseMultiSelect: usemulti
-         });
-
-         for (var k in Selection.ids) {
-           undoOp.newSelection.push(Selection.ids[k]);
-         }
-         UndoStack.pushOperation(undoOp);
+         doSelection();
       }
    }
 }
@@ -257,6 +266,7 @@ ToolHolder.useTool("Select");
 //////////////////////////////// Translate tool /////////////////////////////
 
 function TranslateTool() {
+  var self = this;
   this.name = "Translate";
   this.iconPath = ":icons/transform-move.png";
   this.shortCut = "Ctrl+t";
@@ -290,6 +300,15 @@ function TranslateTool() {
 
 
   this.mouseButtonDown = function(button, handled) {
+
+      if(button === 0 && !handled) {
+         self.deactivate();
+         doSelection();
+         self.activate();
+         heights = {};
+         return;
+      }
+
       if(button === 0) {
          initialCamPos = this.getCameraPosition();
 
@@ -401,6 +420,7 @@ ToolHolder.addTool(translateTool);
 //////////////////////////////// Rotate tool /////////////////////////////
 
 function RotateTool() {
+   var self = this;
    this.name = "Rotate";
    this.iconPath = ":icons/transform-rotate.png";
    this.shortCut = "Ctrl+r";
@@ -428,14 +448,23 @@ function RotateTool() {
       manipulators = [];
   }
 
-   this.mouseButtonDown = function(button, handled) {
-      var doclone = Input.getKey("Shift_L");
-      var clones = [];
-      if(doclone) {
-        clones = Selection.clone();
-      }
+  this.mouseButtonDown = function(button, handled) {
+       if(button === 0 && !handled) {
+          self.deactivate();
+          doSelection();
+          self.activate();
+          manipulators = [];
+          return;
+       }
 
        if(button === 0) {
+
+          var doclone = Input.getKey("Shift_L");
+          var clones = [];
+          if(doclone) {
+            clones = Selection.clone();
+          }
+
           this.undoOp = {
 
             beforeRot : [],
@@ -559,6 +588,7 @@ ToolHolder.addTool(rotateTool);
 //////////////////////////////// Scale tool /////////////////////////////
 
 function ScaleTool() {
+  var self = this;
   this.name = "Scale";
   this.iconPath = ":icons/transform-scale.png";
   this.shortCut = "Ctrl+s";
@@ -589,6 +619,13 @@ function ScaleTool() {
   }
 
    this.mouseButtonDown = function(button, handled) {
+       if(button === 0 && !handled) {
+          self.deactivate();
+          doSelection();
+          self.activate();
+          manipulators = [];
+          return;
+       }
        if(button === 0) {
           initialCamPos = this.getCameraPosition();
 

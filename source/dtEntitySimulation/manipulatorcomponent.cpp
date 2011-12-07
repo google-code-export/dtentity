@@ -426,7 +426,7 @@ namespace dtEntitySimulation
       }
       else if(draggerType == TrackballDraggerId)
       {
-         SetNode(new osgManipulator::TrackballDragger());
+         SetNode(new TrackballDragger());
       }
       else if(draggerType == Translate1DDraggerId)
       {

@@ -442,15 +442,64 @@ namespace dtEntity
          return;
       }
 
-      osg::Box* box = new osg::Box(b.center(), b.xMax() - b.xMin(), b.yMax() - b.yMin(), b.zMax() - b.zMin());
-      osg::ShapeDrawable* drawable = new osg::ShapeDrawable(box);
-      drawable->setColor(osg::Vec4(1,1,1,1));
+      osg::Geometry* geometry = new osg::Geometry();
+      osg::Vec3Array* a = new osg::Vec3Array(24);
+      geometry->setVertexArray(a);
 
-      // linux crashes in generateDisplayList if this is turned on, no idea why
-      drawable->setUseDisplayList(false);
+      float xmax = b.xMax();
+      float xmin = b.xMin();
+      float ymax = b.yMax();
+      float ymin = b.yMin();
+      float zmax = b.zMax();
+      float zmin = b.zMin();
+
+      osg::Vec3 v0(xmin, ymin, zmin);
+      osg::Vec3 v1(xmin, ymax, zmin);
+      osg::Vec3 v2(xmax, ymax, zmin);
+      osg::Vec3 v3(xmax, ymin, zmin);
+      osg::Vec3 v4(xmin, ymin, zmax);
+      osg::Vec3 v5(xmin, ymax, zmax);
+      osg::Vec3 v6(xmax, ymax, zmax);
+      osg::Vec3 v7(xmax, ymin, zmax);
+
+      a->at( 0).set(v0);
+      a->at( 1).set(v1);
+      a->at( 2).set(v1);
+      a->at( 3).set(v2);
+      a->at( 4).set(v2);
+      a->at( 5).set(v3);
+      a->at( 6).set(v3);
+      a->at( 7).set(v0);
+
+      a->at( 8).set(v0);
+      a->at( 9).set(v4);
+      a->at(10).set(v1);
+      a->at(11).set(v5);
+      a->at(12).set(v2);
+      a->at(13).set(v6);
+      a->at(14).set(v3);
+      a->at(15).set(v7);
+
+      a->at(16).set(v4);
+      a->at(17).set(v5);
+      a->at(18).set(v5);
+      a->at(19).set(v6);
+      a->at(20).set(v6);
+      a->at(21).set(v7);
+      a->at(22).set(v7);
+      a->at(23).set(v4);
+
+
+      osg::Vec4 c[] = { osg::Vec4(1,1,1,1) };
+      geometry->setColorArray(new osg::Vec4Array(1, c));
+      geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+
+      geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 24));
+
       osg::Geode* geode = new osg::Geode();
 
-      geode->addDrawable(drawable);
+      geode->addDrawable(geometry);
       geode->setName("SelectionBounds");
       geode->setNodeMask(dtEntity::NodeMasks::VISIBLE);
 
@@ -463,6 +512,11 @@ namespace dtEntity
 
       // make box wireframe
       osg::StateSet* stateset = geode->getOrCreateStateSet();
+      osg::LineWidth* lw = new osg::LineWidth();
+      lw->setWidth(2);
+      stateset->setAttributeAndModes(lw, osg::StateAttribute::ON);
+
+
       osg::PolygonOffset* polyoffset = new osg::PolygonOffset();
       polyoffset->setFactor(-1.0f);
       polyoffset->setUnits(-1.0f);
@@ -470,12 +524,8 @@ namespace dtEntity
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
       stateset->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       stateset->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
-      osg::LineWidth* lw = new osg::LineWidth();
-      lw->setWidth(2);
-      stateset->setAttributeAndModes(lw, osg::StateAttribute::ON);
       stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-      stateset->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-      stateset->setRenderBinDetails(80, "RenderBin");
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -86,4 +86,13 @@ namespace dtEntitySimulation
       osg::ref_ptr<osgManipulator::Scale1DDragger> _zDragger;
       osg::ref_ptr<ScaleAllDragger> _scaleAllDragger;
    };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class TrackballDragger : public osgManipulator::TrackballDragger
+   {
+      typedef osgManipulator::TrackballDragger BaseClass;
+   public:
+      virtual bool handle(const osgManipulator::PointerInfo& pi, const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+   };
 }
