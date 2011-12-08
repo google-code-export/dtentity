@@ -525,7 +525,8 @@ namespace dtEntity
       stateset->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       stateset->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-
+      stateset->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+      stateset->setRenderBinDetails(80, "RenderBin");
    }
 
    ////////////////////////////////////////////////////////////////////////////////

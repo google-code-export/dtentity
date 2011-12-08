@@ -923,11 +923,17 @@ namespace dtEntityQtWidgets
       horizontalLayout->setContentsMargins(0, 0, 0, 0);
       mLabel = new QLabel();
       horizontalLayout->addWidget(mLabel);
-      QPushButton* button = new QPushButton();
-      button->setText("Choose");
-      button->setMaximumHeight(15);
-      horizontalLayout->addWidget(button);
-      connect(button, SIGNAL(clicked()), this, SLOT(GetFile()));
+      QPushButton* choosebutton = new QPushButton();
+      choosebutton->setText("Choose");
+      choosebutton->setMaximumHeight(15);
+      horizontalLayout->addWidget(choosebutton);
+      connect(choosebutton, SIGNAL(clicked()), this, SLOT(GetFile()));
+
+      QPushButton* clearbutton = new QPushButton();
+      clearbutton->setText("Clear");
+      clearbutton->setMaximumHeight(15);
+      horizontalLayout->addWidget(clearbutton);
+      connect(clearbutton, SIGNAL(clicked()), this, SLOT(ClearFile()));
       
       QPalette palette;
       QColor color(255, 255, 255);
@@ -953,6 +959,13 @@ namespace dtEntityQtWidgets
          mDelegate->FinishedEditing(this);
       }
       sel.close();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FileSelectorWidget::ClearFile()
+   {
+      mLabel->setText("");
+      mDelegate->FinishedEditing(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -297,7 +297,7 @@ namespace dtEntityQtWidgets
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi = new osgUtil::LineSegmentIntersector(start, start + pickray * 100000);
 
       osgUtil::IntersectionVisitor iv(lsi.get());
-      iv.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+      iv.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
       iv.setUseKdTreeWhenAvailable(true);
 
       dtEntity::LayerAttachPointSystem* layersys;

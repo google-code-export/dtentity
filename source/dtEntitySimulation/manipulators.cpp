@@ -327,7 +327,7 @@ namespace dtEntitySimulation
 
       osg::Geode* geode = new osg::Geode();
       _scaleAllDragger->addChild(geode);
-      osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(), 0.05f));
+      osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(), 0.1f));
       box->setColor(osg::Vec4(1,1,1,1));
       geode->addDrawable(box);
 

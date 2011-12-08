@@ -141,7 +141,13 @@ namespace dtEntityQtWidgets
 
       if(expandToPath != "")
       {
-         mFileTree->setCurrentIndex(mModel->index(expandToPath));
+         QModelIndex idx = mModel->index(expandToPath);
+
+         mFileTree->setCurrentIndex(idx);
+
+         // this does not seem to work:
+         mFileTree->scrollTo(idx);
+
       }
    }
 
