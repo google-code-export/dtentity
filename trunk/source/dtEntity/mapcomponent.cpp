@@ -161,7 +161,8 @@ namespace dtEntity
       mDeleteEntityFunctor = MessageFunctor(this, &MapSystem::OnDeleteEntity);
       em.RegisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor, "MapSystem::OnDeleteEntity");
 
-      RegisterMessages(mMessageFactory);
+      RegisterCommandMessages(mMessageFactory);
+      RegisterSystemMessages(mMessageFactory);
    }
 
    ////////////////////////////////////////////////////////////////////////////

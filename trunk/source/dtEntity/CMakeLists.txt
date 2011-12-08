@@ -51,6 +51,7 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(LIB_PUBLIC_HEADERS
+  ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/applicationcomponent.h
   ${HEADER_PATH}/basemessages.h
   ${HEADER_PATH}/cameracomponent.h
@@ -100,6 +101,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
   ${HEADER_PATH}/stringid.h
+  ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/textlabelcomponent.h
   ${HEADER_PATH}/texturelabelcomponent.h
   ${HEADER_PATH}/threadsafequeue.h    
@@ -109,8 +111,8 @@ SET(LIB_PUBLIC_HEADERS
 
 SET(LIB_SOURCES
 	
+  ${SOURCE_PATH}/commandmessages.cpp
   ${SOURCE_PATH}/applicationcomponent.cpp
-  ${SOURCE_PATH}/basemessages.cpp
   ${SOURCE_PATH}/cameracomponent.cpp
   ${SOURCE_PATH}/componentpluginmanager.cpp
   ${SOURCE_PATH}/crc32.cpp
@@ -138,6 +140,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/spawner.cpp
   ${SOURCE_PATH}/skyboxcomponent.cpp
   ${SOURCE_PATH}/stringid.cpp
+  ${SOURCE_PATH}/systemmessages.cpp
   ${SOURCE_PATH}/textlabelcomponent.cpp
   ${SOURCE_PATH}/texturelabelcomponent.cpp
   ${SOURCE_PATH}/windowmanager.cpp

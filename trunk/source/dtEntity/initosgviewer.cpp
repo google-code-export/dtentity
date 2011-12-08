@@ -33,6 +33,7 @@
 #include <dtEntity/property.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/windowmanager.h>
+#include <dtEntity/systemmessages.h>
 #include <osgGA/GUIEventAdapter>
 #include <osg/Notify>
 
@@ -233,6 +234,8 @@ namespace dtEntity
 
       mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
 
+      StartSystemMessage msg;
+      em->EnqueueMessage(msg);
       return true;
    }
 }
