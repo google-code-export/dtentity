@@ -91,6 +91,51 @@ namespace dtEntity
       BoolProperty mEnable;
    };
 
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
+    * Cause camera to be moved to entity and change attachment mode
+    */
+   class DT_ENTITY_EXPORT MovementJumpToMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      static const StringId DistanceId;
+      static const StringId KeepCameraDirectionId;
+      static const StringId ContextIdId;
+
+      MovementJumpToMessage();
+
+      virtual Message* Clone() const { return CloneContainer<MovementJumpToMessage>(); }
+
+      EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
+      void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
+
+      // default is 10
+      double GetDistance() const { return mDistance.Get(); }
+      void SetDistance(double v) { mDistance.Set(v); }
+
+      // if true: current eye direction of camera is preserved.
+      // if false: rotate camera from current position to target entity, then
+      // move until distance is reached
+      // true by default
+      bool GetKeepCameraDirection() const { return mKeepCameraDirection.Get(); }
+      void SetKeepCameraDirection(bool v) { mKeepCameraDirection.Set(v); }
+
+      // camera context
+      int GetContextId() const { return mContextId.Get(); }
+      void SetContextId(int v) { mContextId.Set(v); }
+
+   private:
+
+      UIntProperty mAboutEntityId;
+      DoubleProperty mDistance;
+      BoolProperty mKeepCameraDirection;
+      IntProperty mContextId;
+   };
+
    ///////////////////////////////////////////////////////////////////////////////
    /**
     * Cause an animation to be played

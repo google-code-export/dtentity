@@ -203,8 +203,10 @@ namespace dtEntityQtWidgets
 
    protected slots:
 
+      void OnDoubleClick(const QModelIndex&);
       void ShowContextMenu(const QPoint&);     
       void OnDeleteEntityAction(bool);
+      void OnJumpToEntityAction(bool);
       void OnAddEntityAction(bool);
       void OnAddNewMapAction(bool);
       void OnAddExistingMapAction(bool);
@@ -226,6 +228,7 @@ namespace dtEntityQtWidgets
       QTreeView* mTreeView;
       QModelIndex mContextMenuSelectedIndex;
       QAction* mDeleteEntityAction;
+      QAction* mJumpToEntityAction;
       QAction* mDeleteSpawnerAction;
       QAction* mSpawnSpawnerAction;
       QAction* mAddEntityAction;

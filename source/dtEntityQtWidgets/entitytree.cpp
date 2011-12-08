@@ -20,7 +20,8 @@
 
 #include <dtEntityQtWidgets/entitytree.h>
 
-#include <dtEntity/basemessages.h>
+#include <dtEntity/commandmessages.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
@@ -586,6 +587,8 @@ namespace dtEntityQtWidgets
       mTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(mTreeView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(ShowContextMenu(const QPoint&)));
 
+      connect(mTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(OnDoubleClick(const QModelIndex&)));
+
       mAddEntityAction = new QAction(tr("Add Entity"), this);
       connect(mAddEntityAction, SIGNAL(triggered(bool)), this, SLOT(OnAddEntityAction(bool)));
 
@@ -603,6 +606,9 @@ namespace dtEntityQtWidgets
 
       mDeleteEntityAction = new QAction(tr("Delete Entity"), this);
       connect(mDeleteEntityAction, SIGNAL(triggered(bool)), this, SLOT(OnDeleteEntityAction(bool)));
+
+      mJumpToEntityAction = new QAction(tr("Jump to"), this);
+      connect(mJumpToEntityAction, SIGNAL(triggered(bool)), this, SLOT(OnJumpToEntityAction(bool)));
 
       mDeleteSpawnerAction = new QAction(tr("Delete Spawner"), this);
       connect(mDeleteSpawnerAction, SIGNAL(triggered(bool)), this, SLOT(OnDeleteSpawnerAction(bool)));
@@ -637,6 +643,17 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeView::OnDoubleClick(const QModelIndex& idx)
+   {
+      EntityTreeItem* item = GetInternal(idx);
+      dtEntity::MovementJumpToMessage msg;
+      msg.SetAboutEntityId(item->mEntityId);
+      msg.SetDistance(50);
+      msg.SetKeepCameraDirection(true);
+      static_cast<EntityTreeModel*>(mTreeView->model())->GetEntityManager().EnqueueMessage(msg);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::ShowContextMenu(const QPoint& p)
    {
       QModelIndex index = mTreeView->indexAt(p);
@@ -650,6 +667,7 @@ namespace dtEntityQtWidgets
             case EntityTreeType::ENTITY:
             {
                QMenu menu(this);
+               menu.addAction(mJumpToEntityAction);
                menu.addAction(mDeleteEntityAction);
                menu.exec(mTreeView->mapToGlobal(p));
                break;
@@ -919,6 +937,21 @@ namespace dtEntityQtWidgets
       {
          EntityTreeItem* item = GetInternal(mContextMenuSelectedIndex);
          emit(DeleteEntity(item->mEntityId));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeView::OnJumpToEntityAction(bool)
+   {
+      if(mContextMenuSelectedIndex.isValid())
+      {
+         EntityTreeItem* item = GetInternal(mContextMenuSelectedIndex);
+
+         dtEntity::MovementJumpToMessage msg;
+         msg.SetAboutEntityId(item->mEntityId);
+         msg.SetDistance(50);
+         msg.SetKeepCameraDirection(true);
+         static_cast<EntityTreeModel*>(mTreeView->model())->GetEntityManager().EnqueueMessage(msg);
       }
    }
 
