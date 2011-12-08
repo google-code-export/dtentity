@@ -485,6 +485,7 @@ namespace dtEntityQtWidgets
       
      public slots:
         void GetFile();
+        void ClearFile();
 
    private:
       QString mFilters;

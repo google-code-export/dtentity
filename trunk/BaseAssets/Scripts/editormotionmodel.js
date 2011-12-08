@@ -36,6 +36,7 @@ function EditorMotionComponent(eid) {
          if(this.Projection == "3d") {
             camera.ProjectionMode = "ModePerspective";
             camera.EyeDirection = last3dEyeDirection;
+            camera.Up = [0,0,1];
          }
          else
          {
@@ -131,7 +132,7 @@ function EditorMotionComponent(eid) {
          } else {
 
             var orthoZoomSpeed = 1.2;
-            if(dir < 0) {
+            if(dir > 0) {
                zoom /= orthoZoomSpeed;
             } else {
                zoom *= orthoZoomSpeed;
@@ -139,8 +140,8 @@ function EditorMotionComponent(eid) {
 
             camera.OrthoLeft = -zoom * 1000;
             camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = -zoom * 1000;
-            camera.OrthoBottom = zoom * 1000;
+            camera.OrthoTop = zoom * 1000;
+            camera.OrthoBottom = -zoom * 1000;
 
          }
       }
@@ -179,14 +180,14 @@ function EditorMotionComponent(eid) {
             osg.Vec3.add(pos, tempvec, pos);
 
             osg.Vec3.cross(toRight, eyedir, tempvec);
-            osg.Vec3.mult(tempvec, mouseY * zoom * 4, tempvec);
+            osg.Vec3.mult(tempvec, -mouseY * zoom * 4, tempvec);
             osg.Vec3.add(pos, tempvec, pos);
 
             camera.Position = pos
             camera.OrthoLeft = -zoom * 1000;
             camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = -zoom * 1000;
-            camera.OrthoBottom = zoom * 1000;
+            camera.OrthoTop = zoom * 1000;
+            camera.OrthoBottom = -zoom * 1000;
             camera.finished();
          }
          return true;
