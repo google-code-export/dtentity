@@ -29,6 +29,7 @@ namespace dtEntity
    {
       em.RegisterMessageType<DeleteEntityMessage>(DeleteEntityMessage::TYPE);
       em.RegisterMessageType<EnableDebugDrawingMessage>(EnableDebugDrawingMessage::TYPE);
+      em.RegisterMessageType<MovementJumpToMessage>(MovementJumpToMessage::TYPE);
       em.RegisterMessageType<PlayAnimationMessage>(PlayAnimationMessage::TYPE);
       em.RegisterMessageType<RequestEntityDeselectMessage>(RequestEntityDeselectMessage::TYPE);
       em.RegisterMessageType<RequestEntitySelectMessage>(RequestEntitySelectMessage::TYPE);
@@ -60,6 +61,24 @@ namespace dtEntity
       : Message(TYPE)
    {
       this->Register(EnableId, &mEnable);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType MovementJumpToMessage::TYPE(SID("MovementJumpToMessage"));
+   const StringId MovementJumpToMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId MovementJumpToMessage::KeepCameraDirectionId(SID("KeepCameraDirection"));
+   const StringId MovementJumpToMessage::DistanceId(SID("Distance"));
+   const StringId MovementJumpToMessage::ContextIdId(SID("ContextId"));
+
+   MovementJumpToMessage::MovementJumpToMessage()
+      : Message(TYPE)
+   {
+      this->Register(AboutEntityId, &mAboutEntityId);
+      this->Register(DistanceId, &mDistance);
+      this->Register(KeepCameraDirectionId, &mKeepCameraDirection);
+      this->Register(ContextIdId, &mContextId);
+      mDistance.Set(10);
+      mKeepCameraDirection.Set(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
