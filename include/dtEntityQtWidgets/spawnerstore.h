@@ -37,17 +37,22 @@ namespace dtEntityQtWidgets
       SpawnerList();
       void mousePressEvent(QMouseEvent *event);
 
+      void AddCategory(const QString&);
+
    protected slots:
 
       void DeleteSelectedSpawners();
+      void OnReclassify(QAction*);
 
    signals:
 
       void spawnerClicked(QListWidgetItem*);
       void DeleteSpawner(const QString& name);
+      void ChangeCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
 
    private:
        QAction* mDeleteSpawnerAction;
+       QMenu* mReclassifyMeny;
        QListWidgetItem* mSelected;
    };
 
@@ -62,24 +67,30 @@ namespace dtEntityQtWidgets
       SpawnerStoreView(QWidget* parent = NULL);
       virtual ~SpawnerStoreView();
 
+      QWidget* GetButtons() const { return mButtons; }
+
+      QStringList GetCategories();
+
    public slots:
 
       void OnAddSpawner(const QString& name, const QString& category, const QString& iconpath);
       void OnRemoveSpawner(const QString& name, const QString& category);
       void CategoryChanged(const QString&);
       void OnItemClicked(QListWidgetItem*);
+      void OnAddCategoryButtonClicked();
 
 
    signals:
       void SpawnerClicked(const QString& name, const QString& category);
       void DeleteSpawner(const QString&);
+      void ChangeSpawnerCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
    private:
 
       void ShowHideByCategory();
 
-      QListWidget* mSpawnerList;
+      SpawnerList* mSpawnerList;
       QComboBox* mCategories;
-
+      QWidget* mButtons;
 
    }; 
 
@@ -110,6 +121,7 @@ namespace dtEntityQtWidgets
       void OnTextDroppedOntoGLWidget(const QPointF& pos, const QString&);
       void OnSpawnerClicked(const QString& name, const QString& category);
       void SpawnerDeleted(const QString&);
+      void OnChangeSpawnerCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
 
    private:
       dtEntity::EntityManager* mEntityManager;

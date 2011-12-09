@@ -21,6 +21,7 @@
 #include <dtEntityQtWidgets/propertydelegate.h>
 
 #include <dtEntityQtWidgets/assetselector.h>
+#include <dtEntityQtWidgets/delegatefactory.h>
 #include <dtEntityQtWidgets/propertyeditor.h>
 #include <iostream>
 #include <dtEntity/property.h>
@@ -36,6 +37,43 @@ namespace dtEntityQtWidgets
       PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);  
       if(!pitem) { return NULL; }
       return pitem->mDelegate;      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertySubDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+   {
+
+      if(index.column() == 2)
+      {
+         TreeItem* item = static_cast<TreeItem*>(index.parent().internalPointer());
+         if(dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
+         {
+
+            QPushButton b;
+            b.setText("-");
+            b.resize(20, option.rect.size().height());
+            painter->save();
+            painter->translate(option.rect.topLeft());
+            b.render(painter);
+            painter->restore();
+
+            mRemoveButtonArea = b.rect();
+            return;
+         }
+      }
+
+      BaseClass::paint(painter, option, index);
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertySubDelegate::MouseButtonPressed(const QModelIndex& index, int x, int y)
+   {
+      if(mRemoveButtonArea.contains(QPoint(x, y)))
+      {
+         const PropertyEditorModel* model = static_cast<const PropertyEditorModel*>(index.model());
+         const_cast<PropertyEditorModel*>(model)->RemoveArrayEntry(index);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +346,7 @@ namespace dtEntityQtWidgets
       }
       else
       {
-         QItemDelegate::paint(painter, option, index);
+         BaseClass::paint(painter, option, index);
       }
    }
 
@@ -320,6 +358,7 @@ namespace dtEntityQtWidgets
          const PropertyEditorModel* model = static_cast<const PropertyEditorModel*>(index.model());
          const_cast<PropertyEditorModel*>(model)->AppendArrayEntry(index);
       }
+      BaseClass::MouseButtonPressed(index, x, y);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -480,7 +519,7 @@ namespace dtEntityQtWidgets
       }
       else
       {
-         QItemDelegate::paint(painter, option, index);
+         BaseClass::paint(painter, option, index);
       }
    }
 

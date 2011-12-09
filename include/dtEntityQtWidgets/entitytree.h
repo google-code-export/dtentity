@@ -152,6 +152,8 @@ namespace dtEntityQtWidgets
       dtEntity::MessagePump mMessagePump;
       dtEntity::MessageFunctor mEnqueueFunctor;
       dtEntity::EntityManager* mEntityManager;
+
+      EntityTreeItem* mEntitySystemRootItem;
    };
 
 

@@ -160,6 +160,7 @@ namespace dtEntityQtWidgets
    public slots:
 
       void AppendArrayEntry(const QModelIndex& index);
+      void RemoveArrayEntry(const QModelIndex& index);
                   
       void EmitChanges();
       void OnEntitySelected(dtEntity::EntityId id);
@@ -181,6 +182,7 @@ namespace dtEntityQtWidgets
 
    signals:
 
+      void ResetView();
       void ExpandFullTree();
       void ExpandTree(const QModelIndex& index);  
 
@@ -252,6 +254,7 @@ namespace dtEntityQtWidgets
       void EnableAddComponent(bool enable);
       void ShowAddComponentDialog();
 
+      void SetColumnWidths();
    protected:
 
       virtual void closeEvent(QCloseEvent* evt)

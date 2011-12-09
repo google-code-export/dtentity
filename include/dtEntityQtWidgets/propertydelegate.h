@@ -37,6 +37,8 @@ namespace dtEntityQtWidgets
    class PropertySubDelegate 
       : public QItemDelegate
    {
+      typedef QItemDelegate BaseClass;
+
    public:
       PropertySubDelegate(QObject* parent = 0)
          : QItemDelegate(parent)
@@ -47,7 +49,12 @@ namespace dtEntityQtWidgets
          return QIcon("ProjectAssets:icons/property.png"); 
       }
 
-      virtual void MouseButtonPressed(const QModelIndex& index, int x, int y) { }
+      virtual void MouseButtonPressed(const QModelIndex& index, int x, int y);
+
+      void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+   private:
+      mutable QRect mRemoveButtonArea;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -85,6 +92,7 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
    public:
 
      CharPropertyDelegate(QObject *parent = 0);
@@ -107,6 +115,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      FloatPropertyDelegate(QObject *parent = 0);
@@ -128,6 +138,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -152,6 +164,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -185,6 +199,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      BoolPropertyDelegate(QObject *parent = 0);
@@ -207,6 +223,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      ComponentPropertyDelegate(QObject *parent = 0);
@@ -228,6 +246,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -254,6 +274,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      DoublePropertyDelegate(QObject *parent = 0);
@@ -276,6 +298,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -301,6 +325,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      GroupPropertyDelegate(QObject *parent = 0);
@@ -322,6 +348,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -345,6 +373,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      MatrixPropertyDelegate(QObject *parent = 0);
@@ -366,6 +396,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -389,6 +421,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      StringIdPropertyDelegate(QObject *parent = 0);
@@ -410,6 +444,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -433,6 +469,8 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+      typedef PropertySubDelegate BaseClass;
+
    public:
       
      Vec3PropertyDelegate(QObject *parent = 0);
@@ -454,6 +492,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -478,6 +518,7 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+
    public:
       FileSelectorWidget(const QString& filters, FilePathPropertyDelegate* dlgt, QWidget* parent = 0);
       QLabel* mLabel;
@@ -497,6 +538,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
@@ -526,6 +569,7 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
+
    public:
       ColorSelectorWidget(ColorPropertyDelegate* dlgt, QWidget* parent = 0);
       QLabel* mLabel;
@@ -543,6 +587,8 @@ namespace dtEntityQtWidgets
       : public PropertySubDelegate
    {
       Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
 
    public:
       
