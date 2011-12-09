@@ -161,4 +161,86 @@ function createSpawnerFromEntity(entityid) {
   return spawner;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// function for formatting numbers.
+// number is padded with "0" until <length> positive digits are
+// shown. <decimals> decimals are shown.
+function formatNum(num, length, decimals)
+{
+   var text = "" + Math.abs(num).toFixed(decimals);
+   while(text.length < length + decimals + 1) {
+      text = "0" + text;
+   }
+   return (num < 0) ? "-" + text : " " + text;
+}
 
+
+// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
+// returns [ heading, attitude, bank]
+function quatToEuler(q, r)
+{
+   if (r === undefined) {
+       r = [];
+   }
+   var X = q[0];
+   var Y = q[1];
+   var Z = q[2];
+   var W = q[3];
+
+   var t = X * Y + Z * W;
+   if(t > 0.499) {
+      r[0] = 2 * Math.atan2(X,W);
+      r[1] = Math.PI / 2;
+      r[2] = 0;
+
+   } else if(t < -0.499) {
+      r[0] = -2 * Math.atan2(X,W);
+      r[1] = - Math.PI / 2;
+      r[2] = 0;
+   } else  {
+
+      var sqx = X*X;
+      var sqy = Y*Y;
+      var sqz = Z*Z;
+
+      r[0] = Math.atan2(2 * Y * W - 2 * X * Z, 1 - 2 * sqy - 2 * sqz);
+      r[1] = Math.asin(2 * t);
+      r[2] = Math.atan2(2 * X * W - 2 * Y * Z, 1 - 2 * sqx - 2 * sqz);
+
+
+   }
+   return r;
+}
+
+function eulerToQuat(euler, r)
+{
+   if (r === undefined) {
+       r = [];
+   }
+   var heading = euler[0];
+   var attitude = euler[1];
+   var bank = euler[2];
+   var c1 = Math.cos(heading / 2);
+   var c2 = Math.cos(attitude / 2);
+   var c3 = Math.cos(bank / 2);
+   var s1 = Math.sin(heading / 2);
+   var s2 = Math.sin(attitude / 2);
+   var s3 = Math.sin(bank / 2);
+
+   r[0] = s1 * s2 * c3 + c1 * c2 * s3
+   r[1] = s1 * c2 * c3 + c1 * s2 * s3
+   r[2] = c1 * s2 * c3 - s1 * c2 * s3
+   r[3] = c1 * c2 * c3 - s1 * s2 * s3
+   return r;
+}
+
+var degToRadFac = Math.PI / 180.0;
+function degToRad(deg) {
+   return deg * degToRadFac;
+}
+
+
+var radToDegFac = 180.0 / Math.PI ;
+function radToDeg(deg) {
+   return deg * radToDegFac;
+}

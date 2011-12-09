@@ -98,7 +98,6 @@ namespace dtEntity
    class DT_ENTITY_EXPORT LightSystem
       : public dtEntity::DefaultEntitySystem<LightComponent>
    {
-      static const dtEntity::StringId EnabledId;
       typedef dtEntity::DefaultEntitySystem<LightComponent> BaseClass;
       
    public:
@@ -106,7 +105,6 @@ namespace dtEntity
       LightSystem(dtEntity::EntityManager& em);     
 
    private:
-
 
    };
 }

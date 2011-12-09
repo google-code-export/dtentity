@@ -34,6 +34,7 @@ namespace osgLibRocket
 		: _scissorsEnabled(false)
 		, _nextTextureId(1)
 		, _nextGeometryId(1)		
+		, _fullScreen(false)
 	{
 	}
 

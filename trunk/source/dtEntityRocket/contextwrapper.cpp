@@ -62,9 +62,12 @@ namespace dtEntityRocket
 
          Rocket::Core::Context* rs = UnwrapContext(args.Holder());
          Rocket::Core::ElementDocument* doc = rs->LoadDocument(path.c_str());
-         return WrapElementDocument(doc);
+         if(doc != NULL)
+         {
+            return WrapElementDocument(doc);
+         }
       }
-      return Undefined();      
+      return Null();
    }
 
 	////////////////////////////////////////////////////////////////////////////////

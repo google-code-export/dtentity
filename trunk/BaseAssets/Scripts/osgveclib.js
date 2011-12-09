@@ -1192,6 +1192,17 @@ osg.Quat = {
         res[3] = src[3];
         return res;
     },
+    normalize: function(a, result) {
+       if (result === undefined) {
+           result = [];
+       }
+       var l = Math.sqrt(a[0] * a [0] + a[1] * a [1] + a[2] * a [2] + a[3] * a [3]);
+       result[0] = a[0] / l;
+       result[1] = a[1] / l;
+       result[2] = a[2] / l;
+       result[3] = a[3] / l;
+       return result;
+    },
     sub: function(a, b, result) {
         if (result === undefined) {
             result = [];
