@@ -56,13 +56,14 @@ namespace dtEntity
    const StringId ShadowComponent::PSSMMoveVCamFactorId(SID("PSSMMoveVCamFactor"));   
    const StringId ShadowComponent::PSSMPolyOffsetFactorId(SID("PSSMPolyOffsetFactor"));   
    const StringId ShadowComponent::PSSMPolyOffsetUnitId(SID("PSSMPolyOffsetUnit"));   
-  
+   const StringId ShadowComponent::EnabledId(SID("Enabled"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShadowComponent::ShadowComponent()
       : BaseClass(new osgShadow::ShadowedScene())
       , mEntity(NULL)
    {
+      Register(EnabledId, &mEnabled);
       Register(ShadowTechniqueId, &mShadowTechnique);
       Register(MinLightMarginId, &mMinLightMargin);
       Register(MaxFarPlaneId, &mMaxFarPlane);
@@ -98,6 +99,7 @@ namespace dtEntity
       mPSSMMoveVCamFactor.Set(0.1);
       mPSSMPolyOffsetFactor.Set(0.1);
       mPSSMPolyOffsetUnit.Set(0.1);
+      mEnabled.Set(true);
 
    }
   
@@ -120,10 +122,16 @@ namespace dtEntity
       BaseClass::Finished();
       assert(mEntity != NULL);
 
+
+
       osgShadow::MinimalShadowMap* msm = NULL;
       osgShadow::ParallelSplitShadowMap* pssm = NULL;
 
-      if(mShadowTechnique.Get() == "LISPSM")
+      if(mEnabled.Get() == false)
+      {
+         mTechnique = NULL;
+      }
+      else if(mShadowTechnique.Get() == "LISPSM")
       {
          msm = new osgShadow::LightSpacePerspectiveShadowMapDB();
          mTechnique = msm;
@@ -214,8 +222,34 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   const StringId ShadowSystem::EnabledId(SID("Enabled"));
+
+   ////////////////////////////////////////////////////////////////////////////
    ShadowSystem::ShadowSystem(EntityManager& em)
       : DefaultEntitySystem<ShadowComponent>(em)
    {
+      Register(EnabledId, &mEnabled);
+
+      mEnabled.Set(true);
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ShadowSystem::OnPropertyChanged(StringId propname, Property &prop)
+   {
+      if(propname == EnabledId)
+      {
+         SetEnabled(prop.BoolValue());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ShadowSystem::SetEnabled(bool v)
+   {
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         i->second->SetEnabled(v);
+         i->second->Finished();
+      }
+   }
+
 }

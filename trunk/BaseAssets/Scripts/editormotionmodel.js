@@ -173,6 +173,24 @@ function EditorMotionComponent(eid) {
             camera.Up = [0, 0, 1];
 
             camera.finished();
+         }
+         return true;
+
+      } else if(Input.getMouseButton(2, this.contextId)) {
+
+         if(self.Projection == "3d") {
+            var pivotToCam = osg.Vec3.sub(pos, pivot);
+            osg.Quat.makeRotate(mouseX * -0.001, up[0], up[1], up[2], rotateOp);
+            osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
+            osg.Quat.makeRotate(mouseY * 0.001, toRight[0], toRight[1], toRight[2], rotateOp);
+            osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
+            camera.Position = osg.Vec3.add(pivotToCam, pivot);
+            osg.Vec3.mult(pivotToCam, -1, pivotToCam);
+            osg.Vec3.normalize(pivotToCam, pivotToCam);
+            camera.EyeDirection = pivotToCam;
+            camera.finished();
+            return true;
+
          } else {
 
             osg.Vec3.copy(toRight, tempvec);
@@ -190,23 +208,6 @@ function EditorMotionComponent(eid) {
             camera.OrthoBottom = -zoom * 1000;
             camera.finished();
          }
-         return true;
-
-      } else if(Input.getMouseButton(2, this.contextId) && self.Projection == "3d") {
-
-
-         var pivotToCam = osg.Vec3.sub(pos, pivot);
-         osg.Quat.makeRotate(mouseX * -0.001, up[0], up[1], up[2], rotateOp);
-         osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
-         osg.Quat.makeRotate(mouseY * 0.001, toRight[0], toRight[1], toRight[2], rotateOp);
-         osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
-         camera.Position = osg.Vec3.add(pivotToCam, pivot);
-         osg.Vec3.mult(pivotToCam, -1, pivotToCam);
-         osg.Vec3.normalize(pivotToCam, pivotToCam);
-         camera.EyeDirection = pivotToCam;
-         camera.finished();
-         return true;
-
       }
    }
 

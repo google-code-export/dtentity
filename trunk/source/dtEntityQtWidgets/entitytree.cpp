@@ -67,10 +67,19 @@ namespace dtEntityQtWidgets
       em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::EntitySystemRemovedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::SpawnerAddedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
+
+      unsigned int size = mRootItem->childCount();
+      beginInsertRows(QModelIndex(), size, size);
+
+      mEntitySystemRootItem = new EntityTreeItem(mRootItem, EntityTreeType::ENTITYSYSTEM);
+      mEntitySystemRootItem->mName = tr("Entity Systems");
+      mRootItem->appendChild(mEntitySystemRootItem);
+      endInsertRows();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -253,13 +262,26 @@ namespace dtEntityQtWidgets
       const dtEntity::EntitySystemAddedMessage& msg = 
          static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
       
-      unsigned int size = mRootItem->childCount();
-      beginInsertRows(QModelIndex(), size, size);
-      
-      EntityTreeItem* item = new EntityTreeItem(mRootItem, EntityTreeType::ENTITYSYSTEM);
-      item->mName = msg.GetComponentTypeString().c_str();
-      mRootItem->appendChild(item);
-      endInsertRows();
+      if(msg.GetSystemProperties().size() != 0)
+      {
+         for(int i = 0; i < mRootItem->childCount(); ++i)
+         {
+            EntityTreeItem* item = mRootItem->child(i);
+            if(item->GetItemType() == EntityTreeType::ENTITYSYSTEM)
+            {
+               QModelIndex idx = createIndex(item->row(), 0, item);
+               unsigned int size = mEntitySystemRootItem->childCount();
+               beginInsertRows(idx, size, size);
+
+               EntityTreeItem* esitem = new EntityTreeItem(mEntitySystemRootItem, EntityTreeType::ENTITYSYSTEM);
+               esitem->mName = msg.GetComponentTypeString().c_str();
+               mEntitySystemRootItem->appendChild(esitem);
+               endInsertRows();
+               return;
+            }
+         }
+
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -579,6 +601,9 @@ namespace dtEntityQtWidgets
       ui.setupUi(this);
       mTreeView = ui.mTreeView;
       mTreeView->expandToDepth(1);
+      mTreeView->setSortingEnabled(true);
+      mTreeView->sortByColumn (0, Qt::DescendingOrder);
+
       mAddItemButton = ui.mAddItemButton;
 
       connect(ui.mAddItemButton, SIGNAL(clicked()), this, SLOT(OnAddItemButton()));
@@ -656,6 +681,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::ShowContextMenu(const QPoint& p)
    {
+
       QModelIndex index = mTreeView->indexAt(p);
       if(index.isValid()) 
       {

@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QComboBox" name="mCategories">
        <item>
@@ -23,6 +23,36 @@
          <string>All</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="mListPlaceholder" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <zorder>mAddCategoryButton</zorder>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="mButtons" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="mAddCategoryButton">
+          <property name="text">
+           <string>Add Category</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>

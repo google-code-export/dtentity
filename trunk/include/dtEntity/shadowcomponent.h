@@ -41,6 +41,8 @@ namespace dtEntity
    public:
       
       static const ComponentType TYPE;
+
+      static const StringId EnabledId;
       static const StringId ShadowTechniqueId;
       static const StringId MinLightMarginId;
       static const StringId MaxFarPlaneId;
@@ -69,9 +71,12 @@ namespace dtEntity
 
       void SetShadowTechnique(const std::string name);
 
+      void SetEnabled(bool v) { mEnabled.Set(v); }
+      bool GetEnabled() const { return mEnabled.Get(); }
    private:
 
       Entity* mEntity;
+      BoolProperty mEnabled;
       osg::ref_ptr<osgShadow::ShadowTechnique> mTechnique;
       
       StringProperty mShadowTechnique;
@@ -101,7 +106,16 @@ namespace dtEntity
       : public DefaultEntitySystem<ShadowComponent>
    {
    public:
+      static const StringId EnabledId;
+
       ShadowSystem(EntityManager& em);
+
+      virtual void OnPropertyChanged(StringId propname, Property &prop);
+      void SetEnabled(bool);
+      bool GetEnabled() const { return mEnabled.Get(); }
+
+   private:
+      BoolProperty mEnabled;
    };
 
 }

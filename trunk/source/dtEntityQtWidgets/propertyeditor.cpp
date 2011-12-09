@@ -151,7 +151,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    int PropertyEditorModel::columnCount(const QModelIndex &parent) const
    {
-      return 2;
+      return 3;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -262,6 +262,16 @@ namespace dtEntityQtWidgets
                      return pitem->mProperty->StringValue().c_str();
                   }
                }
+               else if(index.column() == 2)
+               {
+                  QModelIndex parent = index.parent();
+                  TreeItem* item = static_cast<TreeItem*>(parent.internalPointer());
+                  if(dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
+                  {
+                     return "-";
+                  }
+                  return "";
+               }
             }
             break;
          }
@@ -327,12 +337,12 @@ namespace dtEntityQtWidgets
 
       if (orientation == Qt::Horizontal)
       {
-         if(section == 0)
-            return tr("Name");
-         else if(section == 1)
-            return tr("Value");
-         else
-            return tr("No header name set");
+         switch(section)
+         {
+         case 0 : return tr("Name");
+         case 1 : return tr("Value");
+         default: return "";
+         }
       }
       return QVariant();
    }
@@ -478,6 +488,7 @@ namespace dtEntityQtWidgets
       mRootItem = new RootTreeItem(f);
       
       endResetModel();
+      emit ResetView();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -703,6 +714,43 @@ namespace dtEntityQtWidgets
       delete clone;
 
       emit ExpandTree(index);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorModel::RemoveArrayEntry(const QModelIndex& index)
+   {
+      TreeItem* parent = static_cast<TreeItem*>(index.parent().internalPointer());
+      PropertyTreeItem* pparent = dynamic_cast<PropertyTreeItem*>(parent);
+      assert(pparent);
+      assert(pparent->mProperty->GetType() == dtEntity::DataType::ARRAY);
+      ArrayPropertyDelegate* dlgt = dynamic_cast<ArrayPropertyDelegate*>(pparent->mDelegate);
+      assert(dlgt);
+      dtEntity::ArrayProperty* arrprop = dynamic_cast<dtEntity::ArrayProperty*>(pparent->mProperty);
+      assert(arrprop);
+      int row = index.row();
+      dtEntity::PropertyArray pa = arrprop->Get();
+      assert(pa.size() > row);
+      //pa.erase(pa.begin() + row);
+      dtEntity::ArrayProperty* np = new dtEntity::ArrayProperty();
+      int newcount = 0;
+      dtEntity::DynamicPropertyContainer pc;
+      for(int i = 0; i < pa.size(); ++i)
+      {
+         if(i != row)
+         {
+            std::ostringstream os;
+            os << newcount;
+            ++newcount;
+
+            pc.AddProperty(dtEntity::SID(os.str()), *pa[i]);
+            np->Add(pa[i]->Clone());
+         }
+      }
+      delete pparent->mProperty;
+      pparent->mProperty = np;
+
+      RemoveProperties(parent);
+      AddProperties(parent, pc);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -956,6 +1004,8 @@ namespace dtEntityQtWidgets
 
       PropertyEditorDelegate* propertyDelegate = new PropertyEditorDelegate(this);
       GetComponentTree()->setItemDelegate(propertyDelegate);
+
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1033,6 +1083,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorView::ShowContextMenu(const QPoint& p)
    {     
+
       QModelIndex index = mComponentTree->indexAt(p);
       if(index.isValid()) 
       {
@@ -1079,6 +1130,13 @@ namespace dtEntityQtWidgets
          mSelectedComponent = "";
          mRemoveComponentButton->setEnabled(false);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorView::SetColumnWidths()
+   {
+      mComponentTree->setColumnWidth(2, 20);
+      mComponentTree->setColumnWidth(1, 200);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1218,6 +1276,7 @@ namespace dtEntityQtWidgets
 
       connect(model, SIGNAL(ExpandTree(const QModelIndex&)), view->GetComponentTree(), SLOT(expand(const QModelIndex&)));
       connect(model, SIGNAL(ExpandFullTree()), view, SLOT(ExpandTree()));
+      connect(model, SIGNAL(ResetView()), view, SLOT(SetColumnWidths()));
 
       connect(model, SIGNAL(EditSpawner(const QString&, bool, const QString&, const QString&)),
               view, SLOT(OnEditSpawner(const QString&, bool, const QString&, const QString&)));
