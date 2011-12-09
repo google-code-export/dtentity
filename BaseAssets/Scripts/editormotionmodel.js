@@ -15,7 +15,7 @@ function EditorMotionComponent(eid) {
   var rotateOp = [0, 0, 0, 1];
   var toRight = [0,0,0];
   var tempvec = [0,0,0];
-  var zoom = 1;
+  var zoom = 100;
   var pivot = [0,0,0];
   var last3dEyeDirection = [0,1,0];
 
@@ -56,6 +56,11 @@ function EditorMotionComponent(eid) {
                camera.EyeDirection = [0, 0, -1];
                camera.Up = [0, 1, 0];
             }
+
+            camera.OrthoLeft = -zoom;
+            camera.OrthoRight = zoom;
+            camera.OrthoTop = zoom;
+            camera.OrthoBottom = -zoom;
          }
          camera.finished();
       }
@@ -67,7 +72,6 @@ function EditorMotionComponent(eid) {
 
    this.keyDown = function(key, handled, cid) {
 
-      //println("K: " + key + " cid: " + cid + " this: " + this.contextId);
       if(!handled && this.Enabled && cid == this.contextId) {
 
          switch(key) {
@@ -138,10 +142,10 @@ function EditorMotionComponent(eid) {
                zoom *= orthoZoomSpeed;
             }
 
-            camera.OrthoLeft = -zoom * 1000;
-            camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = zoom * 1000;
-            camera.OrthoBottom = -zoom * 1000;
+            camera.OrthoLeft = -zoom;
+            camera.OrthoRight = zoom;
+            camera.OrthoTop = zoom;
+            camera.OrthoBottom = -zoom;
 
          }
       }
@@ -194,18 +198,18 @@ function EditorMotionComponent(eid) {
          } else {
 
             osg.Vec3.copy(toRight, tempvec);
-            osg.Vec3.mult(tempvec, -mouseX * zoom * 4, tempvec);
+            osg.Vec3.mult(tempvec, -mouseX * zoom * 0.004, tempvec);
             osg.Vec3.add(pos, tempvec, pos);
 
             osg.Vec3.cross(toRight, eyedir, tempvec);
-            osg.Vec3.mult(tempvec, -mouseY * zoom * 4, tempvec);
+            osg.Vec3.mult(tempvec, -mouseY * zoom * 0.004, tempvec);
             osg.Vec3.add(pos, tempvec, pos);
 
             camera.Position = pos
-            camera.OrthoLeft = -zoom * 1000;
-            camera.OrthoRight = zoom * 1000;
-            camera.OrthoTop = zoom * 1000;
-            camera.OrthoBottom = -zoom * 1000;
+            camera.OrthoLeft = -zoom;
+            camera.OrthoRight = zoom;
+            camera.OrthoTop = zoom;
+            camera.OrthoBottom = -zoom;
             camera.finished();
          }
       }

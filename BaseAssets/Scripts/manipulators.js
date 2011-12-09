@@ -68,6 +68,7 @@ var ToolHolder = {
   _tools: {},
   _activeTool: null,
   _focused : false,
+  getActiveTool : function() { return this._activeTool; },
   addTool: function (tool) {
     this._tools[tool.name] = tool;
 
@@ -276,7 +277,7 @@ function TranslateTool() {
 
   var initialCamPos = [0,0,0];
 
-  var heights = {};
+  var heights = [];
   var clamper = getEntitySystem("GroundClamping");
 
   this.activate = function () {
@@ -305,7 +306,7 @@ function TranslateTool() {
          self.deactivate();
          doSelection();
          self.activate();
-         heights = {};
+         heights = [];
          return;
       }
 
@@ -324,7 +325,7 @@ function TranslateTool() {
            undo: function () {
              if(doclone) {
                 for(var k in clones) {
-                  EntityManager.removeFromScene(clones[k]);
+                  EntityManager.reFromScene(clones[k]);
                   EntityManager.killEntity(clones[k]);
                 }
              }
@@ -360,9 +361,10 @@ function TranslateTool() {
                if(h !== null) height = h;
             }
 
-            heights.push([id, height, manipulator]);
-
             var patcomp = patSystem.getComponent(id);
+            heights.push([id, height, manipulator, patcomp]);
+
+
             if(patcomp !== null) {
                this.undoOp.beforePos.push([id, patcomp.Position]);
             }
@@ -383,6 +385,7 @@ function TranslateTool() {
            UndoStack.pushOperation(this.undoOp);
         }
      }
+     heights = [];
    }
 
   this.update = function () {
@@ -410,6 +413,11 @@ function TranslateTool() {
          manipulator.OffsetFromStart = offs;
       }
     }
+  }
+
+  this.getPosition = function() {
+    if(heights === null || heights.length === 0) return null;
+    return heights[0][3].Position;
   }
 };
 
@@ -578,6 +586,13 @@ function RotateTool() {
           manipulator.OffsetFromStart = cammovement;
         }
       }
+   }
+
+   this.getAttitude = function() {
+      if(Selection.ids.length === 0) return null;
+      var padcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[0]);
+      if(padcomp === null) return null;
+      return padcomp.Attitude;
    }
 };
 
@@ -748,7 +763,14 @@ function ScaleTool() {
           manipulator.OffsetFromStart = cammovement;
         }
       }
-  }
+   }
+
+   this.getScale = function() {
+       if(Selection.ids.length === 0) return null;
+       var padcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[0]);
+       if(padcomp === null) return null;
+       return padcomp.Scale;
+    }
 };
 
 ScaleTool.prototype = Tool;
