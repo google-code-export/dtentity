@@ -748,7 +748,7 @@ namespace dtEntityQtWidgets
       }
       delete pparent->mProperty;
       pparent->mProperty = np;
-
+      pparent->mChanged = true;
       RemoveProperties(parent);
       AddProperties(parent, pc);
    }
