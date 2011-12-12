@@ -23,17 +23,16 @@
 #include <QtGui/QtGui>
 #include <QtCore/QModelIndex>
 #include <QtCore/QObject>
-
-namespace dtEntity
-{
-   class Property;
-}
+#include <dtEntity/property.h>
 
 namespace dtEntityQtWidgets
 {
    class DelegateFactory;
    class PropertyEditorView;
 
+   QString FormatNumber(double v);
+
+   ////////////////////////////////////////////////////////////////////////////////
    class PropertySubDelegate 
       : public QItemDelegate
    {
@@ -52,6 +51,12 @@ namespace dtEntityQtWidgets
       virtual void MouseButtonPressed(const QModelIndex& index, int x, int y);
 
       void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+      virtual void SetValueByString(dtEntity::Property& prop, const QString& val);
+
+      virtual QVariant GetEditableValue(const dtEntity::Property& prop);
+
+      virtual Qt::ItemFlags GetEditFlags();
 
    private:
       mutable QRect mRemoveButtonArea;
@@ -131,6 +136,11 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+        return FormatNumber(prop.DoubleValue());
+        return prop.DoubleValue();
+     }
    };
    
    ////////////////////////////////////////////////////////////////////////////////
@@ -187,6 +197,11 @@ namespace dtEntityQtWidgets
      void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
      virtual void MouseButtonPressed(const QModelIndex& index, int x, int y);
+
+     virtual Qt::ItemFlags GetEditFlags()
+     {
+        return Qt::ItemIsEnabled;
+     }
 
    private:
       dtEntity::Property* mDataPrototype;
@@ -290,8 +305,11 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+        return prop.DoubleValue();
+     }
    };
-
 
    ////////////////////////////////////////////////////////////////////////////////
    class EnumPropertyDelegate 
@@ -320,6 +338,38 @@ namespace dtEntityQtWidgets
    };
  
    ////////////////////////////////////////////////////////////////////////////////
+   class SwitchPropertyDelegate
+      : public PropertySubDelegate
+   {
+      Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
+
+   public:
+
+     SwitchPropertyDelegate(const QMap<QString, dtEntity::Property*>& values, QObject *parent = 0);
+
+     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                           const QModelIndex& index) const;
+
+     void setEditorData(QWidget* editor, const QModelIndex& index) const;
+     void setModelData(QWidget* editor, QAbstractItemModel* model,
+                       const QModelIndex& index) const;
+
+     void updateEditorGeometry(QWidget* editor,
+         const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+     virtual void SetValueByString(dtEntity::Property& prop, const QString& val);
+
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop);
+
+     dtEntity::GroupProperty* GetPropsForSwitchVal(const QString& k);
+
+   private:
+      QMap<QString, dtEntity::Property*> mSwitchProperties;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
    class GroupPropertyDelegate 
       : public PropertySubDelegate
    {
@@ -341,6 +391,10 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual Qt::ItemFlags GetEditFlags()
+     {
+        return Qt::ItemIsEnabled;
+     }
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -413,6 +467,15 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+       osg::Quat v = prop.QuatValue();
+       return QString("%L1 %L2 %L3 %L4")
+             .arg(FormatNumber(v[0]))
+             .arg(FormatNumber(v[1]))
+             .arg(FormatNumber(v[2]))
+             .arg(FormatNumber(v[3]));
+     }
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -461,6 +524,13 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+        osg::Vec2d v = prop.Vec2dValue();
+        return QString("%L1 %L2")
+              .arg(FormatNumber(v[0]))
+              .arg(FormatNumber(v[1]));
+     }
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -485,6 +555,14 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+       osg::Vec3d v = prop.Vec3dValue();
+       return QString("%L1 %L2 %L3")
+             .arg(FormatNumber(v[0]))
+             .arg(FormatNumber(v[1]))
+             .arg(FormatNumber(v[2]));
+     }
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -509,6 +587,15 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     {
+       osg::Vec4d v = prop.Vec4dValue();
+       return QString("%L1 %L2 %L3 %L4")
+             .arg(FormatNumber(v[0]))
+             .arg(FormatNumber(v[1]))
+             .arg(FormatNumber(v[2]))
+             .arg(FormatNumber(v[3]));
+     }
    };
 
    ////////////////////////////////////////////////////////////////////////////////

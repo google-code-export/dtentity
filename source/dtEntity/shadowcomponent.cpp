@@ -57,6 +57,7 @@ namespace dtEntity
    const StringId ShadowComponent::PSSMPolyOffsetFactorId(SID("PSSMPolyOffsetFactor"));   
    const StringId ShadowComponent::PSSMPolyOffsetUnitId(SID("PSSMPolyOffsetUnit"));   
    const StringId ShadowComponent::EnabledId(SID("Enabled"));
+   const StringId ShadowComponent::ShadowTypeId(SID("ShadowType"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShadowComponent::ShadowComponent()
@@ -81,6 +82,8 @@ namespace dtEntity
       Register(PSSMMoveVCamFactorId, &mPSSMMoveVCamFactor);
       Register(PSSMPolyOffsetFactorId, &mPSSMPolyOffsetFactor);
       Register(PSSMPolyOffsetUnitId, &mPSSMPolyOffsetUnit);
+
+      Register(ShadowTypeId, &mShadowType);
       
       mShadowTechnique.Set("LISPSM");
       mMinLightMargin.Set(10.0f);
@@ -101,6 +104,9 @@ namespace dtEntity
       mPSSMPolyOffsetUnit.Set(0.1);
       mEnabled.Set(true);
 
+      PropertyGroup pg;
+      pg[dtEntity::SID("PSSM")] = new GroupProperty();
+      mShadowType.Set(pg);
    }
   
    ////////////////////////////////////////////////////////////////////////////

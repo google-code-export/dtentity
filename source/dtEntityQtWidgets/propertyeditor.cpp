@@ -230,37 +230,7 @@ namespace dtEntityQtWidgets
                }
                else if(index.column() == 1)
                {
-                  
-                  // cannot simply use Property::StringValue
-                  // because Qt has to internationalize decimal delimiter
-                  switch(pitem->mProperty->GetType()) 
-                  {
-                  case dtEntity::DataType::DOUBLE:
-                  case dtEntity::DataType::FLOAT:
-                     return pitem->mProperty->DoubleValue();
-                  case dtEntity::DataType::VEC2:
-                  case dtEntity::DataType::VEC2D:
-                     return QString("%L1 %L2").arg(pitem->mProperty->Vec2dValue()[0])
-                        .arg(pitem->mProperty->Vec2dValue()[1]);
-                  case dtEntity::DataType::VEC3:
-                  case dtEntity::DataType::VEC3D:
-                     return QString("%L1 %L2 %L3").arg(pitem->mProperty->Vec3dValue()[0])
-                        .arg(pitem->mProperty->Vec3dValue()[1])
-                        .arg(pitem->mProperty->Vec3dValue()[2]);
-                  case dtEntity::DataType::VEC4:
-                  case dtEntity::DataType::VEC4D:
-                     return QString("%L1 %L2 %L3 %L4").arg(pitem->mProperty->Vec4dValue()[0])
-                        .arg(pitem->mProperty->Vec4dValue()[1])
-                        .arg(pitem->mProperty->Vec4dValue()[2])
-                        .arg(pitem->mProperty->Vec4dValue()[3]);
-                  case dtEntity::DataType::QUAT:
-                     return QString("%L1 %L2 %L3 %L4").arg(pitem->mProperty->QuatValue()[0])
-                        .arg(pitem->mProperty->QuatValue()[1])
-                        .arg(pitem->mProperty->QuatValue()[2])
-                        .arg(pitem->mProperty->QuatValue()[3]);
-                  default:
-                     return pitem->mProperty->StringValue().c_str();
-                  }
+                  return pitem->mDelegate->GetEditableValue(*pitem->mProperty);
                }
                else if(index.column() == 2)
                {
@@ -364,15 +334,7 @@ namespace dtEntityQtWidgets
          {
             return Qt::ItemIsEnabled;
          }
-
-         switch(pitem->mProperty->GetType())
-         {
-         case dtEntity::DataType::ARRAY:
-         case dtEntity::DataType::GROUP:
-            return Qt::ItemIsEnabled;
-         default:
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-         }
+         return pitem->mDelegate->GetEditFlags();
       }
       else
       {
@@ -383,7 +345,9 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyEditorModel::setData(const QModelIndex &index, const QVariant &value, int role)
    {
-      if (!index.isValid()) return false;
+      if (!index.isValid()  || index.column() != 1) return false;
+
+      // if nothing changed
       if(value == data(index, role))
       {
          return true;
@@ -396,50 +360,9 @@ namespace dtEntityQtWidgets
       {
          return false;
       }
-      if(index.column() != 1)
-      {
-         return false;
-      }
 
-      QStringList l;
-      
-      switch(pitem->mProperty->GetType())
-      {
-      case dtEntity::DataType::FLOAT:
-      case dtEntity::DataType::DOUBLE:
-         pitem->mProperty->SetDouble(value.toDouble());
-         break;
-      case dtEntity::DataType::VEC2:
-      case dtEntity::DataType::VEC2D:
-         l = value.toString().split(" ", QString::SkipEmptyParts);
-         if(l.size() >= 2) {
-            pitem->mProperty->SetVec2D(osg::Vec2d(l[0].toDouble(), l[1].toDouble()));
-         }
-         break;
-      case dtEntity::DataType::VEC3:
-      case dtEntity::DataType::VEC3D:
-         l = value.toString().split(" ", QString::SkipEmptyParts);
-         if(l.size() >= 3) {
-           pitem->mProperty->SetVec3D(osg::Vec3d(l[0].toDouble(), l[1].toDouble(), l[2].toDouble()));
-         }
-         break;
-      case dtEntity::DataType::VEC4:
-      case dtEntity::DataType::VEC4D:
-         l = value.toString().split(" ", QString::SkipEmptyParts);
-         if(l.size() >= 4) {
-           pitem->mProperty->SetVec4D(osg::Vec4d(l[0].toDouble(), l[1].toDouble(), l[2].toDouble(), l[3].toDouble()));
-         }
-         break;
-      case dtEntity::DataType::QUAT:      
-         l = value.toString().split(" ", QString::SkipEmptyParts);
-         if(l.size() >= 4) {
-            pitem->mProperty->SetQuat(osg::Quat(l[0].toDouble(), l[1].toDouble(), l[2].toDouble(), l[3].toDouble()));
-         }
-         break;
-      default: 
-         pitem->mProperty->SetString(value.toString().toStdString());
-      }
-      
+      pitem->mDelegate->SetValueByString(*pitem->mProperty, value.toString());
+
       // walk item tree upwards marking properties as changed
       QModelIndex idx = index;      
       while(pitem != NULL)
@@ -458,7 +381,7 @@ namespace dtEntityQtWidgets
             }
             static_cast<dtEntity::ArrayProperty*>(pitem->mProperty)->Set(arr);
          }
-         else if(pitem->mProperty->GetType() == dtEntity::DataType::GROUP)
+         else if(dynamic_cast<GroupPropertyDelegate*>(pitem->mDelegate) != NULL)
          {
             dtEntity::PropertyGroup grp;
             for(int i = 0; i < pitem->childCount(); ++i)
@@ -641,8 +564,26 @@ namespace dtEntityQtWidgets
          PropertyTreeItem* pitem = new PropertyTreeItem(parent, delegateFactory->GetFactoryForChildren(propname), propname, prop->Clone(), dlgt);
          parent->appendChild(pitem);
 
-         if(prop->GetType() == dtEntity::DataType::GROUP)
+         // add child properties of selected switch
+         SwitchPropertyDelegate* spdelegate = dynamic_cast<SwitchPropertyDelegate*>(dlgt);
+         if(spdelegate != NULL)
          {
+            QString val = spdelegate->GetEditableValue(*prop).toString();
+            dtEntity::GroupProperty* gp = spdelegate->GetPropsForSwitchVal(val);
+            if(gp != NULL)
+            {
+               dtEntity::PropertyGroup grp = gp->Get();
+               dtEntity::DynamicPropertyContainer cmap;
+               for(dtEntity::PropertyGroup::iterator j = grp.begin(); j != grp.end(); ++j)
+               {
+                  cmap.AddProperty(j->first, *j->second);
+               }
+               AddProperties(pitem, cmap);
+            }
+         }
+         else if(prop->GetType() == dtEntity::DataType::GROUP)
+         {
+            // add group properties
             dtEntity::PropertyGroup grp = prop->GroupValue();
             dtEntity::DynamicPropertyContainer cmap;
             for(dtEntity::PropertyGroup::iterator j = grp.begin(); j != grp.end(); ++j)
@@ -653,6 +594,7 @@ namespace dtEntityQtWidgets
          }
          else if(prop->GetType() == dtEntity::DataType::ARRAY)
          {
+            // add array entries
             dtEntity::PropertyArray grp = prop->ArrayValue();
             dtEntity::DynamicPropertyContainer cmap;
             int index = 0;
@@ -1135,8 +1077,9 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorView::SetColumnWidths()
    {
-      mComponentTree->setColumnWidth(2, 20);
+      mComponentTree->setColumnWidth(0, 200);
       mComponentTree->setColumnWidth(1, 200);
+      mComponentTree->setColumnWidth(2, 20);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

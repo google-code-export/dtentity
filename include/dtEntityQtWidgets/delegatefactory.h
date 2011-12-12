@@ -22,6 +22,7 @@
 
 
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QMap>
 #include <dtEntity/property.h>
 
@@ -68,6 +69,19 @@ namespace dtEntityQtWidgets
    public:
       DateTimeDelegateFactory();
       virtual PropertySubDelegate* Create(TreeItem* parent, const QString& propname, const dtEntity::Property* prop) const;
+
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class SwitchDelegateFactory : public DelegateFactory
+   {
+   public:
+      SwitchDelegateFactory(const QMap<QString, dtEntity::Property*>& groups);
+      virtual PropertySubDelegate* Create(TreeItem* parent, const QString& propname, const dtEntity::Property* prop) const;
+
+   private:
+
+      QMap<QString, dtEntity::Property*> mGroups;
 
    };
 

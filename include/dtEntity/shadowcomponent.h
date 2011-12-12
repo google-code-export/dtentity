@@ -60,6 +60,8 @@ namespace dtEntity
       static const StringId PSSMPolyOffsetFactorId;
       static const StringId PSSMPolyOffsetUnitId;
 
+      static const StringId ShadowTypeId;
+
       ShadowComponent();
       virtual ~ShadowComponent();
 
@@ -96,6 +98,8 @@ namespace dtEntity
       UIntProperty mPSSMMoveVCamFactor;
       FloatProperty mPSSMPolyOffsetFactor;
       FloatProperty mPSSMPolyOffsetUnit;
+
+      GroupProperty mShadowType;
    };
 
   
