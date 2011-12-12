@@ -149,6 +149,21 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
+   SwitchDelegateFactory::SwitchDelegateFactory(const QMap<QString, dtEntity::Property*>& groups)
+      : mGroups(groups)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   PropertySubDelegate* SwitchDelegateFactory::Create(TreeItem* parent,
+      const QString& propname,
+      const dtEntity::Property* prop) const
+   {
+      return new SwitchPropertyDelegate(mGroups);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    FileSelectorDelegateFactory::FileSelectorDelegateFactory(const QString& filters)
       : mFilters(filters)
    {
@@ -531,16 +546,79 @@ namespace dtEntityQtWidgets
                {
                   ParseDateTimeInput(currentNode, delegateFactory);
                }
+               else if(strcmp("switchinput", tagname) == 0)
+               {
+                  ParseSwitchInput(currentNode, delegateFactory, translator);
+               }
                else if(strcmp("groupinput", tagname) == 0)
                {
                   ParseDelegateFactory(currentNode, delegateFactory, translator);
-               }
+               }               
                else if(strcmp("translations", tagname) == 0)
                {
                   ParseTranslations(currentNode, translator);
                }
             }
          }
+      }
+
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////
+      void ParseSwitchInput(xml_node<>* element, DelegateFactory* delegateFactory, Translator*& translator)
+      {
+         std::string propertyName;
+         for(xml_attribute<>* attr = element->first_attribute();
+              attr; attr = attr->next_attribute())
+         {
+            if(strcmp(attr->name(), "name") == 0)
+            {
+               propertyName = attr->value();
+            }
+         }
+
+         QMap<QString, dtEntity::Property*> switchgroups;
+
+         for(xml_node<>* currentNode(element->first_node());
+             currentNode != NULL; currentNode = currentNode->next_sibling())
+         {
+            if(currentNode->type() == node_element && strcmp("switchgroup", currentNode->name()) == 0)
+            {
+               std::string switchgroupname;
+               for(xml_attribute<>* attr = currentNode->first_attribute();
+                    attr; attr = attr->next_attribute())
+               {
+                  if(strcmp(attr->name(), "name") == 0)
+                  {
+                     switchgroupname = attr->value();
+                  }
+               }
+
+               dtEntity::GroupProperty* gp = new dtEntity::GroupProperty();
+               for(xml_node<>* iNode(currentNode->first_node());
+                   iNode != NULL; iNode = iNode->next_sibling())
+               {
+                  if(iNode->type() != node_element)
+                  {
+                     continue;
+                  }
+
+                  std::string propname;
+                  for(xml_attribute<>* attr = iNode->first_attribute();
+                       attr; attr = attr->next_attribute())
+                  {
+                     if(strcmp(attr->name(), "name") == 0)
+                     {
+                        propname = attr->value();
+                     }
+                  }
+                  gp->Add(dtEntity::SID(propname), dtEntity::RapidXMLMapEncoder::ParseProperty(iNode));
+                  ParseDelegateFactory(currentNode, delegateFactory, translator);
+               }
+               switchgroups[switchgroupname.c_str()] = gp;
+            }
+         }
+
+         DelegateFactory* factory = new SwitchDelegateFactory(switchgroups);
+         delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
       }
         
       ///////////////////////////////////////////////////////////////////////////////////////////////////////

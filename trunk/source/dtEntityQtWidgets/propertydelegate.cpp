@@ -26,11 +26,19 @@
 #include <iostream>
 #include <dtEntity/property.h>
 #include <float.h>
+#include <sstream>
 
 namespace dtEntityQtWidgets
 {
+   QLocale* s_locale = new QLocale("en_GB");
 
-  ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   QString FormatNumber(double v)
+   {
+      return QString("%1").arg(v);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    PropertySubDelegate* GetSubDelegate(const QModelIndex& index)
    {
       TreeItem* item = static_cast<TreeItem*>(index.internalPointer());    
@@ -74,6 +82,24 @@ namespace dtEntityQtWidgets
          const PropertyEditorModel* model = static_cast<const PropertyEditorModel*>(index.model());
          const_cast<PropertyEditorModel*>(model)->RemoveArrayEntry(index);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertySubDelegate::SetValueByString(dtEntity::Property& prop, const QString& val)
+   {
+      prop.SetString(val.toStdString());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QVariant PropertySubDelegate::GetEditableValue(const dtEntity::Property& prop)
+   {
+      return prop.StringValue().c_str();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Qt::ItemFlags PropertySubDelegate::GetEditFlags()
+   {
+      return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -610,6 +636,99 @@ namespace dtEntityQtWidgets
      const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
    {
      editor->setGeometry(option.rect);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   SwitchPropertyDelegate::SwitchPropertyDelegate(const QMap<QString, dtEntity::Property*>& values, QObject *parent)
+     : PropertySubDelegate(parent)
+     , mSwitchProperties(values)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QWidget* SwitchPropertyDelegate::createEditor(QWidget* parent,
+     const QStyleOptionViewItem&/* option */,
+     const QModelIndex& index) const
+   {
+      QComboBox* editor = new QComboBox(parent);
+
+      QMapIterator<QString, dtEntity::Property*> i(mSwitchProperties);
+      while (i.hasNext())
+      {
+         i.next();
+
+         editor->addItem(i.key());
+      }
+     return editor;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SwitchPropertyDelegate::setEditorData(QWidget *editor,
+                                     const QModelIndex &index) const
+   {
+      QString value = index.model()->data(index, Qt::EditRole).toString();
+      QComboBox* e = static_cast<QComboBox*>(editor);
+      e->setCurrentIndex(e->findText(value));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SwitchPropertyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                    const QModelIndex &index) const
+   {
+      QComboBox* e = static_cast<QComboBox*>(editor);
+      QString value = e->currentText();
+      model->setData(index, value, Qt::EditRole);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SwitchPropertyDelegate::updateEditorGeometry(QWidget *editor,
+     const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+   {
+     editor->setGeometry(option.rect);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SwitchPropertyDelegate::SetValueByString(dtEntity::Property& prop, const QString& val)
+   {
+      dtEntity::PropertyGroup pg = prop.GroupValue();
+
+      dtEntity::Property* tmpprop;
+
+      if(pg.size() > 0)
+      {
+         tmpprop = pg.begin()->second->Clone();
+      }
+      else
+      {
+         tmpprop = new dtEntity::GroupProperty();
+      }
+      dtEntity::PropertyGroup pgnew;
+      pgnew[dtEntity::SID(val.toStdString())] = tmpprop;
+      prop.SetGroup(pgnew);
+      delete tmpprop;
+      assert(prop.GroupValue().size() > 0);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QVariant SwitchPropertyDelegate::GetEditableValue(const dtEntity::Property& prop)
+   {
+      dtEntity::PropertyGroup pg = prop.GroupValue();
+      if(pg.size() > 0)
+      {
+         return dtEntity::GetStringFromSID(pg.begin()->first).c_str();
+      }
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::GroupProperty* SwitchPropertyDelegate::GetPropsForSwitchVal(const QString& k)
+   {
+      if(mSwitchProperties.find(k) == mSwitchProperties.end())
+      {
+         return NULL;
+      }
+      return dynamic_cast<dtEntity::GroupProperty*>(*mSwitchProperties.find(k));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
