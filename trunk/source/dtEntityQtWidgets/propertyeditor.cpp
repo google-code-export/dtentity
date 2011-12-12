@@ -729,14 +729,14 @@ namespace dtEntityQtWidgets
       assert(arrprop);
       int row = index.row();
       dtEntity::PropertyArray pa = arrprop->Get();
-      assert(pa.size() > row);
+      assert(pa.size() > (unsigned int)row);
       //pa.erase(pa.begin() + row);
       dtEntity::ArrayProperty* np = new dtEntity::ArrayProperty();
       int newcount = 0;
       dtEntity::DynamicPropertyContainer pc;
-      for(int i = 0; i < pa.size(); ++i)
+      for(unsigned int i = 0; i < pa.size(); ++i)
       {
-         if(i != row)
+         if(i != (unsigned int)row)
          {
             std::ostringstream os;
             os << newcount;

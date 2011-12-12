@@ -163,7 +163,7 @@ namespace dtEntityQtWidgets
    QStringList SpawnerStoreView::GetCategories()
    {
       QStringList ret;
-      for(unsigned int i = 0; i < mCategories->count(); ++i)
+      for(int i = 0; i < mCategories->count(); ++i)
       {
          QString txt = mCategories->itemText(i);
          if(txt != tr("All"))
@@ -434,7 +434,7 @@ namespace dtEntityQtWidgets
    void SpawnerStoreController::OnChangeSpawnerCategory(const QString& spawnername, const QString& oldcat, const QString& newcat)
    {
       dtEntity::MapSystem* mtsystem;
-      bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
+      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
       dtEntity::Spawner* spawner;
       if(!mtsystem->GetSpawner(spawnername.toStdString(), spawner))
       {

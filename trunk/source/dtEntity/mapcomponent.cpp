@@ -52,12 +52,12 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    MapComponent::MapComponent()
-      : mOwner(NULL)
-      , mSpawner(NULL)
-      , mSpawnerNameProp(
+      : mSpawnerNameProp(
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetSpawnerName),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetSpawnerName)
         )
+      , mSpawner(NULL)
+      , mOwner(NULL)
    {
       Register(EntityNameId, &mEntityName);
       Register(MapNameId, &mMapName);

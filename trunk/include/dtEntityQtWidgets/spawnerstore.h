@@ -52,8 +52,9 @@ namespace dtEntityQtWidgets
 
    private:
        QAction* mDeleteSpawnerAction;
-       QMenu* mReclassifyMeny;
        QListWidgetItem* mSelected;
+       QMenu* mReclassifyMeny;
+
    };
 
    ////////////////////////////////////////////////////////////////////////////////
