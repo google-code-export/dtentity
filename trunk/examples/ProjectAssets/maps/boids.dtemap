@@ -17,27 +17,6 @@
 			<stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
 		</component>
 	</spawner>
-	<spawner name="Tree" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/tree.png">
-		<component type="Layer">
-			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-			<stringproperty name="Layer">default</stringproperty>
-			<boolproperty name="Visible" value="true"/>
-		</component>
-		<component type="PositionAttitudeTransform">
-			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
-			<arrayproperty name="Children">
-				<stringproperty name="0">StaticMesh</stringproperty>
-			</arrayproperty>
-			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
-			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
-		</component>
-		<component type="StaticMesh">
-			<stringproperty name="CacheHint">None</stringproperty>
-			<stringproperty name="Mesh">StaticMeshes/puno.ive</stringproperty>
-			<boolproperty name="Optimize" value="false"/>
-		</component>
-	</spawner>
-	
 	<spawner name="Helix" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/helix.png">
 		<component type="Layer">
 			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
@@ -58,6 +37,26 @@
 			<boolproperty name="Optimize" value="false"/>
 		</component>
 	</spawner>
+	<spawner name="Tree" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/tree.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="CacheHint">None</stringproperty>
+			<stringproperty name="Mesh">StaticMeshes/puno.ive</stringproperty>
+			<boolproperty name="Optimize" value="false"/>
+		</component>
+	</spawner>
 	<entity>
 		<component type="Layer">
 			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
@@ -72,9 +71,12 @@
 			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">Light</stringproperty>
 			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 	</entity>
 	<entity>
@@ -85,16 +87,20 @@
 		<component type="Map">
 			<stringproperty name="EntityName">Terrain</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 				<stringproperty name="1">All</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh">
+			<boolproperty name="IsTerrain" value="true"/>
 			<stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
 		</component>
 	</entity>
@@ -105,10 +111,28 @@
 			<stringproperty name="UniqueId">8d6e64f7-aa89-4b0c-913e-a17de544f7bc</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="-4.2868232727" y="22.4401512146" z="-15.2212324142"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+	<entity spawner="Tree">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">MyEntity</stringproperty>
+			<stringproperty name="UniqueId">MyEntity</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="-0.0000000000" y="0.0000000000" z="-15.3669459036"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
 	</entity>
@@ -123,15 +147,35 @@
 		<component type="Map">
 			<stringproperty name="EntityName">SkyBox</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">SkyBox</stringproperty>
 		</component>
 		<component type="Shadow">
 			<arrayproperty name="Children">
 				<stringproperty name="0">LayerAttachPoint</stringproperty>
 			</arrayproperty>
-			<floatproperty name="MaxFarPlane" value="10000.0000000000"/>
-			<stringproperty name="ShadowTechnique">PSSM</stringproperty>
-			<uintproperty name="TexSize" value="512"/>
+			<groupproperty name="ShadowType">
+				<groupproperty name="LISP">
+					<uintproperty name="BaseTexCoordIndex" value="0"/>
+					<uintproperty name="BaseTexUnit" value="0"/>
+					<floatproperty name="MaxFarPlane" value="0.0000000000"/>
+					<floatproperty name="MinLightMargin" value="10.0000000000"/>
+					<uintproperty name="ShadowTexCoordIndex" value="1"/>
+					<uintproperty name="ShadowTexUnit" value="0"/>
+					<uintproperty name="TexSize" value="1024"/>
+				</groupproperty>
+				<groupproperty name="PSSM">
+					<boolproperty name="DebugColorOn" value="false"/>
+					<uintproperty name="MapCount" value="3"/>
+					<uintproperty name="MapRes" value="512"/>
+					<uintproperty name="MaxFarDist" value="200"/>
+					<uintproperty name="MinNearSplit" value="2"/>
+					<floatproperty name="MoveVCamFactor" value="0.1000000015"/>
+					<floatproperty name="PolyOffsetFactor" value="0.1000000015"/>
+					<floatproperty name="PolyOffsetUnit" value="0.1000000015"/>
+				</groupproperty>
+				<stringproperty name="__SELECTED__">PSSM</stringproperty>
+			</groupproperty>
 		</component>
 		<component type="SkyBox">
 			<arrayproperty name="Children">
@@ -147,10 +191,10 @@
 	</entity>
 	<entity>
 		<component type="Camera">
-			<vec3property name="EyeDirection" x="-0.1370528399" y="0.9063105604" z="-0.3997720441"/>
-			<boolproperty name="IsMainCamera" value="true"/>
-			<vec3property name="Position" x="-10.7011134222" y="12.2677350468" z="-10.3899623850"/>
+			<vec3property name="EyeDirection" x="0.1231698237" y="0.9374510683" z="-0.3255989697"/>
+			<vec3property name="Position" x="-3.1688641610" y="-33.5828342876" z="11.2829572224"/>
 		</component>
+		<component type="EditorMotion"/>
 		<component type="Map">
 			<stringproperty name="EntityName">defaultCam</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>

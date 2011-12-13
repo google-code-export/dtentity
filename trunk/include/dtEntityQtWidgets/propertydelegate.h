@@ -52,11 +52,11 @@ namespace dtEntityQtWidgets
 
       void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-      virtual void SetValueByString(dtEntity::Property& prop, const QString& val);
+      virtual void SetValueByString(dtEntity::Property& prop, const QString& val) const;
 
-      virtual QVariant GetEditableValue(const dtEntity::Property& prop);
+      virtual QVariant GetEditableValue(const dtEntity::Property& prop) const;
 
-      virtual Qt::ItemFlags GetEditFlags();
+      virtual Qt::ItemFlags GetEditFlags() const;
 
    private:
       mutable QRect mRemoveButtonArea;
@@ -136,10 +136,9 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
         return FormatNumber(prop.DoubleValue());
-        return prop.DoubleValue();
      }
    };
    
@@ -198,7 +197,7 @@ namespace dtEntityQtWidgets
 
      virtual void MouseButtonPressed(const QModelIndex& index, int x, int y);
 
-     virtual Qt::ItemFlags GetEditFlags()
+     virtual Qt::ItemFlags GetEditFlags() const
      {
         return Qt::ItemIsEnabled;
      }
@@ -305,7 +304,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
         return prop.DoubleValue();
      }
@@ -347,7 +346,7 @@ namespace dtEntityQtWidgets
 
    public:
 
-     SwitchPropertyDelegate(const QMap<QString, dtEntity::Property*>& values, QObject *parent = 0);
+     SwitchPropertyDelegate(QObject *parent = 0);
 
      QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                            const QModelIndex& index) const;
@@ -359,11 +358,9 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual void SetValueByString(dtEntity::Property& prop, const QString& val);
+     virtual void SetValueByString(dtEntity::Property& prop, const QString& val) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop);
-
-     dtEntity::GroupProperty* GetPropsForSwitchVal(const QString& k);
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const;
 
    private:
       QMap<QString, dtEntity::Property*> mSwitchProperties;
@@ -391,7 +388,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual Qt::ItemFlags GetEditFlags()
+     virtual Qt::ItemFlags GetEditFlags() const
      {
         return Qt::ItemIsEnabled;
      }
@@ -467,7 +464,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
        osg::Quat v = prop.QuatValue();
        return QString("%L1 %L2 %L3 %L4")
@@ -524,7 +521,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
         osg::Vec2d v = prop.Vec2dValue();
         return QString("%L1 %L2")
@@ -555,7 +552,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
        osg::Vec3d v = prop.Vec3dValue();
        return QString("%L1 %L2 %L3")
@@ -587,7 +584,7 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-     virtual QVariant GetEditableValue(const dtEntity::Property& prop)
+     virtual QVariant GetEditableValue(const dtEntity::Property& prop) const
      {
        osg::Vec4d v = prop.Vec4dValue();
        return QString("%L1 %L2 %L3 %L4")

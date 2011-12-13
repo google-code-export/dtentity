@@ -85,19 +85,19 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertySubDelegate::SetValueByString(dtEntity::Property& prop, const QString& val)
+   void PropertySubDelegate::SetValueByString(dtEntity::Property& prop, const QString& val) const
    {
       prop.SetString(val.toStdString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QVariant PropertySubDelegate::GetEditableValue(const dtEntity::Property& prop)
+   QVariant PropertySubDelegate::GetEditableValue(const dtEntity::Property& prop) const
    {
       return prop.StringValue().c_str();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Qt::ItemFlags PropertySubDelegate::GetEditFlags()
+   Qt::ItemFlags PropertySubDelegate::GetEditFlags() const
    {
       return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
    }
@@ -640,9 +640,8 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   SwitchPropertyDelegate::SwitchPropertyDelegate(const QMap<QString, dtEntity::Property*>& values, QObject *parent)
+   SwitchPropertyDelegate::SwitchPropertyDelegate(QObject *parent)
      : PropertySubDelegate(parent)
-     , mSwitchProperties(values)
    {
    }
 
@@ -653,23 +652,63 @@ namespace dtEntityQtWidgets
    {
       QComboBox* editor = new QComboBox(parent);
 
-      QMapIterator<QString, dtEntity::Property*> i(mSwitchProperties);
-      while (i.hasNext())
-      {
-         i.next();
+      TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+      PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+      assert(pitem);
 
-         editor->addItem(i.key());
+      dtEntity::PropertyGroup grp = pitem->mProperty->GroupValue();
+
+      dtEntity::StringId selindex;
+
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      if(sel != grp.end())
+      {
+         selindex = sel->second->StringIdValue();
       }
-     return editor;
+
+      for(int i = 0; i < item->childCount(); ++i)
+      {
+         TreeItem* child = item->child(i);
+
+         PropertyTreeItem* pchild = dynamic_cast<PropertyTreeItem*>(child);
+         if(pchild && pchild->mName.left(2) != "__")
+         {
+            editor->addItem(pchild->mName);
+            if(dtEntity::SID(pchild->mName.toStdString()) == selindex)
+            {
+               editor->setCurrentIndex(editor->count() - 1);
+            }
+         }
+      }
+      return editor;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SwitchPropertyDelegate::setEditorData(QWidget *editor,
                                      const QModelIndex &index) const
    {
-      QString value = index.model()->data(index, Qt::EditRole).toString();
+      TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+      PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+      assert(pitem);
+
+      dtEntity::PropertyGroup grp = pitem->mProperty->GroupValue();
+      dtEntity::StringId selindex;
+
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      if(sel != grp.end())
+      {
+         selindex = sel->second->StringIdValue();
+      }
+
       QComboBox* e = static_cast<QComboBox*>(editor);
-      e->setCurrentIndex(e->findText(value));
+      for(int i = 0; i < e->count(); ++i)
+      {
+         if(dtEntity::SID(e->itemText(i).toStdString()) == selindex)
+         {
+            e->setCurrentIndex(i);
+            break;
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -678,7 +717,14 @@ namespace dtEntityQtWidgets
    {
       QComboBox* e = static_cast<QComboBox*>(editor);
       QString value = e->currentText();
-      model->setData(index, value, Qt::EditRole);
+
+      TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+      PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+      assert(pitem);
+      SetValueByString(*pitem->mProperty, value);
+      dynamic_cast<PropertyEditorModel*>(model)->SwitchChanged(index);
+
+      pitem->mChanged = true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -689,47 +735,33 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SwitchPropertyDelegate::SetValueByString(dtEntity::Property& prop, const QString& val)
+   void SwitchPropertyDelegate::SetValueByString(dtEntity::Property& prop, const QString& val) const
    {
-      dtEntity::PropertyGroup pg = prop.GroupValue();
-
-      dtEntity::Property* tmpprop;
-
-      if(pg.size() > 0)
+      assert(prop.GetType() == dtEntity::DataType::GROUP);
+      dtEntity::PropertyGroup grp = prop.GroupValue();
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      if(sel != grp.end())
       {
-         tmpprop = pg.begin()->second->Clone();
+         sel->second->SetStringId(dtEntity::SID(val.toStdString()));
       }
-      else
-      {
-         tmpprop = new dtEntity::GroupProperty();
-      }
-      dtEntity::PropertyGroup pgnew;
-      pgnew[dtEntity::SID(val.toStdString())] = tmpprop;
-      prop.SetGroup(pgnew);
-      delete tmpprop;
-      assert(prop.GroupValue().size() > 0);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QVariant SwitchPropertyDelegate::GetEditableValue(const dtEntity::Property& prop)
+   QVariant SwitchPropertyDelegate::GetEditableValue(const dtEntity::Property& prop) const
    {
-      dtEntity::PropertyGroup pg = prop.GroupValue();
-      if(pg.size() > 0)
+      assert(prop.GetType() == dtEntity::DataType::GROUP);
+
+      dtEntity::PropertyGroup grp = prop.GroupValue();
+
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      if(sel != grp.end())
       {
-         return dtEntity::GetStringFromSID(pg.begin()->first).c_str();
+         QString str = dtEntity::GetStringFromSID(sel->second->StringIdValue()).c_str();
+         return str;
       }
       return "";
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::GroupProperty* SwitchPropertyDelegate::GetPropsForSwitchVal(const QString& k)
-   {
-      if(mSwitchProperties.find(k) == mSwitchProperties.end())
-      {
-         return NULL;
-      }
-      return dynamic_cast<dtEntity::GroupProperty*>(*mSwitchProperties.find(k));
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////

@@ -76,12 +76,11 @@ namespace dtEntityQtWidgets
    class SwitchDelegateFactory : public DelegateFactory
    {
    public:
-      SwitchDelegateFactory(const QMap<QString, dtEntity::Property*>& groups);
+      SwitchDelegateFactory();
       virtual PropertySubDelegate* Create(TreeItem* parent, const QString& propname, const dtEntity::Property* prop) const;
 
    private:
 
-      QMap<QString, dtEntity::Property*> mGroups;
 
    };
 

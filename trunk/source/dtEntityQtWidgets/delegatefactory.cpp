@@ -149,8 +149,7 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   SwitchDelegateFactory::SwitchDelegateFactory(const QMap<QString, dtEntity::Property*>& groups)
-      : mGroups(groups)
+   SwitchDelegateFactory::SwitchDelegateFactory()
    {
    }
 
@@ -159,7 +158,19 @@ namespace dtEntityQtWidgets
       const QString& propname,
       const dtEntity::Property* prop) const
    {
-      return new SwitchPropertyDelegate(mGroups);
+      if(mChildFactories.contains(propname))
+      {
+         return mChildFactories[propname]->Create(parent, propname, prop);
+      }
+      if(prop->GetType() == dtEntity::DataType::GROUP)
+      {
+         dtEntity::PropertyGroup pg = prop->GroupValue();
+         if(pg.find(dtEntity::SID("__SELECTED__")) != pg.end())
+         {
+            return new SwitchPropertyDelegate();
+         }
+      }
+      return CreateDefault(prop->GetType());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -513,6 +524,26 @@ namespace dtEntityQtWidgets
       }
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////
+      void ParseSwitchInput(xml_node<>* element, DelegateFactory* delegateFactory, Translator*& translator)
+      {
+         std::string propertyName;
+         for(xml_attribute<>* attr = element->first_attribute();
+              attr; attr = attr->next_attribute())
+         {
+            if(strcmp(attr->name(), "propertyname") == 0)
+            {
+               propertyName = attr->value();
+            }
+         }
+
+         DelegateFactory* factory = new SwitchDelegateFactory();
+         delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
+
+         ParseDelegateFactory(element, factory, translator);
+
+      }
+
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////
       void ParseDelegateFactory(xml_node<>* element, DelegateFactory* delegateFactory, Translator*& translator)
       {
          for(xml_node<>* currentNode(element->first_node());
@@ -560,65 +591,6 @@ namespace dtEntityQtWidgets
                }
             }
          }
-      }
-
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////
-      void ParseSwitchInput(xml_node<>* element, DelegateFactory* delegateFactory, Translator*& translator)
-      {
-         std::string propertyName;
-         for(xml_attribute<>* attr = element->first_attribute();
-              attr; attr = attr->next_attribute())
-         {
-            if(strcmp(attr->name(), "name") == 0)
-            {
-               propertyName = attr->value();
-            }
-         }
-
-         QMap<QString, dtEntity::Property*> switchgroups;
-
-         for(xml_node<>* currentNode(element->first_node());
-             currentNode != NULL; currentNode = currentNode->next_sibling())
-         {
-            if(currentNode->type() == node_element && strcmp("switchgroup", currentNode->name()) == 0)
-            {
-               std::string switchgroupname;
-               for(xml_attribute<>* attr = currentNode->first_attribute();
-                    attr; attr = attr->next_attribute())
-               {
-                  if(strcmp(attr->name(), "name") == 0)
-                  {
-                     switchgroupname = attr->value();
-                  }
-               }
-
-               dtEntity::GroupProperty* gp = new dtEntity::GroupProperty();
-               for(xml_node<>* iNode(currentNode->first_node());
-                   iNode != NULL; iNode = iNode->next_sibling())
-               {
-                  if(iNode->type() != node_element)
-                  {
-                     continue;
-                  }
-
-                  std::string propname;
-                  for(xml_attribute<>* attr = iNode->first_attribute();
-                       attr; attr = attr->next_attribute())
-                  {
-                     if(strcmp(attr->name(), "name") == 0)
-                     {
-                        propname = attr->value();
-                     }
-                  }
-                  gp->Add(dtEntity::SID(propname), dtEntity::RapidXMLMapEncoder::ParseProperty(iNode));
-                  ParseDelegateFactory(currentNode, delegateFactory, translator);
-               }
-               switchgroups[switchgroupname.c_str()] = gp;
-            }
-         }
-
-         DelegateFactory* factory = new SwitchDelegateFactory(switchgroups);
-         delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
       }
         
       ///////////////////////////////////////////////////////////////////////////////////////////////////////
