@@ -2,16 +2,9 @@
 <delegates>
    <enuminput propertyname="ShadowTechnique" values="LISPSM|LISPSM_ViewBounds|LISPSM_CullBounds|PSSM" />
 
- <switchinput name="ShadowType">
-     <switchgroup name="PSSM">
-       <vec4property name="MapCount" />
-     </switchgroup>
-
-     <switchgroup name="LISPSM">
-       <vec4property name="LISPPROP" />
-     </switchgroup>
- </switchinput>
-
+<switchinput propertyname="ShadowType">
+  <colorinput propertyname="PSSMVEC" />
+</switchinput>
 
 <arrayinput propertyname="Children" >
 	   <prototype>

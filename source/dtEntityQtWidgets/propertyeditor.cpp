@@ -137,8 +137,6 @@ namespace dtEntityQtWidgets
    int PropertyEditorModel::rowCount(const QModelIndex &parent) const
    {
      TreeItem *parentItem;
-     if (parent.column() > 0)
-         return 0;
 
      if (!parent.isValid())
          parentItem = mRootItem;
@@ -381,14 +379,30 @@ namespace dtEntityQtWidgets
             }
             static_cast<dtEntity::ArrayProperty*>(pitem->mProperty)->Set(arr);
          }
-         else if(dynamic_cast<GroupPropertyDelegate*>(pitem->mDelegate) != NULL)
+         else if(pitem->mProperty->GetType() == dtEntity::DataType::GROUP)
          {
             dtEntity::PropertyGroup grp;
+
+            // keep __SELECTED__ value for switch properties
+            dtEntity::StringIdProperty enabled;
+            dtEntity::StringId selstr = dtEntity::SID("__SELECTED__");
+            dtEntity::PropertyGroup pg = pitem->mProperty->GroupValue();
+
+            if(pg.find(selstr) != pg.end())
+            {
+               enabled.Set(pg[selstr]->StringIdValue());
+               grp[selstr] = &enabled;
+            }
+
             for(int i = 0; i < pitem->childCount(); ++i)
             {
                PropertyTreeItem* child = static_cast<PropertyTreeItem*>(pitem->child(i));
-               grp[dtEntity::SID(child->mName.toStdString())] = child->mProperty;
+               if(child->mName != "__SELECTED__")
+               {
+                  grp[dtEntity::SID(child->mName.toStdString())] = child->mProperty;
+               }
             }
+
             static_cast<dtEntity::GroupProperty*>(pitem->mProperty)->Set(grp);
          }
 
@@ -531,6 +545,12 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorModel::SwitchChanged(const QModelIndex& index)
+   {
+      emit(SwitchWasChanged(index));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorModel::AddProperties(TreeItem* parent, const dtEntity::PropertyContainer& props)
    {
       dtEntity::PropertyContainer::ConstPropertyMap map;
@@ -557,6 +577,7 @@ namespace dtEntityQtWidgets
       for(j = sortedMap.begin(); j != sortedMap.end(); ++j)
       {
          QString propname = j->first.c_str();
+
          const dtEntity::Property* prop = j->second;
 
          PropertySubDelegate* dlgt = delegateFactory->Create(parent, propname, prop);
@@ -564,24 +585,7 @@ namespace dtEntityQtWidgets
          PropertyTreeItem* pitem = new PropertyTreeItem(parent, delegateFactory->GetFactoryForChildren(propname), propname, prop->Clone(), dlgt);
          parent->appendChild(pitem);
 
-         // add child properties of selected switch
-         SwitchPropertyDelegate* spdelegate = dynamic_cast<SwitchPropertyDelegate*>(dlgt);
-         if(spdelegate != NULL)
-         {
-            QString val = spdelegate->GetEditableValue(*prop).toString();
-            dtEntity::GroupProperty* gp = spdelegate->GetPropsForSwitchVal(val);
-            if(gp != NULL)
-            {
-               dtEntity::PropertyGroup grp = gp->Get();
-               dtEntity::DynamicPropertyContainer cmap;
-               for(dtEntity::PropertyGroup::iterator j = grp.begin(); j != grp.end(); ++j)
-               {
-                  cmap.AddProperty(j->first, *j->second);
-               }
-               AddProperties(pitem, cmap);
-            }
-         }
-         else if(prop->GetType() == dtEntity::DataType::GROUP)
+         if(prop->GetType() == dtEntity::DataType::GROUP)
          {
             // add group properties
             dtEntity::PropertyGroup grp = prop->GroupValue();
@@ -1082,6 +1086,45 @@ namespace dtEntityQtWidgets
       mComponentTree->setColumnWidth(2, 20);
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorView::SwitchWasChanged(const QModelIndex& parent)
+   {
+      // hide children of switches that are not currently selected
+      TreeItem* item = static_cast<TreeItem*>(parent.internalPointer());
+      PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+      if(pitem)
+      {
+         if(dynamic_cast<SwitchPropertyDelegate*>(pitem->mDelegate) != NULL)
+         {
+            dtEntity::PropertyGroup grp = pitem->mProperty->GroupValue();
+
+            dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+            if(sel != grp.end())
+            {
+               dtEntity::StringId selindex = sel->second->StringIdValue();
+               std::string selstr = dtEntity::GetStringFromSID((selindex));
+               for(int i = 0; i < parent.model()->rowCount(parent); ++i)
+               {
+                  QModelIndex idx = parent.model()->index(i, 0, parent);
+                  if(idx.isValid())
+                  {
+                     PropertyTreeItem* citem = static_cast<PropertyTreeItem*>(idx.internalPointer());
+                     bool hide = (dtEntity::SID(citem->mName.toStdString()) != selindex);
+                     mComponentTree->setRowHidden(i, parent, hide);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorView::RowsInserted(const QModelIndex& parent,int start, int end)
+   {
+      SwitchWasChanged(parent);
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorView::ShowAddComponentDialog()
    {
@@ -1267,6 +1310,8 @@ namespace dtEntityQtWidgets
       connect(view, SIGNAL(AppendArrayEntry(const QModelIndex&)), model, SLOT(AppendArrayEntry(const QModelIndex&)));
       connect(view, SIGNAL(SpawnerAdditionalPropertiesChanged(const QString&, bool, const QString&, const QString&)),
               this, SLOT(OnSpawnerAdditionalPropertiesChanged(const QString&, bool, const QString&, const QString&)));
+      connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), view, SLOT(RowsInserted(QModelIndex,int,int)));
+      connect(model, SIGNAL(SwitchWasChanged(QModelIndex)), view, SLOT(SwitchWasChanged(QModelIndex)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

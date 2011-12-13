@@ -51,14 +51,17 @@ namespace dtEntity
       static const StringId ShadowTexUnitId;
       static const StringId ShadowTexCoordIndexId;
       static const StringId BaseTexCoordIndexId;
-      static const StringId PSSMMapCountId;
-      static const StringId PSSMMapResId;
-      static const StringId PSSMMapDebugColorOnId;
-      static const StringId PSSMMinNearSplitId;
-      static const StringId PSSMMaxFarDistId;
-      static const StringId PSSMMoveVCamFactorId;
-      static const StringId PSSMPolyOffsetFactorId;
-      static const StringId PSSMPolyOffsetUnitId;
+      static const StringId MapCountId;
+      static const StringId MapResId;
+      static const StringId DebugColorOnId;
+      static const StringId MinNearSplitId;
+      static const StringId MaxFarDistId;
+      static const StringId MoveVCamFactorId;
+      static const StringId PolyOffsetFactorId;
+      static const StringId PolyOffsetUnitId;
+      static const StringId LISPId;
+      static const StringId PSSMId;
+      static const StringId __SELECTED__Id;
 
       static const StringId ShadowTypeId;
 
@@ -80,24 +83,6 @@ namespace dtEntity
       Entity* mEntity;
       BoolProperty mEnabled;
       osg::ref_ptr<osgShadow::ShadowTechnique> mTechnique;
-      
-      StringProperty mShadowTechnique;
-      FloatProperty mMinLightMargin;
-      FloatProperty mMaxFarPlane;
-      UIntProperty mTexSize;
-      UIntProperty mBaseTexUnit;
-      UIntProperty mShadowTexUnit;
-      UIntProperty mShadowTexCoordIndex;
-      UIntProperty mBaseTexCoordIndex;
-
-      UIntProperty mPSSMMapCount;
-      UIntProperty mPSSMMapRes;
-      BoolProperty mPSSMMapDebugColorOn;
-      UIntProperty mPSSMMinNearSplit;
-      UIntProperty mPSSMMaxFarDist;
-      UIntProperty mPSSMMoveVCamFactor;
-      FloatProperty mPSSMPolyOffsetFactor;
-      FloatProperty mPSSMPolyOffsetUnit;
 
       GroupProperty mShadowType;
    };

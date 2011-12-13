@@ -48,16 +48,21 @@ namespace dtEntity
    const StringId ShadowComponent::ShadowTexUnitId(SID("ShadowTexUnit"));
    const StringId ShadowComponent::ShadowTexCoordIndexId(SID("ShadowTexCoordIndex"));   
    const StringId ShadowComponent::BaseTexCoordIndexId(SID("BaseTexCoordIndex"));   
-   const StringId ShadowComponent::PSSMMapCountId(SID("PSSMMapCount"));   
-   const StringId ShadowComponent::PSSMMapResId(SID("PSSMMapRes"));   
-   const StringId ShadowComponent::PSSMMapDebugColorOnId(SID("PSSMMapDebugColorOn"));   
-   const StringId ShadowComponent::PSSMMinNearSplitId(SID("PSSMMinNearSplit"));   
-   const StringId ShadowComponent::PSSMMaxFarDistId(SID("PSSMMaxFarDist"));   
-   const StringId ShadowComponent::PSSMMoveVCamFactorId(SID("PSSMMoveVCamFactor"));   
-   const StringId ShadowComponent::PSSMPolyOffsetFactorId(SID("PSSMPolyOffsetFactor"));   
-   const StringId ShadowComponent::PSSMPolyOffsetUnitId(SID("PSSMPolyOffsetUnit"));   
+   const StringId ShadowComponent::MapCountId(SID("MapCount"));
+   const StringId ShadowComponent::MapResId(SID("MapRes"));
+   const StringId ShadowComponent::DebugColorOnId(SID("DebugColorOn"));
+   const StringId ShadowComponent::MinNearSplitId(SID("MinNearSplit"));
+   const StringId ShadowComponent::MaxFarDistId(SID("MaxFarDist"));
+   const StringId ShadowComponent::MoveVCamFactorId(SID("MoveVCamFactor"));
+   const StringId ShadowComponent::PolyOffsetFactorId(SID("PolyOffsetFactor"));
+   const StringId ShadowComponent::PolyOffsetUnitId(SID("PolyOffsetUnit"));
    const StringId ShadowComponent::EnabledId(SID("Enabled"));
    const StringId ShadowComponent::ShadowTypeId(SID("ShadowType"));
+   const StringId ShadowComponent::LISPId(SID("LISP"));
+   const StringId ShadowComponent::PSSMId(SID("PSSM"));
+   const StringId ShadowComponent::__SELECTED__Id(SID("__SELECTED__"));
+
+
 
    ////////////////////////////////////////////////////////////////////////////
    ShadowComponent::ShadowComponent()
@@ -65,48 +70,32 @@ namespace dtEntity
       , mEntity(NULL)
    {
       Register(EnabledId, &mEnabled);
-      Register(ShadowTechniqueId, &mShadowTechnique);
-      Register(MinLightMarginId, &mMinLightMargin);
-      Register(MaxFarPlaneId, &mMaxFarPlane);
-      Register(TexSizeId, &mTexSize);
-      Register(BaseTexUnitId, &mBaseTexUnit);
-      Register(ShadowTexUnitId, &mShadowTexUnit);
-      Register(ShadowTexCoordIndexId, &mShadowTexCoordIndex);
-      Register(BaseTexCoordIndexId, &mBaseTexCoordIndex);
-      
-      Register(PSSMMapCountId, &mPSSMMapCount);
-      Register(PSSMMapResId, &mPSSMMapRes);
-      Register(PSSMMapDebugColorOnId, &mPSSMMapDebugColorOn);
-      Register(PSSMMinNearSplitId, &mPSSMMinNearSplit);
-      Register(PSSMMaxFarDistId, &mPSSMMaxFarDist);
-      Register(PSSMMoveVCamFactorId, &mPSSMMoveVCamFactor);
-      Register(PSSMPolyOffsetFactorId, &mPSSMPolyOffsetFactor);
-      Register(PSSMPolyOffsetUnitId, &mPSSMPolyOffsetUnit);
-
       Register(ShadowTypeId, &mShadowType);
-      
-      mShadowTechnique.Set("LISPSM");
-      mMinLightMargin.Set(10.0f);
-      mMaxFarPlane.Set(0);
-      mTexSize.Set(1024);
-      mBaseTexUnit.Set(0);
-      mShadowTexUnit.Set(1);
-      mShadowTexCoordIndex.Set(1);
-      mBaseTexCoordIndex.Set(0);
 
-      mPSSMMapCount.Set(4);
-      mPSSMMapRes.Set(1024);
-      mPSSMMapDebugColorOn.Set(false);
-      mPSSMMinNearSplit.Set(3);
-      mPSSMMaxFarDist.Set(200);
-      mPSSMMoveVCamFactor.Set(0.1);
-      mPSSMPolyOffsetFactor.Set(0.1);
-      mPSSMPolyOffsetUnit.Set(0.1);
       mEnabled.Set(true);
 
-      PropertyGroup pg;
-      pg[dtEntity::SID("PSSM")] = new GroupProperty();
-      mShadowType.Set(pg);
+      GroupProperty* pssm = new GroupProperty;
+      pssm->Add(MapCountId, new UIntProperty(3));
+      pssm->Add(MapResId, new UIntProperty(1024));
+      pssm->Add(DebugColorOnId, new BoolProperty(false));
+      pssm->Add(MinNearSplitId, new UIntProperty(3));
+      pssm->Add(MaxFarDistId, new UIntProperty(200));
+      pssm->Add(MoveVCamFactorId, new FloatProperty(0.1));
+      pssm->Add(PolyOffsetFactorId, new FloatProperty(0.1));
+      pssm->Add(PolyOffsetUnitId, new FloatProperty(0.1));
+
+      GroupProperty* lispsm = new GroupProperty;
+      lispsm->Add(TexSizeId, new UIntProperty(1024));
+      lispsm->Add(BaseTexUnitId, new UIntProperty(0));
+      lispsm->Add(ShadowTexUnitId, new UIntProperty(0));
+      lispsm->Add(MinLightMarginId, new FloatProperty(10));
+      lispsm->Add(MaxFarPlaneId, new FloatProperty(0));
+      lispsm->Add(ShadowTexCoordIndexId, new UIntProperty(1));
+      lispsm->Add(BaseTexCoordIndexId, new UIntProperty(0));
+
+      mShadowType.Add(__SELECTED__Id, new StringIdProperty(PSSMId));
+      mShadowType.Add(PSSMId, pssm);
+      mShadowType.Add(LISPId, lispsm);
    }
   
    ////////////////////////////////////////////////////////////////////////////
@@ -128,20 +117,21 @@ namespace dtEntity
       BaseClass::Finished();
       assert(mEntity != NULL);
 
-
-
       osgShadow::MinimalShadowMap* msm = NULL;
       osgShadow::ParallelSplitShadowMap* pssm = NULL;
+
+      PropertyGroup props = mShadowType.GroupValue();
+      StringId selected = props[__SELECTED__Id]->StringIdValue();
 
       if(mEnabled.Get() == false)
       {
          mTechnique = NULL;
       }
-      else if(mShadowTechnique.Get() == "LISPSM")
+      else if(selected == LISPId)
       {
          msm = new osgShadow::LightSpacePerspectiveShadowMapDB();
          mTechnique = msm;
-      }
+      }/*
       else if(mShadowTechnique.Get() == "LISPSM_ViewBounds")
       {
          msm = new osgShadow::LightSpacePerspectiveShadowMapVB();
@@ -151,36 +141,30 @@ namespace dtEntity
       {
          msm = new osgShadow::LightSpacePerspectiveShadowMapCB();
          mTechnique = msm;
-      }
-      else if(mShadowTechnique.Get() == "PSSM")
+      }*/
+      else if(selected == PSSMId)
       {
-         pssm = new osgShadow::ParallelSplitShadowMap(0, mPSSMMapCount.Get());
-         pssm->setTextureResolution(mPSSMMapRes.Get());
+         PropertyGroup pssmgrp = props[PSSMId]->GroupValue();
+         pssm = new osgShadow::ParallelSplitShadowMap(0, pssmgrp[MapCountId]->UIntValue());
+         pssm->setTextureResolution(pssmgrp[MapResId]->UIntValue());
 
-         if(mPSSMMinNearSplit.Get() != 0)
+         if(pssmgrp[MinNearSplitId]->UIntValue() != 0)
          {
-            pssm->setMinNearDistanceForSplits(mPSSMMinNearSplit.Get());
+            pssm->setMinNearDistanceForSplits(pssmgrp[MinNearSplitId]->UIntValue());
          }
-         if(mPSSMMaxFarDist.Get() != 0)
+         if(pssmgrp[MaxFarDistId]->UIntValue() != 0)
          {
-            pssm->setMaxFarDistance(mPSSMMaxFarDist.Get());
-            pssm->setMoveVCamBehindRCamFactor(mPSSMMoveVCamFactor.Get());
+            pssm->setMaxFarDistance(pssmgrp[MaxFarDistId]->UIntValue());
+            pssm->setMoveVCamBehindRCamFactor(pssmgrp[MoveVCamFactorId]->FloatValue());
          }
-         if(mPSSMMapDebugColorOn.Get())
+         if(pssmgrp[DebugColorOnId]->BoolValue())
          {
             pssm->setDebugColorOn();
          }
-         pssm->setPolygonOffset(osg::Vec2(mPSSMPolyOffsetFactor.Get(),mPSSMPolyOffsetUnit.Get())); 
+         pssm->setPolygonOffset(osg::Vec2(
+                                   pssmgrp[PolyOffsetFactorId]->FloatValue(),
+                                   pssmgrp[PolyOffsetUnitId]->FloatValue()));
          mTechnique = pssm;
-
-         /*osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
-         ls->getLight()->setPosition(osg::Vec4(1000, 1000, 1000,1));
-         osg::Vec3 lightdir(0.5f, 0.5f, -0.5f);
-         lightdir.normalize();
-         ls->getLight()->setDirection(lightdir);
-         //ls->getLight()->setSpotCutoff(2500.0f);
-         GetGroup()->addChild(ls);*/
-
       }
       else
       {
@@ -197,13 +181,14 @@ namespace dtEntity
       
       if(msm)
       {
-         msm->setTextureSize( osg::Vec2s(mTexSize.Get(), mTexSize.Get()) );
-         msm->setMinLightMargin(mMinLightMargin.Get());
-         msm->setMaxFarPlane(mMaxFarPlane.Get());
-         msm->setBaseTextureCoordIndex(mBaseTexCoordIndex.Get());
-         msm->setShadowTextureCoordIndex(mShadowTexCoordIndex.Get());
-         msm->setShadowTextureUnit(mShadowTexUnit.Get());
-         msm->setBaseTextureUnit(mBaseTexUnit.Get());
+         PropertyGroup lispgrp = props[LISPId]->GroupValue();
+         msm->setTextureSize(osg::Vec2s(lispgrp[TexSizeId]->UIntValue(), lispgrp[TexSizeId]->UIntValue()) );
+         msm->setMinLightMargin(lispgrp[MinLightMarginId]->FloatValue());
+         msm->setMaxFarPlane(lispgrp[MaxFarPlaneId]->FloatValue());
+         msm->setBaseTextureCoordIndex(lispgrp[BaseTexCoordIndexId]->UIntValue());
+         msm->setShadowTextureCoordIndex(lispgrp[ShadowTexCoordIndexId]->UIntValue());
+         msm->setShadowTextureUnit(lispgrp[ShadowTexUnitId]->UIntValue());
+         msm->setBaseTextureUnit(lispgrp[BaseTexUnitId]->UIntValue());
          msm->setLight(light);
 
          // setting these for PSSM breaks shadows, so only do it here ...

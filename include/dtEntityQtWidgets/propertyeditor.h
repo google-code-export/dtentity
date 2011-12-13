@@ -157,6 +157,9 @@ namespace dtEntityQtWidgets
       QString TranslateProperty(const QString& componenttype, const QString& propertyname) const;
       QString TranslateDescription(const QString& componenttype, const QString& propertyname) const;
 
+      // user changed a switch. Transmit to view.
+      void SwitchChanged(const QModelIndex& index);
+
    public slots:
 
       void AppendArrayEntry(const QModelIndex& index);
@@ -205,7 +208,7 @@ namespace dtEntityQtWidgets
       void RequestUpdateComponent(dtEntity::EntityId id, dtEntity::StringId componentType);
       void RequestUpdateAll(dtEntity::EntityId id);
       void RequestUpdateEntitySystem(const QString& name);
-
+      void SwitchWasChanged(const QModelIndex& index);
 
    private:
 
@@ -255,6 +258,10 @@ namespace dtEntityQtWidgets
       void ShowAddComponentDialog();
 
       void SetColumnWidths();
+
+      void SwitchWasChanged(const QModelIndex& parent);
+      void RowsInserted(const QModelIndex& parent,int start, int end);
+
    protected:
 
       virtual void closeEvent(QCloseEvent* evt)
