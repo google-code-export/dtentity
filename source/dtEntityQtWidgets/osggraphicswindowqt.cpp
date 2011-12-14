@@ -249,7 +249,14 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::closeImplementation()
    {
-      QMetaObject::invokeMethod(this, "ApplyClose", Qt::BlockingQueuedConnection);      
+      if(this->thread() != QThread::currentThread())
+      {
+         QMetaObject::invokeMethod(this, "ApplyClose", Qt::BlockingQueuedConnection);
+      }
+      else
+      {
+         ApplyClose();
+      }
    }
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::ApplyClose()

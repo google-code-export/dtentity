@@ -22,6 +22,7 @@
 #include <dtEntitySimulation/groundclampingcomponent.h>
 #include <dtEntitySimulation/messages.h>
 #include <dtEntitySimulation/manipulatorcomponent.h>
+#include <dtEntitySimulation/pathcomponent.h>
 #include <dtEntity/componentplugin.h>
 
 namespace dtEntitySimulation
@@ -33,14 +34,9 @@ namespace dtEntitySimulation
    {
    public:
 
-      GroundClampingFactory()
-      {
-      
-      }
-
       virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
       {
-         es = new dtEntitySimulation::GroundClampingSystem(*em);
+         es = new GroundClampingSystem(*em);
          return true;
       }
 
@@ -52,7 +48,7 @@ namespace dtEntitySimulation
 
       virtual dtEntity::ComponentType GetType() const
       {
-         return dtEntitySimulation::GroundClampingComponent::TYPE;
+         return GroundClampingComponent::TYPE;
       }
 
       /** get a description of the plugin */
@@ -67,14 +63,9 @@ namespace dtEntitySimulation
    {
    public:
 
-      ManipulatorFactory()
-      {
-
-      }
-
       virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
       {
-         es = new dtEntitySimulation::ManipulatorSystem(*em);
+         es = new ManipulatorSystem(*em);
          return true;
       }
 
@@ -86,13 +77,43 @@ namespace dtEntitySimulation
 
       virtual dtEntity::ComponentType GetType() const
       {
-         return dtEntitySimulation::ManipulatorComponent::TYPE;
+         return ManipulatorComponent::TYPE;
       }
 
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
          return "System for osgManipulator";
+      }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class DT_ENTITY_SIMULATION_EXPORT PathFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+
+      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
+      {
+         es = new PathSystem(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "Path";
+      }
+
+      virtual dtEntity::ComponentType GetType() const
+      {
+         return PathComponent::TYPE;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "System for PAth";
       }
    };
 }
@@ -108,4 +129,5 @@ extern "C" DT_ENTITY_SIMULATION_EXPORT void CreatePluginFactories(std::list<dtEn
 {
    list.push_back(new dtEntitySimulation::GroundClampingFactory());
    list.push_back(new dtEntitySimulation::ManipulatorFactory());
+   list.push_back(new dtEntitySimulation::PathFactory());
 }

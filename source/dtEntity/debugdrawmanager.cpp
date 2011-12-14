@@ -210,7 +210,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
       osg::Geometry* geometry = new osg::Geometry();
-      geometry->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         geometry->setUseDisplayList(false);
+      }
 
       osg::Vec3f v[] = { position };
       geometry->setVertexArray(new osg::Vec3Array(1, v));
@@ -240,7 +243,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
       osg::Geometry* geometry = new osg::Geometry();
-      geometry->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         geometry->setUseDisplayList(false);
+      }
       osg::Vec3f* v = const_cast<osg::Vec3f*>(&positions[0]);
       geometry->setVertexArray(new osg::Vec3Array(positions.size(), v));
 
@@ -266,7 +272,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
        osg::Geometry* geometry = new osg::Geometry();
-       geometry->setUseDisplayList(false);
+       if(duration == 0)
+       {
+          geometry->setUseDisplayList(false);
+       }
 
       osg::Vec3 v[] = { start, end };
       geometry->setVertexArray(new osg::Vec3Array(2, v));
@@ -293,7 +302,10 @@ namespace dtEntity
       if(!mEnabled || lines.empty())
          return;
       osg::Geometry* geometry = new osg::Geometry();
-      geometry->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         geometry->setUseDisplayList(false);
+      }
       
       osg::Vec3f* v = const_cast<osg::Vec3f*>(&lines[0]);
       osg::Vec3Array* a = new osg::Vec3Array(lines.size(), v);
@@ -322,7 +334,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
        osg::Geometry* geometry = new osg::Geometry();
-       geometry->setUseDisplayList(false);
+       if(duration == 0)
+       {
+          geometry->setUseDisplayList(false);
+       }
 
 
       osg::Vec3 v[] = { 
@@ -356,7 +371,10 @@ namespace dtEntity
 
       osg::ShapeDrawable* drawable = new osg::ShapeDrawable(sphere);
       drawable->setColor(color);
-      drawable->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         drawable->setUseDisplayList(false);
+      }
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.3f);
       drawable->setTessellationHints(hints);
@@ -522,7 +540,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
       osg::Geometry* geometry = new osg::Geometry();
-      geometry->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         geometry->setUseDisplayList(false);
+      }
 
       osg::Vec3 v[] = { vert0, vert1, vert2 };
       geometry->setVertexArray(new osg::Vec3Array(3, v));
@@ -550,7 +571,10 @@ namespace dtEntity
       if(!mEnabled)
          return;
       osg::Geometry* geometry = new osg::Geometry();
-      geometry->setUseDisplayList(false);
+      if(duration == 0)
+      {
+         geometry->setUseDisplayList(false);
+      }
 
       osg::Vec3f* v = const_cast<osg::Vec3f*>(&tris[0]);
       geometry->setVertexArray(new osg::Vec3Array(tris.size(), v));

@@ -110,12 +110,22 @@
 			<stringproperty name="EntityName">Boids</stringproperty>
 			<stringproperty name="UniqueId">8d6e64f7-aa89-4b0c-913e-a17de544f7bc</stringproperty>
 		</component>
+		<component type="Path">
+			<boolproperty name="PathVisible" value="true"/>
+			<arrayproperty name="Verts">
+				<vec3property name="0" x="10.0000000000" y="0.0000000000" z="0.0000000000"/>
+				<vec3property name="1" x="0.0000000000" y="10.0000000000" z="0.0000000000"/>
+				<vec3property name="2" x="0.0000000000" y="0.0000000000" z="10.0000000000"/>
+			</arrayproperty>
+			<boolproperty name="VertsVisible" value="true"/>
+		</component>
 		<component type="PositionAttitudeTransform">
 			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
+				<stringproperty name="1">Path</stringproperty>
 			</arrayproperty>
-			<vec3property name="Position" x="-4.2868232727" y="22.4401512146" z="-15.2212324142"/>
+			<vec3property name="Position" x="-4.2868232727" y="22.4401512146" z="-0.1825118419"/>
 			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
@@ -147,7 +157,6 @@
 		<component type="Map">
 			<stringproperty name="EntityName">SkyBox</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
-			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">SkyBox</stringproperty>
 		</component>
 		<component type="Shadow">
@@ -192,7 +201,7 @@
 	<entity>
 		<component type="Camera">
 			<vec3property name="EyeDirection" x="0.1231698237" y="0.9374510683" z="-0.3255989697"/>
-			<vec3property name="Position" x="-3.1688641610" y="-33.5828342876" z="11.2829572224"/>
+			<vec3property name="Position" x="-8.7693598169" y="-27.3581944527" z="16.1232173299"/>
 		</component>
 		<component type="EditorMotion"/>
 		<component type="Map">

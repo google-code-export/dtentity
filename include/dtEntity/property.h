@@ -238,6 +238,12 @@ namespace dtEntity
       void Add(Property* prop);
 
       /**
+       * Insert into array at given index. Ownership is taken by ArrayProperty -
+       * property is deleted in destructor
+       */
+      void Insert(Property* prop, unsigned int index);
+
+      /**
        * Remove from array and delete prop
        * Remove true if prop was found in array
        */

@@ -147,6 +147,10 @@ namespace dtEntitySimulation
                    osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(&nv);
 
                    osg::BoundingSphere bs = mTransform->GetNode()->getBound();
+                   if(!bs.valid())
+                   {
+                     bs.set(mTransform->GetTranslation(), 1);
+                   }
                    osg::Vec3d pivot = bs.center();
                    if(_pivotAtBottom)
                    {

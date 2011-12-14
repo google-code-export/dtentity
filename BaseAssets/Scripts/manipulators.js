@@ -6,6 +6,8 @@ var layerSystem = getEntitySystem("Layer");
 var manipulatorSystem = getEntitySystem("Manipulator");
 var ddm = new DebugDrawManager(EntityManager);
 var patSystem = getEntitySystem("PositionAttitudeTransform");
+var pathSystem = getEntitySystem("Path");
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
@@ -564,7 +566,7 @@ function RotateTool() {
 
          for(var k in Selection.ids) {
             var id = Selection.ids[k];
-            var patcomp = getEntitySystem("PositionAttitudeTransform").getComponent(id);
+            var patcomp = patSystem.getComponent(id);
             if(patcomp !== null) {
                this.undoOp.beforeRot.push([id, patcomp.Attitude, patcomp.Position]);
                patcomp.Attitude = [0, 0, 0, 1];
@@ -590,7 +592,7 @@ function RotateTool() {
 
    this.getAttitude = function() {
       if(Selection.ids.length === 0) return null;
-      var padcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[0]);
+      var padcomp = patSystem.getComponent(Selection.ids[0]);
       if(padcomp === null) return null;
       return padcomp.Attitude;
    }
@@ -742,7 +744,7 @@ function ScaleTool() {
          };
          for(var k in Selection.ids) {
             var id = Selection.ids[k];
-            var patcomp = getEntitySystem("PositionAttitudeTransform").getComponent(id);
+            var patcomp = patSystem.getComponent(id);
             if(patcomp !== null) {
                this.undoOp.beforeScale.push([id, patcomp.Scale, patcomp.Position]);
                patcomp.Scale = [1, 1, 1];
@@ -767,7 +769,7 @@ function ScaleTool() {
 
    this.getScale = function() {
        if(Selection.ids.length === 0) return null;
-       var padcomp = getEntitySystem("PositionAttitudeTransform").getComponent(Selection.ids[0]);
+       var padcomp = patSystem.getComponent(Selection.ids[0]);
        if(padcomp === null) return null;
        return padcomp.Scale;
     }
@@ -776,3 +778,105 @@ function ScaleTool() {
 ScaleTool.prototype = Tool;
 var scaleTool = new ScaleTool();
 ToolHolder.addTool(scaleTool);
+
+
+ //////////////////////////////// PathEdit tool /////////////////////////////
+
+ function PathEditTool() {
+   var self = this;
+   this.name = "PathEdit";
+   this.iconPath = ":icons/format-text-direction-ltr.png";
+   this.shortCut = "Ctrl+p";
+   var initialCamPos = [0,0,0];
+   var manipulator = null;
+   var manipulatorEntity = 0;
+
+   var mouseButtonDown = false;
+   var selectedIndex = null;
+   var selectedEntityId = 0;
+   var clamper = getEntitySystem("GroundClamping");
+
+   this.activate = function () {
+   }
+
+   this.deactivate = function () {
+      if(manipulatorEntity !== 0) {
+        EntityManager.removeFromScene(manipulatorEntity);
+        EntityManager.killEntity(manipulatorEntity);
+        manipulatorEntity = 0;
+      }
+   }
+
+   this.mouseButtonDown = function(button, handled) {
+     if(button === 0) mouseButtonDown = true;
+
+     var doclone = Input.getKey("Shift_L");
+     if(doclone && selectedIndex !== null && selectedEntityId !== 0) {
+       pathSystem.duplicateVertex(selectedEntityId, selectedIndex, selectedIndex);
+       selectedIndex += 1;
+     }
+
+     if(handled) return;
+
+     var pickray = Screen.getPickRay(Input.getAxis(Axis.MouseX), Input.getAxis(Axis.MouseY));
+     var campos = this.getCameraPosition();
+
+     if(manipulatorEntity !== 0) {
+       EntityManager.removeFromScene(manipulatorEntity);
+       EntityManager.killEntity(manipulatorEntity);
+       manipulatorEntity = 0;
+       selectedIndex = null;
+     }
+
+     for (var k in Selection.ids) {
+       var id = Selection.ids[k];
+       selectedIndex = pathSystem.pickVertex(id, campos, pickray);
+       if(selectedIndex !== null) {
+
+         selectedEntityId = id;
+         var worldpos = pathSystem.getVertexWorldPosition(id, selectedIndex);
+
+         manipulatorEntity = EntityManager.createEntity();
+         var poscomp = patSystem.createComponent(manipulatorEntity);
+         poscomp.Position = worldpos;
+         poscomp.finished();
+         manipulator = manipulatorSystem.createComponent(manipulatorEntity);
+         manipulator.DraggerType = "TerrainTranslateDragger";
+         manipulator.KeepSizeConstant = true;
+         manipulator.PivotAtBottom = false;
+         manipulator.finished();
+         EntityManager.addToScene(manipulatorEntity);
+
+         break;
+       }
+     }
+   }
+
+   this.mouseButtonUp = function(button, handled) {
+        if(button === 0) mouseButtonDown = false;
+   }
+
+   this.mouseMove = function(x, y, handled)
+   {
+
+     if(mouseButtonDown && manipulatorEntity !== 0 && selectedIndex !== null) {
+
+       var pos = patSystem.getComponent(manipulatorEntity).Position;
+
+       if(manipulatorSystem.UseGroundClamping)  {
+          var h = clamper.getTerrainHeight(pos);
+         if(h !== null) {
+           pos[2] = h;
+         }
+       }
+       pathSystem.setVertexWorldPosition(selectedEntityId, selectedIndex, pos);
+       pathSystem.getComponent(selectedEntityId).finished();
+
+     }
+   }
+
+ };
+
+ PathEditTool.prototype = Tool;
+ var pathEditTool = new PathEditTool();
+ ToolHolder.addTool(pathEditTool);
