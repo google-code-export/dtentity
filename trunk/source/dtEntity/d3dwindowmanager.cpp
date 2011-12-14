@@ -61,12 +61,11 @@ namespace dtEntity
       em.GetEntitySystem(ApplicationSystem::TYPE, appsys);
       appsys->SetViewer(mApplication->GetCompositeViewer());
       mApplication->GetCamera()->RemoveSender(&dtCore::System::GetInstance());
-      appsys->CreateSceneGraphEntities();
 
       mTimeChangedFunctor = dtEntity::MessageFunctor(this, &D3DWindowManager::OnTimeChange);
       em.RegisterForMessages(dtEntity::TimeChangedMessage::TYPE, mTimeChangedFunctor, "EphemerisSystem::OnTimeChange");
 
-
+      app.GetScene()->GetSceneNode()->addEventCallback(&GetInputHandler());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -84,12 +83,20 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void D3DWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   unsigned int D3DWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
    {
+
       OpenWindowInternal(name, layername, traits);
+      osgViewer::GraphicsWindow* gw = GetWindowByName(name);
+      if(gw)
+      {
+         gw->realize();
+      }
       WindowCreatedMessage msg;
       msg.SetName(name);
+      msg.SetContextId(gw->getState()->getContextID());
       mEntityManager->EmitMessage(msg);
+      return gw->getState()->getContextID();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -139,6 +146,7 @@ namespace dtEntity
       cam->SetWindow(window);
       view->SetCamera(cam);
       cam->GetOSGCamera()->setName(name);
+      
       
    }
 

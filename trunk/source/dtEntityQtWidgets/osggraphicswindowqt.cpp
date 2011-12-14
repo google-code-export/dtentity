@@ -138,7 +138,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    OSGGraphicsWindowQt::~OSGGraphicsWindowQt()
    {  
-      SetQGLWidget(NULL);
+      closeImplementation();
    }
 
    ////////////////////////////////////////////////////////////
@@ -248,6 +248,11 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::closeImplementation()
+   {
+      QMetaObject::invokeMethod(this, "ApplyClose", Qt::BlockingQueuedConnection);      
+   }
+   ////////////////////////////////////////////////////////////
+   void OSGGraphicsWindowQt::ApplyClose()
    {
       if (mQWidget != NULL)
       {

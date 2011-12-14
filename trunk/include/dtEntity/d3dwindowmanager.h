@@ -44,7 +44,7 @@ namespace dtEntity
 	   */
       dtABC::Application* GetApplication() const { return mApplication.get(); }
 
-      virtual void OpenWindow(const std::string& name,
+      virtual unsigned int OpenWindow(const std::string& name,
          dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits);
 
       virtual void CloseWindow(const std::string& name);
