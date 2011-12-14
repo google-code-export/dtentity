@@ -29,6 +29,7 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/osgcomponents.h>
+#include <dtEntity/windowmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <iostream>
 #include <osgDB/FileUtils>
@@ -79,6 +80,10 @@ int main(int argc, char** argv)
    em->AddEntitySystem(*scriptsys);
    
    scriptsys->ExecuteFile(script);
+
+   dtEntity::ApplicationSystem* appsys;
+   em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+   dtEntity::WindowManager* windowManager = appsys->GetWindowManager();
    
    if(profiling_enabled)
    {
@@ -97,6 +102,9 @@ int main(int argc, char** argv)
          CProfileManager::Start_Profile(frameAdvanceId);
          viewer.advance();
          CProfileManager::Stop_Profile();
+
+         // check if a window should be closed
+         windowManager->ProcessQueuedMessages();
 
          CProfileManager::Start_Profile(frameEvTrId);
          viewer.eventTraversal();
@@ -122,7 +130,14 @@ int main(int argc, char** argv)
    }
    else
    {
-      while (!viewer.done()) viewer.frame();
+      viewer.advance(DBL_MAX);
+      
+      // check if a window should be closed
+      windowManager->ProcessQueuedMessages();
+
+      viewer.eventTraversal();
+      viewer.updateTraversal();
+      viewer.renderingTraversals();
    }
    return 0;
 }
