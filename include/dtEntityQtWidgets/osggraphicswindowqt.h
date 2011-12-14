@@ -138,7 +138,7 @@ namespace dtEntityQtWidgets
       void ApplyUseCursor(bool);
       void ApplySetWindowRectangle(int x, int y, int w, int h);
       void ApplyRealize();
-
+      void ApplyClose();
    private:
       bool mValid;
       bool mRealized;
