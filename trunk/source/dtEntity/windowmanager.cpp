@@ -91,13 +91,12 @@ namespace dtEntity
       : WindowManager(em)
    {
       mCloseWindowFunctor = MessageFunctor(this, &OSGWindowManager::OnCloseWindow);
-      em.RegisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor,"OSGWindowManager::OSGWindowManager");
+      mMessagePump.RegisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    OSGWindowManager::~OSGWindowManager()
    {
-      mEntityManager->UnregisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -250,10 +249,9 @@ namespace dtEntity
          return;
       }
       view->setSceneData(NULL);
-      compview->stopThreading();
+
       window->close();
       compview->removeView(view);
-      compview->startThreading();
 
    }
 
@@ -264,7 +262,7 @@ namespace dtEntity
       // Closing window at time of message processing works OK.
       CloseWindowMessage msg;
       msg.SetName(name);
-      mEntityManager->EnqueueMessage(msg);
+      mMessagePump.EnqueueMessage(msg);
    }
 
 

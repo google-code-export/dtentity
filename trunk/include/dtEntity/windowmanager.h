@@ -81,11 +81,13 @@ namespace dtEntity
 
       InputHandler& GetInputHandler() { return *mInputHandler.get(); }
 
+      virtual void ProcessQueuedMessages() { mMessagePump.EmitQueuedMessages(FLT_MAX); }
+
    protected:
 
       EntityManager* mEntityManager;
       osg::ref_ptr<InputHandler> mInputHandler;
-
+      MessagePump mMessagePump;
    };	
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -115,13 +117,14 @@ namespace dtEntity
        * Get pick ray at given screen position
        */
       osg::Vec3 GetPickRay(const std::string& name, float x, float y);
-
+      
    protected:
 
       osgViewer::View* OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits);
 
    private:
       MessageFunctor mCloseWindowFunctor;
+      
    };	
 
 
