@@ -49,6 +49,6 @@
         <file>icons/property.png</file>
         <file>icons/coordsystems.png</file>
         <file>icons/go-bottom.png</file>
-       <!-- <file>icons/applications-accessories.png</file>-->
+        <file>icons/format-text-direction-ltr.png</file>
     </qresource>
 </RCC>

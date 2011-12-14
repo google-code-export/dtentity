@@ -330,6 +330,14 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void ArrayProperty::Insert(Property* prop, unsigned int index)
+   {
+      PropertyArray::iterator i = mValue.begin();
+      i += index;
+      mValue.insert(i, prop);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    bool ArrayProperty::Remove(Property* prop)
    {
       for(PropertyArray::iterator i = mValue.begin(); i != mValue.end(); ++i)
