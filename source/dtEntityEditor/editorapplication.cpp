@@ -68,6 +68,7 @@ namespace dtEntityEditor
       mViewer = new osgViewer::Viewer(arguments);
       mViewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
 
+	  mViewer->setUpViewInWindow(0, 0, 800, 600);
       mViewer->realize();
 
       //osgViewer::View* v = new osgViewer::View();
