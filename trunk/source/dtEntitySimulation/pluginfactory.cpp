@@ -22,6 +22,7 @@
 #include <dtEntitySimulation/groundclampingcomponent.h>
 #include <dtEntitySimulation/messages.h>
 #include <dtEntitySimulation/manipulatorcomponent.h>
+#include <dtEntitySimulation/particlecomponent.h>
 #include <dtEntitySimulation/pathcomponent.h>
 #include <dtEntity/componentplugin.h>
 
@@ -116,6 +117,35 @@ namespace dtEntitySimulation
          return "System for PAth";
       }
    };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class DT_ENTITY_SIMULATION_EXPORT ParticleFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
+      {
+         es = new dtEntitySimulation::ParticleSystem(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "Particl";
+      }
+
+      virtual dtEntity::ComponentType GetType() const
+      {
+         return dtEntitySimulation::ParticleComponent::TYPE;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "System for osgParticle";
+      }
+   };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,5 +159,6 @@ extern "C" DT_ENTITY_SIMULATION_EXPORT void CreatePluginFactories(std::list<dtEn
 {
    list.push_back(new dtEntitySimulation::GroundClampingFactory());
    list.push_back(new dtEntitySimulation::ManipulatorFactory());
+   list.push_back(new dtEntitySimulation::ParticleFactory());
    list.push_back(new dtEntitySimulation::PathFactory());
 }

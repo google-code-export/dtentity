@@ -23,6 +23,7 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/messages.h
    ${HEADER_PATH}/manipulatorcomponent.h
    ${HEADER_PATH}/manipulators.h
+   ${HEADER_PATH}/particlecomponent.h
    ${HEADER_PATH}/pathcomponent.h
    ${HEADER_PATH}/quattools.h
 )
@@ -32,6 +33,7 @@ SET(LIB_SOURCES
 	 ${SOURCE_PATH}/messages.cpp
 	 ${SOURCE_PATH}/manipulatorcomponent.cpp
 	 ${SOURCE_PATH}/manipulators.cpp
+	 ${SOURCE_PATH}/particlecomponent.cpp
 	 ${SOURCE_PATH}/pathcomponent.cpp
 	 ${SOURCE_PATH}/pluginfactory.cpp
 )
