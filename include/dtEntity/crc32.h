@@ -1,24 +1,37 @@
-#pragma once
+//-----------------------------------------------------------------------------
+// MurmurHash3 was written by Austin Appleby, and is placed in the public
+// domain. The author hereby disclaims copyright to this source code.
 
-/* -*-c++-*-
-* dtEntity Game and Simulation Engine
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Martin Scheffler
-*/
+#ifndef _MURMURHASH3_H_
+#define _MURMURHASH3_H_
 
-unsigned int MurmurHash2(const void * key, int len, unsigned int seed);
+//-----------------------------------------------------------------------------
+// Platform-specific functions and macros
 
+// Microsoft Visual Studio
+
+#if defined(_MSC_VER)
+
+typedef unsigned char uint8_t;
+typedef unsigned long uint32_t;
+typedef unsigned __int64 uint64_t;
+
+// Other compilers
+
+#else	// defined(_MSC_VER)
+
+#include <stdint.h>
+
+#endif // !defined(_MSC_VER)
+
+//-----------------------------------------------------------------------------
+
+void MurmurHash3_x86_32  ( const void * key, int len, uint32_t seed, void * out );
+
+void MurmurHash3_x86_128 ( const void * key, int len, uint32_t seed, void * out );
+
+void MurmurHash3_x64_128 ( const void * key, int len, uint32_t seed, void * out );
+
+//-----------------------------------------------------------------------------
+
+#endif // _MURMURHASH3_H_

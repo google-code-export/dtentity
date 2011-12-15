@@ -544,10 +544,10 @@ namespace dtEntityQtWidgets
                EntityTreeItem* item = GetInternal(index);
                switch(item->GetItemType())
                {
-                  case EntityTreeType::ENTITY: return QIcon(":icons/entitytree_entity.png");
-                  case EntityTreeType::ENTITYSYSTEM: return QIcon(":icons/entitytree_entitysystem.png");
-                  case EntityTreeType::MAP: return QIcon(":icons/entitytree_map.png");
-                  case EntityTreeType::SPAWNER: return QIcon(":icons/entitytree_spawner.png");
+                  case EntityTreeType::ENTITY: return QIcon(":icons/user-invisible.png");
+                  case EntityTreeType::ENTITYSYSTEM: return QIcon(":icons/system-run.png");
+                  case EntityTreeType::MAP: return QIcon(":icons/media-floppy.png");
+                  case EntityTreeType::SPAWNER: return QIcon(":icons/help-about.png");
                   default: return QVariant();
                }
             }            

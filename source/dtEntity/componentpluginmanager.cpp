@@ -92,47 +92,43 @@ namespace dtEntity
             continue;
          }
        
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#if defined (_DEBUG)
-         const std::string basePluginName = fileName.substr(0, fileName.size() - 5);
-#else
-         const std::string basePluginName = fileName.substr(0, fileName.size() - 4);
-#endif
-#else
-         const std::string basePluginName = fileName.substr(3, fileName.size() - 6);
-#endif
          std::ostringstream libpath;
          libpath << path << "/" << fileName;
-         std::list<osg::ref_ptr<ComponentPluginFactory> > factories;
-         LoadPluginFactories(libpath.str(), factories);
-
-         if(!factories.empty())
-         {
-            std::list<osg::ref_ptr<ComponentPluginFactory> >::iterator i;
-            for(i = factories.begin(); i != factories.end(); ++i)
-            {
-               osg::ref_ptr<ComponentPluginFactory> factory = *i;
-               assert(factory.valid());
-               
-               ComponentType ctype = factory->GetType();
-
-               // check if a plugin with this name already exists
-               if(mEntityManager->HasEntitySystem(ctype))
-               {
-                  std::ostringstream msg;
-                  msg << "Unable to load entity system from plugin " << basePluginName <<":";
-                  msg << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!";
-                  LOG_ERROR(msg.str());
-                  continue;
-               }
-
-               LOG_DEBUG("Registered entity system " + dtEntity::GetStringFromSID(ctype));
-               // insert factory into factory list
-               AddFactory(factory);
-            }
-         }
-
+         AddPlugin(libpath.str());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ComponentPluginManager::AddPlugin(const std::string& abspath)
+   {
+     std::list<osg::ref_ptr<ComponentPluginFactory> > factories;
+     LoadPluginFactories(abspath, factories);
+
+     if(!factories.empty())
+     {
+        std::list<osg::ref_ptr<ComponentPluginFactory> >::iterator i;
+        for(i = factories.begin(); i != factories.end(); ++i)
+        {
+           osg::ref_ptr<ComponentPluginFactory> factory = *i;
+           assert(factory.valid());
+
+           ComponentType ctype = factory->GetType();
+
+           // check if a plugin with this name already exists
+           if(mEntityManager->HasEntitySystem(ctype))
+           {
+              std::ostringstream msg;
+              msg << "Unable to load entity system from path " << abspath <<":";
+              msg << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!";
+              LOG_ERROR(msg.str());
+              continue;
+           }
+
+           LOG_DEBUG("Registered entity system " + dtEntity::GetStringFromSID(ctype));
+           // insert factory into factory list
+           AddFactory(factory);
+        }
+     }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

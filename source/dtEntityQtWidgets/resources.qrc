@@ -41,14 +41,13 @@
         <file>icons/project-open.png</file>
         <file>icons/draw-path.png</file>
         <file>icons/component.png</file>
-        <file>icons/entity.png</file>
-        <file>icons/entitytree_entity.png</file>
-        <file>icons/entitytree_entitysystem.png</file>
-        <file>icons/entitytree_map.png</file>
-        <file>icons/entitytree_spawner.png</file>
         <file>icons/property.png</file>
         <file>icons/coordsystems.png</file>
         <file>icons/go-bottom.png</file>
         <file>icons/format-text-direction-ltr.png</file>
+        <file>icons/user-invisible.png</file>
+        <file>icons/system-run.png</file>
+        <file>icons/help-about.png</file>
+        <file>icons/media-floppy.png</file>
     </qresource>
 </RCC>
