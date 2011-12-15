@@ -86,6 +86,12 @@ namespace dtEntity
        * it from a plugin
        */
       void AddFactory(ComponentPluginFactory* factory);
+
+      /**
+       * Load a shared library / dll from abs path and register
+       * the contained entity system factories
+       */
+      void AddPlugin(const std::string& abspath);
       
       EntityManager& GetEntityManager() const { return *mEntityManager; }
 

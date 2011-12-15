@@ -40,7 +40,9 @@ namespace dtEntity
       unsigned int Hash(const std::string& str)
       {
          const unsigned char* s = reinterpret_cast<const unsigned char*>(str.c_str());
-         return MurmurHash2(s, str.size(), 0);
+         unsigned int hash;
+         MurmurHash3_x86_32(s, str.size(), 0, &hash);
+         return hash;
       }
 
       ////////////////////////////////////////////////////////////////////////////////
