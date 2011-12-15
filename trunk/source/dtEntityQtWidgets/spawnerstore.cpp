@@ -93,7 +93,7 @@ namespace dtEntityQtWidgets
            QByteArray itemData;
            QMimeData *mimeData = new QMimeData;
            mimeData->setData("application/x-spawner", itemData);
-           mimeData->setText(QString("SPAWNER|%1").arg(item->text()));
+           mimeData->setText(QString("SPAWNER|%1|%2").arg(item->text()).arg(mTargetMap));
 
            QDrag* drag = new QDrag(this);
            drag->setMimeData(mimeData);
@@ -127,7 +127,7 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   SpawnerStoreView::SpawnerStoreView(QWidget* parent)
+   SpawnerStoreView::SpawnerStoreView(const QStringList& loadedMaps, QWidget* parent)
       : QWidget(parent)
    {
       Ui_SpawnerStore ui;
@@ -135,6 +135,8 @@ namespace dtEntityQtWidgets
       mCategories = ui.mCategories;
       mSpawnerList = new SpawnerList();
       mButtons = ui.mButtons;
+      mTargetMap = ui.mTargetMap;
+
       ui.mListPlaceholder->setLayout(new QVBoxLayout());
       ui.mListPlaceholder->layout()->addWidget(mSpawnerList);
       connect(mSpawnerList, SIGNAL(spawnerClicked( QListWidgetItem*)), this, SLOT(OnItemClicked(QListWidgetItem*)));
@@ -144,11 +146,38 @@ namespace dtEntityQtWidgets
       connect(ui.mAddCategoryButton, SIGNAL(clicked()), this, SLOT(OnAddCategoryButtonClicked()));
 
       mCategories->setInsertPolicy(QComboBox::InsertAlphabetically);
+
+      if(!loadedMaps.empty())
+      {
+         QString str;
+         foreach(str, loadedMaps)
+         {
+           mTargetMap->addItem(str);
+         }
+         mSpawnerList->SetTargetMap(loadedMaps.front());
+      }
+      connect(mTargetMap, SIGNAL(currentIndexChanged(QString)), mSpawnerList, SLOT(SetTargetMap(QString)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    SpawnerStoreView::~SpawnerStoreView()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreView::MapLoaded(const QString& map)
+   {
+      mTargetMap->addItem(map);
+      if(mSpawnerList->GetTargetMap() == "")
+      {
+         mSpawnerList->SetTargetMap(map);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnerStoreView::MapUnloaded(const QString& map)
+   {
+      mTargetMap->removeItem(mTargetMap->findText(map));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -337,11 +366,12 @@ namespace dtEntityQtWidgets
    void SpawnerStoreController::OnTextDroppedOntoGLWidget(const QPointF& pos, const QString& text)
    {
       QStringList l = text.split("|");
-      if(l.size() != 2 || l.front() != "SPAWNER")
+      if(l.size() != 3 || l.front() != "SPAWNER")
       {
          return;
       }
-      QString spawnerName = l.back();
+      QString spawnerName = l[1];
+      QString targetMap = l[2];
 
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
@@ -396,6 +426,7 @@ namespace dtEntityQtWidgets
       if(entity->GetComponent(mc))
       {
          mc->SetEntityName(spawner->GetName());
+         mc->SetMapName(targetMap.toStdString());
       }
       mEntityManager->AddToScene(entity->GetId());
 

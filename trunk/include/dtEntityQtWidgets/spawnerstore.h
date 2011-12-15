@@ -39,6 +39,11 @@ namespace dtEntityQtWidgets
 
       void AddCategory(const QString&);
 
+      QString GetTargetMap() const { return mTargetMap; }
+   public slots:
+
+      void SetTargetMap(const QString& v) { mTargetMap = v; }
+
    protected slots:
 
       void DeleteSelectedSpawners();
@@ -51,6 +56,7 @@ namespace dtEntityQtWidgets
       void ChangeCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
 
    private:
+       QString mTargetMap;
        QAction* mDeleteSpawnerAction;
        QListWidgetItem* mSelected;
        QMenu* mReclassifyMeny;
@@ -65,7 +71,7 @@ namespace dtEntityQtWidgets
 
    public:
       
-      SpawnerStoreView(QWidget* parent = NULL);
+      SpawnerStoreView(const QStringList& loadedMaps, QWidget* parent = NULL);
       virtual ~SpawnerStoreView();
 
       QWidget* GetButtons() const { return mButtons; }
@@ -80,6 +86,8 @@ namespace dtEntityQtWidgets
       void OnItemClicked(QListWidgetItem*);
       void OnAddCategoryButtonClicked();
 
+      void MapLoaded(const QString& map);
+      void MapUnloaded(const QString& map);
 
    signals:
       void SpawnerClicked(const QString& name, const QString& category);
@@ -92,6 +100,7 @@ namespace dtEntityQtWidgets
       SpawnerList* mSpawnerList;
       QComboBox* mCategories;
       QWidget* mButtons;
+      QComboBox* mTargetMap;
 
    }; 
 

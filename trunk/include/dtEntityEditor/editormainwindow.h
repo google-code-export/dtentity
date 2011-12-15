@@ -64,7 +64,13 @@ namespace dtEntityEditor
       EditorMainWindow(EditorApplication* app, QWidget *parent = 0);
       virtual ~EditorMainWindow();
 
-      void ToolsUpdated(const dtEntity::Message& msg);
+      void OnToolsUpdated(const dtEntity::Message& msg);
+      void OnMapLoaded(const dtEntity::Message& msg);
+      void OnMapUnloaded(const dtEntity::Message& msg);
+      void OnSceneLoaded(const dtEntity::Message& msg);
+      void OnSceneUnloaded(const dtEntity::Message& msg);
+
+      QStringList GetLoadedMaps() const;
 
    signals:      
 
@@ -80,6 +86,9 @@ namespace dtEntityEditor
 
       void TextDroppedOntoGLWidget(const QPointF& pos, const QString&);
 
+      void MapLoaded(const QString& map);
+      void MapUnloaded(const QString& map);
+
    public slots:
 
       void OnDisplayError(const QString& msg);
@@ -91,7 +100,6 @@ namespace dtEntityEditor
       // interpret line in jump tool bar and do jump
       void DoJump();
 
-      void OnSceneLoaded(const QString& path);
 
       void OnTextDroppedOntoGLWidget(const QPointF& pos, const QString&);
       void ShutDown();
@@ -147,6 +155,8 @@ namespace dtEntityEditor
 
       // The scene currently being edited
       QString mCurrentScene;
+
+      QSet<QString> mCurrentMaps;
 
       dtEntity::MessagePump mMessagePump;
       QTimer* mUpdateTimer;

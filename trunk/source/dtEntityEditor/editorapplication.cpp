@@ -105,8 +105,6 @@ namespace dtEntityEditor
       
       connect(mMainWindow, SIGNAL(Closed(bool)), this, SLOT(ShutDownGame(bool)));
       connect(mMainWindow, SIGNAL(ViewResized(const QSize&)), this, SLOT(ViewResized(const QSize&)));
-      connect(this, SIGNAL(SceneLoaded(const QString&)), mMainWindow, SLOT(OnSceneLoaded(const QString&)));
-
 
    }
 
@@ -219,6 +217,10 @@ namespace dtEntityEditor
       osgViewer::ViewerBase::Cameras cams;
       mViewer->getCameras(cams);
       cams.front()->setViewport(new osg::Viewport(0, 0, size.width(), size.height()));
+
+      double vfov, aspectRatio, nearClip, farClip;
+      cams.front()->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
+      cams.front()->setProjectionMatrixAsPerspective(vfov, (double)size.width() / (double) size.height(), nearClip, farClip);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
