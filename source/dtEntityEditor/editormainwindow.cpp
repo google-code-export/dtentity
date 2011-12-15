@@ -81,19 +81,25 @@ namespace dtEntityEditor
       , mPropertyEditorDock(NULL)
    {
 
-      dtEntity::MessageFunctor functor(this, &EditorMainWindow::ToolsUpdated);
-      mMessagePump.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
-
-
       mUpdateTimer = new QTimer(this);
       connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(EmitQueuedMessages()));
       mUpdateTimer->start(100);
 
-      {
-         // register local message pump to receive messages from game message pump
-         dtEntity::MessageFunctor functor(&mMessagePump, &dtEntity::MessagePump::EnqueueMessage);
-         mApplication->GetEntityManager().RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
-      }
+
+      // register local message pump to receive messages from game message pump
+      dtEntity::MessageFunctor functor(&mMessagePump, &dtEntity::MessagePump::EnqueueMessage);
+      mApplication->GetEntityManager().RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
+      mApplication->GetEntityManager().RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, functor);
+      mApplication->GetEntityManager().RegisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, functor);
+      mApplication->GetEntityManager().RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, functor);
+      mApplication->GetEntityManager().RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, functor);
+
+      mMessagePump.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnToolsUpdated));
+      mMessagePump.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnSceneLoaded));
+      mMessagePump.RegisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnSceneUnloaded));
+      mMessagePump.RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnMapLoaded));
+      mMessagePump.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnMapUnloaded));
+
 
       setMinimumSize(800, 600);
       layout()->setContentsMargins(0, 0, 0, 0);
@@ -226,6 +232,18 @@ namespace dtEntityEditor
 
 
    ////////////////////////////////////////////////////////////////////////////////
+   QStringList EditorMainWindow::GetLoadedMaps() const
+   {
+      QStringList ret;
+      QString m;
+      foreach(m, mCurrentMaps)
+      {
+         ret.push_back(m);
+      }
+      return ret;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::createToolBars()
    {
       {
@@ -264,7 +282,7 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::ToolsUpdated(const dtEntity::Message& m)
+   void EditorMainWindow::OnToolsUpdated(const dtEntity::Message& m)
    {
       const dtEntity::ToolsUpdatedMessage& msg = static_cast<const dtEntity::ToolsUpdatedMessage&>(m);
       mToolsToolbar->clear();
@@ -328,6 +346,50 @@ namespace dtEntityEditor
          toolsActionGroup->addAction(a);
          connect(a, SIGNAL(triggered(bool)), this, SLOT(OnToolActionTriggered(bool)));
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnMapLoaded(const dtEntity::Message& m)
+   {
+      const dtEntity::MapLoadedMessage& msg =
+            static_cast<const dtEntity::MapLoadedMessage&>(m);
+      QString mapname = msg.GetMapPath().c_str();
+      mCurrentMaps.insert(mapname);
+      emit MapLoaded(mapname);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnMapUnloaded(const dtEntity::Message& m)
+   {
+      const dtEntity::MapUnloadedMessage& msg =
+            static_cast<const dtEntity::MapUnloadedMessage&>(m);
+       QString mapname = msg.GetMapPath().c_str();
+      mCurrentMaps.remove(mapname);
+      emit MapUnloaded(mapname);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnSceneLoaded(const dtEntity::Message& m)
+   {
+      const dtEntity::SceneLoadedMessage& msg =
+            static_cast<const dtEntity::SceneLoadedMessage&>(m);
+
+      mCurrentScene = msg.GetSceneName().c_str();
+      mSaveAllAct->setEnabled(true);
+      mSaveSceneAct->setEnabled(true);
+      setWindowTitle(QString("%1 - dtEntity Editor").arg(mCurrentScene));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnSceneUnloaded(const dtEntity::Message& m)
+   {
+      const dtEntity::SceneUnloadedMessage& msg =
+            static_cast<const dtEntity::SceneUnloadedMessage&>(m);
+
+      mCurrentScene = "";
+      mSaveAllAct->setEnabled(false);
+      mSaveSceneAct->setEnabled(false);
+      setWindowTitle("dtEntity Editor");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -417,7 +479,9 @@ namespace dtEntityEditor
       using namespace dtEntityQtWidgets;
 
 
-      SpawnerStoreView* view = new SpawnerStoreView();
+      SpawnerStoreView* view = new SpawnerStoreView(GetLoadedMaps());
+      connect(this, SIGNAL(MapLoaded(QString)), view, SLOT(MapLoaded(QString)));
+      connect(this, SIGNAL(MapUnloaded(QString)), view, SLOT(MapUnloaded(QString)));
       SpawnerStoreController* controller = new SpawnerStoreController(&mApplication->GetEntityManager());
 
       controller->moveToThread(mApplication->thread());
@@ -625,15 +689,6 @@ namespace dtEntityEditor
    void EditorMainWindow::OnViewClosing()
    {
       emit(ViewClosing());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::OnSceneLoaded(const QString& path)
-   {
-      mCurrentScene = path;
-      mSaveAllAct->setEnabled(true);
-      mSaveSceneAct->setEnabled(true);
-      setWindowTitle(QString("%1 - dtEntityEditor").arg(path));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
