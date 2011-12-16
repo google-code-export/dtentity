@@ -383,9 +383,6 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnSceneUnloaded(const dtEntity::Message& m)
    {
-      const dtEntity::SceneUnloadedMessage& msg =
-            static_cast<const dtEntity::SceneUnloadedMessage&>(m);
-
       mCurrentScene = "";
       mSaveAllAct->setEnabled(false);
       mSaveSceneAct->setEnabled(false);

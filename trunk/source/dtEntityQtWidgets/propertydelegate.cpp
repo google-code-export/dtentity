@@ -54,7 +54,10 @@ namespace dtEntityQtWidgets
       if(index.column() == 2)
       {
          TreeItem* item = static_cast<TreeItem*>(index.parent().internalPointer());
-         if(dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
+         PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+         if(   pitem &&
+               pitem->mProperty->GetType() == dtEntity::DataType::ARRAY &&
+               dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
          {
 
             QPushButton b;
@@ -384,7 +387,10 @@ namespace dtEntityQtWidgets
          const PropertyEditorModel* model = static_cast<const PropertyEditorModel*>(index.model());
          const_cast<PropertyEditorModel*>(model)->AppendArrayEntry(index);
       }
-      BaseClass::MouseButtonPressed(index, x, y);
+      else
+      {
+         BaseClass::MouseButtonPressed(index, x, y);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

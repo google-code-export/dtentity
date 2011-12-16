@@ -234,7 +234,10 @@ namespace dtEntityQtWidgets
                {
                   QModelIndex parent = index.parent();
                   TreeItem* item = static_cast<TreeItem*>(parent.internalPointer());
-                  if(dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
+                  PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
+                  if(pitem &&
+                        pitem->mProperty->GetType() == dtEntity::DataType::ARRAY &&
+                        dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
                   {
                      return "-";
                   }
@@ -547,6 +550,14 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorModel::SwitchChanged(const QModelIndex& index)
    {
+      TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+      PropertyTreeItem* pitem =  dynamic_cast<PropertyTreeItem*>(item);
+      while(pitem != NULL)
+      {
+         pitem->mChanged = true;
+         pitem = dynamic_cast<PropertyTreeItem*>(pitem->parent());
+      }
+
       emit(SwitchWasChanged(index));
    }
 
@@ -635,7 +646,7 @@ namespace dtEntityQtWidgets
       PropertyTreeItem* pparent = dynamic_cast<PropertyTreeItem*>(parent);
       assert(pparent);
       assert(pparent->mProperty->GetType() == dtEntity::DataType::ARRAY);
-         
+      pparent->mChanged = true;
       ArrayPropertyDelegate* dlgt = dynamic_cast<ArrayPropertyDelegate*>(pparent->mDelegate);
       assert(dlgt);
       dtEntity::ArrayProperty* arrprop = dynamic_cast<dtEntity::ArrayProperty*>(pparent->mProperty);
