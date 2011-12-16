@@ -1426,6 +1426,11 @@ namespace dtEntity
       std::ostringstream os;
       os << doc;
       std::ofstream of(p_dest.c_str());
+	  if(of.fail())
+	  {
+		  LOG_ERROR("Cannot open file for writing: " + p_dest);
+		  return false;
+	  }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
       of << os.str();
       of.close();
@@ -1470,6 +1475,11 @@ namespace dtEntity
       std::ostringstream os;
       os << doc;
       std::ofstream of(foundPath.c_str());
+	  if(of.fail())
+	  {
+		  LOG_ERROR("Cannot open file for writing: " + foundPath);
+		  return false;
+	  }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
       of << os.str();
       of.close();
