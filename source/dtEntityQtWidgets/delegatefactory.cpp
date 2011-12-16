@@ -59,6 +59,7 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    DelegateFactory::DelegateFactory()
+      : mAllowCreateFromGUI(true)
    {
    }
 
