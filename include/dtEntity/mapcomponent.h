@@ -201,6 +201,11 @@ namespace dtEntity
       bool UnloadScene();
 
       /**
+       * Unload current scene and create new, empty scene
+       */
+      bool CreateScene(const std::string& path);
+
+      /**
        * Get path of currently loaded scene
        */
       std::string GetCurrentScene() const { return mCurrentScene; }

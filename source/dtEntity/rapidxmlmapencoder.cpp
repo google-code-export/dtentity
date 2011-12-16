@@ -1323,6 +1323,10 @@ namespace dtEntity
    bool RapidXMLMapEncoder::LoadSceneFromFile(const std::string& path)
    {
       const std::string absPath = osgDB::findDataFile(path);
+      if(absPath == "")
+      {
+         return false;
+      }
       std::list<std::string> mapsToLoad;
 
       file<> file(absPath.c_str());
@@ -1468,7 +1472,20 @@ namespace dtEntity
          }
       }
 
-      const std::string foundPath = osgDB::findDataFile(path);
+      std::string foundPath = osgDB::findDataFile(path);
+      if(foundPath == "")
+      {
+         if(osgDB::getDataFilePathList().empty())
+         {
+            LOG_ERROR("Cannot save scene, no data paths defined!");
+            return false;
+         }
+         std::ostringstream os;
+         os << osgDB::getDataFilePathList().back();
+         os << osgDB::getNativePathSeparator();
+         os << path;
+         foundPath = os.str();
+      }
       
       // TODO under windows I get a crash in RapidXML if I 
       // directly stream to the ofstream. Hmmm...

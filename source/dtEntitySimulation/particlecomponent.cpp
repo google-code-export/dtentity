@@ -217,8 +217,8 @@ namespace dtEntitySimulation
       dtEntity::LayerAttachPointSystem* layersys;
       entity.GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
       dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
-      sceneLayer->GetNode()->asGroup()->removeChild(mGeode);
-      sceneLayer->GetNode()->asGroup()->removeChild(mProgram);
+      mGeode->getParent(0)->removeChild(mGeode);
+      mProgram->getParent(0)->removeChild(mProgram);
    }
   
    ////////////////////////////////////////////////////////////////////////////

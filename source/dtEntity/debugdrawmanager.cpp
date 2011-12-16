@@ -115,21 +115,14 @@ namespace dtEntity
    DebugDrawManager::~DebugDrawManager()
    {
       SetEnabled(false);
-      LayerAttachPointSystem* ls;
-      bool found = mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
-      if(found)
+      while(mGroupDepthTest->getNumParents() > 0)
       {
-         LayerAttachPointComponent* layer;
-         found = ls->GetByName(mLayerName, layer);
-         if(!found)
-         {
-            LOG_ERROR("Error removing DebugDrawManager: Layer not found!");
-         }
-         else
-         {
-            layer->GetGroup()->removeChild(mGroupDepthTest);
-            layer->GetGroup()->removeChild(mGroupNoDepthTest);
-         }
+         mGroupDepthTest->getParent(0)->removeChild(mGroupDepthTest);
+      }
+
+      while(mGroupNoDepthTest->getNumParents() > 0)
+      {
+         mGroupNoDepthTest->getParent(0)->removeChild(mGroupNoDepthTest);
       }
    }
 
@@ -137,7 +130,7 @@ namespace dtEntity
    void DebugDrawManager::Clear()
    {
       mGroupDepthTest->removeChildren(0, mGroupDepthTest->getNumChildren());
-	  mGroupNoDepthTest->removeChildren(0, mGroupNoDepthTest->getNumChildren());
+      mGroupNoDepthTest->removeChildren(0, mGroupNoDepthTest->getNumChildren());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

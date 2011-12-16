@@ -623,7 +623,7 @@ namespace dtEntityEditor
       bool ok;
       QString text = QInputDialog::getText(this, tr("Enter name for new scene"),
                                           tr("Enter name for new scene:"), QLineEdit::Normal,
-                                          "NewScene", &ok);
+                                          "Scenes/NewScene.dtescene", &ok);
       if (ok && !text.isEmpty())
       {
          emit AddScene(text);
