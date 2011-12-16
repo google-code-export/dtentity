@@ -246,6 +246,17 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::CreateScene(const std::string& path)
+   {
+      UnloadScene();
+      SceneLoadedMessage msg;
+      msg.SetSceneName(path);
+      GetEntityManager().EmitMessage(msg);
+      mCurrentScene = path;
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::LoadScene(const std::string& path)
    {
       bool success = mMapEncoder->LoadSceneFromFile(path);

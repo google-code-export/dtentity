@@ -319,11 +319,10 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::AddScene(const QString& name)
    {
-
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
-      mapSystem->UnloadScene();
+      mapSystem->CreateScene(name.toStdString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
