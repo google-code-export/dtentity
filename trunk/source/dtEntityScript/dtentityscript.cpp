@@ -130,14 +130,17 @@ int main(int argc, char** argv)
    }
    else
    {
-      viewer.advance(DBL_MAX);
-      
-      // check if a window should be closed
-      windowManager->ProcessQueuedMessages();
+      while (!viewer.done())
+      {
+         viewer.advance(DBL_MAX);
 
-      viewer.eventTraversal();
-      viewer.updateTraversal();
-      viewer.renderingTraversals();
+         // check if a window should be closed
+         windowManager->ProcessQueuedMessages();
+
+         viewer.eventTraversal();
+         viewer.updateTraversal();
+         viewer.renderingTraversals();
+      }
    }
    return 0;
 }

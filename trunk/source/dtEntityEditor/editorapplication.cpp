@@ -70,12 +70,6 @@ namespace dtEntityEditor
       // don't exit on escape
       mViewer->setKeyEventSetsDone(0);
 
-      mViewer->setUpViewInWindow(0, 0, 800, 600);
-      mViewer->realize();
-
-      //osgViewer::View* v = new osgViewer::View();
-      //mViewer->addView(v);
-      //v->setUpViewInWindow(100,100,800,600);
       dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
 
       dtEntity::MapSystem* ms;
