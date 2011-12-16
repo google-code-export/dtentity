@@ -72,7 +72,7 @@ namespace dtEntity
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
 
       osgViewer::ViewerBase::Windows wins;
-      appsys->GetViewer()->getWindows(wins);
+      appsys->GetViewer()->getWindows(wins, false);
 
       osgViewer::ViewerBase::Windows::iterator i;
       for(i = wins.begin(); i != wins.end(); ++i)
@@ -102,17 +102,14 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    unsigned int OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
    {
-      OpenWindowInternal(name, layername, traits);
-      osgViewer::GraphicsWindow* gw = GetWindowByName(name);
-      if(gw)
-      {
-         gw->realize();
-      }
+      osgViewer::View* view = OpenWindowInternal(name, layername, traits);
+      unsigned int cid = view->getCamera()->getGraphicsContext()->getState()->getContextID();
+
       WindowCreatedMessage msg;
       msg.SetName(name);
-      msg.SetContextId(gw->getState()->getContextID());
+      msg.SetContextId(cid);
       mEntityManager->EmitMessage(msg);
-      return gw->getState()->getContextID();
+      return cid;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -143,7 +140,6 @@ namespace dtEntity
          return NULL;
       }
 
-
       view->setName(name);
       view->setSceneData(target->GetGroup());
 
@@ -153,24 +149,15 @@ namespace dtEntity
       traits.readDISPLAY();
       if (traits.displayNum<0) traits.displayNum = 0;
 
-      osg::ref_ptr<osg::GraphicsContext> gc;
-      if(compviewer == NULL)
-      {
-         gc = view->getCamera()->getGraphicsContext();
-      }
-      else
-      {
-         gc = osg::GraphicsContext::createGraphicsContext(&traits);
-         cam->setGraphicsContext(gc.get());
-      }
-
-
+      osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
       osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
       if (gw)
       {
           OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
           gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
           gw->setName(name);
+          cam->setGraphicsContext(gw);
+
       }
       else
       {
@@ -194,9 +181,7 @@ namespace dtEntity
       cam->setDrawBuffer(buffer);
       cam->setReadBuffer(buffer);
 
-      //cam->addChild(mInputHandler);
       cam->addEventCallback(mInputHandler);
-
 
       dtEntity::Entity* entity;
       mEntityManager->CreateEntity(entity);
@@ -206,6 +191,7 @@ namespace dtEntity
       os << "cam_"  << contextid;
       cam->setName(os.str());
 
+      gw->realize();
       return view;
       
    }
