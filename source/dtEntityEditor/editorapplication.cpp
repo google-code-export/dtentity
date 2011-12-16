@@ -67,8 +67,10 @@ namespace dtEntityEditor
       osg::ArgumentParser arguments(&argc,argv);
       mViewer = new osgViewer::Viewer(arguments);
       mViewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
+      // don't exit on escape
+      mViewer->setKeyEventSetsDone(0);
 
-	  mViewer->setUpViewInWindow(0, 0, 800, 600);
+      mViewer->setUpViewInWindow(0, 0, 800, 600);
       mViewer->realize();
 
       //osgViewer::View* v = new osgViewer::View();

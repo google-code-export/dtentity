@@ -2,4 +2,5 @@
 <delegates>
    <fileinput propertyname="Mesh" filters="*.ive *.osg *.osgb *.flt *.txp *.dae *.3ds" />
    <boolinput propertyname="UseCache" />
+   <enuminput propertyname="CacheHint" values="CacheNone|CacheAll|CacheNodes|CacheHardwareMeshes" />
 </delegates>   

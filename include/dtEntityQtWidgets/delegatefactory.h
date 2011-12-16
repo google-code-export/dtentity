@@ -53,7 +53,7 @@ namespace dtEntityQtWidgets
       DelegateFactory();     
       virtual ~DelegateFactory();     
       virtual PropertySubDelegate* Create(TreeItem* parent, const QString& propname, const dtEntity::Property* prop) const;
-      DelegateFactory* GetFactoryForChildren(const QString& propname);
+      virtual DelegateFactory* GetFactoryForChildren(const QString& propname);
       void SetFactoryForChildren(const QString& propname, DelegateFactory* factory);
       PropertySubDelegate* CreateDefault(dtEntity::DataType::e dtype) const;
       virtual bool AllowCreateFromGUI() const { return mAllowCreateFromGUI; }

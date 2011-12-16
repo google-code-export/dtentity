@@ -267,7 +267,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    DelegateFactory* ArrayDelegateFactory::GetFactoryForChildren(const QString& propname)
    {
-      return DelegateFactory::GetFactoryForChildren(propname);
+      return DelegateFactory::GetFactoryForChildren("Prototype");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
