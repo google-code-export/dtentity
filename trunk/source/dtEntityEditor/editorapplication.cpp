@@ -259,24 +259,17 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::LoadScene(const QString& path)
-   {  
-      
-      dtEntity::MapSystem* mapSystem;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-
-      if(mapSystem->GetCurrentScene().size() != 0)
-      {
-         mapSystem->UnloadScene();
-      }
-
-      mapSystem->LoadScene(path.toStdString());
-
+   void EditorApplication::CreateCameraEntityIfNotExists()
+   {
       dtEntity::CameraSystem* camsys;
       GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
       if(camsys->GetNumComponents() == 0)
       {
          std::string cameramapname = "maps/default.dtemap";
+
+         dtEntity::MapSystem* mapSystem;
+         GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+
          if(!mapSystem->GetLoadedMaps().empty())
          {
             cameramapname = mapSystem->GetLoadedMaps().front();
@@ -306,6 +299,24 @@ namespace dtEntityEditor
          mapcomp->Finished();
          GetEntityManager().AddToScene(entity->GetId());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorApplication::LoadScene(const QString& path)
+   {  
+      
+      dtEntity::MapSystem* mapSystem;
+      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+
+      if(mapSystem->GetCurrentScene().size() != 0)
+      {
+         mapSystem->UnloadScene();
+      }
+
+      mapSystem->LoadScene(path.toStdString());
+
+      CreateCameraEntityIfNotExists();
+      
       emit SceneLoaded(path);
 
    }
@@ -317,6 +328,7 @@ namespace dtEntityEditor
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
       mapSystem->CreateScene(name.toStdString());
+      CreateCameraEntityIfNotExists();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

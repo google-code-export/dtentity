@@ -123,6 +123,7 @@ namespace dtEntity
    void CameraComponent::OnAddedToEntity(Entity& entity)
    {
       mEntity = &entity;
+      FetchCamera();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -175,6 +176,10 @@ namespace dtEntity
       {
          SetCullMask(prop.UIntValue());
       }
+      else if(propname == ContextIdId)
+      {
+         FetchCamera();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -194,6 +199,7 @@ namespace dtEntity
       {
          return;
       }
+      mCamera = NULL;
       ApplicationSystem* appsys;
       mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
 
@@ -306,8 +312,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::UpdateViewMatrix()
    {
-      osg::Vec3d lookat = mPosition.Get() + mEyeDirection.Get();
-      mCamera->setViewMatrixAsLookAt(mPosition.Get(), lookat, mUp.Get());
+      if(mCamera.valid())
+      {
+         osg::Vec3d lookat = mPosition.Get() + mEyeDirection.Get();
+         mCamera->setViewMatrixAsLookAt(mPosition.Get(), lookat, mUp.Get());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////

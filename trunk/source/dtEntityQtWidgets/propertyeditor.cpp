@@ -1092,8 +1092,8 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorView::SetColumnWidths()
    {
-      mComponentTree->setColumnWidth(0, 200);
-      mComponentTree->setColumnWidth(1, 200);
+      mComponentTree->setColumnWidth(0, 120);
+      mComponentTree->setColumnWidth(1, 120);
       mComponentTree->setColumnWidth(2, 20);
    }
 

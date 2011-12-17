@@ -63,11 +63,18 @@ var Tool = {
   update: function () {},
   selectionUpdated: function () {},
   disableMotionSystem: function () {
-   println("camid: " + camid);
-    getEntitySystem("Motion").getComponent(camid).Enabled = false;
+   
+    var c = getEntitySystem("Motion").getComponent(camid);
+    if(c) {
+		c.Enabled = false;
+	}
+   
   },
   enableMotionSystem: function () {
-    getEntitySystem("Motion").getComponent(camid).Enabled = true;
+    var c = getEntitySystem("Motion").getComponent(camid);
+    if(c) {
+		c.Enabled = true;
+	}
   },
   getCameraPosition: function () {
     return mainCamera.Position;

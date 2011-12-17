@@ -48,7 +48,7 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    LayerComponent::LayerComponent()
-      : mLayerProperty(StringId())
+      : mLayerProperty(dtEntity::SID("default"))
       , mAttachedComponent(StringId())
       , mCurrentlyAttachedComponent(StringId())
       , mAttachPoint(StringId())
@@ -60,6 +60,7 @@ namespace dtEntity
       Register(AttachedComponentId, &mAttachedComponent);            
       Register(VisibleId, &mVisible);   
       mVisible.Set(true);
+      
    }
 
    ////////////////////////////////////////////////////////////////////////////
