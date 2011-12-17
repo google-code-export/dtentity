@@ -183,9 +183,6 @@ namespace dtEntity
 
       cam->addEventCallback(mInputHandler);
 
-      dtEntity::Entity* entity;
-      mEntityManager->CreateEntity(entity);
-
       unsigned int contextid = gw->getState()->getContextID();
       std::ostringstream os;
       os << "cam_"  << contextid;
