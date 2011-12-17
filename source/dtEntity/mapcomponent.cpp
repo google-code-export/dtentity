@@ -21,7 +21,6 @@
 #include <dtEntity/mapcomponent.h>
 
 #include <dtEntity/basemessages.h>
-//#include <dtEntity/xercesmapencoder.h>
 #include <dtEntity/rapidxmlmapencoder.h>
 #include <assert.h>
 #include <dtEntity/spawner.h>

@@ -127,6 +127,7 @@ namespace dtEntityEditor
 
    private:
 
+      void CreateCameraEntityIfNotExists();
       EditorMainWindow* mMainWindow;
       QTimer* mTimer;
       osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
