@@ -22,6 +22,7 @@
 
 #include <QtGui/QtGui>
 #include <dtEntity/messagepump.h>
+#include <set>
 
 namespace dtEntityQtWidgets
 {
@@ -108,6 +109,7 @@ namespace dtEntityEditor
       void CreateMessageStore();
       void CreateSpawners();
       void CreatePropertyEditor();
+      void AddToKnownComponentList(std::set<dtEntity::ComponentType> newTypes);
 
    protected slots:
 
