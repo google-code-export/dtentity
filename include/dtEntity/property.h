@@ -71,8 +71,8 @@ namespace dtEntity
          VEC4D
       };
 
-      std::string ToString(e);
-      e FromString(const std::string&);
+      std::string DT_ENTITY_EXPORT ToString(e);
+      e DT_ENTITY_EXPORT FromString(const std::string&);
    }
    
    // helper function to split string by char
