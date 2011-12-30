@@ -1,22 +1,22 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2005 MOVES Institute
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
 
 #ifndef  DTENTUTY_AUDIOMANAGER
 #define  DTENTUTY_AUDIOMANAGER
@@ -102,6 +102,8 @@ namespace dtEntity
     *
     * At frame time, AudioManager process all Sounds with commands in their
     * respective queues.
+    *
+    * The current version is heavily inspired from the Delta3D one
     *
     */
    class DT_ENTITY_EXPORT AudioManager : public dtEntity::Singleton<AudioManager>
@@ -286,8 +288,6 @@ namespace dtEntity
       bool UnloadFile(const std::string& file);
 
    private:
-      /// process commands of all sounds in the sound list
-      inline void PreFrame(const double deltaFrameTime);
 
       /// check if manager has been configured
       inline bool Configured() const;
@@ -354,9 +354,6 @@ namespace dtEntity
       BUF_MAP             mBufferMap;
 
       SND_LST             mSoundList;
-
-      //SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
-      //                                    ///prior to a system-wide pause message
 
       ALCdevice*          mDevice;
       ALCcontext*         mContext;

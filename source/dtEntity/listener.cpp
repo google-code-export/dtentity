@@ -1,3 +1,24 @@
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
+
+
 #include <dtEntity/listener.h>
 #include <dtEntity/sound.h>
 #include <osg/Matrix>
@@ -53,36 +74,6 @@ namespace dtEntity
       Sound::CheckForError("OpenAL Listener getting gain value", __FUNCTION__, __LINE__);
 
       return g;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Listener::OnFrame()
-   {
-      // TODO need to update listener position and orientation in AL
-      /*
-         Note: does it make sense to make it for every frame? maybe
-         we can do it only if and when the listener has moved...
-      */
-
-//       Sound::CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-// 
-//       osg::Matrix       matrix;
-//       ALfloat           pos[3];
-// 
-//       union orient
-//       {
-//          ALfloat     ort[6];
-// 
-//          struct
-//          {
-//             ALfloat  at[3];
-//             ALfloat  up[3];
-//          };
-//       } orient;
-// 
-//       alListenerfv(AL_POSITION, pos);
-//       alListenerfv(AL_ORIENTATION, orient.ort);
-//       Sound::CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,24 @@
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
+
+
 #include <dtEntity/audiomanager.h>
 #include <dtEntity/log.h>
 
@@ -301,8 +322,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void AudioManager::PauseSounds()
    {
-      //mSoundStateMap.clear();
-
       // Pause all sounds that are currently playing, and
       // save their previous state.
       for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
@@ -312,19 +331,6 @@ namespace dtEntity
          {
             continue;
          }
-
-         //if (sob->IsPaused())
-         //{
-         //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PAUSED));
-         //}
-         //else if (sob->IsPlaying())
-         //{
-         //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PLAYING));
-         //}
-         //else if (sob->IsStopped())
-         //{
-         //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, STOPPED));
-         //}
 
          if (sob->IsPlaying())
          {
@@ -344,20 +350,6 @@ namespace dtEntity
          {
             continue;
          }
-
-         //switch (mSoundStateMap[sob])
-         //{
-         //case PAUSED:
-         //   //No need to do anything.
-         //   break;
-         //case PLAYING:
-         //   break;
-         //case STOPPED:
-         //   sob->Stop();
-         //   break;
-         //default:
-         //   break;
-         //}
 
          if (sob->IsPaused())
          {
@@ -587,30 +579,6 @@ namespace dtEntity
 
       mBufferMap.erase(iter);
       return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   // private member functions
-   void AudioManager::PreFrame(const double deltaFrameTime)
-   {
-      Sound::CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-      SOB_PTR     snd(NULL);
-
-      // flush all the sound commands
-      for (unsigned int i = 0; i < mSoundList.size(); ++i)
-      {
-         snd = mSoundList.at(i);
-
-         if (snd.get() == NULL)
-         {
-            continue;
-         }
-
-         //Position and direct sound before firing commands
-         //snd->SetPositionFromParent();
-         //snd->SetDirectionFromParent();
-         snd->RunAllCommandsInQueue();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

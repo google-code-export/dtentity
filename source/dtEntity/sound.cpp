@@ -1,6 +1,22 @@
-// sound.cpp: Implementation of the Sound class.
-// 
-//////////////////////////////////////////////////////////////////////
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
 
 #include <cfloat>
 #include <dtEntity/sound.h>
@@ -14,19 +30,13 @@
 namespace dtEntity
 {
    ////////////////////////////////////////////////////////////////////////////////
-   // Utility function used to work with OpenAL's error messaging system. It's used
-   // in multiple places throughout dtAudio. It's not in AudioManager because we
-   // don't want things like Sound to directly access the AudioManager.
-   // Returns true on error, false if no error
-   bool Sound::CheckForError(const std::string& userMessage,
-                     const std::string& msgFunction,
-                     int lineNumber)
+   bool Sound::CheckForError(const std::string& userMsg,const std::string& msgFunction, int lineNum)
    {
       ALenum error = alGetError();
       if (error != AL_NO_ERROR)
       {
          std::ostringstream finalStream;
-         finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << alGetString(error) << "]";
+         finalStream << "User Message: [" << userMsg << "] OpenAL Message: [" << alGetString(error) << "]";
          LOG_WARNING(finalStream.str().c_str());
          return AL_TRUE;
       }
@@ -37,7 +47,7 @@ namespace dtEntity
          if (alutError != ALUT_ERROR_NO_ERROR)
          {
             std::ostringstream finalStream;
-            finalStream << "User Message: [" << userMessage << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
+            finalStream << "User Message: [" << userMsg << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNum;
             LOG_WARNING(finalStream.str().c_str());
             return AL_TRUE;
          }
@@ -274,7 +284,6 @@ namespace dtEntity
    void Sound::LoadFile(const char* file)
    {
       mFilename = file;
-//      SendMessage(kCommand[LOAD], this);
 
       // switch ON flag to tell audioMgr that we need loading stuff...
       mMustLoadBuffer = true;
@@ -283,8 +292,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void Sound::UnloadFile()
    {
-//      SendMessage(kCommand[UNLOAD], this);
-
       // TODO - what should we do here to cleanly unload the data?
    }
 
@@ -410,16 +417,6 @@ namespace dtEntity
          // assume user is resetting buffer
          return;
       }
-
-      // This check was added to prevent a crash-on-exit for OSX -osb
-      //ALint bufValue;
-      //alGetSourcei(mSource, AL_BUFFER, &bufValue);
-      //CheckForError("Checking buffer before attaching it to a source", __FUNCTION__, __LINE__);
-      //if (bufValue == 0)
-      //{
-      //   std::cout << "alGetSource failed" << std::endl;
-      //   return;
-      //}
 
       if (alIsBuffer(b) == AL_FALSE)
       {

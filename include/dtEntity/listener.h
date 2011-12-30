@@ -1,22 +1,22 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2005 MOVES Institute
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
 
 #ifndef  DTENTITY_LISTENER
 #define  DTENTITY_LISTENER
@@ -43,13 +43,7 @@ namespace dtEntity
     * free it up.  The underlying listener object is a global singular
     * which lasts as long as the AudioManager exists.
     *
-    * Listener is a transformable, so it can be a child of other
-    * transformables (ie. the camera)  When a Listener is child of
-    * another object, it automatically gets positioned in scene-space
-    * relative to the parent object every frame, so there is no need to
-    * update the Listener's position.  The Listener position can be set
-    * manually in scene-space without having to make it a child of another
-    * object, but any position updates must then be made manually.
+    * The current version is heavily inspired from the Delta3D one
     */
    class DT_ENTITY_EXPORT Listener : public osg::Referenced
    {
@@ -101,12 +95,6 @@ namespace dtEntity
           * @return the current volume
           */
          float GetGain() const;
-
-         /**
-          * Message handler's main job is to reposition listener if it's a child
-          * of a Transformable in scene-space.
-          */
-         virtual void OnFrame();
 
          /// clean up listener
          void Clear(void);
