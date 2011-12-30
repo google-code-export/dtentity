@@ -114,6 +114,9 @@ namespace dtEntity
             // TODO - need to set orientation as well...
          }
       }
+      // also flush all sound commands
+      mCurrentSound->RunAllCommandsInQueue();
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -165,6 +168,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////
+   const StringId SoundSystem::ListenerGainId(SID("ListenerGain"));
    const StringId SoundSystem::ListenerLinkToCameraId(SID("ListenerLinkToCamera"));
    const StringId SoundSystem::ListenerTranslationId(SID("ListenerTranslation"));
    const StringId SoundSystem::ListenerUpId(SID("ListenerUp"));
@@ -175,11 +179,14 @@ namespace dtEntity
       : DefaultEntitySystem<SoundComponent>(em)
       , mListenerLinkToCamera(true)
    {
+      Register(ListenerGainId, &mListenerGain);
       Register(ListenerLinkToCameraId, &mListenerLinkToCamera);
       Register(ListenerTranslationId, &mListenerTranslation);
       Register(ListenerUpId, &mListenerUp);
       Register(ListenerEyeDirectionId, &mListenerEyeDirection);
       Register(ListenerVelocityId, &mListenerVelocity);
+
+      mListenerGain = 1.0f;
 
       mEnterWorldFunctor = MessageFunctor(this, &SoundSystem::OnEnterWorld);
       em.RegisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
@@ -212,6 +219,8 @@ namespace dtEntity
          dtEntity::AudioManager::GetListener()->SetPosition(mListenerTranslation.Get());
          dtEntity::AudioManager::GetListener()->SetVelocity(mListenerVelocity.Get());
       }
+      // set global gain
+      dtEntity::AudioManager::GetListener()->SetGain(mListenerGain.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -274,12 +283,9 @@ namespace dtEntity
             soundObj->SetMustLoadBuffer(false);
          }
 
-         // 2 - update sound component position
+         // 2 - update sound component (set position, flush commands)
          float dt = msg.GetFloat(dtEntity::TickMessage::DeltaSimTimeId);
          currSoundComp->Update(dt);
-
-         // 3 - flush all sound commands
-         soundObj->RunAllCommandsInQueue();
       }
 
    }

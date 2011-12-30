@@ -1,22 +1,22 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2005 MOVES Institute
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- * 
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- */
+/* -*-c++-*-
+* dtEntity Game and Simulation Engine
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Martin Scheffler
+*/
 
 #ifndef DTENTITY_SOUND
 #define DTENTITY_SOUND
@@ -78,6 +78,8 @@ namespace dtEntity
     * playing and when it actually stops playing.
     *
     *
+    * The current version is heavily inspired from the Delta3D one
+    *
     */
    class DT_ENTITY_EXPORT Sound : public osg::Referenced
    {
@@ -133,20 +135,24 @@ namespace dtEntity
    public:
       static const char* kCommand[kNumCommands];
 
+      /// Utility function used to work with OpenAL's error messaging system. 
       /**
-       * Constructor.  Typically, user does not create directly
+         It's used in multiple places throughout dtEntity. It's not in AudioManager
+         because we don't want things like Sound to directly access the AudioManager.
+         @return True on error, false if no error
+      */
+      static bool CheckForError(const std::string& userMessage, const std::string& msgFunction, int lineNumber);
+
+
+      /// Constructor
+      /**
+       * Typically, user does not create directly
        * instead requests a sound from AudioManager.  The AudioManager
        * facilitates sound data buffer management.
        */
       Sound();
 
 
-      /// Utility function used to work with OpenAL's error messaging system. 
-      /** It's used in multiple places throughout dtAudio. It's not in AudioManager 
-         because wedon't want things like Sound to directly access the AudioManager.
-         Returns true on error, false if no error
-      */
-      static bool CheckForError(const std::string& userMessage, const std::string& msgFunction, int lineNumber);
 
 
    protected:
@@ -180,9 +186,6 @@ namespace dtEntity
       bool RestoreSource();
 
    public:
-//      void SetPositionFromParent();
-
-//      void SetDirectionFromParent();
 
       bool GetMustLoadBuffer()         {return mMustLoadBuffer; }
       void SetMustLoadBuffer(bool val) {mMustLoadBuffer = val; }
@@ -406,17 +409,6 @@ namespace dtEntity
        */
       void SetListenerRelative(bool relative);
 
-
-      ///**
-      // * Set the transform position of sound.
-      // *
-      // * @param *xform : The new Transform to position this instance
-      // * @param cs : Optional parameter describing the coordinate system of xform
-      // *             Defaults to ABS_CS.
-      // */
-      //void SetTransform(const dtCore::Transform& xform,
-      //                  dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS);
-
       /**
        * Set the position of the Sound
        *
@@ -562,7 +554,7 @@ namespace dtEntity
        */
       FrameData* CreateFrameData() const;
 
-      /** Used by dtCore::Recorder in playback.
+      /** 
        * @param data The Sound::FrameData containing the Sound's state information.
        */
       void UseFrameData(const FrameData* data);
@@ -584,11 +576,11 @@ namespace dtEntity
       std::string mFilename;
 
       /// Flag indicating if this sound is waiting for its buffer to be loaded
-      bool mMustLoadBuffer;
       /**
          If set to true, at the next update the audio manager will take care of
          loading the proper data file so this sound object will be ready to play.
       */
+      bool mMustLoadBuffer;
 
       CallBack    mPlayCB;
       void*       mPlayCBData;

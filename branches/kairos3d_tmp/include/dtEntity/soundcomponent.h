@@ -47,7 +47,6 @@ namespace dtEntity
       static const ComponentType TYPE;
       static const StringId SoundPathId;
       static const StringId AutoPlayId;
-//      static const StringId MoveWithTransformId;
       static const StringId GainId;
       static const StringId PitchId;
       static const StringId RollOffId;
@@ -100,14 +99,21 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_EXPORT SoundSystem
-      : public DefaultEntitySystem<SoundComponent>
+   /// Manages sound effects
+   /**
+      The Sound system relies on the AudioManager, a singleton object which acts
+      as the main interface to OpenAL.
+      This systems is in charge of updating all sound components at each frame, via
+      the OnTick method.
+   */
+   class DT_ENTITY_EXPORT SoundSystem : public DefaultEntitySystem<SoundComponent>
    {
    public:
 
       SoundSystem(EntityManager& em);
       ~SoundSystem();
 
+      static const StringId ListenerGainId;
       static const StringId ListenerLinkToCameraId;
       static const StringId ListenerTranslationId;
       static const StringId ListenerUpId;
@@ -153,6 +159,7 @@ namespace dtEntity
       MessageFunctor mEnterWorldFunctor;
       MessageFunctor mLeaveWorldFunctor;
       MessageFunctor mTickFunctor;
+      FloatProperty mListenerGain;
       BoolProperty mListenerLinkToCamera;
       Vec3dProperty mListenerTranslation;
       Vec3dProperty mListenerUp;
