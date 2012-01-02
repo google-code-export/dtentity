@@ -211,7 +211,8 @@ namespace dtEntity
       {
          osgViewer::GraphicsWindow* window = windows[i];
 
-         if(window->getState()->getContextID() ==  mContextId.Get())
+         unsigned int contextid = window->getState()->getContextID();
+         if(contextid ==  mContextId.Get())
          {
             osg::GraphicsContext::Cameras cameras = window->getCameras();
             if(cameras.size() == 0)

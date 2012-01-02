@@ -105,6 +105,16 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   StringId DT_ENTITY_EXPORT SIDHash(StringId hash)
+   {
+#if defined(DTENTITY_USE_STRINGS_AS_STRINGIDS)
+      return StringIdManager::GetInstance().ReverseLookup(hash);
+#else
+      return hash;
+#endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    StringId SID(unsigned int hash)
    {
 #if defined(DTENTITY_USE_STRINGS_AS_STRINGIDS)
