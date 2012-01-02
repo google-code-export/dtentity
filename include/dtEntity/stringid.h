@@ -52,6 +52,7 @@ namespace dtEntity
     * get string id crc32 hash of string, don't add to reverse lookup
     */
    StringId DT_ENTITY_EXPORT SIDHash(const std::string& str);
+   StringId DT_ENTITY_EXPORT SIDHash(StringId str);
 
    /**
    * get string id crc32 hash of string, add to reverse lookup

@@ -149,19 +149,31 @@ namespace dtEntity
       traits.readDISPLAY();
       if (traits.displayNum<0) traits.displayNum = 0;
 
-      osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
-      osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
-      if (gw)
+      unsigned int contextid = 0;
+      if(compviewer == NULL)
       {
-          OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
-          gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
-          gw->setName(name);
-          cam->setGraphicsContext(gw);
-
+         osgViewer::ViewerBase::Windows windows;
+         appsys->GetViewer()->getWindows(windows);
+         windows.front()->setName(name);
+         appsys->GetViewer()->realize();
       }
       else
       {
-          LOG_ERROR("GraphicsWindow has not been created successfully.");
+         osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
+         osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
+         if (gw)
+         {
+             OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
+             gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
+             gw->setName(name);
+             cam->setGraphicsContext(gw);
+             contextid = gw->getState()->getContextID();
+             gw->realize();
+         }
+         else
+         {
+             LOG_ERROR("GraphicsWindow has not been created successfully.");
+         }
       }
 
       double fovy, aspectRatio, zNear, zFar;
@@ -183,12 +195,12 @@ namespace dtEntity
 
       cam->addEventCallback(mInputHandler);
 
-      unsigned int contextid = gw->getState()->getContextID();
+
       std::ostringstream os;
       os << "cam_"  << contextid;
       cam->setName(os.str());
 
-      gw->realize();
+
       return view;
       
    }

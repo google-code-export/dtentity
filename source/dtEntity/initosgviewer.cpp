@@ -89,8 +89,12 @@ namespace dtEntity
           baseassets = env_baseassets;
        }
 
-       int curArg = 0;
+       int curArg = 1;
        int screenNum = -1;
+       int winx = 100;
+       int winy = 100;
+       int winw = 800;
+       int winh = 600;
 
        while (curArg < argc)
        {
@@ -104,6 +108,34 @@ namespace dtEntity
                 {
                    std::istringstream iss(argv[curArg]);
                    iss >> screenNum;
+                }
+
+             }
+             else if (curArgv == "--window")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winx;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winy;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winw;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winh;
                 }
 
              }
@@ -124,7 +156,7 @@ namespace dtEntity
                    baseassets = argv[curArg];
                 }
              }
-           }
+          }
           ++curArg;
        }
 
@@ -180,10 +212,10 @@ namespace dtEntity
 
       if(screenNum == -1)
       {
-         traits->x = 100;
-         traits->y = 100;
-         traits->width = 800;
-         traits->height = 600;
+         traits->x = winx;
+         traits->y = winy;
+         traits->width = winw;
+         traits->height = winh;
       }
       else
       {
