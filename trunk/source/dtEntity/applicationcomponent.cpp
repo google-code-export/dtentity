@@ -363,7 +363,7 @@ namespace dtEntity
    {
       const SetComponentPropertiesMessage& msg = static_cast<const SetComponentPropertiesMessage&>(m);
       
-      ComponentType ctype = msg.GetComponentType();
+      ComponentType ctype = dtEntity::SIDHash(msg.GetComponentType());
       std::string uniqueid = msg.GetEntityUniqueId();
 
       MapSystem* ms;
@@ -376,7 +376,7 @@ namespace dtEntity
       if(!found)
       {
          LOG_WARNING("Cannot process SetComponentProperties message. Component not found: " 
-            + GetStringFromSID(msg.GetComponentType()));
+            + msg.GetComponentType());
          return;
       }
       PropertyGroup props = msg.GetProperties();
@@ -385,12 +385,12 @@ namespace dtEntity
          Property* target = component->Get(i->first);
          if(!target)
          {
-            std::ostringstream os;
-            os << "Cannot process SetComponentProperties message. Component ";
-            os << GetStringFromSID(msg.GetComponentType());
-            os << " has no property named ";
-            os << GetStringFromSID(i->first);
-            LOG_ERROR(os.str());
+            LOG_ERROR(
+                "Cannot process SetComponentProperties message. Component "
+                << msg.GetComponentType()
+                << " has no property named "
+                << GetStringFromSID(i->first)
+            );
             continue;
          }
          target->SetFrom(*i->second);
@@ -403,11 +403,11 @@ namespace dtEntity
    void ApplicationSystem::OnSetSystemProperties(const Message& m)
    {
       const SetSystemPropertiesMessage& msg = static_cast<const SetSystemPropertiesMessage&>(m);
-      EntitySystem* sys = GetEntityManager().GetEntitySystem(msg.GetComponentType());
+      EntitySystem* sys = GetEntityManager().GetEntitySystem(SIDHash(msg.GetComponentType()));
       if(sys == NULL)
       {
          LOG_WARNING("Cannot process SetSystemProperties message. Entity system not found: " 
-            + GetStringFromSID(msg.GetComponentType()));
+            << msg.GetComponentType());
          return;
       }
       PropertyGroup props = msg.GetProperties();
@@ -418,10 +418,13 @@ namespace dtEntity
          {
             std::ostringstream os;
             os << "Cannot process SetSystemProperties message. Entity system ";
-            os << GetStringFromSID(msg.GetComponentType());
+            os << msg.GetComponentType();
             os << " has no property named ";
             os << GetStringFromSID(i->first);
-            LOG_ERROR(os.str());
+            LOG_ERROR("Cannot process SetSystemProperties message. Entity system "
+                << msg.GetComponentType()
+                << " has no property named "
+                << GetStringFromSID(i->first));
             continue;
          }
          target->SetFrom(*i->second);

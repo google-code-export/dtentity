@@ -149,9 +149,9 @@ namespace dtEntity
       this->Register(PropertiesId, &mProperties);
    }
 
-   SetComponentPropertiesMessage::SetComponentPropertiesMessage(const std::string& uid, ComponentType t, StringId propname, Property& prop)
+   SetComponentPropertiesMessage::SetComponentPropertiesMessage(const std::string& uid, const std::string& componenttype, const std::string& propname, Property& prop)
       : Message(TYPE)
-      , mComponentType(t)
+      , mComponentType(componenttype)
       , mEntityUniqueId(uid)
    {
       this->Register(EntityUniqueIdId, &mEntityUniqueId);
@@ -159,7 +159,7 @@ namespace dtEntity
       this->Register(PropertiesId, &mProperties);
 
       PropertyGroup grp;
-      grp[propname] = &prop;
+      grp[dtEntity::SIDHash(propname)] = &prop;
       mProperties.Set(grp);
    }
 
@@ -175,15 +175,15 @@ namespace dtEntity
       this->Register(PropertiesId, &mProperties);
    }
 
-   SetSystemPropertiesMessage::SetSystemPropertiesMessage(ComponentType t, StringId propname, Property& prop)
+   SetSystemPropertiesMessage::SetSystemPropertiesMessage(const std::string& componenttype, const std::string& propname, Property& prop)
       : Message(TYPE)
-      , mComponentType(t)
+      , mComponentType(componenttype)
    {
       this->Register(ComponentTypeId, &mComponentType);
       this->Register(PropertiesId, &mProperties);
 
       PropertyGroup grp;
-      grp[propname] = &prop;
+      grp[SIDHash(propname)] = &prop;
       mProperties.Set(grp);
    }
 

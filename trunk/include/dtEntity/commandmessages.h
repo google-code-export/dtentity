@@ -282,15 +282,15 @@ namespace dtEntity
        * Initialize with single property. Prop is cloned!
        */
       SetComponentPropertiesMessage(const std::string& entityUniqueId,
-         ComponentType t, StringId propname, Property& prop);
+         const std::string& componenttype, const std::string& propname, Property& prop);
 
       virtual Message* Clone() const { return CloneContainer<SetComponentPropertiesMessage>(); }
 
       std::string GetEntityUniqueId() const { return mEntityUniqueId.Get(); }
       void SetEntityUniqueId(const std::string& id) { mEntityUniqueId.Set(id); }
 
-      void SetComponentType(ComponentType t) { mComponentType.Set(t); }
-      ComponentType GetComponentType() const { return mComponentType.Get(); }
+      void SetComponentType(const std::string& t) { mComponentType.Set(t); }
+      std::string GetComponentType() const { return mComponentType.Get(); }
 
 	  /**
 		* Group of properties that will be applied to entity system
@@ -299,7 +299,7 @@ namespace dtEntity
 		PropertyGroup GetProperties() const { return mProperties.Get(); }
 
    private:
-      StringIdProperty mComponentType;
+      StringProperty mComponentType;
       GroupProperty mProperties;
       StringProperty mEntityUniqueId;
    };
@@ -323,12 +323,12 @@ namespace dtEntity
       /**
        * Initialize with single property. Prop is cloned!
        */
-      SetSystemPropertiesMessage(ComponentType t, StringId propname, Property& prop);
+      SetSystemPropertiesMessage(const std::string& componenttype, const std::string& propname, Property& prop);
 
       virtual Message* Clone() const { return CloneContainer<SetSystemPropertiesMessage>(); }
 
-      void SetComponentType(ComponentType t) { mComponentType.Set(t); }
-      ComponentType GetComponentType() const { return mComponentType.Get(); }
+      void SetComponentType(const std::string& t) { mComponentType.Set(t); }
+      std::string GetComponentType() const { return mComponentType.Get(); }
 
 	  /**
 		* Group of properties that will be applied to entity system
@@ -337,7 +337,7 @@ namespace dtEntity
 		PropertyGroup GetProperties() const { return mProperties.Get(); }
 
    private:
-      StringIdProperty mComponentType;
+      StringProperty mComponentType;
       GroupProperty mProperties;
    };
 

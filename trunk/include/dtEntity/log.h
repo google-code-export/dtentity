@@ -21,24 +21,39 @@
 */
 
 #include <dtEntity/logmanager.h>
-
+#include <sstream>
 
 #include <osg/Notify>
 
 #define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
 
 #define LOG_DEBUG(msg)\
-dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_DEBUG, __FILE__, __FUNCTION__, __LINE__, msg) ;
+{\
+   std::ostringstream os; os << msg; \
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_DEBUG, __FILE__, __FUNCTION__, __LINE__, os.str());\
+}\
 
 #define LOG_INFO(msg)\
-   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_INFO, __FILE__, __FUNCTION__, __LINE__, msg) ;
+{\
+   std::ostringstream os; os << msg; \
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_INFO, __FILE__, __FUNCTION__, __LINE__, os.str());\
+}\
 
 #define LOG_WARNING(msg)\
-   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_WARNING, __FILE__, __FUNCTION__, __LINE__, msg) ;
+{\
+   std::ostringstream os; os << msg; \
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_WARNING, __FILE__, __FUNCTION__, __LINE__, os.str());\
+}\
 
 #define LOG_ERROR(msg)\
-   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, __FILE__, __FUNCTION__, __LINE__, msg) ;
+{\
+   std::ostringstream os; os << msg; \
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, __FILE__, __FUNCTION__, __LINE__, os.str());\
+}\
 
 #define LOG_ALWAYS(msg)\
-dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ALWAYS, __FILE__, __FUNCTION__, __LINE__, msg) ;
+{\
+   std::ostringstream os; os << msg; \
+   dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ALWAYS, __FILE__, __FUNCTION__, __LINE__, os.str());\
+}\
 
