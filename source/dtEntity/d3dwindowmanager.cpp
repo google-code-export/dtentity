@@ -127,7 +127,7 @@ namespace dtEntity
       t.hostName = traits.hostName;
       t.displayNum = traits.displayNum;
       t.screenNum = traits.screenNum;
-      //t.realizeUponCreate = traits.realizeUponCreate;
+      //t.realizeUponCreate = true;
       t.vsync = traits.vsync;
 
       dtCore::DeltaWin* window = new dtCore::DeltaWin(t);
@@ -146,7 +146,6 @@ namespace dtEntity
       cam->SetWindow(window);
       view->SetCamera(cam);
       cam->GetOSGCamera()->setName(name);
-      
       
    }
 
