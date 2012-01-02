@@ -35,6 +35,18 @@
 
 namespace dtEntity
 {
+   class AnimationComponentImpl
+   {
+   public:
+      osg::ref_ptr<dtAnim::AnimationHelper> mHelper;
+      osg::ref_ptr<osg::MatrixTransform> mFlipTransform;
+
+      AnimationComponentImpl()
+         : mHelper(new dtAnim::AnimationHelper())
+      {
+      }
+   };
+
 
    ////////////////////////////////////////////////////////////////////////////
    const StringId AnimationComponent::TYPE(SID("Animation"));
@@ -52,7 +64,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    AnimationComponent::AnimationComponent()
       : BaseClass(new osg::Group())
-      , mHelper(new dtAnim::AnimationHelper())
+      , mImpl(new AnimationComponentImpl())
    {
       Register(MeshId, &mMeshPathProperty);
       Register(TimeScaleId, &mTimeScale);
@@ -68,24 +80,25 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    AnimationComponent::~AnimationComponent()
    {
+      delete mImpl;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void AnimationComponent::PlayAnimation(const std::string& pAnim) 
    {
-      mHelper->PlayAnimation(pAnim); 
+      mImpl->mHelper->PlayAnimation(pAnim);
    }
    
    ////////////////////////////////////////////////////////////////////////////
    void AnimationComponent::ClearAnimation(const std::string& pAnim, float fadeOutTime)
    {
-      mHelper->ClearAnimation(pAnim, fadeOutTime); 
+      mImpl->mHelper->ClearAnimation(pAnim, fadeOutTime);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void AnimationComponent::ClearAll(float fadeOutTime) 
    {
-      mHelper->ClearAll(fadeOutTime); 
+      mImpl->mHelper->ClearAll(fadeOutTime);
    }      
 
    ////////////////////////////////////////////////////////////////////////////
@@ -104,11 +117,11 @@ namespace dtEntity
       else if(propname == FlipYAxisId)
       {
          osg::Group* grp = static_cast<osg::Group*>(GetNode());
-         if(mFlipTransform.valid())
+         if(mImpl->mFlipTransform.valid())
          {
-            mFlipTransform->removeChildren(0, mFlipTransform->getNumChildren());
-            grp->removeChild(mFlipTransform);
-            mFlipTransform = NULL;
+            mImpl->mFlipTransform->removeChildren(0, mImpl->mFlipTransform->getNumChildren());
+            grp->removeChild(mImpl->mFlipTransform);
+            mImpl->mFlipTransform = NULL;
          }
          else
          {
@@ -117,24 +130,24 @@ namespace dtEntity
 
          if(mFlipYAxis.Get())
          {
-            mFlipTransform = new osg::MatrixTransform();
-            mFlipTransform->addChild(mHelper->GetNode());
+            mImpl->mFlipTransform = new osg::MatrixTransform();
+            mImpl->mFlipTransform->addChild(mImpl->mHelper->GetNode());
             osg::Matrix mat;
             mat.setRotate(osg::Quat(osg::PI, osg::Vec3(0, 0, 1)));
-            mFlipTransform->setMatrix(mat);
-            grp->addChild(mFlipTransform);
+            mImpl->mFlipTransform->setMatrix(mat);
+            grp->addChild(mImpl->mFlipTransform);
 
             for(unsigned int i = 0; i < mAttachMeshes.size(); ++i)
             {
                if(mAttachVisible[i])
                {
-                  mFlipTransform->addChild(mAttachMeshes[i]);
+                  mImpl->mFlipTransform->addChild(mAttachMeshes[i]);
                }
             }
          }
          else
          {
-            grp->addChild(mHelper->GetNode());
+            grp->addChild(mImpl->mHelper->GetNode());
             AttachmentList::iterator i;
             for(unsigned int i = 0; i < mAttachMeshes.size(); ++i)
             {
@@ -159,22 +172,22 @@ namespace dtEntity
    void AnimationComponent::SetMesh(const std::string& path)
    {
       ClearAttachments();
-      if(mHelper->GetNode() != NULL)
+      if(mImpl->mHelper->GetNode() != NULL)
       {
-         mHelper->GetNode()->getParent(0)->removeChild(mHelper->GetNode());
+         mImpl->mHelper->GetNode()->getParent(0)->removeChild(mImpl->mHelper->GetNode());
       }
 
       mMeshPathProperty.Set(path);
 
       std::string abspath = osgDB::findDataFile(path);
-      mHelper->LoadModel(abspath);
-      if(mFlipTransform)
+      mImpl->mHelper->LoadModel(abspath);
+      if(mImpl->mFlipTransform)
       {
-         mFlipTransform->addChild(mHelper->GetNode());
+         mImpl->mFlipTransform->addChild(mImpl->mHelper->GetNode());
       }
       else
       {
-         static_cast<osg::Group*>(GetNode())->addChild(mHelper->GetNode());
+         static_cast<osg::Group*>(GetNode())->addChild(mImpl->mHelper->GetNode());
       }
       SetupAttachments();
    }
@@ -187,9 +200,9 @@ namespace dtEntity
          return;
       }
 
-      mHelper->Update(dt);
+      mImpl->mHelper->Update(dt);
 
-      dtAnim::Cal3DModelWrapper* model = mHelper->GetModelWrapper();
+      dtAnim::Cal3DModelWrapper* model = mImpl->mHelper->GetModelWrapper();
       for(unsigned int i = 0; i < mAttachMeshes.size(); ++i)
       {
          int boneid = mAttachBoneIds[i];
@@ -223,7 +236,7 @@ namespace dtEntity
    void AnimationComponent::GetRegisteredAnimations(std::vector<std::string>& toFill)
    {
       std::vector<const dtAnim::Animatable*> v;
-      mHelper->GetSequenceMixer().GetRegisteredAnimations(v);
+      mImpl->mHelper->GetSequenceMixer().GetRegisteredAnimations(v);
       for(std::vector<const dtAnim::Animatable*>::iterator i = v.begin(); i != v.end(); ++i)
       {
          toFill.push_back((*i)->GetName());
@@ -233,13 +246,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool AnimationComponent::HasAnimation(const std::string& name) const
    {
-      return (mHelper->GetSequenceMixer().GetRegisteredAnimation(name) != NULL);
+      return (mImpl->mHelper->GetSequenceMixer().GetRegisteredAnimation(name) != NULL);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    bool AnimationComponent::IsAnimationPlaying(const std::string& name) const
    {
-      return mHelper->GetSequenceMixer().IsAnimationPlaying(name);
+      return mImpl->mHelper->GetSequenceMixer().IsAnimationPlaying(name);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -250,9 +263,9 @@ namespace dtEntity
       mAttachLocalRotations.clear();
 
       osg::Group* grp = static_cast<osg::Group*>(GetNode());
-      if(mFlipTransform.valid())
+      if(mImpl->mFlipTransform.valid())
       {
-         grp = mFlipTransform;
+         grp = mImpl->mFlipTransform;
       }
 
       AttachmentList::iterator i;
@@ -309,7 +322,7 @@ namespace dtEntity
          mAttachLocalTranslations[i] = offset;
          mAttachLocalRotations[i] = offrot;
          mAttachVisible[i] = visible;
-         int boneid = GetHelper()->GetModelWrapper()->GetCoreBoneID(bonename);
+         int boneid = mImpl->mHelper->GetModelWrapper()->GetCoreBoneID(bonename);
 
          if(boneid == dtAnim::Cal3DModelWrapper::NULL_BONE)
          {
@@ -331,9 +344,9 @@ namespace dtEntity
 
             if(visible)
             {
-               if(mFlipTransform.valid())
+               if(mImpl->mFlipTransform.valid())
                {
-                  mFlipTransform->addChild(mt);
+                  mImpl->mFlipTransform->addChild(mt);
                }
                else
                {
@@ -348,12 +361,18 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   dtAnim::Animatable* AnimationComponent::GetActiveAnimation(const std::string& animname) const
+   {
+      return mImpl->mHelper->GetSequenceMixer().GetActiveAnimation(animname);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void AnimationComponent::SetTimeScale(float v)
    {
       mTimeScale.Set(v);
-      if(mHelper->GetModelWrapper())
+      if(mImpl->mHelper->GetModelWrapper())
       {
-         mHelper->GetModelWrapper()->GetCalModel()->getMixer()->setTimeFactor(v);
+         mImpl->mHelper->GetModelWrapper()->GetCalModel()->getMixer()->setTimeFactor(v);
       }
    }
 

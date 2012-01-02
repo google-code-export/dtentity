@@ -430,7 +430,7 @@ namespace dtEntityWrappers
       {
          dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
          std::string compType = ToStdString(obj->Get(String::New("componentType")));
-         dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SIDHash(compType);
+         dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SID(compType);
          EntitySystemJS* es = new EntitySystemJS(ct, *em, obj);
          em->AddEntitySystem(*es);
          return Undefined();

@@ -29,13 +29,15 @@
 #include <dtEntity/message.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
-#include <dtAudio/sound.h>
+
 
 namespace dtEntity
 { 
    ////////////////////////////////////////////////////////////////////////////////
 
    class SoundSystem;
+
+   class SoundComponentImpl;
 
    class DT_ENTITY_EXPORT SoundComponent 
       : public Component
@@ -92,7 +94,7 @@ namespace dtEntity
       FloatProperty mPitch;
       FloatProperty mRollOff;
       BoolProperty mLooping;
-      osg::ref_ptr<dtAudio::Sound> mCurrentSound;
+      SoundComponentImpl* mImpl;
       Entity* mOwner;
       dtEntity::TransformComponent* mTransformComponent;
    };

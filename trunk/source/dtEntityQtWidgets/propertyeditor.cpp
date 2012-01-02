@@ -617,7 +617,7 @@ namespace dtEntityQtWidgets
             {
                std::ostringstream idx;
                idx << std::setfill('0') << std::setw(6) << index++;
-               cmap.AddProperty(dtEntity::SIDHash(idx.str()), **j);
+               cmap.AddProperty(dtEntity::SID(idx.str()), **j);
             }
             AddProperties(pitem, cmap);
          }
@@ -664,7 +664,7 @@ namespace dtEntityQtWidgets
          arr.push_back(proto);
          arrprop->Set(arr);
          dtEntity::DynamicPropertyContainer pc;
-         dtEntity::StringId name = dtEntity::SIDHash(QString("%1").arg(arr.size() - 1).toStdString());
+         dtEntity::StringId name = dtEntity::SID(QString("%1").arg(arr.size() - 1).toStdString());
          pc.AddProperty(name, *proto);
          AddProperties(parent, pc);
       }
