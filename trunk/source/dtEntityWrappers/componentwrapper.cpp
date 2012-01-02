@@ -59,7 +59,7 @@ namespace dtEntityWrappers
       ValToProp(value, prop);      
       dtEntity::Component* component = UnwrapComponent(info.Holder());
       assert(component != NULL);
-	  	component->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+      component->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

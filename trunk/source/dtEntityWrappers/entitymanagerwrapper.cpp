@@ -207,7 +207,7 @@ namespace dtEntityWrappers
       {
          Handle<Value> propn = propnames->Get(i);
          std::string propname = ToStdString(propn);
-         dtEntity::Property* prop = msg->Get(dtEntity::SID(propname));
+         dtEntity::Property* prop = msg->Get(dtEntity::SIDHash(propname));
          if(!prop)
          {
             std::ostringstream os;
@@ -229,14 +229,14 @@ namespace dtEntityWrappers
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
       std::string namestr = ToStdString(args[0]);
-      dtEntity::StringId pname = dtEntity::SID(namestr);
+      dtEntity::StringId pname = dtEntity::SIDHash(namestr);
 
       dtEntity::Message* msg = NULL; 
       bool success = mf->CreateMessage(pname, msg);
       
       if(!success)
       {
-         return ThrowError("Could not create message of type " + dtEntity::GetStringFromSID(pname));
+         return ThrowError("Could not create message of type " + namestr);
       }
       ConvertJSToMessage(args[1], msg);
       em->EmitMessage(*msg);
@@ -250,14 +250,14 @@ namespace dtEntityWrappers
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
 
-      dtEntity::StringId pname = dtEntity::SID(ToStdString(args[0]));      
+      dtEntity::StringId pname = dtEntity::SIDHash(ToStdString(args[0]));
 
       dtEntity::Message* msg = NULL; 
       bool success = mf->CreateMessage(pname, msg);
       
       if(!success)
       {
-         return ThrowError("Could not create message of type " + dtEntity::GetStringFromSID(pname));
+         return ThrowError("Could not create message of type " + ToStdString(args[0]));
       }
 
       ConvertJSToMessage(args[1], msg);
@@ -302,7 +302,7 @@ namespace dtEntityWrappers
          funcname = os.str();
       }
       
-      MessageFunctorHolder* fh = new MessageFunctorHolder(dtEntity::SID(msgname), func);
+      MessageFunctorHolder* fh = new MessageFunctorHolder(dtEntity::SIDHash(msgname), func);
       
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
 
@@ -315,7 +315,7 @@ namespace dtEntityWrappers
       {
          options = args[2]->Uint32Value();
       }
-      em->RegisterForMessages(dtEntity::SID(msgname), fh->mFunctor, options, funcname);
+      em->RegisterForMessages(dtEntity::SIDHash(msgname), fh->mFunctor, options, funcname);
       return Undefined();
    }
 
@@ -327,7 +327,7 @@ namespace dtEntityWrappers
          return ThrowError("Usage: unregisterForMessages(string msgname, function)");
       }
       std::string msgname = ToStdString(args[0]);
-      dtEntity::StringId msgnamesid = dtEntity::SID(msgname);
+      dtEntity::StringId msgnamesid = dtEntity::SIDHash(msgname);
       Handle<Function> func = Handle<Function>::Cast(args[1]);
       
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
@@ -340,7 +340,7 @@ namespace dtEntityWrappers
          MessageFunctorHolder* holder = *i;
          if(holder->mFunction == func && holder->mMessageType == msgnamesid)
          {
-            em->UnregisterForMessages(dtEntity::SID(holder->mMessageType), holder->mFunctor);
+            em->UnregisterForMessages(holder->mMessageType, holder->mFunctor);
             storage->mHolders.erase(i);
             delete holder;
             return Undefined();
@@ -367,7 +367,7 @@ namespace dtEntityWrappers
       {
          MessageFunctorHolder* holder = *i;
           
-         em->UnregisterForMessages(dtEntity::SID(holder->mMessageType), holder->mFunctor);
+         em->UnregisterForMessages(holder->mMessageType, holder->mFunctor);
          delete holder;
       }
       storage->mHolders.clear();
@@ -387,7 +387,7 @@ namespace dtEntityWrappers
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       if(!args[0]->IsString()) return ThrowError("usage: hasEntitySystem(string)");
-      dtEntity::ComponentType t = dtEntity::SID(ToStdString(args[0]));
+      dtEntity::ComponentType t = dtEntity::SIDHash(ToStdString(args[0]));
       if(em->HasEntitySystem(t))
       {
          return True();
@@ -430,7 +430,7 @@ namespace dtEntityWrappers
       {
          dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
          std::string compType = ToStdString(obj->Get(String::New("componentType")));
-         dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SID(compType);
+         dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SIDHash(compType);
          EntitySystemJS* es = new EntitySystemJS(ct, *em, obj);
          em->AddEntitySystem(*es);
          return Undefined();
@@ -446,7 +446,7 @@ namespace dtEntityWrappers
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       if(!args[0]->IsString()) return ThrowError("usage: getEntitySystem(string)");
       std::string str = ToStdString(args[0]);
-      dtEntity::ComponentType t = dtEntity::SID(str);
+      dtEntity::ComponentType t = dtEntity::SIDHash(str);
       dtEntity::EntitySystem* es = em->GetEntitySystem(t);
       if(es == NULL)
       {

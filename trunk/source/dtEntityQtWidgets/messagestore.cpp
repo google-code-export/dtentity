@@ -336,7 +336,7 @@ namespace dtEntityQtWidgets
       dtEntity::Spawner* spawner = new dtEntity::Spawner(name.toStdString(), mapname);
 
       dtEntity::Message* msg;
-      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SID(msgtype.toStdString()), msg);
+      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SIDHash(msgtype.toStdString()), msg);
       if(!success)
       {
          LOG_ERROR("Could not create message, message type not found in registry!");
@@ -350,9 +350,9 @@ namespace dtEntityQtWidgets
 
       dtEntity::StringProperty msgtypename;
       msgtypename.Set(msgtype.toStdString());
-      dprops.AddProperty(dtEntity::SID("MessageTypeName"), msgtypename);
+      dprops.AddProperty(dtEntity::SIDHash("MessageTypeName"), msgtypename);
 
-      spawner->AddComponent(dtEntity::SID("Message"), dprops);
+      spawner->AddComponent(dtEntity::SIDHash("Message"), dprops);
 
       mtsystem->AddSpawner(*spawner);
       mtsystem->SaveMap(mapname);
@@ -392,12 +392,12 @@ namespace dtEntityQtWidgets
          LOG_ERROR("Cannot emit message: Spawner not found!");
          return;
       }
-      dtEntity::DynamicPropertyContainer props = spawner->GetComponentValues(dtEntity::SID("Message"));
-      dtEntity::StringId msgtypenamesid = dtEntity::SID("MessageTypeName");
+      dtEntity::DynamicPropertyContainer props = spawner->GetComponentValues(dtEntity::SIDHash("Message"));
+      dtEntity::StringId msgtypenamesid = dtEntity::SIDHash("MessageTypeName");
       std::string msgtypename = props.GetString(msgtypenamesid);
 
       dtEntity::Message* msg;
-      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SID(msgtypename), msg);
+      success = mtsystem->GetMessageFactory().CreateMessage(dtEntity::SIDHash(msgtypename), msg);
       if(!success)
       {
          LOG_ERROR("Cannot emit message: Message of this type is not registered: " + msgtypename);

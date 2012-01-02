@@ -38,7 +38,7 @@ namespace dtEntityWrappers
       Handle<External> ext = Handle<External>::Cast(info.Data());
       ComponentJS* comp = static_cast<ComponentJS*>(ext->Value());
       std::string propnamestr = ToStdString(propname);
-      dtEntity::Property* prop = comp->Get(dtEntity::SID(propnamestr));
+      dtEntity::Property* prop = comp->Get(dtEntity::SIDHash(propnamestr));
       if(!prop)
       {
          return scope.Close(Undefined());
@@ -56,7 +56,7 @@ namespace dtEntityWrappers
       Handle<External> ext = Handle<External>::Cast(info.Data());
       ComponentJS* comp = static_cast<ComponentJS*>(ext->Value());
       std::string propnamestr = ToStdString(propname);
-      dtEntity::StringId propnamesid = dtEntity::SID(propnamestr);
+      dtEntity::StringId propnamesid = dtEntity::SIDHash(propnamestr);
       dtEntity::Property* prop = comp->Get(propnamesid);
       if(prop)
       {
@@ -85,7 +85,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = obj->Get(propname);
 
          // don't convert functions to component properties
@@ -252,7 +252,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = obj->Get(propname);
 
          //don't convert functions to entity system properties, only primitive values
@@ -504,7 +504,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = mSystem->Get(propname);
          dtEntity::Property* prop = Convert(val);
          if(prop)
@@ -536,7 +536,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = mSystem->Get(propname);
          dtEntity::Property* prop = Convert(val);
          if(prop)

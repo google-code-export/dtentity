@@ -333,7 +333,7 @@ namespace dtEntityWrappers
       dtEntity::StringId layername = dtEntity::LayerAttachPointSystem::DefaultLayerId;
       if(args.Length() > 1)
       {
-         layername = dtEntity::SID(ToStdString(args[1]));
+         layername = dtEntity::SIDHash(ToStdString(args[1]));
       }
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();

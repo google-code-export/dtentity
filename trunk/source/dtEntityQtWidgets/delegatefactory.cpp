@@ -166,7 +166,7 @@ namespace dtEntityQtWidgets
       if(prop->GetType() == dtEntity::DataType::GROUP)
       {
          dtEntity::PropertyGroup pg = prop->GroupValue();
-         if(pg.find(dtEntity::SID("__SELECTED__")) != pg.end())
+         if(pg.find(dtEntity::SIDHash("__SELECTED__")) != pg.end())
          {
             return new SwitchPropertyDelegate();
          }

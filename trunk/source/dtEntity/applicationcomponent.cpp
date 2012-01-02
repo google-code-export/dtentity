@@ -450,16 +450,16 @@ namespace dtEntity
          // TODO this should not be hard coded
          ComponentType t = (*i)->GetComponentType();
          if(*i != this &&
-               t != dtEntity::SID("Camera") &&
-               t != dtEntity::SID("Application") &&
-               t != dtEntity::SID("Layer") &&
-               t != dtEntity::SID("LayerAttachPoint") &&
-               t != dtEntity::SID("Group") &&
-               t != dtEntity::SID("StaticMesh") &&
-               t != dtEntity::SID("MatrixTransform") &&
-               t != dtEntity::SID("Map") &&
-               t != dtEntity::SID("Script") &&
-               t != dtEntity::SID("PositionAttitudeTransform"))
+               t != dtEntity::SIDHash("Camera") &&
+               t != dtEntity::SIDHash("Application") &&
+               t != dtEntity::SIDHash("Layer") &&
+               t != dtEntity::SIDHash("LayerAttachPoint") &&
+               t != dtEntity::SIDHash("Group") &&
+               t != dtEntity::SIDHash("StaticMesh") &&
+               t != dtEntity::SIDHash("MatrixTransform") &&
+               t != dtEntity::SIDHash("Map") &&
+               t != dtEntity::SIDHash("Script") &&
+               t != dtEntity::SIDHash("PositionAttitudeTransform"))
          {
            GetEntityManager().RemoveEntitySystem(**i);
          }

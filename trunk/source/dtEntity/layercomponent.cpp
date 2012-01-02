@@ -48,7 +48,7 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    LayerComponent::LayerComponent()
-      : mLayerProperty(dtEntity::SID("default"))
+      : mLayerProperty(dtEntity::SIDHash("default"))
       , mAttachedComponent(StringId())
       , mCurrentlyAttachedComponent(StringId())
       , mAttachPoint(StringId())

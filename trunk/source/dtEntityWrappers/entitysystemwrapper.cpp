@@ -334,7 +334,7 @@ namespace dtEntityWrappers
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(info.Holder());
 	  if(sys)
 	  {
-		sys->OnPropertyChanged(dtEntity::SID(ToStdString(propname)), *prop);
+		sys->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
 	  }
    }
 

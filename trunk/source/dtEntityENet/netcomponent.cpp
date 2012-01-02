@@ -118,7 +118,7 @@ namespace dtEntityENet
    {
       QByteArray arr;
       QDataStream out(&arr, QIODevice::WriteOnly);
-      quint32 messageType =  (quint32)dtEntity::SIDHash(msg.GetType());
+      quint32 messageType =  (quint32)msg.GetType();
       out << messageType;
       
       dtEntity::PropertyContainer::ConstPropertyMap props;
@@ -140,7 +140,7 @@ namespace dtEntityENet
       QDataStream ins(&arr, QIODevice::ReadOnly);
       quint32 mType;
       ins >> mType;
-      dtEntity::MessageType messageType = dtEntity::SID(mType);
+      dtEntity::MessageType messageType = mType;
       dtEntity::Message* message;
 	  
 	  dtEntity::MapSystem* mapsys;

@@ -393,8 +393,8 @@ namespace dtEntityEditor
    void EditorMainWindow::OnToggleCoordSystem(bool v)
    {
       dtEntity::BoolProperty b(v);
-      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SID("Manipulator"),
-         dtEntity::SID("UseLocalCoords"), b);
+      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SIDHash("Manipulator"),
+         dtEntity::SIDHash("UseLocalCoords"), b);
       mApplication->GetEntityManager().EnqueueMessage(msg);
    }
 
@@ -402,8 +402,8 @@ namespace dtEntityEditor
    void EditorMainWindow::OnToggleGroundClamp(bool v)
    {
       dtEntity::BoolProperty b(v);
-      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SID("Manipulator"),
-         dtEntity::SID("UseGroundClamping"), b);
+      dtEntity::SetSystemPropertiesMessage msg(dtEntity::SIDHash("Manipulator"),
+         dtEntity::SIDHash("UseGroundClamping"), b);
       mApplication->GetEntityManager().EnqueueMessage(msg);
    }
 

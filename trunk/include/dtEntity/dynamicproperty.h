@@ -41,7 +41,7 @@ namespace dtEntity
       }
 
       virtual const std::string StringValue() const { return mGetValueCallback(); }
-      virtual StringId StringIdValue() const { return dtEntity::SID(StringValue()); }
+      virtual StringId StringIdValue() const { return dtEntity::SIDHash(StringValue()); }
       virtual void SetStringId(dtEntity::StringId v) { Set(GetStringFromSID(v)); }
 
       const std::string Get() const { return mGetValueCallback(); }
