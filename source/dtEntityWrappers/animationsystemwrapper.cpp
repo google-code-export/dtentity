@@ -27,6 +27,7 @@
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 
+#include <dtAnim/animatable.h>
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -112,7 +113,7 @@ namespace dtEntityWrappers
       // register callback to be executed when animation ends
       if(args.Length() >= 2 && args[2]->IsFunction())
       {
-         dtAnim::Animatable* anim = animComp->GetHelper()->GetSequenceMixer().GetActiveAnimation(animname);
+         dtAnim::Animatable* anim = animComp->GetActiveAnimation(animname);
          assert(anim != NULL);
          s_animationEndCallbackHolder.AddAnimationEndCallback(anim, Handle<Function>::Cast(args[2]));
       }

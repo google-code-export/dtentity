@@ -85,7 +85,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
          Handle<Value> val = obj->Get(propname);
 
          // don't convert functions to component properties
@@ -252,7 +252,7 @@ namespace dtEntityWrappers
          {
             continue;
          }
-         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
+         dtEntity::StringId propname_sid = dtEntity::SID(propname_str);
          Handle<Value> val = obj->Get(propname);
 
          //don't convert functions to entity system properties, only primitive values

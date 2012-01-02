@@ -32,12 +32,18 @@
 #include <osg/Group>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
-#include <dtAnim/animationhelper.h>
+
+namespace dtAnim
+{
+   class Animatable;
+}
 
 namespace dtEntity
 {
 
    ///////////////////////////////////////////////////////////////////////////
+
+   class AnimationComponentImpl;
 
    /**
     * holds an animation helper
@@ -78,11 +84,6 @@ namespace dtEntity
       void ClearAll(float fadeOutTime);
       bool HasAnimation(const std::string& name) const;
       bool IsAnimationPlaying(const std::string& name) const;
-
-      dtAnim::AnimationHelper* GetHelper() const
-      {
-         return mHelper.get();
-      }
       
       void GetRegisteredAnimations(std::vector<std::string>& toFill);
 
@@ -94,12 +95,15 @@ namespace dtEntity
 
       void ClearAttachments();
 
+      dtAnim::Animatable* GetActiveAnimation(const std::string& animname) const;
+
    private:
      
       void SetupAttachments();
 
-      osg::ref_ptr<dtAnim::AnimationHelper> mHelper;
-      osg::ref_ptr<osg::MatrixTransform> mFlipTransform;
+      AnimationComponentImpl* mImpl;
+
+
 
       // path to loaded script file
       StringProperty mMeshPathProperty;

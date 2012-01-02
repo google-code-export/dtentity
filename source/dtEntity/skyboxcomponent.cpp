@@ -23,7 +23,6 @@
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
-#include <osgDB/ReadFile>
 #include <assert.h>
 #include <osg/Vec3>
 #include <osg/Vec4>

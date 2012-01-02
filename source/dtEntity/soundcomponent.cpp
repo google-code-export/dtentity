@@ -41,11 +41,17 @@ namespace dtEntity
    const StringId SoundComponent::RollOffId(SID("RollOff"));
    const StringId SoundComponent::LoopingId(SID("Looping"));
    
+   class SoundComponentImpl
+   {
+   public:
+      osg::ref_ptr<dtAudio::Sound> mCurrentSound;
+   };
    
    ////////////////////////////////////////////////////////////////////////////
    SoundComponent::SoundComponent()
       : mOwner(NULL)
       , mTransformComponent(NULL)
+      , mImpl(new SoundComponentImpl())
    {
       Register(SoundPathId, &mSoundPath);
       Register(AutoPlayId, &mAutoPlay);
@@ -64,6 +70,7 @@ namespace dtEntity
    SoundComponent::~SoundComponent()
    {
       FreeSound();
+      delete mImpl;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -75,14 +82,14 @@ namespace dtEntity
       {
          return;
       }
-      mCurrentSound = dtAudio::AudioManager::GetInstance().NewSound();
-      assert(mCurrentSound);
+      mImpl->mCurrentSound = dtAudio::AudioManager::GetInstance().NewSound();
+      assert(mImpl->mCurrentSound);
 
-      mCurrentSound->LoadFile(mSoundPath.Get().c_str());
-      mCurrentSound->SetGain(mGain.Get());
-      mCurrentSound->SetRolloffFactor(mRollOff.Get());
-      mCurrentSound->SetPitch(mPitch.Get());
-      mCurrentSound->SetLooping(mLooping.Get());
+      mImpl->mCurrentSound->LoadFile(mSoundPath.Get().c_str());
+      mImpl->mCurrentSound->SetGain(mGain.Get());
+      mImpl->mCurrentSound->SetRolloffFactor(mRollOff.Get());
+      mImpl->mCurrentSound->SetPitch(mPitch.Get());
+      mImpl->mCurrentSound->SetLooping(mLooping.Get());
       
       if(mAutoPlay.Get())
       {
@@ -107,27 +114,27 @@ namespace dtEntity
          }
       }
       
-      osg::Vec3 oldpos = mCurrentSound->GetPosition();
+      osg::Vec3 oldpos = mImpl->mCurrentSound->GetPosition();
       osg::Vec3 trans = mTransformComponent->GetTranslation();
       osg::Vec3 velocity = (trans - oldpos) * (1 / dt);
       //sc->mCurrentSound->SetPosition(trans);
       dtCore::Transform xform;
       xform.SetTranslation(trans);
-      mCurrentSound->SetTransform(xform);
-      mCurrentSound->SetVelocity(velocity);
+      mImpl->mCurrentSound->SetTransform(xform);
+      mImpl->mCurrentSound->SetVelocity(velocity);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::FreeSound()
    {
-      if(mCurrentSound.valid())
+      if(mImpl->mCurrentSound.valid())
       {
-         if(mCurrentSound->IsPlaying())
+         if(mImpl->mCurrentSound->IsPlaying())
          {
-            mCurrentSound->Stop();            
+            mImpl->mCurrentSound->Stop();
          }
-         mCurrentSound->UnloadFile();
-         mCurrentSound->ReleaseSource();
+         mImpl->mCurrentSound->UnloadFile();
+         mImpl->mCurrentSound->ReleaseSource();
       }
    }
 
@@ -140,29 +147,29 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::PlaySound() 
    {  
-      if(mCurrentSound != NULL)
+      if(mImpl->mCurrentSound != NULL)
       {
-         mCurrentSound->Play();
+         mImpl->mCurrentSound->Play();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::StopSound() 
    {  
-      if(mCurrentSound != NULL)
+      if(mImpl->mCurrentSound != NULL)
       {
-         mCurrentSound->Stop();
+         mImpl->mCurrentSound->Stop();
       }
    }
 
    ///////////////////////////////////////////////////////////////////
    bool SoundComponent::IsPlaying() const
    {
-      if(!mCurrentSound.valid())
+      if(!mImpl->mCurrentSound.valid())
       {
          return false;
       }
-      return (mCurrentSound->IsPlaying() != 0);
+      return (mImpl->mCurrentSound->IsPlaying() != 0);
    }
 
    ///////////////////////////////////////////////////////////////////
