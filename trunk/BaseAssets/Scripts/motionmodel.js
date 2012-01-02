@@ -351,28 +351,3 @@ function MotionSystem() {
 
 EntityManager.addEntitySystem(new MotionSystem());
 
-/*var cameraMotionSystem = new CameraMotionSystem();
-EntityManager.addEntitySystem(cameraMotionSystem);
-
-// create camera motion system when camera is created
-function onCameraAdded(name, params) {
-
-  var camid = params.AboutEntity;
-  var camcomp = cameraSystem.getComponent(camid);
-  if(camcomp && camcomp.IsMainCamera) {
-    cameraMotionSystem.setCameraId(camid);
-  }
-}
-EntityManager.registerForMessages("CameraAddedMessage", onCameraAdded);
-
-// create camera motion system when camera is created
-function onCameraRemoved(name, params) {
-
-  var camid = params.AboutEntity;
-   if(camid === cameraMotionSystem.getCameraId()) {
-      cameraMotionSystem.setCameraId(0);
-   }
-
-}
-EntityManager.registerForMessages("CameraRemovedMessage", onCameraRemoved);
-*/
