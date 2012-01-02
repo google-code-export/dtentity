@@ -285,8 +285,8 @@ int main(int argc, char** argv)
    }
 
    // make sure these component systems are started
-   mSystem->GetPluginManager().StartEntitySystem(dtEntity::SID("StaticMesh"));
-   mSystem->GetPluginManager().StartEntitySystem(dtEntity::SID("PositionAttitudeTransform"));
+   mSystem->GetPluginManager().StartEntitySystem(dtEntity::SIDHash("StaticMesh"));
+   mSystem->GetPluginManager().StartEntitySystem(dtEntity::SIDHash("PositionAttitudeTransform"));
      
    // create spawner for entity
    dtEntity::Spawner* spawner;

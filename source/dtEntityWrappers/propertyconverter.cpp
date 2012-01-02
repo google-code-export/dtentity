@@ -141,7 +141,7 @@ namespace dtEntityWrappers
             Handle<Value> key = keys->Get(Integer::New(i));
             std::string keyname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
-            prp->Add(dtEntity::SID(keyname), Convert(val));
+            prp->Add(dtEntity::SIDHash(keyname), Convert(val));
          }
          return prp;
       }
@@ -225,7 +225,7 @@ namespace dtEntityWrappers
             {
                return ThrowError("Unknown datatype encountered!");
             }
-            groupprop->Add(dtEntity::SID(kname), newprop);
+            groupprop->Add(dtEntity::SIDHash(kname), newprop);
          }
 
          break;

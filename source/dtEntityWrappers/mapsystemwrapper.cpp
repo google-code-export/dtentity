@@ -187,7 +187,7 @@ namespace dtEntityWrappers
          Handle<Value> key = keys->Get(Integer::New(i));
          std::string keyname = ToStdString(key);
 
-         dtEntity::StringId ctype = dtEntity::SID(keyname);
+         dtEntity::StringId ctype = dtEntity::SIDHash(keyname);
 
          if(ms->GetEntityManager().HasEntitySystem(ctype))
          {
@@ -204,7 +204,7 @@ namespace dtEntityWrappers
                   std::string compkeystr = ToStdString(compkey);
                   Handle<Value> compval = compobj->Get(compkey);
                   dtEntity::Property* prop = Convert(compval);
-                  props.AddProperty(dtEntity::SID(compkeystr), *prop);
+                  props.AddProperty(dtEntity::SIDHash(compkeystr), *prop);
                   delete prop;
                }
                spawner->AddComponent(ctype, props);

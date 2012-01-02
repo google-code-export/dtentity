@@ -241,7 +241,7 @@ namespace dtEntitySimulation
       Register(UseLocalCoordsId, &mUseLocalCoords);
       Register(KeepSizeConstantId, &mKeepSizeConstant);
       Register(PivotAtBottomId, &mPivotAtBottom);
-      mLayerProperty.Set(dtEntity::SID("root"));
+      mLayerProperty.Set(dtEntity::SIDHash("root"));
 
       mKeepSizeConstant.Set(true);
       mUseLocalCoords.Set(false);

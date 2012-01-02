@@ -83,7 +83,7 @@ int main()
 
    mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
 
-   bool success = mapSystem->GetPluginManager().StartEntitySystem(dtEntity::SID("Net"));
+   bool success = mapSystem->GetPluginManager().StartEntitySystem(dtEntity::SIDHash("Net"));
    assert(success && "Net system not found, check plugin paths");
 
    dtEntityENet::NetSystem* netSystem;

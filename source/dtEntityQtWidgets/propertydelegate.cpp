@@ -666,7 +666,7 @@ namespace dtEntityQtWidgets
 
       dtEntity::StringId selindex;
 
-      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
       {
          selindex = sel->second->StringIdValue();
@@ -680,7 +680,7 @@ namespace dtEntityQtWidgets
          if(pchild && pchild->mName.left(2) != "__")
          {
             editor->addItem(pchild->mName);
-            if(dtEntity::SID(pchild->mName.toStdString()) == selindex)
+            if(dtEntity::SIDHash(pchild->mName.toStdString()) == selindex)
             {
                editor->setCurrentIndex(editor->count() - 1);
             }
@@ -700,7 +700,7 @@ namespace dtEntityQtWidgets
       dtEntity::PropertyGroup grp = pitem->mProperty->GroupValue();
       dtEntity::StringId selindex;
 
-      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
       {
          selindex = sel->second->StringIdValue();
@@ -709,7 +709,7 @@ namespace dtEntityQtWidgets
       QComboBox* e = static_cast<QComboBox*>(editor);
       for(int i = 0; i < e->count(); ++i)
       {
-         if(dtEntity::SID(e->itemText(i).toStdString()) == selindex)
+         if(dtEntity::SIDHash(e->itemText(i).toStdString()) == selindex)
          {
             e->setCurrentIndex(i);
             break;
@@ -745,10 +745,10 @@ namespace dtEntityQtWidgets
    {
       assert(prop.GetType() == dtEntity::DataType::GROUP);
       dtEntity::PropertyGroup grp = prop.GroupValue();
-      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
       {
-         sel->second->SetStringId(dtEntity::SID(val.toStdString()));
+         sel->second->SetStringId(dtEntity::SIDHash(val.toStdString()));
       }
    }
 
@@ -759,7 +759,7 @@ namespace dtEntityQtWidgets
 
       dtEntity::PropertyGroup grp = prop.GroupValue();
 
-      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+      dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
       {
          QString str = dtEntity::GetStringFromSID(sel->second->StringIdValue()).c_str();

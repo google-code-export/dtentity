@@ -49,12 +49,12 @@ namespace dtEntity
    std::string DT_ENTITY_EXPORT GetStringFromSID(StringId id);
 
    /**
-    * get crc32 hash of string
+    * get string id crc32 hash of string, don't add to reverse lookup
     */
-   unsigned int DT_ENTITY_EXPORT SIDHash(StringId str);
+   StringId DT_ENTITY_EXPORT SIDHash(const std::string& str);
 
    /**
-   * get string id from hash
+   * get string id crc32 hash of string, add to reverse lookup
    */
    StringId DT_ENTITY_EXPORT SID(unsigned int hash);
 

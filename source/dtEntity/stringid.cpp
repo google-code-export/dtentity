@@ -26,7 +26,7 @@
 namespace dtEntity
 {
 
-   class DT_ENTITY_EXPORT StringIdManager 
+   class DT_ENTITY_EXPORT StringIdManager
       : public Singleton<StringIdManager>
    {
 
@@ -94,14 +94,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   unsigned int SIDHash(StringId str)
+   StringId SIDHash(const std::string& str)
    {
 #if defined(DTENTITY_USE_STRINGS_AS_STRINGIDS)
-      unsigned int hash = StringIdManager::GetInstance().Hash(str);  
-      StringIdManager::GetInstance().AddToReverseLookup(str, hash);
-      return hash;
-#else
       return str;
+#else
+      unsigned int hash = StringIdManager::GetInstance().Hash(str);
+      return hash;
 #endif
    }
 

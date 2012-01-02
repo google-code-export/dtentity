@@ -388,7 +388,7 @@ namespace dtEntityQtWidgets
 
             // keep __SELECTED__ value for switch properties
             dtEntity::StringIdProperty enabled;
-            dtEntity::StringId selstr = dtEntity::SID("__SELECTED__");
+            dtEntity::StringId selstr = dtEntity::SIDHash("__SELECTED__");
             dtEntity::PropertyGroup pg = pitem->mProperty->GroupValue();
 
             if(pg.find(selstr) != pg.end())
@@ -402,7 +402,7 @@ namespace dtEntityQtWidgets
                PropertyTreeItem* child = static_cast<PropertyTreeItem*>(pitem->child(i));
                if(child->mName != "__SELECTED__")
                {
-                  grp[dtEntity::SID(child->mName.toStdString())] = child->mProperty;
+                  grp[dtEntity::SIDHash(child->mName.toStdString())] = child->mProperty;
                }
             }
 
@@ -617,7 +617,7 @@ namespace dtEntityQtWidgets
             {
                std::ostringstream idx;
                idx << std::setfill('0') << std::setw(6) << index++;
-               cmap.AddProperty(dtEntity::StringId(dtEntity::SID(idx.str())), **j);
+               cmap.AddProperty(dtEntity::SIDHash(idx.str()), **j);
             }
             AddProperties(pitem, cmap);
          }
@@ -664,7 +664,7 @@ namespace dtEntityQtWidgets
          arr.push_back(proto);
          arrprop->Set(arr);
          dtEntity::DynamicPropertyContainer pc;
-         dtEntity::StringId name = dtEntity::SID(QString("%1").arg(arr.size() - 1).toStdString());
+         dtEntity::StringId name = dtEntity::SIDHash(QString("%1").arg(arr.size() - 1).toStdString());
          pc.AddProperty(name, *proto);
          AddProperties(parent, pc);
       }
@@ -699,7 +699,7 @@ namespace dtEntityQtWidgets
             os << newcount;
             ++newcount;
 
-            pc.AddProperty(dtEntity::SID(os.str()), *pa[i]);
+            pc.AddProperty(dtEntity::SIDHash(os.str()), *pa[i]);
             np->Add(pa[i]->Clone());
          }
       }
@@ -826,7 +826,7 @@ namespace dtEntityQtWidgets
             {
                ResetChangedFlag(prop);
                changes = true;
-               props.AddProperty(dtEntity::SID(prop->mName.toStdString()), *prop->mProperty);
+               props.AddProperty(dtEntity::SIDHash(prop->mName.toStdString()), *prop->mProperty);
             }
          }
          if(changes)
@@ -1110,7 +1110,7 @@ namespace dtEntityQtWidgets
          {
             dtEntity::PropertyGroup grp = pitem->mProperty->GroupValue();
 
-            dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SID("__SELECTED__"));
+            dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
             if(sel != grp.end())
             {
                dtEntity::StringId selindex = sel->second->StringIdValue();
@@ -1121,7 +1121,7 @@ namespace dtEntityQtWidgets
                   if(idx.isValid())
                   {
                      PropertyTreeItem* citem = static_cast<PropertyTreeItem*>(idx.internalPointer());
-                     bool hide = (dtEntity::SID(citem->mName.toStdString()) != selindex);
+                     bool hide = (dtEntity::SIDHash(citem->mName.toStdString()) != selindex);
                      mComponentTree->setRowHidden(i, parent, hide);
                   }
                }
@@ -1394,7 +1394,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnEntitySelected(const dtEntity::Message& msg)
    {
-      dtEntity::EntityId id = (dtEntity::EntityId) msg.GetUInt(dtEntity::SID("AboutEntity"));
+      dtEntity::EntityId id = (dtEntity::EntityId) msg.GetUInt(dtEntity::SIDHash("AboutEntity"));
 
       emit(EntitySelected(id));
       dtEntity::Entity* entity; 
@@ -1424,10 +1424,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnEntitySystemSelected(const dtEntity::Message& msg)
    {
-      std::string name = msg.GetString(dtEntity::SID("Name"));
+      std::string name = msg.GetString(dtEntity::SIDHash("Name"));
       emit(EntitySystemSelected(name.c_str()));
 
-      dtEntity::StringId sid = dtEntity::SID(name);
+      dtEntity::StringId sid = dtEntity::SIDHash(name);
       dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(sid);
       if(es == NULL)
       {
@@ -1445,14 +1445,14 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnMapSelected(const dtEntity::Message& msg)
    {
-      std::string mapName = msg.GetString(dtEntity::SID("Name"));
+      std::string mapName = msg.GetString(dtEntity::SIDHash("Name"));
       emit(MapSelected(mapName.c_str()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnSpawnerSelected(const dtEntity::Message& msg)
    {
-      std::string spawnerName = msg.GetString(dtEntity::SID("Name"));
+      std::string spawnerName = msg.GetString(dtEntity::SIDHash("Name"));
 
       dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
@@ -1493,7 +1493,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::ApplyPropertiesToEntity(dtEntity::EntityId id, const QString& componentType, const dtEntity::DynamicPropertyContainer& props)
    {
-      dtEntity::StringId ctype = dtEntity::SID(componentType.toStdString());
+      dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
       dtEntity::EntitySystem* es;
       bool success = mEntityManager->GetEntitySystem(ctype, es);
       if(!success)
@@ -1540,7 +1540,7 @@ namespace dtEntityQtWidgets
    void PropertyEditorController::ApplyPropertiesToEntitySystem(const QString& componentType, const dtEntity::DynamicPropertyContainer& props)
    {
 
-      dtEntity::StringId ctype = dtEntity::SID(componentType.toStdString());
+      dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
       dtEntity::EntitySystem* es;
       bool success = mEntityManager->GetEntitySystem(ctype, es);
       if(!success)
@@ -1637,7 +1637,7 @@ namespace dtEntityQtWidgets
       }
 
       // get current component values from spawner ///////////////////////////////
-      dtEntity::StringId ctype = dtEntity::SID(componentType.toStdString());
+      dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
       dtEntity::DynamicPropertyContainer currentSpawnerComponentProps = spawner->GetComponentValues(ctype);
       
       // Loop through incoming properties and check if they are already set in spawner.
@@ -1692,7 +1692,7 @@ namespace dtEntityQtWidgets
       dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
 
-      dtEntity::ComponentType ctype = dtEntity::SID(ctypestr.toStdString());
+      dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
       dtEntity::EntitySystem* compsys;
       bool found = mEntityManager->GetEntitySystem(ctype, compsys);
       if(!found)
@@ -1733,7 +1733,7 @@ namespace dtEntityQtWidgets
    void PropertyEditorController::OnAddComponentToEntity(dtEntity::EntityId id, const QString& ctypestr)
    {
       dtEntity::EntitySystem* es;
-      dtEntity::ComponentType ctype = dtEntity::SID(ctypestr.toStdString());
+      dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
       bool found = mEntityManager->GetEntitySystem(ctype, es);
       if(!found)
       {
@@ -1794,7 +1794,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnRemoveComponentFromSpawner(const QString& spawnername, const QString& ctypestr)
    {
-	  dtEntity::ComponentType ctype = dtEntity::SID(ctypestr.toStdString());
+     dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
 	  
 	  dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
@@ -1827,7 +1827,7 @@ namespace dtEntityQtWidgets
    void PropertyEditorController::OnRemoveComponentFromEntity(dtEntity::EntityId id, const QString& ctypestr)
    {
       dtEntity::EntitySystem* es;
-      dtEntity::ComponentType ctype = dtEntity::SID(ctypestr.toStdString());
+      dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
       bool found = mEntityManager->GetEntitySystem(ctype, es);
       if(!found)
       {
@@ -1872,7 +1872,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnRequestUpdateEntitySystem(const QString& name)
    {
-      dtEntity::StringId sid = dtEntity::SID(name.toStdString());
+      dtEntity::StringId sid = dtEntity::SIDHash(name.toStdString());
       dtEntity::EntitySystem* es;
       bool found = mEntityManager->GetEntitySystem(sid, es);
       if(found)
