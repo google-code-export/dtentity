@@ -46,7 +46,6 @@ namespace dtEntitySimulation
       dtEntity::SID("SetHeightAndRotationToTerrain"));
    const dtEntity::StringId GroundClampingComponent::VerticalOffsetId(dtEntity::SID("VerticalOffset"));
    const dtEntity::StringId GroundClampingComponent::MinDistToCameraId(dtEntity::SID("MinDistToCamera"));
-   
 
    ////////////////////////////////////////////////////////////////////////////
    GroundClampingComponent::GroundClampingComponent()
@@ -89,6 +88,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
 
    const dtEntity::StringId GroundClampingSystem::EnabledId(dtEntity::SID("Enabled"));
+   const dtEntity::StringId GroundClampingSystem::IntersectLayerId(dtEntity::SID("IntersectLayer"));
 
    GroundClampingSystem::GroundClampingSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
@@ -98,6 +98,7 @@ namespace dtEntitySimulation
    {
 
       Register(EnabledId, &mEnabled);
+      Register(IntersectLayerId, &mIntersectLayer);
       mEnabled.Set(true);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::Tick);
@@ -113,10 +114,6 @@ namespace dtEntitySimulation
          mCameraAddedFunctor, "GroundClampingSystem::CameraRemoved");
 
       AddScriptedMethod("getTerrainHeight", dtEntity::ScriptMethodFunctor(this, &GroundClampingSystem::ScriptGetTerrainHeight));
-
-      dtEntity::LayerAttachPointSystem* layersys;
-      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      mRootNode = layersys->GetSceneGraphRoot();
 
       dtEntity::MapSystem* mapsys;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapsys);
@@ -134,6 +131,8 @@ namespace dtEntitySimulation
             mCamera = camsys->begin()->second;
          }
       }
+
+      SetIntersectLayer(dtEntity::LayerAttachPointSystem::DefaultLayerId);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -142,11 +141,38 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop)
+   {
+      if(propname == IntersectLayerId)
+      {
+         SetIntersectLayer(prop.StringIdValue());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
      GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
      GetEntityManager().UnregisterForMessages(dtEntity::CameraAddedMessage::TYPE, mCameraAddedFunctor);
      GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::SetIntersectLayer(dtEntity::StringId layername)
+   {
+      mIntersectLayer.Set(layername);
+      dtEntity::LayerAttachPointSystem* layersys;
+      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      dtEntity::LayerAttachPointComponent* c;
+      if(layersys->GetByName(layername, c))
+      {
+         mRootNode = c->GetGroup();
+      }
+      else
+      {
+         LOG_ERROR("Could not find intersect layer for ground clamping system!");
+         mRootNode = NULL;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -198,6 +224,11 @@ namespace dtEntitySimulation
             const dtEntity::Entity* entity = static_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL)
             {
+               dtEntity::MapComponent* mc;
+               if(GetEntityManager().GetComponent(entity->GetId(), mc))
+               {
+                  LOG_ERROR("Map: " << mc->GetEntityName());
+               }
                osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
                v[2] = isectpos[2];
                return true;

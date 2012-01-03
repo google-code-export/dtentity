@@ -105,6 +105,7 @@ namespace dtEntitySimulation
 
    ////////////////////////////////////////////////////////////////////////////////
 
+
    class DT_ENTITY_SIMULATION_EXPORT GroundClampingSystem
       : public dtEntity::DefaultEntitySystem<GroundClampingComponent>
       , public dtEntity::ScriptAccessor
@@ -114,9 +115,13 @@ namespace dtEntitySimulation
    public:
      
       static const dtEntity::StringId EnabledId;
+      static const dtEntity::StringId IntersectLayerId;
+
 
       GroundClampingSystem(dtEntity::EntityManager& em);
       ~GroundClampingSystem();
+
+      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop);
 
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
 
@@ -127,6 +132,10 @@ namespace dtEntitySimulation
       void OnMapUnloaded(const dtEntity::Message& msg);
 
       bool ClampToTerrain(osg::Vec3d& position, int voffset = 10000);
+
+      void SetIntersectLayer(dtEntity::StringId);
+      dtEntity::StringId GetIntersectLayer() const { return  mIntersectLayer.Get(); }
+
 
    private:
 
@@ -143,7 +152,10 @@ namespace dtEntitySimulation
       osgUtil::IntersectionVisitor mIntersectionVisitor;
       osg::observer_ptr<osg::Node> mRootNode;
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;
+
       dtEntity::BoolProperty mEnabled;
+      dtEntity::StringIdProperty mIntersectLayer;
+
       osgSim::LineOfSight mLos;
       dtEntity::CameraComponent* mCamera;
 
