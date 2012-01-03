@@ -199,9 +199,8 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
+	  virtual void OnAddedToEntity(Entity& entity);
       virtual void Finished();
-
-      void OnAddedToEntity(Entity& entity);
 
       // set existing geometry as static mesh
       void SetStaticMesh(osg::Node* node);

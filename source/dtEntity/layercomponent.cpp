@@ -152,7 +152,8 @@ namespace dtEntity
          LayerAttachPointComponent* current;
          if(attachedNode != NULL && layerattsystem->GetByName(mAttachPoint, current))
          {
-            current->GetGroup()->removeChild(attachedNode);           
+            bool success = current->GetGroup()->removeChild(attachedNode);           
+			assert(success);
          }
       }
       

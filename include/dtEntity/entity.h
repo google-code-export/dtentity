@@ -65,14 +65,14 @@ namespace dtEntity
        * @return true if found
        */
       template<typename T> 
-      bool GetComponent(T*& component);
+      bool GetComponent(T*& component) const;
 
       /**
        * Get component from this entity
        * @param component receives the component if found
        * @return true if found
        */
-      bool GetComponent(ComponentType t, Component*& component);
+      bool GetComponent(ComponentType t, Component*& component) const;
 
       /**
        * Get a list of all component associated with this entity
@@ -126,7 +126,7 @@ namespace dtEntity
    }
 
    template<typename T> 
-   bool Entity::GetComponent(T*& component) 
+   bool Entity::GetComponent(T*& component) const
    {
        return GetEntityManager().GetComponent<T>(this->GetId(), component);
    }

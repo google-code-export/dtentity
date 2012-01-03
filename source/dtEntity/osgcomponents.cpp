@@ -443,7 +443,7 @@ namespace dtEntity
       BaseClass::OnAddedToEntity(entity);
 
       // for picking
-      GetNode()->setUserData(NULL);
+      GetNode()->setUserData(&entity);
    }
    
    ////////////////////////////////////////////////////////////////////////////
@@ -491,7 +491,7 @@ namespace dtEntity
       }
 
       // don't set user data, mesh node may have multiple parents
-      mMeshNode->setUserData(NULL);
+      mMeshNode->setUserData(mEntity);
 
       MeshChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());

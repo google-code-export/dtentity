@@ -114,6 +114,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/commandmessages.cpp
   ${SOURCE_PATH}/applicationcomponent.cpp
   ${SOURCE_PATH}/cameracomponent.cpp
+  ${SOURCE_PATH}/componentfactories.cpp
   ${SOURCE_PATH}/componentpluginmanager.cpp
   ${SOURCE_PATH}/crc32.cpp
   ${SOURCE_PATH}/debugdrawmanager.cpp
