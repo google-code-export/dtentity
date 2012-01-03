@@ -210,35 +210,11 @@ namespace dtEntitySimulation
       mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
 
       mRootNode->accept(mIntersectionVisitor);
-
-      osgUtil::LineSegmentIntersector::Intersections::const_iterator isect;
-      for(isect = intersector->getIntersections().begin(); isect != intersector->getIntersections().end(); ++isect)
-      {
-         for(osg::NodePath::const_reverse_iterator j = isect->nodePath.rbegin(); j != isect->nodePath.rend(); ++j)
-         {
-            const osg::Node* node = *j;
-
-            const osg::Referenced* referenced = node->getUserData();
-
-            if(referenced == NULL) continue;
-            const dtEntity::Entity* entity = static_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL)
-            {
-               dtEntity::MapComponent* mc;
-               if(GetEntityManager().GetComponent(entity->GetId(), mc))
-               {
-                  LOG_ERROR("Map: " << mc->GetEntityName());
-               }
-               osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
-               v[2] = isectpos[2];
-               return true;
-            }
-            if(mRootNode.get() == node)
-            {
-               return false;
-            }
-         }
-      }      
+	  if(intersector->containsIntersections())
+	  {
+		  v = intersector->getFirstIntersection().getWorldIntersectPoint();
+		  return true;
+	  }
       return false;
    }
 

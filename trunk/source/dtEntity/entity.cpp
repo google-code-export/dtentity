@@ -51,7 +51,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   bool Entity::GetComponent(ComponentType t, Component*& component)
+   bool Entity::GetComponent(ComponentType t, Component*& component) const
    {
       return GetEntityManager().GetComponent(this->GetId(), t, component);
    }

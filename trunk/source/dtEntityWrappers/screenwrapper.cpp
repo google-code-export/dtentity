@@ -25,6 +25,7 @@
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/osgcomponents.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/wrappermanager.h>
@@ -222,6 +223,14 @@ namespace dtEntityWrappers
                const osg::Referenced* referenced = node->getUserData();
                if(referenced == NULL) continue;
                const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
+			   
+			   // ignore static mesh nodes, they are shared by multiple parents and can't be used to
+			   // identify the entity
+			   dtEntity::StaticMeshComponent* smc;
+			   if(entity->GetComponent(smc) && smc->GetNode() == node)
+			   {
+				   continue;
+			   }
                if(entity != NULL &&
                      entityManager->HasComponent(entity->GetId(), dtEntity::TransformComponent::TYPE, true))
                {
@@ -298,11 +307,18 @@ namespace dtEntityWrappers
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL)
             {
-               Handle<Object> obj = Object::New();
-               obj->Set(entityid, Uint32::New(entity->GetId()));
-               obj->Set(normal, WrapVec3(isect.getWorldIntersectNormal()));
-               obj->Set(position, WrapVec3(isect.getWorldIntersectPoint()));
-               ret->Set(count++, obj);
+
+			   // ignore static mesh nodes, they are shared by multiple parents and can't be used to
+			   // identify the entity
+				dtEntity::StaticMeshComponent* smc;
+			   if(!entity->GetComponent(smc) || smc->GetNode() != node)
+			   {
+				   Handle<Object> obj = Object::New();
+				   obj->Set(entityid, Uint32::New(entity->GetId()));
+				   obj->Set(normal, WrapVec3(isect.getWorldIntersectNormal()));
+				   obj->Set(position, WrapVec3(isect.getWorldIntersectPoint()));
+				   ret->Set(count++, obj);
+			   }
             }
          }
       }
