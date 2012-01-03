@@ -158,9 +158,7 @@ namespace dtEntityWrappers
          std::string flags = "--debugger-agent";
          v8::V8::SetFlagsFromString(flags.c_str(), flags.length());
          v8::Debug::EnableAgent("DtScript", dbgport);
-         std::ostringstream os; 
-         os << "Enabling JavaScript debugging on port " << dbgport;
-         LOG_DEBUG(os.str());
+         LOG_DEBUG("Enabling JavaScript debugging on port " << dbgport);
       }
    }
 

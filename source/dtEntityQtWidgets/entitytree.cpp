@@ -211,11 +211,8 @@ namespace dtEntityQtWidgets
          }
          if(!found)
          {
-            std::ostringstream os;
-            os << "Cannot remove entity from tree: No entry found with id " << entry.mEntityId;
-            os << " in map " << entry.mMapName.toStdString();
-
-            LOG_WARNING(os.str());
+            LOG_WARNING("Cannot remove entity from tree: No entry found with id " << entry.mEntityId
+             << " in map " << entry.mMapName.toStdString());
             return;
          }
          beginRemoveRows(parent, i, i);
@@ -227,7 +224,7 @@ namespace dtEntityQtWidgets
       }
       else
       {
-         LOG_WARNING("cannot get valid tree entry for map " + entry.mMapName.toStdString());
+         LOG_WARNING("cannot get valid tree entry for map " << entry.mMapName.toStdString());
       }
    }
    

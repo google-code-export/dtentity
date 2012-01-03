@@ -598,21 +598,17 @@ namespace dtEntity
       }
       catch(CEGUI::Exception& e)
       {
-         std::ostringstream oss;
-         oss << "CEGUI system will use the original default XML parser \""
+         LOG_WARNING("CEGUI system will use the original default XML parser \""
             << currentParserName.c_str() << "\" because the system could not link to use XML parser \""
             << parserName.c_str() << "\" because of the following CEGUI exception ("
             << e.getName().c_str() << "):\n"
-            << e.getMessage().c_str() << "\n";
-         LOG_WARNING(oss.str().c_str());
+            << e.getMessage().c_str() << "\n");
       }
       catch(...)
       {
-         std::ostringstream oss;
-         oss << "CEGUI system will use the original default XML parser \""
+         LOG_ERROR("CEGUI system will use the original default XML parser \""
             << currentParserName.c_str() << "\" because the system could not link to use XML parser \""
-            << parserName.c_str() << "\" because of some unknown exception.\n";
-         LOG_ERROR(oss.str().c_str());
+            << parserName << "\" because of some unknown exception.");
       }
 
       // If the intended parser assignment failed, ensure the last parser used is assigned.
@@ -713,10 +709,8 @@ namespace dtEntity
 
       if (!widget.isPropertyPresent(propertyName))
       {
-         std::ostringstream oss;
-         oss << "Widget \"" << widget.getName().c_str() << "\" does not have the \""
-            << propertyName << "\" property. Cannot create render target texture.";
-         LOG_WARNING(oss.str());
+         LOG_WARNING("Widget \"" << widget.getName().c_str() << "\" does not have the \""
+            << propertyName << "\" property. Cannot create render target texture.");
          return NULL;
       }
 

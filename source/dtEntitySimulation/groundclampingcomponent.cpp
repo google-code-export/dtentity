@@ -113,6 +113,12 @@ namespace dtEntitySimulation
       GetEntityManager().RegisterForMessages(dtEntity::CameraRemovedMessage::TYPE,
          mCameraAddedFunctor, "GroundClampingSystem::CameraRemoved");
 
+	  mMapLoadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::MapLoaded);
+      GetEntityManager().RegisterForMessages(dtEntity::MapLoadedMessage::TYPE,
+         mMapLoadedFunctor, "GroundClampingSystem::MapLoaded");
+	  GetEntityManager().RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE,
+         mMapLoadedFunctor, "GroundClampingSystem::MapUnLoaded");
+
       AddScriptedMethod("getTerrainHeight", dtEntity::ScriptMethodFunctor(this, &GroundClampingSystem::ScriptGetTerrainHeight));
 
       dtEntity::MapSystem* mapsys;
@@ -155,6 +161,8 @@ namespace dtEntitySimulation
      GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
      GetEntityManager().UnregisterForMessages(dtEntity::CameraAddedMessage::TYPE, mCameraAddedFunctor);
      GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
+	 GetEntityManager().UnregisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor);
+	 GetEntityManager().UnregisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mMapLoadedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -236,6 +244,12 @@ namespace dtEntitySimulation
       {
          mCamera = NULL;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::MapLoaded(const dtEntity::Message& msg)
+   {
+	  SetIntersectLayer(mIntersectLayer.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////

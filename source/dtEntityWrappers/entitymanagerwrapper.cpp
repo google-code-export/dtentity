@@ -210,11 +210,9 @@ namespace dtEntityWrappers
          dtEntity::Property* prop = msg->Get(dtEntity::SIDHash(propname));
          if(!prop)
          {
-            std::ostringstream os;
-            os << "Error setting message values: Message ";
-            os << dtEntity::GetStringFromSID(msg->GetType());
-            os << " has no property with name " + propname;
-            LOG_ERROR(os.str());
+            LOG_ERROR("Error setting message values: Message "
+             << dtEntity::GetStringFromSID(msg->GetType())
+             << " has no property with name " << propname);
          }
          else
          {

@@ -46,15 +46,19 @@ namespace dtEntity
       virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                       const std::string& msg)
       {
-         switch(level)
+		 std::ostream* strm;
+		 switch(level)
          {
-         case  LogLevel::LVL_DEBUG  : OSG_DEBUG   << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::LVL_INFO   : OSG_INFO    << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::LVL_WARNING: OSG_WARN    << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::LVL_ERROR  : OSG_FATAL   << msg << std::endl; OSG_DEBUG.flush(); break;
-         case  LogLevel::LVL_ALWAYS : OSG_ALWAYS  << msg << std::endl; OSG_DEBUG.flush(); break;
-         default:  OSG_ALWAYS << msg << std::endl; OSG_DEBUG.flush();
+		 case  LogLevel::LVL_DEBUG   : strm = &osg::notify(osg::DEBUG_INFO); break;
+		 case  LogLevel::LVL_INFO    : strm = &osg::notify(osg::INFO); break;
+		 case  LogLevel::LVL_WARNING : strm = &osg::notify(osg::WARN); break;
+		 case  LogLevel::LVL_ERROR   : strm = &osg::notify(osg::FATAL); break;
+		 case  LogLevel::LVL_ALWAYS  : strm = &osg::notify(osg::ALWAYS); break;
+		 default: strm = &osg::notify(osg::ALWAYS);
          }
+		 (*strm) << "File: " << filename << " Line: " << linenumber << " Message: " << msg << std::endl; 
+		 strm->flush();
+         
       }
    };
 

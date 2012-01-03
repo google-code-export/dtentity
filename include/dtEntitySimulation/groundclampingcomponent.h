@@ -128,9 +128,8 @@ namespace dtEntitySimulation
       void Tick(const dtEntity::Message& msg);
       void CameraAdded(const dtEntity::Message& msg);
       void CameraRemoved(const dtEntity::Message& msg);
-      void OnMapLoaded(const dtEntity::Message& msg);
-      void OnMapUnloaded(const dtEntity::Message& msg);
-
+      void MapLoaded(const dtEntity::Message& msg);
+      
       bool ClampToTerrain(osg::Vec3d& position, int voffset = 10000);
 
       void SetIntersectLayer(dtEntity::StringId);
@@ -149,6 +148,7 @@ namespace dtEntitySimulation
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mCameraAddedFunctor;
       dtEntity::MessageFunctor mCameraRemovedFunctor;
+	  dtEntity::MessageFunctor mMapLoadedFunctor;
       osgUtil::IntersectionVisitor mIntersectionVisitor;
       osg::observer_ptr<osg::Node> mRootNode;
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;

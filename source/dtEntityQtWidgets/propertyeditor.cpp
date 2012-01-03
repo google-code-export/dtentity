@@ -1524,10 +1524,8 @@ namespace dtEntityQtWidgets
          }
          else
          {
-            std::ostringstream os;
-            os << "Error setting property: Component " << componentType.toStdString();
-            os << " has no property named " << dtEntity::GetStringFromSID(sid);
-            LOG_WARNING(os.str());
+            LOG_WARNING("Error setting property: Component " << componentType.toStdString()
+             << " has no property named " << dtEntity::GetStringFromSID(sid));
          }
       }
 
@@ -1563,11 +1561,9 @@ namespace dtEntityQtWidgets
             es->OnPropertyChanged(sid, *propToSet);
          }
          else
-         {
-            std::ostringstream os;
-            os << "Error setting property: Entity system " << componentType.toStdString();
-            os << " has no property named " << dtEntity::GetStringFromSID(sid);
-            LOG_WARNING(os.str());
+         {            
+            LOG_WARNING("Error setting property: Entity system " << componentType.toStdString()
+             << " has no property named " << dtEntity::GetStringFromSID(sid));
          }
       }
 
@@ -1758,10 +1754,8 @@ namespace dtEntityQtWidgets
 
       if(es->HasComponent(id))
       {
-         std::ostringstream os;
-         os << "Could not create component, already exists for entity " << id << ": ";
-         os << ctypestr.toStdString();
-         LOG_WARNING(os.str());
+         LOG_WARNING("Could not create component, already exists for entity " << id << ": "
+          << ctypestr.toStdString());
          return;
       }
       dtEntity::Component* comp;

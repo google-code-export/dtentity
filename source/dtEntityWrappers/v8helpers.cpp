@@ -43,88 +43,52 @@ namespace dtEntityWrappers
 
    using namespace v8;
 
+
+
    ////////////////////////////////////////////////////////////////////////////////
    // lifted from node.js file node.cc
-   void DisplayExceptionLine (std::ostringstream& os, TryCatch &try_catch)
+   void ReportException(TryCatch *try_catch) 
    {
-     HandleScope scope;
+        
+	  HandleScope scope;
 
-     Handle<Message> message = try_catch.Message();
+      Handle<Message> message = try_catch->Message();
+	  std::string filename_string = "";
+	  std::string sourceline_string = "";
+	  int linenum = 0;
+	  int start = 0;
+	  int end = 0;
 
-     //node::Stdio::DisableRawMode(STDIN_FILENO);
-     //fprintf(stderr, "\n");
-     os << "\n";
+      if (!message.IsEmpty()) {
+       
+         String::Utf8Value filename(message->GetScriptResourceName());
+         filename_string = *filename;
+         linenum = message->GetLineNumber();       
+         String::Utf8Value sourceline(message->GetSourceLine());
+         sourceline_string = *sourceline;
+         start = message->GetStartColumn();       
+         end = message->GetEndColumn();
 
-     if (!message.IsEmpty()) {
-       // Print (filename):(line number): (message).
-       String::Utf8Value filename(message->GetScriptResourceName());
-       const char* filename_string = *filename;
-       int linenum = message->GetLineNumber();
-       //fprintf(stderr, "%s:%i\n", filename_string, linenum);
-       os << filename_string << ":" << linenum << "\n";
-       // Print line of source code.
-       String::Utf8Value sourceline(message->GetSourceLine());
-       const char* sourceline_string = *sourceline;
+      }
 
-       int offset =  0;
-
-       //fprintf(stderr, "%s\n", sourceline_string + offset);
-       os << (sourceline_string + offset) << "\n";
-       // Print wavy underline (GetUnderline is deprecated).
-       int start = message->GetStartColumn();
-       for (int i = offset; i < start; i++) {
-         //fprintf(stderr, " ");
-          os << " ";
-       }
-       int end = message->GetEndColumn();
-       for (int i = start; i < end; i++) {
-         //fprintf(stderr, "^");
-          os << "^";
-       }
-       //fprintf(stderr, "\n");
-       os << "\n";
-     }
-   }
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   // lifted from node.js file node.cc
-   void ReportException(TryCatch *try_catch, bool show_line) {
-     HandleScope scope;
-
-     std::ostringstream os;
-     if (show_line) DisplayExceptionLine(os, *try_catch);
-
-     String::Utf8Value trace(try_catch->StackTrace());
-
+      String::Utf8Value trace(try_catch->StackTrace());
+	  std::string tracestr = *trace;
      
-     // range errors have a trace member set to undefined
-     if (trace.length() > 0 && !try_catch->StackTrace()->IsUndefined()) {
-       //fprintf(stderr, "%s\n", *trace);
-       os << *trace;
-     } else {
-       // this really only happens for RangeErrors, since they're the only
-       // kind that won't have all this info in the trace, or when non-Error
-       // objects are thrown manually.
-       Local<Value> er = try_catch->Exception();
-       bool isErrorObject = er->IsObject() &&
-         !(er->ToObject()->Get(String::New("message"))->IsUndefined()) &&
-         !(er->ToObject()->Get(String::New("name"))->IsUndefined());
+	  std::ostringstream os;
 
-       if (isErrorObject) {
-         String::Utf8Value name(er->ToObject()->Get(String::New("name")));
-         //fprintf(stderr, "%s: ", *name);
-         os << *name;
-       }
+	  os << tracestr << "\n";
 
-       String::Utf8Value msg(!isErrorObject ? er->ToString()
-                            : er->ToObject()->Get(String::New("message"))->ToString());
-       //fprintf(stderr, "%s\n", *msg);
-       os << *msg;
-     }
-
-     //fflush(stderr);
-     LOG_ERROR(os.str());
+	  for (int i = 0; i < start; i++) 
+	  {
+         os << " ";
+	  }
+	  for (int i = start; i < end; i++) 
+	  {
+         os << "^";
+      }
+	 
+	  std::string msg = os.str();
+      dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, filename_string, "", linenum, msg);     
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -477,9 +477,9 @@ namespace dtEntity
                Property* toset = component->Get(namesid);
                if(toset == NULL)
                {
-                  std::ostringstream os;
-                  os << "Property " << GetStringFromSID(namesid) << " does not exist in component " << GetStringFromSID(componentType);
-                  LOG_WARNING(os.str());
+                  LOG_WARNING("Property " << GetStringFromSID(namesid) 
+					  << " does not exist in component "
+					  << GetStringFromSID(componentType));
                }
                else
                {
@@ -748,10 +748,8 @@ namespace dtEntity
                Property* toset = es->Get(namesid);
                if(toset == NULL)
                {
-                  std::ostringstream os;
-                  os << "Property " << name << " does not exist in entity system ";
-                  os << GetStringFromSID(componentType);
-                  LOG_WARNING(os.str());
+                  LOG_WARNING("Property " << name << " does not exist in entity system "
+                     << GetStringFromSID(componentType));
                }
                else
                {
@@ -1432,7 +1430,7 @@ namespace dtEntity
       std::ofstream of(p_dest.c_str());
 	  if(of.fail())
 	  {
-		  LOG_ERROR("Cannot open file for writing: " + p_dest);
+		  LOG_ERROR("Cannot open file for writing: " << p_dest);
 		  return false;
 	  }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
@@ -1494,7 +1492,7 @@ namespace dtEntity
       std::ofstream of(foundPath.c_str());
 	  if(of.fail())
 	  {
-		  LOG_ERROR("Cannot open file for writing: " + foundPath);
+		  LOG_ERROR("Cannot open file for writing: " << foundPath);
 		  return false;
 	  }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";

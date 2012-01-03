@@ -171,7 +171,7 @@ namespace dtEntityWrappers
    }
 
    /** write a JavaScript exception to log */
-   void DTENTITY_WRAPPERS_EXPORT ReportException(v8::TryCatch* try_catch, bool showline = true);
+   void DTENTITY_WRAPPERS_EXPORT ReportException(v8::TryCatch* try_catch);
 
    /**
      * shortcut to throw error with std string error message

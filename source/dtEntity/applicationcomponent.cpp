@@ -355,7 +355,6 @@ namespace dtEntity
          mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
       }
       GetPrimaryView()->getSceneData()->addUpdateCallback(mImpl->mUpdateCallback);
-      //GetPrimaryView()->getSceneData()->asGroup()->addChild(&GetWindowManager()->GetInputHandler());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -416,11 +415,6 @@ namespace dtEntity
          Property* target = sys->Get(i->first);
          if(!target)
          {
-            std::ostringstream os;
-            os << "Cannot process SetSystemProperties message. Entity system ";
-            os << msg.GetComponentType();
-            os << " has no property named ";
-            os << GetStringFromSID(i->first);
             LOG_ERROR("Cannot process SetSystemProperties message. Entity system "
                 << msg.GetComponentType()
                 << " has no property named "
