@@ -117,10 +117,8 @@ namespace dtEntity
            // check if a plugin with this name already exists
            if(mEntityManager->HasEntitySystem(ctype))
            {
-              std::ostringstream msg;
-              msg << "Unable to load entity system from path " << abspath <<":";
-              msg << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!";
-              LOG_ERROR(msg.str());
+              LOG_ERROR("Unable to load entity system from path " << abspath <<":"
+                << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!");
               continue;
            }
 
@@ -240,10 +238,8 @@ namespace dtEntity
          // check if dependency can be fulfilled
          if(!FactoryExists(dependency))
          {
-            std::ostringstream os;
-            os << "Cannot start plugin " << tname << ": It depends on plugin ";
-            os << GetStringFromSID(dependency) << " which was not found.";
-            LOG_ERROR(os.str());
+            LOG_ERROR("Cannot start plugin " << tname << ": It depends on plugin "
+             << GetStringFromSID(dependency) << " which was not found.");
             return false;
          }
 

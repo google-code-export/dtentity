@@ -136,10 +136,8 @@ namespace dtEntity
       LayerAttachPointComponent* current;
       if(!layerattsystem->GetByName(mAttachPoint, current))
       {
-         std::ostringstream os;
-         os << "Cannot detach node from scene graph. Attach point is ";
-         os << GetStringFromSID(mAttachPoint);
-         LOG_WARNING(os.str());
+         LOG_WARNING(os << "Cannot detach node from scene graph. Attach point is "
+          << GetStringFromSID(mAttachPoint));
          return;
       }
 
@@ -260,18 +258,16 @@ namespace dtEntity
 #ifdef _DEBUG
          if(attachedNode == NULL)
          {
-            std::ostringstream os;
-            os << "LayerSystem: Cannot attach entity, node to attach is not selected!";
-            os << " ComponentType: " << GetStringFromSID(mCurrentlyAttachedComponent);
-            LOG_WARNING(os.str());
+
+            LOG_WARNING("LayerSystem: Cannot attach entity, node to attach is not selected!"
+             << " ComponentType: " << GetStringFromSID(mCurrentlyAttachedComponent));
          }
          if(attachedNode != NULL && (attachedNode->getUserData() == NULL ||
              dynamic_cast<Entity*>(attachedNode->getUserData()) == NULL))
          {
-            std::ostringstream os;
-            os << "Attaching node with no user data to scene graph!";
-            os << " ComponentType: " << GetStringFromSID(mCurrentlyAttachedComponent);
-            LOG_ERROR(os.str());
+
+            LOG_ERROR("Attaching node with no user data to scene graph!"
+             << " ComponentType: " << GetStringFromSID(mCurrentlyAttachedComponent));
          }
 #endif
 
