@@ -47,7 +47,6 @@ namespace dtEntityWrappers
       case DataType::QUAT:        return new QuatProperty(); 
       case DataType::STRING:      return new StringProperty(); 
       case DataType::STRINGID:    return new StringIdProperty(); 
-      case DataType::UCHAR:       return new UCharProperty();
       case DataType::UINT:        return new UIntProperty();
       case DataType::VEC2:        return new Vec2Property(); 
       case DataType::VEC3:        return new Vec3Property(); 
