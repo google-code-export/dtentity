@@ -245,6 +245,7 @@ namespace dtEntityQtWidgets
       virtual bool eventFilter (QObject* watched, QEvent* event);
 
       void SetModel(QAbstractItemModel* model) { mComponentTree->setModel(model); }
+      QAbstractItemModel* GetModel()   { return mComponentTree->model(); }
 
    public slots:
 

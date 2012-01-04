@@ -29,6 +29,7 @@
 #include <dtEntity/message.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
+#include <dtEntity/sound.h>
 
 
 namespace dtEntity
@@ -37,10 +38,7 @@ namespace dtEntity
 
    class SoundSystem;
 
-   class SoundComponentImpl;
-
-   class DT_ENTITY_EXPORT SoundComponent 
-      : public Component
+   class DT_ENTITY_EXPORT SoundComponent : public NodeComponent
    {
    
       friend class SoundSystem;
@@ -50,7 +48,6 @@ namespace dtEntity
       static const ComponentType TYPE;
       static const StringId SoundPathId;
       static const StringId AutoPlayId;
-      static const StringId MoveWithTransformId;
       static const StringId GainId;
       static const StringId PitchId;
       static const StringId RollOffId;
@@ -72,6 +69,9 @@ namespace dtEntity
       virtual void Finished();
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity;}
       virtual void OnRemovedFromEntity(Entity& entity) { mOwner = NULL; }
+
+      dtEntity::Sound* GetCurrentSound() const { return mCurrentSound.get(); }
+
       void SetSoundPath(const std::string& p);
       std::string GetSoundPath() const { return mSoundPath.Get(); }
 
@@ -89,42 +89,56 @@ namespace dtEntity
 
       StringProperty mSoundPath;
       BoolProperty mAutoPlay;
-      BoolProperty mMoveWithTransform;
       FloatProperty mGain;
       FloatProperty mPitch;
       FloatProperty mRollOff;
       BoolProperty mLooping;
-      SoundComponentImpl* mImpl;
+      osg::ref_ptr<dtEntity::Sound> mCurrentSound;
       Entity* mOwner;
-      dtEntity::TransformComponent* mTransformComponent;
    };
 
    
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_EXPORT SoundSystem
-      : public DefaultEntitySystem<SoundComponent>
+   /// Manages sound effects
+   /**
+      The Sound system relies on the AudioManager, a singleton object which acts
+      as the main interface to OpenAL.
+      This systems is in charge of updating all sound components at each frame, via
+      the OnTick method.
+   */
+   class DT_ENTITY_EXPORT SoundSystem : public DefaultEntitySystem<SoundComponent>
    {
    public:
 
       SoundSystem(EntityManager& em);
       ~SoundSystem();
 
+      static const StringId ListenerGainId;
+      static const StringId ListenerLinkToCameraId;
       static const StringId ListenerTranslationId;
       static const StringId ListenerUpId;
       static const StringId ListenerEyeDirectionId;
       static const StringId ListenerVelocityId;
 
+      //void OnAddedToEntityManager(dtEntity::EntityManager& em)
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
       void OnEnterWorld(const Message&);
       void OnLeaveWorld(const Message&);
       void OnTick(const Message& msg);
-      
+
+      /// Override base class behavior to save system properties to file
+      virtual bool StorePropertiesToScene() const { return true; }
+
+
       virtual void Finished();
 
       void SetSoundPath(EntityId eid, const std::string& p);
       void PlaySound(EntityId eid);
       void StopSound(EntityId eid);
+
+      void SetListenerLinkToCamera(const bool val)  { mListenerLinkToCamera.Set(val); }
+      bool GetListenerLinkToCamera() const { return mListenerLinkToCamera.Get(); }
 
       void SetListenerTranslation(const osg::Vec3d& pos) { mListenerTranslation.Set(pos); }
       osg::Vec3d GetListenerTranslation() const { return mListenerTranslation.Get(); }
@@ -139,10 +153,15 @@ namespace dtEntity
       osg::Vec3d GetListenerVelocity() const { return mListenerVelocity.Get(); }
 
    private:
-      
+
+      /// Internal util that copies current camera position and orientation to listener
+      void CopyCamTransformToListener();
+
       MessageFunctor mEnterWorldFunctor;
       MessageFunctor mLeaveWorldFunctor;
       MessageFunctor mTickFunctor;
+      FloatProperty mListenerGain;
+      BoolProperty mListenerLinkToCamera;
       Vec3dProperty mListenerTranslation;
       Vec3dProperty mListenerUp;
       Vec3dProperty mListenerEyeDirection;

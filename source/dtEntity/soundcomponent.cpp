@@ -20,12 +20,13 @@
 
 #include <dtEntity/soundcomponent.h>
 
-#include <dtAudio/audiomanager.h>
-#include <dtAudio/sound.h>
-#include <dtCore/transform.h>
+#include <dtEntity/audiomanager.h>
+#include <dtEntity/sound.h>
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/applicationcomponent.h>
+#include <osg/Camera>
 #include <assert.h>
 #include <iostream>
 
@@ -35,32 +36,25 @@ namespace dtEntity
    const StringId SoundComponent::TYPE(SID("Sound"));
    const StringId SoundComponent::SoundPathId(SID("SoundPath"));
    const StringId SoundComponent::AutoPlayId(SID("AutoPlay"));
-   const StringId SoundComponent::MoveWithTransformId(SID("MoveWithTransform"));
    const StringId SoundComponent::GainId(SID("Gain"));
    const StringId SoundComponent::PitchId(SID("Pitch"));
    const StringId SoundComponent::RollOffId(SID("RollOff"));
    const StringId SoundComponent::LoopingId(SID("Looping"));
    
-   class SoundComponentImpl
-   {
-   public:
-      osg::ref_ptr<dtAudio::Sound> mCurrentSound;
-   };
    
    ////////////////////////////////////////////////////////////////////////////
    SoundComponent::SoundComponent()
       : mOwner(NULL)
-      , mTransformComponent(NULL)
-      , mImpl(new SoundComponentImpl())
    {
       Register(SoundPathId, &mSoundPath);
       Register(AutoPlayId, &mAutoPlay);
-      Register(MoveWithTransformId, &mMoveWithTransform);
       Register(GainId, &mGain);
       Register(PitchId, &mPitch);
       Register(RollOffId, &mRollOff);
       Register(LoopingId, &mLooping);
-      mMoveWithTransform.Set(true);
+
+      GetNode()->setName("SoundComponent");
+
       mGain.Set(1.0f);
       mPitch.Set(1.0f);
       mRollOff.Set(1.0f);
@@ -70,7 +64,6 @@ namespace dtEntity
    SoundComponent::~SoundComponent()
    {
       FreeSound();
-      delete mImpl;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -82,14 +75,14 @@ namespace dtEntity
       {
          return;
       }
-      mImpl->mCurrentSound = dtAudio::AudioManager::GetInstance().NewSound();
-      assert(mImpl->mCurrentSound);
+      mCurrentSound = AudioManager::GetInstance().NewSound();
+      assert(mCurrentSound);
 
-      mImpl->mCurrentSound->LoadFile(mSoundPath.Get().c_str());
-      mImpl->mCurrentSound->SetGain(mGain.Get());
-      mImpl->mCurrentSound->SetRolloffFactor(mRollOff.Get());
-      mImpl->mCurrentSound->SetPitch(mPitch.Get());
-      mImpl->mCurrentSound->SetLooping(mLooping.Get());
+      mCurrentSound->LoadFile(mSoundPath.Get().c_str());
+      mCurrentSound->SetGain(mGain.Get());
+      mCurrentSound->SetRolloffFactor(mRollOff.Get());
+      mCurrentSound->SetPitch(mPitch.Get());
+      mCurrentSound->SetLooping(mLooping.Get());
       
       if(mAutoPlay.Get())
       {
@@ -100,41 +93,39 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::Update(float dt)
    {
-      if(!IsPlaying() || !mMoveWithTransform.Get() || mOwner == NULL)
+      if(!IsPlaying() || mOwner == NULL)
       {
          return;
       }
-      
-      if(mTransformComponent == NULL)
+
+      // retrieve current PAT and set it to OpenAL
+      dtEntity::TransformComponent* comp;
+	  if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), comp, true))
       {
-         if(!mOwner->GetEntityManager().GetComponent(mOwner->GetId(), mTransformComponent, true))
-         {
-            mMoveWithTransform.Set(false);
-            return;
-         }
+        osg::Vec3 currPos = comp->GetTranslation();
+        osg::Vec3 oldPos = mCurrentSound->GetPosition();
+        osg::Vec3 velocity = (currPos - oldPos) * (1 / dt);
+        mCurrentSound->SetVelocity(velocity);
+        mCurrentSound->SetPosition(currPos);
+        // TODO - need to set orientation as well...
+         
       }
-      
-      osg::Vec3 oldpos = mImpl->mCurrentSound->GetPosition();
-      osg::Vec3 trans = mTransformComponent->GetTranslation();
-      osg::Vec3 velocity = (trans - oldpos) * (1 / dt);
-      //sc->mCurrentSound->SetPosition(trans);
-      dtCore::Transform xform;
-      xform.SetTranslation(trans);
-      mImpl->mCurrentSound->SetTransform(xform);
-      mImpl->mCurrentSound->SetVelocity(velocity);
+      // also flush all sound commands
+      mCurrentSound->RunAllCommandsInQueue();
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::FreeSound()
    {
-      if(mImpl->mCurrentSound.valid())
+      if(mCurrentSound.valid())
       {
-         if(mImpl->mCurrentSound->IsPlaying())
+         if(mCurrentSound->IsPlaying())
          {
-            mImpl->mCurrentSound->Stop();
+            mCurrentSound->Stop();            
          }
-         mImpl->mCurrentSound->UnloadFile();
-         mImpl->mCurrentSound->ReleaseSource();
+         mCurrentSound->UnloadFile();
+         mCurrentSound->ReleaseSource();
       }
    }
 
@@ -147,32 +138,34 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::PlaySound() 
    {  
-      if(mImpl->mCurrentSound != NULL)
+      if(mCurrentSound != NULL)
       {
-         mImpl->mCurrentSound->Play();
+         mCurrentSound->Play();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void SoundComponent::StopSound() 
    {  
-      if(mImpl->mCurrentSound != NULL)
+      if(mCurrentSound != NULL)
       {
-         mImpl->mCurrentSound->Stop();
+         mCurrentSound->Stop();
       }
    }
 
    ///////////////////////////////////////////////////////////////////
    bool SoundComponent::IsPlaying() const
    {
-      if(!mImpl->mCurrentSound.valid())
+      if(!mCurrentSound.valid())
       {
          return false;
       }
-      return (mImpl->mCurrentSound->IsPlaying() != 0);
+      return (mCurrentSound->IsPlaying() != 0);
    }
 
    ///////////////////////////////////////////////////////////////////
+   const StringId SoundSystem::ListenerGainId(SID("ListenerGain"));
+   const StringId SoundSystem::ListenerLinkToCameraId(SID("ListenerLinkToCamera"));
    const StringId SoundSystem::ListenerTranslationId(SID("ListenerTranslation"));
    const StringId SoundSystem::ListenerUpId(SID("ListenerUp"));
    const StringId SoundSystem::ListenerEyeDirectionId(SID("ListenerEyeDirection"));
@@ -180,11 +173,16 @@ namespace dtEntity
 
    SoundSystem::SoundSystem(EntityManager& em)
       : DefaultEntitySystem<SoundComponent>(em)
+      , mListenerLinkToCamera(true)
    {
+      Register(ListenerGainId, &mListenerGain);
+      Register(ListenerLinkToCameraId, &mListenerLinkToCamera);
       Register(ListenerTranslationId, &mListenerTranslation);
       Register(ListenerUpId, &mListenerUp);
       Register(ListenerEyeDirectionId, &mListenerEyeDirection);
       Register(ListenerVelocityId, &mListenerVelocity);
+
+      mListenerGain = 1.0f;
 
       mEnterWorldFunctor = MessageFunctor(this, &SoundSystem::OnEnterWorld);
       em.RegisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
@@ -195,33 +193,30 @@ namespace dtEntity
       mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
       em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
-      dtAudio::AudioManager::Instantiate();
+      dtEntity::AudioManager::GetInstance().Init();
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    SoundSystem::~SoundSystem()
    {
-
+      // TODO - Should we move this to the OnRemoveFromEntitymanager?
+      dtEntity::AudioManager::DestroyInstance();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void SoundSystem::Finished()
-   {      
-      osg::Matrixd mat;
-      mat.setTrans(mListenerTranslation.Get());
-      osg::Quat q;
-      osg::Vec3d rot = mListenerEyeDirection.Get();
-      rot[2] = 0;
-      rot.normalize();
-      q.makeRotate(osg::Vec3d(0,1,0), rot);
-      mat.setRotate(q);
-      //mat.makeLookAt(mListenerTranslation.Get(), eye, mListenerUp.Get());
-      dtCore::Transform xform;
-      //xform.SetTranslation(mListenerTranslation.Get());
-      
-      xform.Set(mat);
-      dtAudio::AudioManager::GetListener()->SetTransform(xform);
-      dtAudio::AudioManager::GetListener()->SetVelocity(mListenerVelocity.Get());
+   {
+      if (mListenerLinkToCamera.Get())
+         CopyCamTransformToListener();
+      else
+      {
+         dtEntity::AudioManager::GetListener()->SetOrientation(mListenerEyeDirection.Get(), mListenerUp.Get());
+         dtEntity::AudioManager::GetListener()->SetPosition(mListenerTranslation.Get());
+         dtEntity::AudioManager::GetListener()->SetVelocity(mListenerVelocity.Get());
+      }
+      // set global gain
+      dtEntity::AudioManager::GetListener()->SetGain(mListenerGain.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -232,7 +227,6 @@ namespace dtEntity
          SoundComponent* sc = i->second;
          sc->FreeSound();
       }
-      dtAudio::AudioManager::Destroy();
       em.UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
       em.UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
       em.UnregisterForMessages(TickMessage::TYPE, mTickFunctor);
@@ -267,12 +261,29 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnTick(const Message& msg)
    {
-      float dt = msg.GetFloat(dtEntity::TickMessage::DeltaSimTimeId);
+      if (mListenerLinkToCamera.Get())
+      {
+	      // copy current camera position to listener...
+         CopyCamTransformToListener();
+      } 
+
+      // update all sound components now
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         SoundComponent* sc = i->second;
-         sc->Update(dt);  
+         // 1 - check if any sound file needs to be loaded
+         SoundComponent* currSoundComp = i->second;
+         dtEntity::Sound* soundObj = currSoundComp->GetCurrentSound();
+         if (soundObj && soundObj->GetMustLoadBuffer())
+         {
+            int result = AudioManager::GetInstance().LoadSoundBuffer(*soundObj);
+            soundObj->SetMustLoadBuffer(false);
+         }
+
+         // 2 - update sound component (set position, flush commands)
+         float dt = msg.GetFloat(dtEntity::TickMessage::DeltaSimTimeId);
+         currSoundComp->Update(dt);
       }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -303,6 +314,20 @@ namespace dtEntity
       if(sc)
       {
          sc->StopSound();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundSystem::CopyCamTransformToListener()
+   {
+      dtEntity::ApplicationSystem* pAppSys;
+      if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
+      {
+         osg::Camera* currCam = pAppSys->GetPrimaryCamera();
+         osg::Vec3 camPos, camLookAt, camUp;
+         currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
+         dtEntity::AudioManager::GetListener()->SetPosition(camPos);
+         dtEntity::AudioManager::GetListener()->SetOrientation(camLookAt - camPos, camUp);
       }
    }
 }
