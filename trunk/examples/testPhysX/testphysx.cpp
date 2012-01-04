@@ -109,8 +109,9 @@ int main(int argc, char** argv)
    appsys->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(10000, 10000, 1770), osg::Vec3(11000, 11000, 1770), osg::Vec3(0,0,1),false);
    appsys->GetPrimaryView()->getCameraManipulator()->home(0);
 
-   dtEntity::InputHandler& ih = appsys->GetInputHandler();
+   
    dtEntity::WindowManager* wm = appsys->GetWindowManager();
+   dtEntity::InputHandler& ih = wm->GetInputHandler();
    dtEntity::DebugDrawManager* debugDrawManager = new dtEntity::DebugDrawManager(*em);
    debugDrawManager->SetEnabled(true);
 
