@@ -46,8 +46,8 @@ struct SceneFixture
       osgDB::setDataFilePathList(paths);
 
       mEntityManager = new dtEntity::EntityManager();
-      bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mMapSystem);
-      assert(success);
+      mMapSystem = new dtEntity::MapSystem(*mEntityManager);
+	  mEntityManager->AddEntitySystem(*mMapSystem);
       mEntityManager->AddEntitySystem(*new dtEntity::ApplicationSystem(*mEntityManager));
    }
    osg::ref_ptr<dtEntity::EntityManager> mEntityManager;

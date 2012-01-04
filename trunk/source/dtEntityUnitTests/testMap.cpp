@@ -46,8 +46,9 @@ struct MapFixture
       osgDB::setDataFilePathList(paths);
 
       mEntityManager = new dtEntity::EntityManager();
-      bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mMapSystem);
-      assert(success);
+	  mMapSystem = new dtEntity::MapSystem(*mEntityManager);
+	  mEntityManager->AddEntitySystem(*mMapSystem);
+
    }
    osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
    dtEntity::MapSystem* mMapSystem;
@@ -182,7 +183,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       mMapSystem->AddEmptyMap(mapname);
       dtEntity::Entity* entity;
       mEntityManager->CreateEntity(entity);
-
+	  mEntityManager->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*mEntityManager));
       dtEntity::PositionAttitudeTransformComponent* transcomp;
       entity->CreateComponent(transcomp);
       transcomp->SetPosition(osg::Vec3(1,2,3));

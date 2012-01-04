@@ -24,6 +24,7 @@
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/propertycontainer.h>
+#include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <UnitTest++.h>
 
@@ -38,13 +39,16 @@ TEST(SpawnComponent)
       _CrtSetDbgFlag(0);
    #endif
    
+   osg::ref_ptr<EntityManager> em = new EntityManager();
+   em->AddEntitySystem(*new dtEntity::MapSystem(*em));
+   em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
+
    Spawner* spawner = new Spawner("mymap", "");
 
    DynamicPropertyContainer pprops;
    pprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(33,66,99)));
    spawner->AddComponent(PositionAttitudeTransformComponent::TYPE, pprops);
 
-   osg::ref_ptr<EntityManager> em = new EntityManager();
    
    Entity* entity;
    em->CreateEntity(entity);
@@ -75,6 +79,8 @@ TEST(SpawnHierarchy)
    childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
 
    osg::ref_ptr<EntityManager> em = new EntityManager();
+   em->AddEntitySystem(*new dtEntity::MapSystem(*em));
+   em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
 
    CHECK(childSpawner->GetParent() == parentSpawner);
    
