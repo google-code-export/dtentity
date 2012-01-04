@@ -34,11 +34,12 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate0<std::string> GetValueCB;
 
       DynamicStringProperty(const SetValueCB& s, const GetValueCB& g)
-         : Property(DataType::STRING)
-         , mSetValueCallback(s)
+         : mSetValueCallback(s)
          , mGetValueCallback(g)
       {
       }
+
+      virtual DataType::e GetType() const { return DataType::STRING; }
 
       virtual const std::string StringValue() const { return mGetValueCallback(); }
       virtual StringId StringIdValue() const { return dtEntity::SIDHash(StringValue()); }
@@ -66,11 +67,12 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate0<osg::Vec3d> GetValueCB;
 
       DynamicVec3dProperty(const SetValueCB& s, const GetValueCB& g)
-         : Property(DataType::VEC3D)
-         , mSetValueCallback(s)
+         : mSetValueCallback(s)
          , mGetValueCallback(g)
       {
       }
+
+      virtual DataType::e GetType() const { return DataType::VEC3; }
 
       virtual osg::Vec3f Vec3Value() const { return Get(); }
       virtual void SetVec3(const osg::Vec3& v) { Set(v); }
@@ -98,9 +100,10 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Quat&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Quat> GetValueCB;
 
+      virtual DataType::e GetType() const { return DataType::QUAT; }
+
       DynamicQuatProperty(const SetValueCB& s, const GetValueCB& g)
-         : Property(DataType::QUAT)
-         , mSetValueCallback(s)
+         : mSetValueCallback(s)
          , mGetValueCallback(g)
       {
       }
@@ -129,9 +132,10 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Matrix&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Matrix> GetValueCB;
 
+      virtual DataType::e GetType() const { return DataType::MATRIX; }
+
       DynamicMatrixProperty(const SetValueCB& s, const GetValueCB& g)
-         : Property(DataType::MATRIX)
-         , mSetValueCallback(s)
+         : mSetValueCallback(s)
          , mGetValueCallback(g)
       {
       }

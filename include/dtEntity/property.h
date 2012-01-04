@@ -61,7 +61,6 @@ namespace dtEntity
          QUAT,
          STRING,
          STRINGID,
-         UCHAR,
          UINT,
          VEC2,
          VEC3,
@@ -100,7 +99,7 @@ namespace dtEntity
       /**
        * Get data type of this property
        */
-      DataType::e GetType() const { return mDataType; }
+      virtual DataType::e GetType() const = 0;
       
       /**
        * Create a copy of this property on the heap
@@ -136,7 +135,6 @@ namespace dtEntity
       virtual osg::Matrix MatrixValue() const {assert(!"Not a matrix property!"); return osg::Matrix(); }
       virtual osg::Quat QuatValue() const { assert(!"Not a quat property!"); return osg::Quat(); }
       virtual StringId StringIdValue() const { assert(!"Not a string id property!"); return 0; }
-      virtual unsigned char UCharValue() const { assert(!"Not an uchar property!"); return 0; }
       virtual unsigned int UIntValue() const {assert(!"Not an unsigned int property!"); return 0; }
       virtual osg::Vec2f Vec2Value() const { assert(!"Not a vec2 property!"); return osg::Vec2f(); }
       virtual osg::Vec3f Vec3Value() const { assert(!"Not a vec3 property!"); return osg::Vec3f(); }
@@ -162,7 +160,6 @@ namespace dtEntity
       virtual void SetMatrix(const osg::Matrix&) { assert(!"Not a matrix property!"); }
       virtual void SetQuat(const osg::Quat&) { assert(!"Not a quat property!"); }
       virtual void SetStringId(dtEntity::StringId) { assert(!"Not a stringid property!"); }
-      virtual void SetUChar(unsigned char) { assert(!"Not a uchar property!"); }
       virtual void SetUInt(unsigned int) { assert(!"Not a uint property!"); }
       virtual void SetVec2(const osg::Vec2&) { assert(!"Not a vec2 property!"); }
       virtual void SetVec3(const osg::Vec3&) { assert(!"Not a vec3 property!"); }
@@ -171,20 +168,6 @@ namespace dtEntity
       virtual void SetVec3D(const osg::Vec3d&) { assert(!"Not a vec3D property!"); }
       virtual void SetVec4D(const osg::Vec4d&) { assert(!"Not a vec4D property!"); }
 
-   protected:
-
-      /**
-       * Subclasses have to pass the property type here,
-       * otherwise subclassing is not possible
-       */
-      Property(DataType::e dtype)
-         : mDataType(dtype)
-      {
-      }
-
-   private:
-      
-      DataType::e mDataType;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +183,8 @@ namespace dtEntity
       ArrayProperty(const PropertyArray& v = PropertyArray());
 
       ~ArrayProperty();
+
+      virtual DataType::e GetType() const { return DataType::ARRAY; }
 
       virtual PropertyArray ArrayValue() const;
       virtual void SetArray(const PropertyArray& v) { Set(v); }
@@ -267,6 +252,8 @@ namespace dtEntity
    public:
       BoolProperty(bool v = false);
 
+      virtual DataType::e GetType() const { return DataType::BOOL; }
+
       virtual bool BoolValue() const;
       virtual void SetBool(bool v) { Set(v); }
 
@@ -291,6 +278,8 @@ namespace dtEntity
 
       CharProperty(char v = '0');
 
+      virtual DataType::e GetType() const { return DataType::CHAR; }
+
       virtual char CharValue() const;
       virtual void SetChar(char v) { Set(v); }
       virtual const std::string StringValue() const;
@@ -312,6 +301,8 @@ namespace dtEntity
    {
    public:
       DoubleProperty(double v = 0);
+
+      virtual DataType::e GetType() const { return DataType::DOUBLE; }
 
       virtual double DoubleValue() const;
       virtual float FloatValue() const;
@@ -336,6 +327,7 @@ namespace dtEntity
    public:
       FloatProperty(float v = 0);
 
+      virtual DataType::e GetType() const { return DataType::FLOAT; }
       virtual float FloatValue() const;
       virtual double DoubleValue() const;
       virtual void SetFloat(float v) { Set(v); }
@@ -364,6 +356,9 @@ namespace dtEntity
       GroupProperty(const PropertyGroup& v = PropertyGroup());
 
       ~GroupProperty();
+
+      virtual DataType::e GetType() const { return DataType::GROUP; }
+
       void Clear();
 
       virtual PropertyGroup GroupValue() const;
@@ -389,6 +384,8 @@ namespace dtEntity
    {
    public:
       IntProperty(int v = 0);
+
+      virtual DataType::e GetType() const { return DataType::INT; }
 
       virtual int IntValue() const;
       virtual void SetInt(int v) { Set(v); }
@@ -417,6 +414,8 @@ namespace dtEntity
    public:
       MatrixProperty(const osg::Matrix& v = osg::Matrix());
 
+      virtual DataType::e GetType() const { return DataType::MATRIX; }
+
       virtual osg::Matrix MatrixValue() const;
       virtual void SetMatrix(const osg::Matrix& v) { Set(v); }
       virtual const std::string StringValue() const;
@@ -439,6 +438,8 @@ namespace dtEntity
    public:
       QuatProperty(const osg::Quat& v = osg::Quat(0, 0, 0, 1));
 
+      virtual DataType::e GetType() const { return DataType::QUAT; }
+
       virtual osg::Quat QuatValue() const;
       virtual const std::string StringValue() const;
       virtual void SetQuat(const osg::Quat& v) { Set(v); }
@@ -460,6 +461,8 @@ namespace dtEntity
    {
    public:
       StringProperty(const std::string& v = "");
+
+      virtual DataType::e GetType() const { return DataType::STRING; }
 
       virtual const std::string StringValue() const;
       virtual StringId StringIdValue() const;
@@ -484,6 +487,8 @@ namespace dtEntity
    public:
       StringIdProperty(StringId v = StringId());
 
+      virtual DataType::e GetType() const { return DataType::STRINGID; }
+
       virtual StringId StringIdValue() const;
       virtual void SetStringId(dtEntity::StringId v) { Set(v); }
       virtual const std::string StringValue() const;
@@ -501,33 +506,12 @@ namespace dtEntity
    };
 
    //////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT UCharProperty : public Property
-   {
-   public:
-
-      UCharProperty(unsigned char v = '0');
-
-      virtual unsigned char UCharValue() const;
-      virtual void SetUChar(unsigned char v) { Set(v); }
-      virtual const std::string StringValue() const;
-
-      unsigned char Get() const { return mValue; }
-
-      virtual Property* Clone() const;
-      virtual bool operator==(const Property& other) const;
-      void Set(unsigned char v) { mValue = v; }
-      virtual void SetString(const std::string&);
-      virtual bool SetFrom(const Property& other);
-
-   private:
-      unsigned char mValue;
-   };
-
-   //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT UIntProperty : public Property
    {
    public:
       UIntProperty(unsigned int v = 0);
+
+      virtual DataType::e GetType() const { return DataType::UINT; }
 
       virtual unsigned int UIntValue() const;
       virtual void SetUInt(unsigned int v) { Set(v); }
@@ -552,7 +536,10 @@ namespace dtEntity
    class DT_ENTITY_EXPORT Vec2Property : public Property
    {
    public:
+
       Vec2Property(const osg::Vec2f& v = osg::Vec2f());
+
+      virtual DataType::e GetType() const { return DataType::VEC2; }
 
       virtual osg::Vec2f Vec2Value() const;
       virtual void SetVec2(const osg::Vec2& v) { Set(v); }
@@ -578,6 +565,8 @@ namespace dtEntity
    {
    public:
       Vec3Property(const osg::Vec3f& v = osg::Vec3f());
+
+      virtual DataType::e GetType() const { return DataType::VEC3; }
       
       virtual osg::Vec3f Vec3Value() const;
       virtual void SetVec3(const osg::Vec3& v) { Set(v); }
@@ -602,6 +591,8 @@ namespace dtEntity
    public:
       Vec4Property(const osg::Vec4f& v = osg::Vec4f());
 
+      virtual DataType::e GetType() const { return DataType::VEC4; }
+
       virtual osg::Vec4f Vec4Value() const;
       virtual void SetVec4(const osg::Vec4& v) { Set(v); }
       virtual osg::Vec4d Vec4dValue() const;
@@ -624,6 +615,8 @@ namespace dtEntity
    {
    public:
       Vec2dProperty(const osg::Vec2d& v = osg::Vec2d());
+
+      virtual DataType::e GetType() const { return DataType::VEC2D; }
 
       virtual osg::Vec2f Vec2Value() const;
       virtual void SetVec2(const osg::Vec2& v) { Set(v); }
@@ -649,6 +642,8 @@ namespace dtEntity
    public:
       Vec3dProperty(const osg::Vec3d& v = osg::Vec3d());
 
+      virtual DataType::e GetType() const { return DataType::VEC3D; }
+
       virtual osg::Vec3f Vec3Value() const;
       virtual void SetVec3(const osg::Vec3& v) { Set(v); }
       virtual osg::Vec3d Vec3dValue() const;
@@ -671,6 +666,8 @@ namespace dtEntity
    {
    public:
       Vec4dProperty(const osg::Vec4d& v = osg::Vec4d());
+
+      virtual DataType::e GetType() const { return DataType::VEC4D; }
 
       virtual osg::Vec4f Vec4Value() const;
       virtual void SetVec4(const osg::Vec4& v) { Set(v); }

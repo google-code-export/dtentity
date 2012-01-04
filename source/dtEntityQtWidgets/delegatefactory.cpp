@@ -109,8 +109,7 @@ namespace dtEntityQtWidgets
       case dtEntity::DataType::MATRIX:    return new MatrixPropertyDelegate();      
       case dtEntity::DataType::QUAT:      return new QuatPropertyDelegate();
       case dtEntity::DataType::STRINGID:  return new StringIdPropertyDelegate();
-      case dtEntity::DataType::UCHAR:     return new CharPropertyDelegate();
-      case dtEntity::DataType::UINT:      return new IntPropertyDelegate();      
+      case dtEntity::DataType::UINT:      return new IntPropertyDelegate();
       case dtEntity::DataType::VEC2:
       case dtEntity::DataType::VEC2D:     return new Vec2PropertyDelegate();
       case dtEntity::DataType::VEC3:

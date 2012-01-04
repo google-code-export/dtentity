@@ -44,7 +44,6 @@ namespace dtEntity
          case QUAT:        return "QUAT";
          case STRING:      return "STRING";
          case STRINGID:    return "STRINGID";
-         case UCHAR:       return "UCHAR";
          case UINT:        return "UINT";
          case VEC2:        return "VEC2";
          case VEC3:        return "VEC3";
@@ -70,7 +69,6 @@ namespace dtEntity
          if(s == "QUAT")         return QUAT;
          if(s == "STRING")       return STRING;
          if(s == "STRINGID")     return STRINGID;
-         if(s == "UCHAR")        return UCHAR;
          if(s == "UINT")         return UINT;
          if(s == "VEC2")         return VEC2;
          if(s == "VEC3")         return VEC3;
@@ -108,8 +106,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ArrayProperty::ArrayProperty(const PropertyArray& v)
-      : Property(DataType::ARRAY)
-   {         
+   {
       Set(v);
    }
 
@@ -355,8 +352,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    BoolProperty::BoolProperty(bool v)
-      : Property(DataType::BOOL)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -408,8 +404,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    CharProperty::CharProperty(char v)
-      : Property(DataType::CHAR)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -461,8 +456,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    FloatProperty::FloatProperty(float v)
-      : Property(DataType::FLOAT)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -520,8 +514,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    DoubleProperty::DoubleProperty(double v)
-      : Property(DataType::DOUBLE)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -585,7 +578,6 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    GroupProperty::GroupProperty(const PropertyGroup& v)
-      : Property(DataType::GROUP)
    {         
       Set(v);
    }
@@ -675,8 +667,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    UIntProperty::UIntProperty(unsigned int v)
-      : Property(DataType::UINT)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -763,8 +754,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    MatrixProperty::MatrixProperty(const osg::Matrix& v)
-      : Property(DataType::MATRIX)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -853,8 +843,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    StringProperty::StringProperty(const std::string& v)
-      : Property(DataType::STRING)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -918,8 +907,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    QuatProperty::QuatProperty(const osg::Quat& v)
-      : Property(DataType::QUAT)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -980,8 +968,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    StringIdProperty::StringIdProperty(StringId v)
-      : Property(DataType::STRINGID)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -1034,61 +1021,8 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-   UCharProperty::UCharProperty(unsigned char v)
-      : Property(DataType::UCHAR)
-      , mValue(v)
-   {         
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   unsigned char UCharProperty::UCharValue() const
-   { 
-      return Get(); 
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const std::string UCharProperty::StringValue() const 
-   { 
-      std::ostringstream os;
-      os << mValue;
-      return os.str(); 
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   Property* UCharProperty::Clone() const
-   { 
-      return new UCharProperty(mValue); 
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool UCharProperty::operator==(const Property& other) const
-   {
-      if(other.GetType() != GetType())
-      {
-         return false;
-      }
-      const UCharProperty& aother = static_cast<const UCharProperty&>(other);
-      return (aother.mValue == mValue);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void UCharProperty::SetString(const std::string& s)
-   {
-      mValue = s.c_str()[0];
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool UCharProperty::SetFrom(const Property& other)
-   {
-      this->Set(other.UCharValue());
-      return true;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   /////////////////////////////////////////////////////////////////////////////////
    IntProperty::IntProperty(int v)
-      : Property(DataType::INT)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -1175,8 +1109,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec2Property::Vec2Property(const osg::Vec2& v)
-      : Property(DataType::VEC2)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -1240,8 +1173,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec3Property::Vec3Property(const osg::Vec3& v)
-      : Property(DataType::VEC3)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -1307,8 +1239,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec4Property::Vec4Property(const osg::Vec4& v)
-      : Property(DataType::VEC4)
-      , mValue(v)
+      : mValue(v)
    {         
    }
 
@@ -1375,8 +1306,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec2dProperty::Vec2dProperty(const osg::Vec2d& v)
-      : Property(DataType::VEC2D)
-      , mValue(v)
+      : mValue(v)
    {
    }
 
@@ -1440,8 +1370,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec3dProperty::Vec3dProperty(const osg::Vec3d& v)
-      : Property(DataType::VEC3D)
-      , mValue(v)
+      : mValue(v)
    {
    }
 
@@ -1507,8 +1436,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
    Vec4dProperty::Vec4dProperty(const osg::Vec4d& v)
-      : Property(DataType::VEC4D)
-      , mValue(v)
+      : mValue(v)
    {
    }
 
