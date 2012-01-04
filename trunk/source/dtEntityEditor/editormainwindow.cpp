@@ -530,6 +530,31 @@ namespace dtEntityEditor
       CreatePropertyEditor();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::AddToKnownComponentList(std::set<dtEntity::ComponentType> newTypes)
+   {
+      using namespace dtEntityQtWidgets;
+
+      // get the model first
+      PropertyEditorView* view = dynamic_cast<PropertyEditorView*>(mPropertyEditorDock->widget());
+      if (view)
+      {
+         PropertyEditorModel* model = dynamic_cast<PropertyEditorModel*>(view->GetModel());
+         if (model)
+         {
+          //  model->EntitySystemAdded();
+
+            // loop over input types and add them
+            std::set<dtEntity::ComponentType>::const_iterator itr;
+            for (itr = newTypes.begin(); itr != newTypes.end(); itr++)
+            {
+               model->EntitySystemAdded(*itr);
+            }
+         }
+      }
+   }
+
+
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::closeEvent(QCloseEvent* e)
    {

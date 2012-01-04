@@ -156,7 +156,16 @@ namespace dtEntityEditor
             LOG_DEBUG("Looking for plugins in directory " + mPluginPaths[i]);
             // load and start all entity systems in plugins
             mapSystem->GetPluginManager().LoadPluginsInDir(mPluginPaths[i]);
-         }         
+         }
+         // add new factories to list of know ones
+         std::set<dtEntity::ComponentType> newTypes;
+         dtEntity::ComponentPluginManager::PluginFactoryMap& factories = mapSystem->GetPluginManager().GetFactories();
+         dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
+         for(j = factories.begin(); j != factories.end(); ++j)
+            newTypes.insert(j->first);
+         mMainWindow->AddToKnownComponentList(newTypes);
+
+
       }
       catch(const std::exception& e)
       {

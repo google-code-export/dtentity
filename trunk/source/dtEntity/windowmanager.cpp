@@ -149,11 +149,13 @@ namespace dtEntity
       traits.readDISPLAY();
       if (traits.displayNum<0) traits.displayNum = 0;
 
+	  osgViewer::ViewerBase::Windows windows;
+      appsys->GetViewer()->getWindows(windows);
+
+         
       unsigned int contextid = 0;
-      if(compviewer == NULL)
+	  if(compviewer == NULL && !windows.empty())
       {
-         osgViewer::ViewerBase::Windows windows;
-         appsys->GetViewer()->getWindows(windows);
          windows.front()->setName(name);
          appsys->GetViewer()->realize();
       }
