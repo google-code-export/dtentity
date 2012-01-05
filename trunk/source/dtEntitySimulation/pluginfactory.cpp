@@ -114,7 +114,7 @@ namespace dtEntitySimulation
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
-         return "System for PAth";
+         return "System for Path";
       }
    };
 
@@ -132,7 +132,7 @@ namespace dtEntitySimulation
       /** get the name of the plugin */
       virtual std::string GetName() const
       {
-         return "Particl";
+         return "Particle";
       }
 
       virtual dtEntity::ComponentType GetType() const

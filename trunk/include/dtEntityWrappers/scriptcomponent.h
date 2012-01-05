@@ -59,6 +59,8 @@ namespace dtEntityWrappers
       // equal to the file name
       void LoadAutoStartScripts(const std::string& path);
 
+      virtual bool StorePropertiesToScene() const { return true; }
+
    private:
       void SetupContext();
       
