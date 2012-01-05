@@ -184,7 +184,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 D3DWindowManager::GetPickRay(const std::string& name, float x, float y)
+   osg::Vec3 D3DWindowManager::GetPickRay(const std::string& name, float x, float y, bool usePixels)
    {
       osgViewer::GraphicsWindow* window = GetD3DWindowByName(name)->GetOsgViewerGraphicsWindow();
       
@@ -199,7 +199,15 @@ namespace dtEntity
       int wx, wy, w, h;
       window->getWindowRectangle(wx, wy, w, h);
 
-      osg::Vec2 windowCoord((w/2) * (x + 1), (h/2) * (y + 1));
+      osg::Vec2 windowCoord;
+	  if(usePixels)
+	  {
+		  windowCoord.set(x, y);
+	  }
+	  else
+	  {
+		  windowCoord.set((w/2) * (x + 1), (h/2) * (y + 1));
+	  }
 
       // calculate pick ray
       osg::Vec3 start = osg::Vec3(windowCoord, 0);

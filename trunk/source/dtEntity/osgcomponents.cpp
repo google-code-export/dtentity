@@ -254,6 +254,7 @@ namespace dtEntity
       else
       {
          mNode = node;
+         mNode->setUserData(mEntity);
       }
    }
 
@@ -436,15 +437,6 @@ namespace dtEntity
       SetMesh(mMeshPathProperty.Get(), mCacheHint.Get());
       BaseClass::Finished();
    }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshComponent::OnAddedToEntity(Entity& entity)
-   {
-      BaseClass::OnAddedToEntity(entity);
-
-      // for picking
-      GetNode()->setUserData(&entity);
-   }
    
    ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::SetMesh(const std::string& path, StringId cacheHint)
@@ -457,9 +449,9 @@ namespace dtEntity
       mMeshPathProperty.Set(path);
       if(path == "")
       {
-         mMeshNode = new osg::Node();
-         mMeshNode->setName("StaticMeshComponent");
-         SetNode(mMeshNode);
+         osg::Node* node = new osg::Node();
+         node->setName("StaticMeshComponent");
+         SetNode(node);
       }
       else
       {
@@ -476,22 +468,19 @@ namespace dtEntity
          {
            cm = CacheMode::HardwareMeshes;
          }
-         mMeshNode = s_modelCache.GetNode(path, cm, GetOptimize());
-         if(mMeshNode == NULL)
+         osg::ref_ptr<osg::Node> meshnode = s_modelCache.GetNode(path, cm, GetOptimize());
+         if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
-            mMeshNode = new osg::Node();
+            meshnode = new osg::Node();
          }
          else
          {
-            mMeshNode->setName("StaticMeshComponent " + path);
+            meshnode->setName("StaticMeshComponent " + path);
          }
 
-         SetStaticMesh(mMeshNode);    
+         SetStaticMesh(meshnode);    
       }
-
-      // don't set user data, mesh node may have multiple parents
-      mMeshNode->setUserData(mEntity);
 
       MeshChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());
@@ -508,11 +497,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::SetStaticMesh(osg::Node* node)
    {
-      mMeshNode = node;
       assert(mEntity != NULL);
 
-      mMeshNode->setName("StaticMeshComponent");
-      SetNode(mMeshNode); 
+      node->setName("StaticMeshComponent");
+      SetNode(node); 
       
       unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
             NodeMasks::RECEIVES_SHADOWS;

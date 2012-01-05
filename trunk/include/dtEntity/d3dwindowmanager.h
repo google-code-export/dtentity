@@ -60,7 +60,7 @@ namespace dtEntity
       /**
        * Get pick ray at given screen position
        */
-      osg::Vec3 GetPickRay(const std::string& name, float x, float y);
+      osg::Vec3 GetPickRay(const std::string& name, float x, float y, bool usePixels = false);
 
       void OnTimeChange(const dtEntity::Message& msg);
 

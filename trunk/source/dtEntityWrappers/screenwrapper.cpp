@@ -21,6 +21,7 @@
 #include <dtEntityWrappers/screenwrapper.h>
 
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/nodemasks.h>
@@ -190,7 +191,7 @@ namespace dtEntityWrappers
    {
       if(args.Length() < 2)
       {
-         return ThrowError("usage: computeIntersections(x, y)");
+		  return ThrowError("usage: pickEntity(x, y, [nodemask])");
       }
 
       unsigned int nodemask = dtEntity::NodeMasks::PICKABLE;
@@ -199,53 +200,77 @@ namespace dtEntityWrappers
          nodemask = args[2]->Uint32Value();
       }
 
-      osgViewer::View* view = UnwrapScreenView(args.Holder());
-
-      osgUtil::LineSegmentIntersector::Intersections intersections;
-
-      dtEntity::EntityManager* entityManager = GetEntityManager();
-
-
       double x = args[0]->NumberValue();
       double y = args[1]->NumberValue();
-      if (view->computeIntersections(x, y, intersections, nodemask))
+	 
+      HandleScope scope;
+
+      dtEntity::EntityManager* em = GetEntityManager();
+
+	   dtEntity::CameraSystem* camsys;
+	   em->GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+	   dtEntity::EntityId camid = camsys->GetCameraEntityByContextId(0);
+	   dtEntity::CameraComponent* camcomp;
+	   bool success = em->GetComponent(camid, camcomp);
+	   if(!success)
+	   {
+	 	  return ThrowError("No camera present, cannot pick entity!");
+	   }
+	   osg::Vec3d from = camcomp->GetPosition();
+
+	   dtEntity::ApplicationSystem* appsys;
+      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+      
+      osg::Vec3 pr = appsys->GetWindowManager()->GetPickRay("defaultView", x, y, true);
+      
+      osg::Vec3d to = from + pr * 10000;
+
+      osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
+      lsi = new osgUtil::LineSegmentIntersector(from, to);
+
+      osgUtil::IntersectionVisitor iv(lsi.get());
+      iv.setUseKdTreeWhenAvailable(true);
+      iv.setTraversalMask(nodemask); 
+
+      dtEntity::LayerAttachPointSystem* laps;
+      em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, laps);
+      dtEntity::LayerAttachPointComponent* sceneLayer = laps->GetDefaultLayer();
+      sceneLayer->GetGroup()->accept(iv);
+
+      if(!lsi->containsIntersections())
       {
-         HandleScope scope;
+         return Null();
+      }
 
-         osgUtil::LineSegmentIntersector::Intersections::iterator i;
-         for(i = intersections.begin(); i != intersections.end(); ++i)
+      osgUtil::LineSegmentIntersector::Intersections::iterator i;
+
+      for(i = lsi->getIntersections().begin(); i != lsi->getIntersections().end(); ++i)
+      {
+         osgUtil::LineSegmentIntersector::Intersection isect = *i;
+         for(osg::NodePath::const_reverse_iterator j = isect.nodePath.rbegin(); j != isect.nodePath.rend(); ++j)
          {
-            osgUtil::LineSegmentIntersector::Intersection isect = *i;
-            for(osg::NodePath::const_reverse_iterator j = isect.nodePath.rbegin(); j != isect.nodePath.rend(); ++j)
+            const osg::Node* node = *j;
+            const osg::Referenced* referenced = node->getUserData();
+            if(referenced == NULL) continue;
+            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
+            if(entity != NULL)
             {
-               const osg::Node* node = *j;
-
-               const osg::Referenced* referenced = node->getUserData();
-               if(referenced == NULL) continue;
-               const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-			   
-			   // ignore static mesh nodes, they are shared by multiple parents and can't be used to
-			   // identify the entity
-			   dtEntity::StaticMeshComponent* smc;
-			   if(entity->GetComponent(smc) && smc->GetNode() == node)
-			   {
-				   continue;
-			   }
-               if(entity != NULL &&
-                     entityManager->HasComponent(entity->GetId(), dtEntity::TransformComponent::TYPE, true))
-               {
-                  Handle<Object> o = Object::New();
-                  o->Set(String::New("Id"), Uint32::New(entity->GetId()));
-                  o->Set(String::New("Position"), WrapVec3(isect.getWorldIntersectPoint()));
-                  o->Set(String::New("Normal"), WrapVec3(isect.getWorldIntersectNormal()));
-
-                  return scope.Close(o);
+			      // ignore static mesh nodes, they are shared by multiple parents and can't be used to
+			      // identify the entity
+				   dtEntity::StaticMeshComponent* smc;
+               if(em->GetComponent(entity->GetId(), smc, true) && smc->GetNode() == node)
+			      {
+                  continue;
                }
+ 				   
+               return Uint32::New(entity->GetId());
+			      
             }
          }
-
       }
+
       return Null();
+      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -261,8 +286,8 @@ namespace dtEntityWrappers
 
       dtEntity::EntityManager* entityManager = GetEntityManager();
 
-      osg::Vec3 from = UnwrapVec3(args[0]);
-      osg::Vec3 to = UnwrapVec3(args[1]);
+      osg::Vec3d from = UnwrapVec3(args[0]);
+      osg::Vec3d to = UnwrapVec3(args[1]);
 
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
       lsi = new osgUtil::LineSegmentIntersector(from, to);
