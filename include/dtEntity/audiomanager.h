@@ -265,7 +265,7 @@ namespace dtEntity
        *        sound buffer.
        * @return Count of references to the loaded sound buffer; 0 if failed.
        */
-      inline int LoadSoundBuffer(Sound& snd);
+       int LoadSoundBuffer(Sound& snd);
       /*
        * Pre-load a sound file into a buffer. We only support .wav's
        * Return the OpenAL buffer ID of the loaded sound data.
