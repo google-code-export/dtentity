@@ -126,11 +126,11 @@ namespace dtEntity
       }
 
       //////////////////////////////////////////////////////////////////////////
-      virtual ReadResult readObject(std::istream& fin,const Options* = NULL) const
+      virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& fin,const Options* = NULL) const
       {
          osgDB::ReaderWriter::ReadResult result = osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED);
 
-         if (fin.fail()) return false;
+         if (fin.fail()) return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
 
          fin.seekg(0,std::ios_base::end);
          unsigned int ulzipFileLength = fin.tellg();
@@ -139,7 +139,7 @@ namespace dtEntity
          char* memBuffer = new (std::nothrow) char [ulzipFileLength];
          if (memBuffer == NULL)
          {
-            return false;
+            return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
          }
 
          fin.read(memBuffer, ulzipFileLength);
