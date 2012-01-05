@@ -141,6 +141,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+			   return false;
             }
             return ret->BooleanValue();
          }

@@ -9,6 +9,7 @@ var Selection = {
   },
 
   select : function (id) {
+  println("Selecting: " + id);
     if (id === 0 || this.isEntitySelected(id)) {
       return;
     }
@@ -22,6 +23,7 @@ var Selection = {
       AboutEntity: id
     });
     ToolHolder.selectionUpdated();
+    println("Selected: " + id);
   },
 
   deselect : function (id) {

@@ -199,7 +199,6 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-	  virtual void OnAddedToEntity(Entity& entity);
       virtual void Finished();
 
       // set existing geometry as static mesh
@@ -231,7 +230,6 @@ namespace dtEntity
       StringIdProperty mCacheHint;
       BoolProperty mOptimize;
       BoolProperty mIsTerrain;
-      osg::ref_ptr<osg::Node> mMeshNode;
       std::string mLoadedMesh;
    };
 

@@ -73,8 +73,9 @@ namespace dtEntity
       
       /**
        * Get pick ray at given screen position
+	   * @param usePixels if true, use x-y screen coordinates, if false use values from -1 to 1
        */
-      virtual osg::Vec3 GetPickRay(const std::string& name, float x, float y) = 0;
+      virtual osg::Vec3 GetPickRay(const std::string& name, float x, float y, bool usePixels = false) = 0;
 
       virtual osgViewer::View* GetViewByName(const std::string& name);
       virtual osgViewer::GraphicsWindow* GetWindowByName(const std::string& name);
@@ -116,7 +117,7 @@ namespace dtEntity
       /**
        * Get pick ray at given screen position
        */
-      osg::Vec3 GetPickRay(const std::string& name, float x, float y);
+      osg::Vec3 GetPickRay(const std::string& name, float x, float y, bool usePixels = false);
       
    protected:
 

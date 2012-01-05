@@ -58,7 +58,7 @@ namespace dtEntitySimulation
       Register(VerticalOffsetId, &mVerticalOffset);
       Register(MinDistToCameraId, &mMinDistToCamera);
 
-      mMinDistToCamera.Set(100);
+      mMinDistToCamera.Set(500);
 
    }
     

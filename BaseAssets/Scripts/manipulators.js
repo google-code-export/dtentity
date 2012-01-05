@@ -200,7 +200,7 @@ function doSelection() {
    var mouseY = Input.getAxis(Axis.MouseYRaw);
    var pick = Screen.pickEntity(mouseX, mouseY);
 
-   if (pick === null) {
+   if (pick === null || typeof(pick) == "undefined") {
      return false;
    }
 
@@ -237,7 +237,7 @@ function doSelection() {
 
     var usemulti = (Input.getKey("Control_L"));
     RequestEntitySelect("", {
-      AboutEntity: pick.Id,
+      AboutEntity: pick,
       UseMultiSelect: usemulti
     });
 

@@ -211,7 +211,7 @@ namespace dtEntity
       }
       else
       {
-          GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() ^ dtEntity::NodeMasks::VISIBLE);
+         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~dtEntity::NodeMasks::VISIBLE);
       }
 
       mCurrentlyVisible = visible;
