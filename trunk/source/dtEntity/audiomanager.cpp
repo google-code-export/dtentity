@@ -764,7 +764,7 @@ namespace dtEntity
       mDevice = alcOpenDevice(deviceName);
       if (mDevice == NULL)
       {
-         LOG_ERROR("AudioManager can't open audio device.");
+         LOG_ERROR("AudioManager can't open audio device " << deviceName);
       }
    }
 

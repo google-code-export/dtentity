@@ -35,10 +35,12 @@ namespace dtEntity
       ALenum error = alGetError();
       if (error != AL_NO_ERROR)
       {
-         std::ostringstream finalStream;
-         finalStream << "User Message: [" << userMsg << "] OpenAL Message: [" << alGetString(error) << "]";
-         LOG_WARNING(finalStream.str().c_str());
-         return AL_TRUE;
+         const ALchar* errstr = alGetString(error);
+         if(errstr != NULL)
+         {
+            LOG_ERROR("User Message: [" << userMsg << "] OpenAL Message: [" << errstr << "]");
+            return AL_TRUE;
+         }
       }
       else
       {
@@ -46,9 +48,7 @@ namespace dtEntity
          ALenum alutError = alutGetError();
          if (alutError != ALUT_ERROR_NO_ERROR)
          {
-            std::ostringstream finalStream;
-            finalStream << "User Message: [" << userMsg << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNum;
-            LOG_WARNING(finalStream.str().c_str());
+            LOG_ERROR("User Message: [" << userMsg << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNum);
             return AL_TRUE;
          }
       }
