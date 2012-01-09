@@ -71,12 +71,11 @@ namespace dtEntityWrappers
 
       }
 
-      String::Utf8Value trace(try_catch->StackTrace());
+     String::Utf8Value trace(try_catch->StackTrace());
 	  std::string tracestr = *trace;
      
 	  std::ostringstream os;
-
-	  os << tracestr << "\n";
+     os << std::endl << sourceline_string << std::endl;	  
 
 	  for (int i = 0; i < start; i++) 
 	  {
@@ -86,6 +85,8 @@ namespace dtEntityWrappers
 	  {
          os << "^";
       }
+
+     os << tracestr << "\n";
 	 
 	  std::string msg = os.str();
       dtEntity::LogManager::GetInstance().LogMessage(dtEntity::LogLevel::LVL_ERROR, filename_string, "", linenum, msg);     
