@@ -20,7 +20,6 @@
 
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/basemessages.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/log.h>
 #include <osg/Version>
 #include <osgViewer/CompositeViewer>

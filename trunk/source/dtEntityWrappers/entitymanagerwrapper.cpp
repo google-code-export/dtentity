@@ -20,7 +20,6 @@
 
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
