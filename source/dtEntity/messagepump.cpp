@@ -21,7 +21,6 @@
 #include <dtEntity/messagepump.h>
 
 #include <dtEntity/log.h>
-#include <dtEntity/applicationcomponent.h>
 
 #define PROFILING_ENABLED
 

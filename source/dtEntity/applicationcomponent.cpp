@@ -255,7 +255,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Timer_t ApplicationSystem::GetRealClockTime() const
+   osg::Timer_t ApplicationSystem::GetRealClockTime()
    {
       return osg::Timer::instance()->tick();
    }

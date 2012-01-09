@@ -19,7 +19,6 @@
 */
 
 #include <dtEntity/inputhandler.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/v8helpers.h>

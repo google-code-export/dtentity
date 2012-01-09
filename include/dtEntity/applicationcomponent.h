@@ -93,7 +93,7 @@ namespace dtEntity
       /**
        * @return The current real clock time. This is in MICRO SECONDS (seconds * 1000000LL).
        */
-      osg::Timer_t GetRealClockTime() const;
+      static osg::Timer_t GetRealClockTime();
 
       /**
        * Change the time settings.

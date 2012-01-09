@@ -20,7 +20,6 @@
 
 #include <dtEntityWrappers/globalfunctions.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/profile.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
