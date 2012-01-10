@@ -141,7 +141,7 @@ namespace dtEntitySimulation
 
       SetIntersectLayer(dtEntity::LayerAttachPointSystem::DefaultLayerId);
 
-      mDebugDraw = new dtEntity::DebugDrawManager(em);
+      //mDebugDraw = new dtEntity::DebugDrawManager(em);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -346,7 +346,7 @@ namespace dtEntitySimulation
    {
       osg::Vec3d isectpos = intersection.getWorldIntersectPoint();         
 
-      mDebugDraw->AddLine(isectpos, isectpos + intersection.getWorldIntersectNormal() * 20, osg::Vec4(1,0,0,1), 5);
+      //mDebugDraw->AddLine(isectpos, isectpos + intersection.getWorldIntersectNormal() * 20, osg::Vec4(1,0,0,1), 5);
 
       dtEntity::StringId mode = component->GetClampingMode();
 

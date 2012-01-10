@@ -163,7 +163,7 @@ namespace dtEntitySimulation
 
       osgSim::LineOfSight mLos;
       dtEntity::CameraComponent* mCamera;
-      osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDraw;
+      //osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDraw;
 
    };
 }
