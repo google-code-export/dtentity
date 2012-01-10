@@ -132,6 +132,7 @@ namespace dtEntity
 
       void AddVisibleBoundingBox(dtEntity::EntityId id);
       void RemoveVisibleBoundingBox(dtEntity::EntityId id);
+      void RemoveAllBoundingBoxes();
 
    private:
 
@@ -144,6 +145,12 @@ namespace dtEntity
       Property* ScriptRemoveVisibleBoundingBox(const PropertyArgs& args)
       {
          RemoveVisibleBoundingBox(args[0]->UIntValue());
+         return NULL;
+      }
+
+      Property* ScriptRemoveAllBoundingBoxes(const PropertyArgs& args)
+      {
+         RemoveAllBoundingBoxes();
          return NULL;
       }
 

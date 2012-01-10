@@ -11,7 +11,7 @@ var pathSystem = getEntitySystem("Path");
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
-var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
+var camid = getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
 var cameraSystem = getEntitySystem("Camera");
 var mainCamera = null;
 if(camid === null) {
