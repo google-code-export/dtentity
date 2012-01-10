@@ -374,6 +374,7 @@ namespace dtEntity
 
       AddScriptedMethod("addVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
       AddScriptedMethod("removeVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
+      AddScriptedMethod("removeAllBoundingBoxes", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveAllBoundingBoxes));
       AddScriptedMethod("getBoundingSphere", ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
    }
 
@@ -566,6 +567,15 @@ namespace dtEntity
             grp->removeChild(i, 1);
             return;
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LayerSystem::RemoveAllBoundingBoxes()
+   {
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         RemoveVisibleBoundingBox(i->first);
       }
    }
 

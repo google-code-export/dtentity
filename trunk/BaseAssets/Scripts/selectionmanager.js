@@ -15,7 +15,8 @@ var Selection = {
     
     this.ids.push(id);
 
-    if(typeof cameraMotionSystem === 'undefined' || cameraMotionSystem.ShowSelection) {
+	var motionSystem = getEntitySystem("Motion");
+    if(motionSystem === null || motionSystem.ShowSelection) {
       layerSystem.addVisibleBoundingBox(id);
     }
     EntityManager.emitMessage("EntitySelectedMessage", {
