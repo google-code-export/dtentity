@@ -24,6 +24,7 @@
 #include <dtEntitySimulation/export.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/component.h>
+#include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
@@ -86,6 +87,9 @@ namespace dtEntitySimulation
       void SetLastClampedPosition(const osg::Vec3d& p) { mLastClampedPosition = p; }
       osg::Vec3d GetLastClampedPosition() const { return mLastClampedPosition; }
 
+      void SetLastClampedAttitude(const osg::Quat& p) { mLastClampedAttitude = p; }
+      osg::Quat GetLastClampedAttitude() const { return mLastClampedAttitude; }
+
       void SetMinDistToCamera(float  p) { mMinDistToCamera.Set(p); }
       float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
 
@@ -99,6 +103,7 @@ namespace dtEntitySimulation
       dtEntity::Entity* mEntity;
       osg::ref_ptr<osgUtil::LineSegmentIntersector> mIntersector;
       osg::Vec3d mLastClampedPosition;
+      osg::Quat mLastClampedAttitude;
       
    };
 
@@ -142,8 +147,8 @@ namespace dtEntitySimulation
 
       dtEntity::TransformComponent* GetTransformComp(dtEntity::EntityId eid, GroundClampingComponent* component);
 
-      void HandleIntersections(GroundClampingComponent* component,
-         const osgUtil::LineSegmentIntersector::Intersections& intersections);
+      void HandleIntersection(GroundClampingComponent* component,
+         const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt);
 
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mCameraAddedFunctor;
@@ -158,6 +163,7 @@ namespace dtEntitySimulation
 
       osgSim::LineOfSight mLos;
       dtEntity::CameraComponent* mCamera;
+      osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDraw;
 
    };
 }
