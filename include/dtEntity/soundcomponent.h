@@ -116,10 +116,6 @@ namespace dtEntity
 
       static const StringId ListenerGainId;
       static const StringId ListenerLinkToCameraId;
-      static const StringId ListenerTranslationId;
-      static const StringId ListenerUpId;
-      static const StringId ListenerEyeDirectionId;
-      static const StringId ListenerVelocityId;
 
       //void OnAddedToEntityManager(dtEntity::EntityManager& em)
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
@@ -140,18 +136,6 @@ namespace dtEntity
       void SetListenerLinkToCamera(const bool val)  { mListenerLinkToCamera.Set(val); }
       bool GetListenerLinkToCamera() const { return mListenerLinkToCamera.Get(); }
 
-      void SetListenerTranslation(const osg::Vec3d& pos) { mListenerTranslation.Set(pos); }
-      osg::Vec3d GetListenerTranslation() const { return mListenerTranslation.Get(); }
-
-      void SetListenerUp(const osg::Vec3d& pos)  { mListenerUp.Set(pos); }
-      osg::Vec3d GetListenerUp() const { return mListenerUp.Get(); }
-
-      void SetListenerEyeDirection(const osg::Vec3d& pos)  { mListenerEyeDirection.Set(pos); }
-      osg::Vec3d GetListenerEyeDirection() const { return mListenerEyeDirection.Get(); }
-
-      void SetListenerVelocity(const osg::Vec3d& pos)  { mListenerVelocity.Set(pos); }
-      osg::Vec3d GetListenerVelocity() const { return mListenerVelocity.Get(); }
-
    private:
 
       /// Internal util that copies current camera position and orientation to listener
@@ -162,10 +146,6 @@ namespace dtEntity
       MessageFunctor mTickFunctor;
       FloatProperty mListenerGain;
       BoolProperty mListenerLinkToCamera;
-      Vec3dProperty mListenerTranslation;
-      Vec3dProperty mListenerUp;
-      Vec3dProperty mListenerEyeDirection;
-      Vec3Property mListenerVelocity;
    };
 }
 

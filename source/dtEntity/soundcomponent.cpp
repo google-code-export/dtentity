@@ -166,10 +166,6 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////
    const StringId SoundSystem::ListenerGainId(SID("ListenerGain"));
    const StringId SoundSystem::ListenerLinkToCameraId(SID("ListenerLinkToCamera"));
-   const StringId SoundSystem::ListenerTranslationId(SID("ListenerTranslation"));
-   const StringId SoundSystem::ListenerUpId(SID("ListenerUp"));
-   const StringId SoundSystem::ListenerEyeDirectionId(SID("ListenerEyeDirection"));
-   const StringId SoundSystem::ListenerVelocityId(SID("ListenerVelocity"));
 
    SoundSystem::SoundSystem(EntityManager& em)
       : DefaultEntitySystem<SoundComponent>(em)
@@ -177,10 +173,6 @@ namespace dtEntity
    {
       Register(ListenerGainId, &mListenerGain);
       Register(ListenerLinkToCameraId, &mListenerLinkToCamera);
-      Register(ListenerTranslationId, &mListenerTranslation);
-      Register(ListenerUpId, &mListenerUp);
-      Register(ListenerEyeDirectionId, &mListenerEyeDirection);
-      Register(ListenerVelocityId, &mListenerVelocity);
 
       mListenerGain = 1.0f;
 
@@ -208,13 +200,10 @@ namespace dtEntity
    void SoundSystem::Finished()
    {
       if (mListenerLinkToCamera.Get())
-         CopyCamTransformToListener();
-      else
       {
-         dtEntity::AudioManager::GetListener()->SetOrientation(mListenerEyeDirection.Get(), mListenerUp.Get());
-         dtEntity::AudioManager::GetListener()->SetPosition(mListenerTranslation.Get());
-         dtEntity::AudioManager::GetListener()->SetVelocity(mListenerVelocity.Get());
+         CopyCamTransformToListener();
       }
+     
       // set global gain
       dtEntity::AudioManager::GetListener()->SetGain(mListenerGain.Get());
    }
@@ -328,6 +317,8 @@ namespace dtEntity
          currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
          dtEntity::AudioManager::GetListener()->SetPosition(camPos);
          dtEntity::AudioManager::GetListener()->SetOrientation(camLookAt - camPos, camUp);
+
+         // TODO add velocity to listener
       }
    }
 }
