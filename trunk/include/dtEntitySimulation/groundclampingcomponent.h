@@ -141,6 +141,8 @@ namespace dtEntitySimulation
       dtEntity::StringId GetIntersectLayer() const { return  mIntersectLayer.Get(); }
 
 
+      virtual bool StorePropertiesToScene() const { return true; }
+
    private:
 
       dtEntity::Property* ScriptGetTerrainHeight(const dtEntity::PropertyArgs& args);

@@ -135,6 +135,8 @@ namespace dtEntity
 
       void Tick(const Message& m);
 
+      virtual bool StorePropertiesToScene() const { return true; }
+
    private:
       dtEntity::MessageFunctor mTickFunctor;
       BoolProperty mUseHardwareSkinning;
