@@ -137,6 +137,10 @@ namespace dtEntity
       view->GetOsgViewerView()->setName(name);
       dtCore::Scene* scene = new dtCore::Scene();
       scene->SetSceneNode(target->GetGroup());
+
+      dtEntity::ApplicationSystem* appsystem;
+      mEntityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
+      appsystem->InstallUpdateCallback(target->GetGroup());
       view->SetScene(scene);
       view->SetName(name);
       
