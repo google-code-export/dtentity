@@ -29,6 +29,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/stringid.h>
 #include <iostream>
+#include <osg/io_utils>
 
 #define MINIMUM_MOVEMENT_DISTANCE 0.2
 
@@ -59,7 +60,7 @@ namespace dtEntitySimulation
       Register(MinDistToCameraId, &mMinDistToCamera);
 
       mMinDistToCamera.Set(500);
-
+      
    }
     
    ////////////////////////////////////////////////////////////////////////////
@@ -139,6 +140,8 @@ namespace dtEntitySimulation
       }
 
       SetIntersectLayer(dtEntity::LayerAttachPointSystem::DefaultLayerId);
+
+      mDebugDraw = new dtEntity::DebugDrawManager(em);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -218,11 +221,11 @@ namespace dtEntitySimulation
       mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
 
       mRootNode->accept(mIntersectionVisitor);
-	  if(intersector->containsIntersections())
-	  {
-		  v = intersector->getFirstIntersection().getWorldIntersectPoint();
-		  return true;
-	  }
+	   if(intersector->containsIntersections())
+	   {
+		   v = intersector->getFirstIntersection().getWorldIntersectPoint();
+		   return true;
+	   }
       return false;
    }
 
@@ -253,8 +256,11 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroundClampingSystem::Tick(const dtEntity::Message& msg)
+   void GroundClampingSystem::Tick(const dtEntity::Message& m)
    {
+      const dtEntity::TickMessage& tick = static_cast<const dtEntity::TickMessage&>(m);
+      float dt = tick.GetDeltaSimTime();
+
       if(!mRootNode.valid() || mCamera == NULL || !mEnabled.Get() || mComponents.empty() )
       {
          return;
@@ -276,7 +282,6 @@ namespace dtEntitySimulation
          dtEntity::StringId mode = component->GetClampingMode();
          if(mode == GroundClampingComponent::ClampingMode_DisabledId)
          {
-            //std::cout << "Disabled\n";
             continue;
          }
 
@@ -290,7 +295,6 @@ namespace dtEntitySimulation
          float distToCam = sqrt(distx * distx + disty * disty);
          if(distToCam > component->GetMinDistToCamera())
          {
-           // std::cout << "MinDistCam\n";
             continue;
          }
 
@@ -304,7 +308,10 @@ namespace dtEntitySimulation
          if(distMovedX < MINIMUM_MOVEMENT_DISTANCE && distMovedY < MINIMUM_MOVEMENT_DISTANCE)
          {
             transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
-            //std::cout << "MinDistMove\n";
+            if(component->GetClampingMode() == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
+            {
+               transformcomp->SetRotation(component->GetLastClampedAttitude());
+            }
             continue;
          }
 
@@ -315,73 +322,63 @@ namespace dtEntitySimulation
          iSectToCompMap.push_back(std::make_pair(intersector, component));
          static int i = 0;
          ++i;
-         //std::cout << "Intersect" << i << "\n";
       }
 
       mIntersectionVisitor.reset();
+      mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
       mIntersectionVisitor.setIntersector(mIntersectorGroup.get());
       mRootNode->accept(mIntersectionVisitor);
       
       for(ISectToCompMap::iterator i = iSectToCompMap.begin(); i != iSectToCompMap.end(); ++i)
       {
          osgUtil::LineSegmentIntersector* isector = i->first;
-         GroundClampingComponent* component = i->second;
-         HandleIntersections(component, isector->getIntersections());
+         if(isector->containsIntersections())
+         {
+            GroundClampingComponent* component = i->second;
+            HandleIntersection(component, isector->getFirstIntersection(), dt);
+         }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroundClampingSystem::HandleIntersections(GroundClampingComponent* component,
-      const osgUtil::LineSegmentIntersector::Intersections& intersections)
+   void GroundClampingSystem::HandleIntersection(GroundClampingComponent* component,
+      const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt)
    {
-      osgUtil::LineSegmentIntersector::Intersections::const_iterator isect;
-      for(isect = intersections.begin(); isect != intersections.end(); ++isect)
+      osg::Vec3d isectpos = intersection.getWorldIntersectPoint();         
+
+      mDebugDraw->AddLine(isectpos, isectpos + intersection.getWorldIntersectNormal() * 20, osg::Vec4(1,0,0,1), 5);
+
+      dtEntity::StringId mode = component->GetClampingMode();
+
+      dtEntity::TransformComponent* transformcomp = component->GetTransformComponent();
+      osg::Vec3d translation = transformcomp->GetTranslation();
+
+      float voffset = component->GetVerticalOffset();
+
+      if(mode != GroundClampingComponent::ClampingMode_KeepAboveTerrainId || 
+         translation[2] - voffset < isectpos[2])
       {
-         for(osg::NodePath::const_reverse_iterator j = isect->nodePath.rbegin(); j != isect->nodePath.rend(); ++j)
-         {
-            const osg::Node* node = *j;
-            const osg::Referenced* referenced = node->getUserData();
-
-            if(referenced == NULL) continue;
-            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL)
-            {
-               osg::Vec3d isectpos = isect->getWorldIntersectPoint();         
-         
-               dtEntity::StringId mode = component->GetClampingMode();
-
-               dtEntity::TransformComponent* transformcomp = component->GetTransformComponent();
-               osg::Vec3d translation = transformcomp->GetTranslation();
-
-               float voffset = component->GetVerticalOffset();
-
-               if(mode != GroundClampingComponent::ClampingMode_KeepAboveTerrainId || 
-                  translation[2] - voffset < isectpos[2])
-               {
-                  translation[2] = isectpos[2] + voffset;
-                  transformcomp->SetTranslation(translation);
-                  component->SetLastClampedPosition(translation);
-                  
-               }
-
-               if(mode == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
-               {
-                  osg::Quat rot = transformcomp->GetRotation();
-
-                  // get current up vector of entity in global coords
-                  osg::Vec3 up(0, 0, 1);
-                  up = rot * up;
-
-                  // make rotation from global up vec to surface normal
-                  osg::Quat addrot;
-                  addrot.makeRotate(up, isect->getWorldIntersectNormal());
-                  rot = rot * addrot;
-                  transformcomp->SetRotation(rot);                  
-               }               
-               return;
-            }
-         }
+         translation[2] = isectpos[2] + voffset;
+         transformcomp->SetTranslation(translation);
+         component->SetLastClampedPosition(translation);
       }
+
+      if(mode == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
+      {
+         osg::Quat rot = transformcomp->GetRotation();
+
+         // get current up vector of entity in global coords
+         osg::Vec3 up(0, 0, 1);
+         up = rot * up;
+
+         // make rotation from global up vec to surface normal
+         osg::Quat addrot;
+         addrot.makeRotate(up, intersection.getWorldIntersectNormal());
+                           
+         osg::Quat newrot = rot * addrot;
+         transformcomp->SetRotation(newrot);  
+         component->SetLastClampedAttitude(newrot);
+      }               
 
       // no intersection found, set last clamped pos to current position
       // so that there is no intersection test until translation changes
