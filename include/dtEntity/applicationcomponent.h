@@ -113,7 +113,7 @@ namespace dtEntity
       void OnResetSystem(const Message& msg);
       
 
-      void InstallUpdateCallback();
+      void InstallUpdateCallback(osg::Node*);
 
 
       void SetWindowManager(WindowManager* wm);

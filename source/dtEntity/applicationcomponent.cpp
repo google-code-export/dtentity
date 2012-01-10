@@ -60,6 +60,7 @@ namespace dtEntity
       osg::Timer_t mStartOfFrameTick;
       osg::Timer_t mSimulationClockTime;
       double mPrevSimTime;
+      unsigned int mLastFrameNumber;
 
    public:
      
@@ -68,6 +69,7 @@ namespace dtEntity
          , mStartOfFrameTick(osg::Timer::instance()->tick())
          , mSimulationClockTime(0)
          , mPrevSimTime(0)
+         , mLastFrameNumber(0)
       {
          time_t t;
          time(&t);
@@ -82,6 +84,13 @@ namespace dtEntity
       {
 
          const osg::FrameStamp* fs = nv->getFrameStamp();
+
+         if(fs->getFrameNumber() == mLastFrameNumber)
+         {
+            return;
+         }
+         mLastFrameNumber = fs->getFrameNumber();
+
          double simtime = fs->getSimulationTime();
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
          double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
@@ -348,13 +357,13 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::InstallUpdateCallback()
+   void ApplicationSystem::InstallUpdateCallback(osg::Node* node)
    {
       if(!mImpl->mUpdateCallback.valid())
       {
          mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
       }
-      GetPrimaryView()->getSceneData()->addUpdateCallback(mImpl->mUpdateCallback);
+      node->setUpdateCallback(mImpl->mUpdateCallback);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
