@@ -198,7 +198,7 @@ EntityManager.registerForMessages("ToolActivatedMessage", OnToolActivatedMessage
 function doSelection(context) {
    var mouseX = Input.getAxis(Axis.MouseXRaw);
    var mouseY = Input.getAxis(Axis.MouseYRaw);
-   println("Context: " + context);
+   
    var pick = Screen.pickEntity(mouseX, mouseY, NodeMasks.PICKABLE, context);
 
    if (pick === null || typeof(pick) == "undefined") {

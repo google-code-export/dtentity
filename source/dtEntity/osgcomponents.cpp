@@ -77,9 +77,10 @@ namespace dtEntity
                ModelMap::iterator i = mModels.find(path);
                if(i != mModels.end())
                {
-                  return osg::clone(i->second.get(), osg::CopyOp(
+                  return i->second.get();
+                  /*return osg::clone(i->second.get(), osg::CopyOp(
                      osg::CopyOp::SHALLOW_COPY
-                  ));
+                  ));*/
                }
             }break;
             case CacheMode::HardwareMeshes:
