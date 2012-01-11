@@ -219,7 +219,7 @@ namespace dtEntityWrappers
 	   bool success = em->GetComponent(camid, camcomp);
 	   if(!success)
 	   {
-	 	  return ThrowError("No camera present, cannot pick entity!");
+	 	  return Null();
 	   }
 	   osg::Vec3d from = camcomp->GetPosition();
 
