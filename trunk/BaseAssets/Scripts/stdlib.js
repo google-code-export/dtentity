@@ -36,6 +36,8 @@ function setTimeout(callback, delay, arguments) {
 function clearTimeout(timeoutId) {
   if(timeoutId in __TIMEOUTS) {
     delete __TIMEOUTS[timeoutId];
+  } else {
+    Log.error("Cannot clear timeout, no timeout with this id found");
   }
 }
 
@@ -70,6 +72,8 @@ function setInterval(callback, delay, arguments) {
 function clearInterval(intervalId) {
   if(intervalId in __INTERVALS) {
     delete __INTERVALS[intervalId];
+  } else {
+    Log.error("Cannot clear interval, no interval with this id found");
   }
 }
 

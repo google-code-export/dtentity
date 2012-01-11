@@ -131,7 +131,7 @@ namespace dtEntity
       t.vsync = traits.vsync;
 
       dtCore::DeltaWin* window = new dtCore::DeltaWin(t);
-
+      window->GetOsgViewerGraphicsWindow()->setName(name);
       dtCore::View* view = new dtCore::View();
       view->SetName(name);
       view->GetOsgViewerView()->setName(name);
@@ -150,6 +150,7 @@ namespace dtEntity
       cam->SetWindow(window);
       view->SetCamera(cam);
       cam->GetOSGCamera()->setName(name);
+      cam->GetOSGCamera()->addEventCallback(mInputHandler);
       
    }
 
@@ -160,7 +161,7 @@ namespace dtEntity
       dtCore::View* v = GetD3DViewByName(name);
       if(v)
       {
-         GetApplication()->RemoveView(*v);
+         GetApplication()->RemoveView(*v, true);
       }
    }
 

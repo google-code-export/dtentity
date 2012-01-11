@@ -235,7 +235,7 @@ namespace dtEntityQtWidgets
       for(int i = 0; i < mSpawnerList->count(); ++i)
       {
          QListWidgetItem* item = mSpawnerList->item(i);
-         if(category == "All" || item->data(Qt::UserRole).toString() == category)
+         if(category == tr("All") || item->data(Qt::UserRole).toString() == category)
          {
             item->setHidden(false);
          }
