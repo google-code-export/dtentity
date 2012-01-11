@@ -191,13 +191,18 @@ namespace dtEntityWrappers
    {
       if(args.Length() < 2)
       {
-		  return ThrowError("usage: pickEntity(x, y, [nodemask])");
+		  return ThrowError("usage: pickEntity(x, y, [nodemask, contextid])");
       }
 
       unsigned int nodemask = dtEntity::NodeMasks::PICKABLE;
       if(args.Length() > 2)
       {
          nodemask = args[2]->Uint32Value();
+      }
+      unsigned int contextid = 0;
+      if(args.Length() > 3)
+      {
+         contextid = args[3]->Uint32Value();
       }
 
       double x = args[0]->NumberValue();
@@ -209,7 +214,7 @@ namespace dtEntityWrappers
 
 	   dtEntity::CameraSystem* camsys;
 	   em->GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
-	   dtEntity::EntityId camid = camsys->GetCameraEntityByContextId(0);
+	   dtEntity::EntityId camid = camsys->GetCameraEntityByContextId(contextid);
 	   dtEntity::CameraComponent* camcomp;
 	   bool success = em->GetComponent(camid, camcomp);
 	   if(!success)

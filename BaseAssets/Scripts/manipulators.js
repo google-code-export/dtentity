@@ -142,24 +142,24 @@ var ToolHolder = {
       this._activeTool.keyUp(key, handled);
     }
   },
-  mouseButtonDown : function(button, handled) {
+  mouseButtonDown : function(button, handled, context) {
     if (this._activeTool !== null && typeof this._activeTool.mouseButtonDown != 'undefined') {
-      this._activeTool.mouseButtonDown(button, handled);
+      this._activeTool.mouseButtonDown(button, handled, context);
     }
   },
-  mouseButtonUp : function(button, handled) {
+  mouseButtonUp : function(button, handled, context) {
     if (this._activeTool !== null && typeof this._activeTool.mouseButtonUp != 'undefined') {
-      this._activeTool.mouseButtonUp(button, handled);
+      this._activeTool.mouseButtonUp(button, handled, context);
     }
   },
-  mouseWheel : function(dir, handled) {
+  mouseWheel : function(dir, handled, context) {
      if (this._activeTool !== null && typeof this._activeTool.mouseWheel != 'undefined') {
-       this._activeTool.mouseWheel(dir, handled);
+       this._activeTool.mouseWheel(dir, handled, context);
      }
   },
-  mouseMove : function(x, y, handled) {
+  mouseMove : function(x, y, handled, context) {
       if (this._activeTool !== null && typeof this._activeTool.mouseMove != 'undefined') {
-        this._activeTool.mouseMove(x, y, handled);
+        this._activeTool.mouseMove(x, y, handled, context);
       }
   },
   mouseEnterLeave : function(focused, displaynum, screennum) {
@@ -195,10 +195,11 @@ EntityManager.registerForMessages("ToolActivatedMessage", OnToolActivatedMessage
 
 //////////////////////////////// Select tool /////////////////////////////
 
-function doSelection() {
+function doSelection(context) {
    var mouseX = Input.getAxis(Axis.MouseXRaw);
    var mouseY = Input.getAxis(Axis.MouseYRaw);
-   var pick = Screen.pickEntity(mouseX, mouseY);
+   println("Context: " + context);
+   var pick = Screen.pickEntity(mouseX, mouseY, NodeMasks.PICKABLE, context);
 
    if (pick === null || typeof(pick) == "undefined") {
      return false;
@@ -253,10 +254,10 @@ function SelectTool() {
   this.iconPath = ":icons/edit-select.png";
   this.shortCut = "Ctrl+i";
 
-   this.mouseButtonDown = function(button, handled) {
+   this.mouseButtonDown = function(button, handled, context) {
       if(button === 0 && !handled) {
 
-         doSelection();
+         doSelection(context);
       }
    }
 }
@@ -302,11 +303,11 @@ function TranslateTool() {
   }
 
 
-  this.mouseButtonDown = function(button, handled) {
+  this.mouseButtonDown = function(button, handled, context) {
 
       if(button === 0 && !handled) {
          self.deactivate();
-         doSelection();
+         doSelection(context);
          self.activate();
          heights = [];
          return;
@@ -458,10 +459,10 @@ function RotateTool() {
       manipulators = [];
   }
 
-  this.mouseButtonDown = function(button, handled) {
+  this.mouseButtonDown = function(button, handled, context) {
        if(button === 0 && !handled) {
           self.deactivate();
-          doSelection();
+          doSelection(context);
           self.activate();
           manipulators = [];
           return;
@@ -635,10 +636,10 @@ function ScaleTool() {
       manipulators = [];
   }
 
-   this.mouseButtonDown = function(button, handled) {
+   this.mouseButtonDown = function(button, handled, context) {
        if(button === 0 && !handled) {
           self.deactivate();
-          doSelection();
+          doSelection(context);
           self.activate();
           manipulators = [];
           return;

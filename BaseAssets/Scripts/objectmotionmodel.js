@@ -28,7 +28,10 @@ function ObjectMotionComponent(eid) {
      camera = getEntitySystem("Camera").getComponent(eid);
      if(camera) {
         contextId = camera.ContextId;
-     }
+     } else {
+	   Log.error("Motion model component expects a camera component!");
+	   return;
+	 }
 
      if(this.TargetEntityId !== 0)
      {
@@ -47,7 +50,6 @@ function ObjectMotionComponent(eid) {
 
    this.keyDown = function(key, handled, cid) {
 
-      //println("K: " + key + " cid: " + cid + " this: " + contextId);
       if(!handled && this.Enabled && cid == contextId) {
 
          switch(key) {
@@ -238,17 +240,16 @@ function ObjectMotionComponent(eid) {
 function ObjectMotionSystem() {
 
   var self = this;
-  var components = [];
+  var components = {};
   this.componentType = "ObjectMotion";
 
-  setInterval(function() {
+  var intervalid = setInterval(function() {
     for(k in components) { components[k].update(); }
   }, 0);
 
   // -----------------------------------------
   this.hasComponent = function(eid) {
-
-    return (components[eid]) ? true : false;
+    return (eid in components);
   };
 
   // -----------------------------------------
