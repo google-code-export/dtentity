@@ -65,10 +65,13 @@ namespace dtEntity
                ModelMap::iterator i = mModels.find(path);
                if(i != mModels.end())
                {
-                  return osg::clone(i->second.get(), osg::CopyOp(
+                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
                      osg::CopyOp::DEEP_COPY_OBJECTS        |
-                     osg::CopyOp::DEEP_COPY_NODES
+                     osg::CopyOp::DEEP_COPY_NODES          |
+                     osg::CopyOp::DEEP_COPY_USERDATA
                   ));
+                  n->setUserData(NULL);
+                  return n;
                }
             }
             break;
@@ -77,10 +80,11 @@ namespace dtEntity
                ModelMap::iterator i = mModels.find(path);
                if(i != mModels.end())
                {
-                  return i->second.get();
-                  /*return osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::SHALLOW_COPY
-                  ));*/
+                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+                     osg::CopyOp::DEEP_COPY_USERDATA
+                  ));
+                  n->setUserData(NULL);
+                  return n;
                }
             }break;
             case CacheMode::HardwareMeshes:
@@ -88,7 +92,7 @@ namespace dtEntity
                ModelMap::iterator i = mModels.find(path);
                if(i != mModels.end())
                {
-                  return osg::clone(i->second.get(), osg::CopyOp(
+                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
                      osg::CopyOp::DEEP_COPY_ALL
                      & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
                      & ~osg::CopyOp::DEEP_COPY_ARRAYS
@@ -98,6 +102,8 @@ namespace dtEntity
                      &  ~osg::CopyOp::DEEP_COPY_SHAPES
                      & ~osg::CopyOp::DEEP_COPY_UNIFORMS
                   ));
+                  n->setUserData(NULL);
+                  return n;
                }
             }
             break;
@@ -106,9 +112,11 @@ namespace dtEntity
                ModelMap::iterator i = mModels.find(path);
                if(i != mModels.end())
                {
-                  return osg::clone(i->second.get(), osg::CopyOp(
+                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
                      osg::CopyOp::DEEP_COPY_ALL
                   ));
+                  n->setUserData(NULL);
+                  return n;
                }
             }
             break;
@@ -418,7 +426,7 @@ namespace dtEntity
       Register(OptimizeId, &mOptimize);
       Register(IsTerrainId, &mIsTerrain);
       
-      GetNode()->setName("StaticMeshComponent");
+      GetNode()->setName("StaticMeshComponent Initial");
       GetNode()->setNodeMask(
          NodeMasks::VISIBLE  |
          NodeMasks::PICKABLE |
@@ -451,7 +459,7 @@ namespace dtEntity
       if(path == "")
       {
          osg::Node* node = new osg::Node();
-         node->setName("StaticMeshComponent");
+         node->setName("StaticMeshComponent Empty");
          SetNode(node);
       }
       else
@@ -474,6 +482,7 @@ namespace dtEntity
          {
             LOG_ERROR("Could not load static mesh from path " + path);
             meshnode = new osg::Node();
+            meshnode->setName("StaticMeshComponent NotFound");
          }
          else
          {
@@ -500,7 +509,7 @@ namespace dtEntity
    {
       assert(mEntity != NULL);
 
-      node->setName("StaticMeshComponent");
+      
       SetNode(node); 
       
       unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |

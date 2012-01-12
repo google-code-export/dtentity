@@ -259,17 +259,8 @@ namespace dtEntityWrappers
             if(referenced == NULL) continue;
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL)
-            {
-			      // ignore static mesh nodes, they are shared by multiple parents and can't be used to
-			      // identify the entity
-				   dtEntity::StaticMeshComponent* smc;
-               if(em->GetComponent(entity->GetId(), smc, true) && smc->GetNode() == node)
-			      {
-                  continue;
-               }
- 				   
-               return Uint32::New(entity->GetId());
-			      
+            {			     
+               return Uint32::New(entity->GetId());			      
             }
          }
       }
@@ -337,18 +328,11 @@ namespace dtEntityWrappers
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL)
             {
-
-			   // ignore static mesh nodes, they are shared by multiple parents and can't be used to
-			   // identify the entity
-				dtEntity::StaticMeshComponent* smc;
-			   if(!entity->GetComponent(smc) || smc->GetNode() != node)
-			   {
 				   Handle<Object> obj = Object::New();
 				   obj->Set(entityid, Uint32::New(entity->GetId()));
 				   obj->Set(normal, WrapVec3(isect.getWorldIntersectNormal()));
 				   obj->Set(position, WrapVec3(isect.getWorldIntersectPoint()));
-				   ret->Set(count++, obj);
-			   }
+				   ret->Set(count++, obj);			   
             }
          }
       }
