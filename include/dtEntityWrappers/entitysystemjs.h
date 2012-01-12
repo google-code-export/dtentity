@@ -96,6 +96,11 @@ namespace dtEntityWrappers
       v8::Persistent<v8::Function> mCreateCompFun;
       v8::Persistent<v8::Function> mDelCompFun;
       v8::Persistent<v8::Function> mGetESFun;
-
+      v8::Persistent<v8::String> mStringGetComponent;
+      v8::Persistent<v8::String> mStringFinished;
+      v8::Persistent<v8::String> mStringOnPropertyChanged;
+      v8::Persistent<v8::String> mStringStoreComponentToMap;
+      v8::Persistent<v8::String> mStringAllowComponentCreationBySpawner;
+      v8::Persistent<v8::String> mStringStorePropertiesToScene;
    };
 }
