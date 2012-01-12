@@ -244,8 +244,8 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::SetDataPaths(const QStringList& paths)
    {
-
-      osgDB::FilePathList in;
+      // make sure we don't loose the paths used by OSG...
+      osgDB::FilePathList in = osgDB::getDataFilePathList();
 
       for(QStringList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
