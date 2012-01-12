@@ -34,16 +34,14 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> PropertyGetter(Local<String> propname, const AccessorInfo& info)
    {
-      HandleScope scope;
-      Handle<External> ext = Handle<External>::Cast(info.Data());
-      ComponentJS* comp = static_cast<ComponentJS*>(ext->Value());
+      ComponentJS* comp = static_cast<ComponentJS*>(Handle<External>::Cast(info.Data())->Value());
       std::string propnamestr = ToStdString(propname);
       dtEntity::Property* prop = comp->Get(dtEntity::SIDHash(propnamestr));
       if(!prop)
       {
-         return scope.Close(Undefined());
+         return Undefined();
       }
-      return scope.Close(PropToVal(prop));
+      return PropToVal(prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -51,10 +49,7 @@ namespace dtEntityWrappers
                                Local<Value> value,
                                const AccessorInfo& info)
    {
-      
-      HandleScope scope;
-      Handle<External> ext = Handle<External>::Cast(info.Data());
-      ComponentJS* comp = static_cast<ComponentJS*>(ext->Value());
+      ComponentJS* comp = static_cast<ComponentJS*>(Handle<External>::Cast(info.Data())->Value());
       std::string propnamestr = ToStdString(propname);
       dtEntity::StringId propnamesid = dtEntity::SIDHash(propnamestr);
       dtEntity::Property* prop = comp->Get(propnamesid);
@@ -73,11 +68,13 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Array> propnames = obj->GetPropertyNames();
 
+      V8::AdjustAmountOfExternalAllocatedMemory(sizeof ComponentJS);
+
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
       {
-         Handle<Value> p = propnames->Get(Integer::New(i));
-         Handle<String> propname = Handle<String>::Cast(p);
+         Local<Value> p = propnames->Get(Integer::New(i));
+         Local<String> propname = Local<String>::Cast(p);
          std::string propname_str = ToStdString(propname);
 
          // don't expose properties beginning with "__"
@@ -112,6 +109,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    ComponentJS::~ComponentJS()
    {
+      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof ComponentJS);
       for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
       {
          delete i->second;
@@ -133,14 +131,16 @@ namespace dtEntityWrappers
       Handle<Value>newval = PropToVal(&prop);
       mComponent->Set(String::New(propname.c_str()), newval);
       */
-      Handle<Value> cb = mComponent->Get(String::New("onPropertyChanged"));
+      Handle<String> s = String::New("onPropertyChanged");
+      Handle<Value> cb = mComponent->Get(s);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
          Context::Scope context_scope(GetGlobalContext());
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
-         Handle<Value> argv[1] = { String::New(propname.c_str())};
+         Handle<String> propstr = String::New(propname.c_str());
+         Handle<Value> argv[1] = { propstr };
          Handle<Value> ret = func->Call(mComponent, 1, argv);
 
          if(ret.IsEmpty()) 
@@ -155,7 +155,8 @@ namespace dtEntityWrappers
    {
       HandleScope scope;
 
-      Handle<Value> cb = mComponent->Get(String::New("finished"));
+      Handle<String> strfin = String::New("finished");
+      Handle<Value> cb = mComponent->Get(strfin);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
          Context::Scope context_scope(GetGlobalContext());
@@ -180,7 +181,8 @@ namespace dtEntityWrappers
    {
       HandleScope scope;
       Handle<Object> obj = Handle<Object>::Cast(v);
-      Handle<Value> hidden = obj->GetHiddenValue(String::New("__COMPONENT__"));
+      Handle<String> strcomp = String::New("__COMPONENT__");
+      Handle<Value> hidden = obj->GetHiddenValue(strcomp);
       if(!hidden.IsEmpty())
       {
          void* ptr = Handle<External>::Cast(hidden)->Value();
@@ -193,14 +195,15 @@ namespace dtEntityWrappers
    dtEntity::Component* GetOrCreateComponentJS(dtEntity::ComponentType componentType, Handle<Object> obj)
    {
       HandleScope scope;
-      Handle<Value> v = obj->GetHiddenValue(String::New("__COMPONENT__"));
+      Handle<String> strcomp = String::New("__COMPONENT__");
+      Handle<Value> v = obj->GetHiddenValue(strcomp);
       if(v.IsEmpty())
       {
          ComponentJS* compjs = new ComponentJS(componentType, obj);
          
          Handle<External> ext = External::New(compjs);
 
-         obj->SetHiddenValue(String::New("__COMPONENT__"), ext);
+         obj->SetHiddenValue(strcomp, ext);
 
          Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(obj);
          pobj.MakeWeak(NULL, &ComponentDestructor);
@@ -219,7 +222,8 @@ namespace dtEntityWrappers
    Persistent<Function> ExtractFun(Handle<Object> obj, const char* funname)
    {
       HandleScope scope;
-      Handle<Value> val = obj->Get(String::New(funname));
+      Handle<String> strFunName = String::New(funname);
+      Handle<Value> val = obj->Get(strFunName);
       if(val.IsEmpty() || !val->IsFunction())
       {
          LOG_ERROR("Entity System method not found: " + std::string(funname));
@@ -241,6 +245,13 @@ namespace dtEntityWrappers
       mDelCompFun = ExtractFun(mSystem, "deleteComponent");
       mGetESFun = ExtractFun(mSystem, "getEntitiesInSystem");
       
+      mStringGetComponent = Persistent<String>::New(String::New("getComponent"));
+      mStringFinished = Persistent<String>::New(String::New("finished"));
+      mStringOnPropertyChanged = Persistent<String>::New(String::New("onPropertyChanged"));
+      mStringStoreComponentToMap = Persistent<String>::New(String::New("storeComponentToMap"));
+      mStringAllowComponentCreationBySpawner = Persistent<String>::New(String::New("allowComponentCreationBySpawner"));
+      mStringStorePropertiesToScene = Persistent<String>::New(String::New("storePropertiesToScene"));
+
       Handle<Array> propnames = obj->GetPropertyNames();
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -283,7 +294,7 @@ namespace dtEntityWrappers
       Handle<String> propnamestr = String::New(propname.c_str());
       mSystem->Set(propnamestr, newval);
 
-      Handle<Value> cb = mSystem->Get(String::New("onPropertyChanged"));
+      Handle<Value> cb = mSystem->Get(mStringOnPropertyChanged);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
          Context::Scope context_scope(GetGlobalContext());
@@ -306,7 +317,7 @@ namespace dtEntityWrappers
    {
       HandleScope scope;
 
-      Handle<Value> cb = mSystem->Get(String::New("finished"));
+      Handle<Value> cb = mSystem->Get(mStringFinished);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
          Context::Scope context_scope(GetGlobalContext());
@@ -353,6 +364,8 @@ namespace dtEntityWrappers
       return ret->BooleanValue();
    }    
 
+   
+
    ////////////////////////////////////////////////////////////////////////////////
    bool EntitySystemJS::GetComponent(dtEntity::EntityId eid, dtEntity::Component*& component)
    {
@@ -362,8 +375,7 @@ namespace dtEntityWrappers
       TryCatch try_catch;
       
       Handle<Value> argv[1] = { Integer::New(eid) };
-      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("getComponent")));
-      Handle<Value> ret = fun->Call(mSystem, 1, argv);
+      Handle<Value> ret = mGetCompFun->Call(mSystem, 1, argv);
 
       if(ret.IsEmpty()) 
       {
@@ -394,9 +406,15 @@ namespace dtEntityWrappers
 
       if(ret.IsEmpty() || !ret->IsObject()) 
       {
+         ReportException(&try_catch);
+         return false;
+      }
+      if(!ret->IsObject()) 
+      {
          return false;
       }
       Handle<Object> obj = Handle<Object>::Cast(ret);
+
       component = GetOrCreateComponentJS(GetComponentType(), obj);
       return true;
    }      
@@ -556,7 +574,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::StoreComponentToMap(dtEntity::EntityId id) const
    {
       HandleScope scope;
-      if(!mSystem->Has(String::New("storeComponentToMap")))
+      if(!mSystem->Has(mStringStoreComponentToMap))
       {
          return true;
       }
@@ -565,7 +583,7 @@ namespace dtEntityWrappers
 
       TryCatch try_catch;
       Handle<Value> argv[1] = { Uint32::New(id)};
-      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("storeComponentToMap")));
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(mStringStoreComponentToMap));
       Handle<Value> ret = fun->Call(mSystem, 1, argv);
 
       if(ret.IsEmpty())
@@ -580,7 +598,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::AllowComponentCreationBySpawner() const
    {
       HandleScope scope;
-      if(!mSystem->Has(String::New("allowComponentCreationBySpawner")))
+      if(!mSystem->Has(mStringAllowComponentCreationBySpawner))
       {
          return true;
       }
@@ -588,7 +606,7 @@ namespace dtEntityWrappers
       Context::Scope context_scope(GetGlobalContext());
 
       TryCatch try_catch;
-      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("allowComponentCreationBySpawner")));
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(mStringAllowComponentCreationBySpawner));
       Handle<Value> ret = fun->Call(mSystem, 0, NULL);
 
       if(ret.IsEmpty())
@@ -603,7 +621,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::StorePropertiesToScene() const
    {
       HandleScope scope;
-      if(!mSystem->Has(String::New("storePropertiesToScene")))
+      if(!mSystem->Has(mStringStorePropertiesToScene))
       {
          return true;
       }
@@ -611,7 +629,7 @@ namespace dtEntityWrappers
       Context::Scope context_scope(GetGlobalContext());
 
       TryCatch try_catch;
-      Local<Function> fun = Local<Function>::Cast(mSystem->Get(String::New("storePropertiesToScene")));
+      Local<Function> fun = Local<Function>::Cast(mSystem->Get(mStringStorePropertiesToScene));
       Handle<Value> ret = fun->Call(mSystem, 0, NULL);
 
       if(ret.IsEmpty())
