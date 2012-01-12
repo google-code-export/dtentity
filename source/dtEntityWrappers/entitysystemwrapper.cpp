@@ -399,7 +399,7 @@ namespace dtEntityWrappers
          std::string propname = dtEntity::GetStringFromSID(j->first);
          instance->SetAccessor(String::New(propname.c_str()),
                           ESPropertyGetter, ESPropertySetter,
-                          Persistent<External>::New(ext));
+                          ext);
       }
 
       dtEntity::ScriptAccessor* scriptaccessor = dynamic_cast<dtEntity::ScriptAccessor*>(v);

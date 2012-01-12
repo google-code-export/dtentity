@@ -166,7 +166,7 @@ namespace dtEntityWrappers
         std::string propname = dtEntity::GetStringFromSID(i->first);
         instance->SetAccessor(String::New(propname.c_str()),
                          COPropertyGetter, COPropertySetter,
-                         Persistent<External>::New(ext));
+                         ext);
      }
      Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
      pobj.MakeWeak(NULL, &ComponentWrapperDestructor);
