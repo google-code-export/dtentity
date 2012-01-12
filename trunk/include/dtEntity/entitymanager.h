@@ -41,6 +41,18 @@ namespace dtEntity
    class Message;
 
    /**
+    * can be used to clean up wrappers for components or
+    * execute other actions
+    */
+   class ComponentDeletedCallback : public osg::Referenced
+   {
+   public:
+      virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
+   };
+
+   typedef std::vector<osg::ref_ptr<ComponentDeletedCallback> > ComponentDeletedCallbacks;
+
+   /**
     * Entity manager is a container for entity systems. 
     * Each entity system holds entity components of a specific type.
     * The entity manager gives access to the entity systems and can be used to
@@ -271,6 +283,9 @@ namespace dtEntity
          if(mMessagePump) mMessagePump->EmitQueuedMessages(simtime);
       }
 
+      void AddDeletedCallback(ComponentDeletedCallback* cb);
+      bool RemoveDeletedCallback(ComponentDeletedCallback* cb);
+
    protected:
    
          // Destructor
@@ -303,6 +318,8 @@ namespace dtEntity
 
 	  // for publish-subscribe of messages
       MessagePump* mMessagePump;
+
+      ComponentDeletedCallbacks mDeletedCallbacks;
 
    };
 
