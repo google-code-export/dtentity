@@ -168,7 +168,17 @@ namespace dtEntity
       EntitySystemStore::iterator i = mEntitySystemStore.begin();
       for(; i != mEntitySystemStore.end(); ++i)
       {
-         i->second->DeleteComponent(id);
+         if(i->second->HasComponent(id))
+         {
+            i->second->DeleteComponent(id);
+            if(!mDeletedCallbacks.empty())
+            {
+               for(ComponentDeletedCallbacks::iterator j = mDeletedCallbacks.begin(); j != mDeletedCallbacks.end(); ++j)
+               {
+                  (*j)->ComponentDeleted(i->first, id);
+               }
+            }
+         }
       }
       
       OpenThreads::ScopedWriteLock lock(mEntityMutex);
@@ -412,13 +422,25 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void EntityManager::DeleteComponent(EntityId eid, Component& component)
    {
+      ComponentType t = component.GetType();
       EntitySystem* es;
-      if(!GetEntitySystem(component.GetType(), es))
+      if(!GetEntitySystem(t, es))
       {
          LOG_ERROR("Could not remove component: no entity system of this type!");
          return;
       }
-      es->DeleteComponent(eid);
+
+      if(es->HasComponent(eid))
+      {         
+         es->DeleteComponent(eid);
+         if(!mDeletedCallbacks.empty())
+         {
+            for(ComponentDeletedCallbacks::iterator i = mDeletedCallbacks.begin(); i != mDeletedCallbacks.end(); ++i)
+            {
+               (*i)->ComponentDeleted(t, eid);
+            }
+         }         
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -429,6 +451,27 @@ namespace dtEntity
          delete mMessagePump;
       }
       mMessagePump = &p;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EntityManager::AddDeletedCallback(ComponentDeletedCallback* cb)
+   {
+      mDeletedCallbacks.push_back(cb);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::RemoveDeletedCallback(ComponentDeletedCallback* cb)
+   {
+      ComponentDeletedCallbacks::iterator i;
+      for(i = mDeletedCallbacks.begin(); i != mDeletedCallbacks.end(); ++i)
+      {
+         if(*i == cb)
+         {
+            mDeletedCallbacks.erase(i);
+            return true;
+         }
+      }
+      return false;
    }
 }
 
