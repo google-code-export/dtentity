@@ -101,7 +101,7 @@ namespace dtEntityWrappers
             }      
             
             Handle<External> ext = v8::External::New(static_cast<void*>(this));
-            obj->SetAccessor(propname, PropertyGetter, PropertySetter, Persistent<External>::New(ext));
+            obj->SetAccessor(propname, PropertyGetter, PropertySetter, ext);
          }
       }
    }
