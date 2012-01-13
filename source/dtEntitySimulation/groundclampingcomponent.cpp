@@ -32,6 +32,7 @@
 #include <osg/io_utils>
 
 #define MINIMUM_MOVEMENT_DISTANCE 0.2
+#define CLAMPING_INTERVAL 5.0
 
 namespace dtEntitySimulation
 {
@@ -54,6 +55,7 @@ namespace dtEntitySimulation
       , mEntity(NULL)
       , mIntersector(new osgUtil::LineSegmentIntersector(osg::Vec3d(), osg::Vec3d()))
       , mLastClampedPosition(osg::Vec3(FLT_MAX, FLT_MAX, FLT_MAX))
+      , mLastClampingTime(0)
    {
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
@@ -161,11 +163,11 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
-     GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
-     GetEntityManager().UnregisterForMessages(dtEntity::CameraAddedMessage::TYPE, mCameraAddedFunctor);
-     GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
-	 GetEntityManager().UnregisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor);
-	 GetEntityManager().UnregisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mMapLoadedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::CameraAddedMessage::TYPE, mCameraAddedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
+	   GetEntityManager().UnregisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor);
+	   GetEntityManager().UnregisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mMapLoadedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -260,6 +262,7 @@ namespace dtEntitySimulation
    {
       const dtEntity::TickMessage& tick = static_cast<const dtEntity::TickMessage&>(m);
       float dt = tick.GetDeltaSimTime();
+      double simTime = tick.GetSimulationTime();
 
       if(!mRootNode.valid() || mCamera == NULL || !mEnabled.Get() || mComponents.empty() )
       {
@@ -305,7 +308,10 @@ namespace dtEntitySimulation
 
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
-         if(distMovedX < MINIMUM_MOVEMENT_DISTANCE && distMovedY < MINIMUM_MOVEMENT_DISTANCE)
+         if(distMovedX < MINIMUM_MOVEMENT_DISTANCE &&
+            distMovedY < MINIMUM_MOVEMENT_DISTANCE &&
+            simTime < component->GetLastClampingTime() + CLAMPING_INTERVAL
+            )
          {
             transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
             if(component->GetClampingMode() == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
@@ -335,14 +341,14 @@ namespace dtEntitySimulation
          if(isector->containsIntersections())
          {
             GroundClampingComponent* component = i->second;
-            HandleIntersection(component, isector->getFirstIntersection(), dt);
+            HandleIntersection(component, isector->getFirstIntersection(), dt, simTime);
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::HandleIntersection(GroundClampingComponent* component,
-      const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt)
+      const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt, double simTime)
    {
       osg::Vec3d isectpos = intersection.getWorldIntersectPoint();         
 
@@ -360,7 +366,6 @@ namespace dtEntitySimulation
       {
          translation[2] = isectpos[2] + voffset;
          transformcomp->SetTranslation(translation);
-         component->SetLastClampedPosition(translation);
       }
 
       if(mode == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
@@ -380,8 +385,7 @@ namespace dtEntitySimulation
          component->SetLastClampedAttitude(newrot);
       }               
 
-      // no intersection found, set last clamped pos to current position
-      // so that there is no intersection test until translation changes
-      component->SetLastClampedPosition(component->GetTransformComponent()->GetTranslation());
+      component->SetLastClampedPosition(transformcomp->GetTranslation());
+      component->SetLastClampingTime(simTime);
    }
 }

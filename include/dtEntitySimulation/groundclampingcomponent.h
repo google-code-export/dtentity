@@ -93,6 +93,8 @@ namespace dtEntitySimulation
       void SetMinDistToCamera(float  p) { mMinDistToCamera.Set(p); }
       float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
 
+      double GetLastClampingTime() const { return mLastClampingTime; }
+      void SetLastClampingTime(double v) { mLastClampingTime = v; }
    private:
 
       dtEntity::StringIdProperty mClampingMode;
@@ -104,6 +106,7 @@ namespace dtEntitySimulation
       osg::ref_ptr<osgUtil::LineSegmentIntersector> mIntersector;
       osg::Vec3d mLastClampedPosition;
       osg::Quat mLastClampedAttitude;
+      double mLastClampingTime;
       
    };
 
@@ -150,7 +153,7 @@ namespace dtEntitySimulation
       dtEntity::TransformComponent* GetTransformComp(dtEntity::EntityId eid, GroundClampingComponent* component);
 
       void HandleIntersection(GroundClampingComponent* component,
-         const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt);
+         const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt, double simTime);
 
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mCameraAddedFunctor;
