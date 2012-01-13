@@ -325,7 +325,7 @@ namespace dtEntity
          bool success = this->GetEntitySystem(it->second, es);
          if(!success)
          {
-            LOG_ERROR("Error in type hierarchy structure!");
+            LOG_ERROR("Error in type hierarchy structure! Cannot find entity system " << GetStringFromSID(it->second));
             continue;
          }
 
