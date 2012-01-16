@@ -99,6 +99,12 @@ namespace dtEntity
        */
       std::set<ComponentType> AddPlugin(const std::string& abspath, bool saveWithScene = false);
 
+      /**
+       * same as before, but doesn't expect a full path to plugin, instead takes
+        * a plugin directory and a library name without extension.
+       */
+      std::set<ComponentType> AddPlugin(const std::string& path, const std::string& libname, bool saveWithScene = false);
+
       /// Retrieves the names of the currently loaded plugins (with no path and no extension)
       const std::map<std::string, bool>& GetLoadedPlugins() const { return mLoadedPlugins; }
 
@@ -106,6 +112,9 @@ namespace dtEntity
       EntityManager& GetEntityManager() const { return *mEntityManager; }
 
       PluginFactoryMap& GetFactories() { return mFactories; }
+
+      // get extension appended to lib name to point to shared library name
+      std::string GetLibExtension();
 
    private:
 

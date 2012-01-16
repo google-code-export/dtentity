@@ -45,6 +45,7 @@ SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/inputhandlerwrapper.h
 	${HEADER_PATH}/loggerwrapper.h
 	${HEADER_PATH}/mapsystemwrapper.h
+	${HEADER_PATH}/messages.h
 	${HEADER_PATH}/propertyconverter.h
 	${HEADER_PATH}/screenwrapper.h
 	${HEADER_PATH}/scriptcomponent.h
@@ -66,6 +67,7 @@ SET(LIB_SOURCES
 	${SOURCE_PATH}/inputhandlerwrapper.cpp	
     ${SOURCE_PATH}/loggerwrapper.cpp
 	${SOURCE_PATH}/mapsystemwrapper.cpp
+	${SOURCE_PATH}/messages.cpp
 	${SOURCE_PATH}/propertyconverter.cpp
 	${SOURCE_PATH}/screenwrapper.cpp
 	${SOURCE_PATH}/scriptcomponent.cpp	
