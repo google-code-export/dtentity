@@ -24,6 +24,7 @@
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/stringid.h>
 #include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
 #include <osgDB/DynamicLibrary>
 #include <dtEntity/log.h>
 
@@ -99,34 +100,69 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ComponentPluginManager::AddPlugin(const std::string& abspath)
+   std::set<ComponentType> ComponentPluginManager::AddPlugin(const std::string& abspath, bool saveWithScene)
    {
-     std::list<osg::ref_ptr<ComponentPluginFactory> > factories;
-     LoadPluginFactories(abspath, factories);
+      
+      // store the name of this plugin
+      std::string libName(osgDB::getSimpleFileName(abspath));
+      libName.assign(osgDB::getNameLessAllExtensions(libName));
+#ifdef _DEBUG
+      // remove debug postfix from lib name
+      // TODO: need a better way to handle this. Maybe add a Cmake define line the OSG_LIBRARY_POSTFIX in osgDB?
+      std::string debugPostfix("d");
+      libName = libName.substr(0, libName.size() - debugPostfix.size());
+#endif // _DEBUG
 
-     if(!factories.empty())
-     {
-        std::list<osg::ref_ptr<ComponentPluginFactory> >::iterator i;
-        for(i = factories.begin(); i != factories.end(); ++i)
-        {
-           osg::ref_ptr<ComponentPluginFactory> factory = *i;
-           assert(factory.valid());
+      std::set<ComponentType> result;
 
-           ComponentType ctype = factory->GetType();
+      // if already loaded
+      if(mLoadedPlugins.find(libName) != mLoadedPlugins.end())
+      {
+         // modify saveWithScene flag anyway, could have changed
+         mLoadedPlugins[libName] = saveWithScene;
+         return result;
+      }
 
-           // check if a plugin with this name already exists
-           if(mEntityManager->HasEntitySystem(ctype))
-           {
-              LOG_ERROR("Unable to load entity system from path " << abspath <<":"
-                << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!");
-              continue;
-           }
+      if (libName.size() > 0)
+      {
+         mLoadedPlugins[libName] = saveWithScene;
+      }
+      
+      std::list<osg::ref_ptr<ComponentPluginFactory> > factories;
+      LoadPluginFactories(abspath, factories);
 
-           LOG_DEBUG("Registered entity system " + dtEntity::GetStringFromSID(ctype));
-           // insert factory into factory list
-           AddFactory(factory);
-        }
-     }
+      if(factories.empty())
+      {
+         mLoadedPlugins.erase(libName);
+      }
+      else
+      {
+         std::list<osg::ref_ptr<ComponentPluginFactory> >::iterator i;
+         for(i = factories.begin(); i != factories.end(); ++i)
+         {
+            osg::ref_ptr<ComponentPluginFactory> factory = *i;
+            assert(factory.valid());
+
+            ComponentType ctype = factory->GetType();
+
+            // store this type in output list
+            result.insert(ctype);
+
+            // check if a plugin with this name already exists
+            if(mEntityManager->HasEntitySystem(ctype))
+            {
+               LOG_ERROR("Unable to load entity system from path " << abspath <<":"
+                  << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!");
+               continue;
+            }
+
+            LOG_DEBUG("Registered entity system " + dtEntity::GetStringFromSID(ctype));
+            // insert factory into factory list
+            AddFactory(factory);
+         }   
+      }
+
+      return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -287,5 +323,7 @@ namespace dtEntity
 
          mFactories.erase(mFactories.begin());
       }
+      // also clear the list of loaded plugins
+      mLoadedPlugins.clear();
    }
 }

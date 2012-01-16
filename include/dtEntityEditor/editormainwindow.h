@@ -121,6 +121,7 @@ namespace dtEntityEditor
       void OnChooseDataPaths();
       void OnSaveScene();
       void OnSaveAll();
+      void OnAddPlugin();
       void OnResetSystem();
       void EmitQueuedMessages();
 
@@ -149,6 +150,7 @@ namespace dtEntityEditor
       QAction* mNewSceneAct;
       QAction* mSaveSceneAct;
       QAction* mSaveAllAct;
+      QAction* mAddPluginAct;
       QAction* mResetSystemAct;
       QAction* mExitAct;
 
