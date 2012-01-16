@@ -32,7 +32,6 @@
 #include <osg/io_utils>
 
 #define MINIMUM_MOVEMENT_DISTANCE 0.2
-#define CLAMPING_INTERVAL 5.0
 
 namespace dtEntitySimulation
 {
@@ -54,8 +53,7 @@ namespace dtEntitySimulation
       : mTransformComponent(NULL)
       , mEntity(NULL)
       , mIntersector(new osgUtil::LineSegmentIntersector(osg::Vec3d(), osg::Vec3d()))
-      , mLastClampedPosition(osg::Vec3(FLT_MAX, FLT_MAX, FLT_MAX))
-      , mLastClampingTime(0)
+      , mDirty(true)
    {
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
@@ -85,6 +83,7 @@ namespace dtEntitySimulation
       {
          LOG_ERROR("Ground clamping component depends on transform component!");
       }
+      SetDirty(true);
    }
   
    ////////////////////////////////////////////////////////////////////////////
@@ -116,10 +115,11 @@ namespace dtEntitySimulation
       GetEntityManager().RegisterForMessages(dtEntity::CameraRemovedMessage::TYPE,
          mCameraAddedFunctor, "GroundClampingSystem::CameraRemoved");
 
-	  mMapLoadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::MapLoaded);
+	   mMapLoadedFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::MapLoaded);
       GetEntityManager().RegisterForMessages(dtEntity::MapLoadedMessage::TYPE,
          mMapLoadedFunctor, "GroundClampingSystem::MapLoaded");
-	  GetEntityManager().RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE,
+
+	   GetEntityManager().RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE,
          mMapLoadedFunctor, "GroundClampingSystem::MapUnLoaded");
 
       AddScriptedMethod("getTerrainHeight", dtEntity::ScriptMethodFunctor(this, &GroundClampingSystem::ScriptGetTerrainHeight));
@@ -158,6 +158,10 @@ namespace dtEntitySimulation
       {
          SetIntersectLayer(prop.StringIdValue());
       }
+      else if(propname == EnabledId && prop.BoolValue() == true)
+      {
+         DirtyAll();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -168,6 +172,16 @@ namespace dtEntitySimulation
       GetEntityManager().UnregisterForMessages(dtEntity::CameraRemovedMessage::TYPE, mCameraRemovedFunctor);
 	   GetEntityManager().UnregisterForMessages(dtEntity::MapLoadedMessage::TYPE, mMapLoadedFunctor);
 	   GetEntityManager().UnregisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mMapLoadedFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void GroundClampingSystem::DirtyAll() 
+   {
+      ComponentStore::iterator i = mComponents.begin();
+      for(; i != mComponents.end(); ++i)
+      {
+         i->second->SetDirty(true);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -186,6 +200,8 @@ namespace dtEntitySimulation
          LOG_ERROR("Could not find intersect layer for ground clamping system!");
          mRootNode = NULL;
       }
+
+      DirtyAll();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -238,6 +254,7 @@ namespace dtEntitySimulation
       if(msg.GetContextId() == 0)
       {
          GetEntityManager().GetComponent(msg.GetAboutEntityId(), mCamera);
+         DirtyAll();
       }
    }
 
@@ -298,6 +315,7 @@ namespace dtEntitySimulation
          float distToCam = sqrt(distx * distx + disty * disty);
          if(distToCam > component->GetMinDistToCamera())
          {
+            component->SetDirty(true);
             continue;
          }
 
@@ -308,9 +326,9 @@ namespace dtEntitySimulation
 
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
-         if(distMovedX < MINIMUM_MOVEMENT_DISTANCE &&
-            distMovedY < MINIMUM_MOVEMENT_DISTANCE &&
-            simTime < component->GetLastClampingTime() + CLAMPING_INTERVAL
+         if(!component->GetDirty() &&
+            distMovedX < MINIMUM_MOVEMENT_DISTANCE &&
+            distMovedY < MINIMUM_MOVEMENT_DISTANCE
             )
          {
             transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
@@ -386,6 +404,6 @@ namespace dtEntitySimulation
       }               
 
       component->SetLastClampedPosition(transformcomp->GetTranslation());
-      component->SetLastClampingTime(simTime);
+      component->SetDirty(false);
    }
 }

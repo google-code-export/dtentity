@@ -93,8 +93,9 @@ namespace dtEntitySimulation
       void SetMinDistToCamera(float  p) { mMinDistToCamera.Set(p); }
       float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
 
-      double GetLastClampingTime() const { return mLastClampingTime; }
-      void SetLastClampingTime(double v) { mLastClampingTime = v; }
+      void SetDirty(bool v) { mDirty = v; }
+      bool GetDirty() const { return mDirty; }
+
    private:
 
       dtEntity::StringIdProperty mClampingMode;
@@ -105,8 +106,8 @@ namespace dtEntitySimulation
       dtEntity::Entity* mEntity;
       osg::ref_ptr<osgUtil::LineSegmentIntersector> mIntersector;
       osg::Vec3d mLastClampedPosition;
+      bool mDirty;
       osg::Quat mLastClampedAttitude;
-      double mLastClampingTime;
       
    };
 
@@ -151,14 +152,14 @@ namespace dtEntitySimulation
       dtEntity::Property* ScriptGetTerrainHeight(const dtEntity::PropertyArgs& args);
 
       dtEntity::TransformComponent* GetTransformComp(dtEntity::EntityId eid, GroundClampingComponent* component);
-
+      void DirtyAll();
       void HandleIntersection(GroundClampingComponent* component,
          const osgUtil::LineSegmentIntersector::Intersection& intersection, float dt, double simTime);
 
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mCameraAddedFunctor;
       dtEntity::MessageFunctor mCameraRemovedFunctor;
-	  dtEntity::MessageFunctor mMapLoadedFunctor;
+	   dtEntity::MessageFunctor mMapLoadedFunctor;
       osgUtil::IntersectionVisitor mIntersectionVisitor;
       osg::observer_ptr<osg::Node> mRootNode;
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;

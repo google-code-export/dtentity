@@ -32,7 +32,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
   ${CMAKE_SOURCE_DIR}/source/dtEntity/include
-  ${CMAKE_SOURCE_DIR}/source/dtEntityWrappers/include
   ${CMAKE_SOURCE_DIR}/source/dtEntityQtWidgets/include
   ${QT_INCLUDE_DIR}
   ${OSG_INCLUDE_DIRS}
