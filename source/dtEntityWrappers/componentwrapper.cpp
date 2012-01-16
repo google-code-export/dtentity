@@ -127,7 +127,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentWrapperDestructor(v8::Persistent<Value> v, void*)
    {
-      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof dtEntity::Component);
+      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(dtEntity::Component));
       v.Dispose();
    }
 
@@ -170,7 +170,7 @@ namespace dtEntityWrappers
      }
      Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
      pobj.MakeWeak(NULL, &ComponentWrapperDestructor);
-     V8::AdjustAmountOfExternalAllocatedMemory(sizeof dtEntity::Component);
+     V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
      return handle_scope.Close(instance);
    }
 
