@@ -60,7 +60,7 @@ namespace dtEntity
       // find out library extension for this system
       // take care of debug/release library stuff on windows
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#if defined (_DEBUG)       
+#if defined (_DEBUG)
       return "d.dll";
 #else
       return ".dll";
@@ -68,6 +68,18 @@ namespace dtEntity
 #else
       return ".so";
 #endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string ComponentPluginManager::GetSharedLibNameFromPluginName(const std::string& pluginName)
+   {
+      std::ostringstream os;
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+      os << pluginName << GetLibExtension();
+#else
+      os << "lib" << pluginName << GetLibExtension();
+#endif
+      return os.str();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +125,7 @@ namespace dtEntity
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
       paths.push_back(path);
       
-      std::string filename = libname + GetLibExtension();
+      std::string filename = GetSharedLibNameFromPluginName(libname);
       std::string p = osgDB::findFileInPath(filename, paths);
       if(p == "")
       {
