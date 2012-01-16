@@ -68,7 +68,7 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Array> propnames = obj->GetPropertyNames();
 
-      V8::AdjustAmountOfExternalAllocatedMemory(sizeof ComponentJS);
+      V8::AdjustAmountOfExternalAllocatedMemory(sizeof(ComponentJS));
 
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -109,7 +109,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    ComponentJS::~ComponentJS()
    {
-      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof ComponentJS);
+      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(ComponentJS));
       for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
       {
          delete i->second;
