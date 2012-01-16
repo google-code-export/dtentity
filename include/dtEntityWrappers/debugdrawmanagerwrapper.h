@@ -31,6 +31,6 @@ namespace dtEntity
 namespace dtEntityWrappers
 {
 
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Function> CreateDebugDrawManager();
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Function> CreateDebugDrawManager(v8::Handle<v8::Context> context);
 }
 

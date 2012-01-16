@@ -120,9 +120,8 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::EntityManager* GetEntityManager()
+   dtEntity::EntityManager* GetEntityManager(v8::Handle<v8::Context> context)
    {
-      v8::Handle<v8::Context> context = GetGlobalContext();
       Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
       return UnwrapEntityManager(emh);
    }

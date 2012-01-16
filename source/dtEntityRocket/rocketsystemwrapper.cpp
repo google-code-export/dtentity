@@ -53,18 +53,18 @@ namespace dtEntityRocket
          RocketComponent* rc = rs->GetComponent(id);
          if(rc && rc->GetRocketContext() != NULL)
          {
-            return WrapContext(rc->GetRocketContext());
+            return WrapContext(args.Holder()->CreationContext(), rc->GetRocketContext());
          }
       }
       return Null();      
    }   
    
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapRocketSystem(RocketSystem* v)
+   v8::Handle<v8::Object> WrapRocketSystem(Handle<Context> context, RocketSystem* v)
    {
       
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       Local<Object> instance = s_rocketSystemTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
@@ -130,17 +130,17 @@ namespace dtEntityRocket
          }
          else
          {
-            return WrapElement(el);
+            return WrapElement(args.Holder()->CreationContext(), el);
          }
       }
       return Undefined();      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InitRocketSystemWrapper()
+   void InitRocketSystemWrapper(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
       Handle<FunctionTemplate> templt = FunctionTemplate::New();
       s_rocketSystemTemplate = Persistent<FunctionTemplate>::New(templt);
       templt->SetClassName(String::New("Rocket"));
@@ -151,6 +151,6 @@ namespace dtEntityRocket
       proto->Set("getContext", FunctionTemplate::New(RSGetContext));
       proto->Set("instanceElement", FunctionTemplate::New(RSInstanceElement));
       proto->Set("loadFontFace", FunctionTemplate::New(RSLoadFontFace));
-      dtEntityWrappers::RegisterEntitySystempWrapper(RocketComponent::TYPE, templt);
+      dtEntityWrappers::RegisterEntitySystempWrapper(context, RocketComponent::TYPE, templt);
    }
 }

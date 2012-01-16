@@ -35,6 +35,7 @@
 #include <osgLibRocket/FileInterface>
 #include <osgLibRocket/GuiNode>
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <Rocket/Controls/Controls.h>
 
 namespace dtEntityRocket
@@ -292,8 +293,15 @@ namespace dtEntityRocket
      // EventInstancer* ei = new EventInstancer(GetEntityManager().GetMessagePump());
      // Rocket::Core::Factory::RegisterEventInstancer(ei)->RemoveReference();
 
-     EventListenerInstancer* eli = new EventListenerInstancer(GetEntityManager().GetMessagePump());
-	  Rocket::Core::Factory::RegisterEventListenerInstancer(eli)->RemoveReference();
+     
+     dtEntityWrappers::ScriptSystem* scriptsys;
+     if(em.GetEntitySystem(dtEntityWrappers::ScriptSystem::TYPE, scriptsys))
+     {
+        EventListenerInstancer* eli = new EventListenerInstancer(scriptsys->GetGlobalContext(), GetEntityManager().GetMessagePump());
+        Rocket::Core::Factory::RegisterEventListenerInstancer(eli)->RemoveReference();
+     }
+     
+	  
 
    }
 

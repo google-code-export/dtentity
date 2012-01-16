@@ -33,6 +33,7 @@
 #include <dtEntityWrappers/loggerwrapper.h>
 #include <dtEntityWrappers/entitysystemwrapper.h>
 #include <dtEntityWrappers/mapsystemwrapper.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 
 #include <v8.h>
@@ -80,12 +81,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void InitializeAllWrappers(dtEntity::EntityManager& em)
    {
-
-      RegisterGlobalFunctions();
-      HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
-      Context::Scope context_scope(context);
-
+      
       dtEntity::ApplicationSystem* as;
       if(!em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as))
       {
@@ -99,6 +95,19 @@ namespace dtEntityWrappers
         LOG_ERROR("Could not get map system!");
         return;
       }
+
+      ScriptSystem* scriptsystem;
+      if(!em.GetEntitySystem(ScriptSystem::TYPE, scriptsystem))
+      {
+        LOG_ERROR("Could not get script system!");
+        return;
+      }
+
+      HandleScope handle_scope;
+      Handle<Context> context = scriptsystem->GetGlobalContext();      
+      Context::Scope context_scope(context);
+
+      RegisterGlobalFunctions(context);
       
       
 #if BUILD_CEGUI_WRAPPER
@@ -106,22 +115,22 @@ namespace dtEntityWrappers
       as->GetViewer()->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
       // make main view gl context current before creating gui
       dtEntity::GUI* gui = new dtEntity::GUI(em, as->GetPrimaryCamera());
-      context->Global()->Set(String::New("GUI"), WrapGui(gui));
+      context->Global()->Set(String::New("GUI"), WrapGui(scriptsystem, gui));
 #endif
 
-      context->Global()->Set(String::New("DebugDrawManager"), CreateDebugDrawManager());
+      context->Global()->Set(String::New("DebugDrawManager"), CreateDebugDrawManager(context));
       //context->Global()->Set(String::New("Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
 
       // make entity manager accessible as a global variable
-      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(&em, &mapsystem->GetMessageFactory()));
+      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(context, &em, &mapsystem->GetMessageFactory()));
 
       context->Global()->Set(String::New("NodeMasks"), WrapNodeMasks());
 
       context->Global()->Set(String::New("Buffer"), CreateBuffer());
       context->Global()->Set(String::New("File"), CreateFile());
-      context->Global()->Set(String::New("Log"), WrapLogger());
+      context->Global()->Set(String::New("Log"), WrapLogger(context));
 
-      InitMapSystemWrapper();
+      InitMapSystemWrapper(context);
       
 #if BUILD_OPENAL_WRAPPER
       InitSoundSystemWrapper();

@@ -25,5 +25,5 @@
 
 namespace dtEntityWrappers
 {
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapLogger();
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapLogger(v8::Handle<v8::Context> context);
 }

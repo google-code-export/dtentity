@@ -34,6 +34,6 @@ namespace Rocket
 namespace dtEntityRocket
 {
    class RocketSystem;
-   v8::Handle<v8::Object> WrapContext(Rocket::Core::Context* v);
+   v8::Handle<v8::Object> WrapContext(v8::Handle<v8::Context>, Rocket::Core::Context* v);
    Rocket::Core::Context* UnwrapContext(v8::Handle<v8::Value>);   
 }

@@ -33,6 +33,6 @@ namespace Rocket
 
 namespace dtEntityRocket
 {
-   v8::Handle<v8::Object> WrapEventListener(Rocket::Core::EventListener* v);
+   v8::Handle<v8::Object> WrapEventListener(v8::Handle<v8::Context> context, Rocket::Core::EventListener* v);
    Rocket::Core::EventListener* UnwrapEventListener(v8::Handle<v8::Value>);   
 }

@@ -25,6 +25,7 @@
 #include "rocketsystemwrapper.h"
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/messagefactory.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 
 namespace dtEntityRocket
 {
@@ -37,7 +38,10 @@ namespace dtEntityRocket
 
       virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
       {
-         InitRocketSystemWrapper();
+         dtEntityWrappers::ScriptSystem* scriptsys;
+         bool success = em->GetEntitySystem(dtEntityWrappers::ScriptSystem::TYPE, scriptsys);
+         assert(success);
+         InitRocketSystemWrapper(scriptsys->GetGlobalContext());
          es = new RocketSystem(*em);        
 
          return true;

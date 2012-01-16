@@ -81,7 +81,6 @@ namespace dtEntityWrappers
    {      
 
       V8::Initialize();
-      RegisterGlobalFunctions();
       Register(ScriptsId, &mScripts);
       Register(DebugPortId, &mDebugPort);
       Register(DebugEnabledId, &mDebugEnabled);
@@ -92,7 +91,6 @@ namespace dtEntityWrappers
       Handle<Context> context = GetGlobalContext();
       Context::Scope context_scope(context);
      
-      SetupContext();
       //V8::AddGCPrologueCallback(GCStartCallback);
       //V8::AddGCEpilogueCallback(GCEndCallback);
 
@@ -124,6 +122,8 @@ namespace dtEntityWrappers
    {
       HandleScope handle_scope;
 
+      RegisterGlobalFunctions(GetGlobalContext());
+      
       InitializeAllWrappers(GetEntityManager());
 
       Handle<Context> context = GetGlobalContext();
@@ -141,10 +141,10 @@ namespace dtEntityWrappers
       dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
 
       context->Global()->Set(String::New("Axis"), WrapAxes(input));
-      context->Global()->Set(String::New("Input"), WrapInputHandler(input));
+      context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));
       context->Global()->Set(String::New("Key"), WrapKeys(input));
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
-      context->Global()->Set(String::New("Screen"), WrapScreen(mView.get(), window));
+      context->Global()->Set(String::New("Screen"), WrapScreen(this, mView.get(), window));
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());
@@ -166,6 +166,12 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
+   {
+      SetupContext();      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::OnSceneLoaded(const dtEntity::Message& msg)
    {
       dtEntity::PropertyArray scripts = mScripts.Get();
@@ -181,7 +187,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::OnResetSystem(const dtEntity::Message& msg)
    {
-      UnregisterJavaScriptFromMessages();
+      UnregisterJavaScriptFromMessages(this);
       WrapperManager::GetInstance().ResetGlobalContext();
 
       SetupContext();
@@ -192,7 +198,25 @@ namespace dtEntityWrappers
    void ScriptSystem::OnLoadScript(const dtEntity::Message& m)
    {
       const ExecuteScriptMessage& msg = static_cast<const ExecuteScriptMessage&>(m);
-      ExecuteFile(msg.GetPath());
+
+      HandleScope scope;
+      Handle<Context> context = GetGlobalContext();      
+      Context::Scope context_scope(context);
+      
+      if(msg.GetIncludeOnce())
+      {
+         WrapperManager::GetInstance().ExecuteFileOnce(msg.GetPath());
+      }
+      else
+      {
+         WrapperManager::GetInstance().ExecuteFile(msg.GetPath());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   v8::Handle<v8::Context> ScriptSystem::GetGlobalContext()
+   {
+      return WrapperManager::GetInstance().GetGlobalContext();
    }
 
    ////////////////////////////////////////////////////////////////////////////

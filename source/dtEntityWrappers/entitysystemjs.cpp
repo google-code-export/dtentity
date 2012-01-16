@@ -41,7 +41,7 @@ namespace dtEntityWrappers
       {
          return Undefined();
       }
-      return PropToVal(prop);
+      return PropToVal(info.Holder()->CreationContext(), prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -127,15 +127,11 @@ namespace dtEntityWrappers
       std::string propname = dtEntity::GetStringFromSID(propnamesid);
       HandleScope scope;
          
-      /*
-      Handle<Value>newval = PropToVal(&prop);
-      mComponent->Set(String::New(propname.c_str()), newval);
-      */
       Handle<String> s = String::New("onPropertyChanged");
       Handle<Value> cb = mComponent->Get(s);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
-         Context::Scope context_scope(GetGlobalContext());
+         Context::Scope context_scope(mComponent->CreationContext());
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
@@ -159,7 +155,7 @@ namespace dtEntityWrappers
       Handle<Value> cb = mComponent->Get(strfin);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
-         Context::Scope context_scope(GetGlobalContext());
+         Context::Scope context_scope(mComponent->CreationContext());
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
@@ -237,7 +233,7 @@ namespace dtEntityWrappers
       : BaseClass(id, em)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(obj->CreationContext());
       mSystem = Persistent<Object>::New(obj);
       mHasCompFun = ExtractFun(mSystem, "hasComponent");
       mGetCompFun = ExtractFun(mSystem, "getComponent");
@@ -290,14 +286,14 @@ namespace dtEntityWrappers
       std::string propname = dtEntity::GetStringFromSID(propnamesid);
       HandleScope scope;
          
-      Handle<Value>newval = PropToVal(&prop);
+      Handle<Value> newval = PropToVal(mSystem->CreationContext(), &prop);
       Handle<String> propnamestr = String::New(propname.c_str());
       mSystem->Set(propnamestr, newval);
 
       Handle<Value> cb = mSystem->Get(mStringOnPropertyChanged);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
-         Context::Scope context_scope(GetGlobalContext());
+         Context::Scope context_scope(mSystem->CreationContext());
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
@@ -320,7 +316,7 @@ namespace dtEntityWrappers
       Handle<Value> cb = mSystem->Get(mStringFinished);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
-         Context::Scope context_scope(GetGlobalContext());
+         Context::Scope context_scope(mSystem->CreationContext());
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
@@ -351,7 +347,7 @@ namespace dtEntityWrappers
    {
       
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
       TryCatch try_catch;
       Handle<Value> argv[1] = { Integer::New(eid) };
       Handle<Value> ret = mHasCompFun->Call(mSystem, 1, argv);
@@ -370,7 +366,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::GetComponent(dtEntity::EntityId eid, dtEntity::Component*& component)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
       
@@ -397,7 +393,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::GetComponent(dtEntity::EntityId eid, const dtEntity::Component*& component) const
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
 
@@ -423,7 +419,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::CreateComponent(dtEntity::EntityId eid, dtEntity::Component*& component)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
 
@@ -449,7 +445,7 @@ namespace dtEntityWrappers
    bool EntitySystemJS::DeleteComponent(dtEntity::EntityId eid)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
 
@@ -468,7 +464,7 @@ namespace dtEntityWrappers
    void EntitySystemJS::GetEntitiesInSystem(std::list<dtEntity::EntityId>& toFill) const
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
       TryCatch try_catch;
       Handle<Value> ret = mGetESFun->Call(mSystem, 0, NULL);
 
@@ -510,7 +506,7 @@ namespace dtEntityWrappers
    void EntitySystemJS::GetProperties(PropertyMap& toFill)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
       Handle<Array> propnames = mSystem->GetPropertyNames();
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -542,7 +538,7 @@ namespace dtEntityWrappers
    void EntitySystemJS::GetProperties(ConstPropertyMap& toFill) const
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
       Handle<Array> propnames = mSystem->GetPropertyNames();
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -579,7 +575,7 @@ namespace dtEntityWrappers
          return true;
       }
 
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
       Handle<Value> argv[1] = { Uint32::New(id)};
@@ -603,7 +599,7 @@ namespace dtEntityWrappers
          return true;
       }
 
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
       Local<Function> fun = Local<Function>::Cast(mSystem->Get(mStringAllowComponentCreationBySpawner));
@@ -626,7 +622,7 @@ namespace dtEntityWrappers
          return true;
       }
 
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mSystem->CreationContext());
 
       TryCatch try_catch;
       Local<Function> fun = Local<Function>::Cast(mSystem->Get(mStringStorePropertiesToScene));

@@ -35,5 +35,6 @@ namespace dtEntityWrappers
 
    const dtEntity::MessageType ExecuteScriptMessage::TYPE(dtEntity::SID("ExecuteScriptMessage"));
    const dtEntity::StringId ExecuteScriptMessage::PathId(dtEntity::SID("Path"));
+   const dtEntity::StringId ExecuteScriptMessage::IncludeOnceId(dtEntity::SID("IncludeOnce"));
   
 }

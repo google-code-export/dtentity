@@ -118,7 +118,7 @@ namespace dtEntityWrappers
             String::New(msg.c_str())
          };
 
-         Context::Scope context_scope(GetGlobalContext());
+         Context::Scope context_scope(mFunction->CreationContext());
          TryCatch try_catch;
          Handle<Value> result = mFunction->Call(mFunction, 5, argv);
 
@@ -154,10 +154,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapLogger()
+   v8::Handle<v8::Object> WrapLogger(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
       v8::Context::Scope context_scope(context);
 
       if(s_loggerTemplate.IsEmpty())

@@ -33,7 +33,7 @@ namespace dtEntityRocket
    public:
 	   
       EventListener(v8::Handle<v8::Function> func);
-      EventListener(const std::string& code);
+      EventListener(v8::Handle<v8::Context>, const std::string& code);
       ~EventListener();
 
       // Process the incoming Event
@@ -42,6 +42,7 @@ namespace dtEntityRocket
    private:
       bool ExecuteCode();
       v8::Persistent<v8::Function> mFunc;
+      v8::Persistent<v8::Context> mContext;
       std::string mCode;
    };
 

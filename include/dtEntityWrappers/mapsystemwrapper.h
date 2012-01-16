@@ -1,5 +1,7 @@
 #pragma once
 
+#include <v8.h>
+
 /*
 * dtEntity Game and Simulation Engine
 *
@@ -22,5 +24,5 @@
 
 namespace dtEntityWrappers
 {
-   void InitMapSystemWrapper();
+   void InitMapSystemWrapper(v8::Handle<v8::Context>);
 }

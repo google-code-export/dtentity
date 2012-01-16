@@ -29,6 +29,7 @@
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
@@ -51,7 +52,7 @@ namespace dtEntityWrappers
    void SCRSetLockCursor(Local<String> propname, Local<Value> value, const AccessorInfo& info)
    {     
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = info.Holder()->CreationContext();
       Handle<Value> ih = context->Global()->Get(String::New("Input"));
       dtEntity::InputHandler* input = UnwrapInputHandler(ih);
       input->SetLockCursor(value->BooleanValue());
@@ -62,7 +63,7 @@ namespace dtEntityWrappers
    Handle<Value> SCRGetLockCursor(Local<String> propname, const AccessorInfo& info)
    {
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = info.Holder()->CreationContext();
       Handle<Value> ih = context->Global()->Get(String::New("Input"));
       dtEntity::InputHandler* input = UnwrapInputHandler(ih);
       return Boolean::New(input->GetLockCursor());
@@ -178,7 +179,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetPickRay(const Arguments& args)
    {
-      dtEntity::EntityManager* em = GetEntityManager();
+      dtEntity::EntityManager* em = GetEntityManager(args.Holder()->CreationContext());
+
       dtEntity::ApplicationSystem* appsys;
       em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
       osg::Vec3 pr = appsys->GetWindowManager()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
@@ -210,7 +212,7 @@ namespace dtEntityWrappers
 	 
       HandleScope scope;
 
-      dtEntity::EntityManager* em = GetEntityManager();
+      dtEntity::EntityManager* em = GetEntityManager(args.Holder()->CreationContext());
 
 	   dtEntity::CameraSystem* camsys;
 	   em->GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
@@ -280,7 +282,7 @@ namespace dtEntityWrappers
 
       HandleScope scope;
 
-      dtEntity::EntityManager* entityManager = GetEntityManager();
+      dtEntity::EntityManager* entityManager = GetEntityManager(args.Holder()->CreationContext());
 
       osg::Vec3d from = UnwrapVec3(args[0]);
       osg::Vec3d to = UnwrapVec3(args[1]);
@@ -387,7 +389,7 @@ namespace dtEntityWrappers
          if(traitsin->Has(String::New("vsync"))) traits->vsync = traitsin->Get(String::New("vsync"))->BooleanValue();
       }
 
-      dtEntity::EntityManager* entityManager = GetEntityManager();
+      dtEntity::EntityManager* entityManager = GetEntityManager(args.Holder()->CreationContext());
       dtEntity::ApplicationSystem* appsys;
       entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
 
@@ -398,7 +400,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRCloseWindow(const Arguments& args)
    {     
-      dtEntity::EntityManager* entityManager = GetEntityManager();
+      dtEntity::EntityManager* entityManager = GetEntityManager(args.Holder()->CreationContext());
       dtEntity::ApplicationSystem* appsys;
       entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
       appsys->GetWindowManager()->CloseWindow(ToStdString(args[0]));
@@ -407,10 +409,10 @@ namespace dtEntityWrappers
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapScreen(osgViewer::View* v, osgViewer::GraphicsWindow* w)
+   v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss, osgViewer::View* v, osgViewer::GraphicsWindow* w)
    {
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = ss->GetGlobalContext();
       Context::Scope context_scope(context);
 
       Handle<FunctionTemplate> templt = FunctionTemplate::New();

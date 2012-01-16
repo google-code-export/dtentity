@@ -47,8 +47,9 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   EventListener::EventListener(const std::string& code)
-      : mCode(code)
+   EventListener::EventListener(Handle<Context> context, const std::string& code)
+      : mContext(Persistent<Context>::New(context))
+      , mCode(code)
    {
    }
 
@@ -56,6 +57,7 @@ namespace dtEntityRocket
    EventListener::~EventListener()
    {
       mFunc.Dispose();
+      mContext.Dispose();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +85,7 @@ namespace dtEntityRocket
    bool EventListener::ExecuteCode() 
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mContext);
 
 		std::ostringstream os;
 		os << "(function (name, parameters){";
@@ -141,7 +143,7 @@ namespace dtEntityRocket
       }
 
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(mFunc->CreationContext());
 
       const Rocket::Core::Dictionary* dict = ev.GetParameters();
       
@@ -158,13 +160,13 @@ namespace dtEntityRocket
       Handle<Object> current; 
       if(ev.GetCurrentElement())
       {
-         current = WrapElement(ev.GetCurrentElement());
+         current = WrapElement(mFunc->CreationContext(), ev.GetCurrentElement());
       }
 
       Handle<Object> target;
       if(ev.GetTargetElement())
       {
-         target = WrapElement(ev.GetTargetElement());
+         target = WrapElement(mFunc->CreationContext(), ev.GetTargetElement());
       }
       
       TryCatch try_catch;

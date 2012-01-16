@@ -33,7 +33,7 @@ namespace Rocket
 
 namespace dtEntityRocket
 {
-   v8::Handle<v8::Object> WrapElement(Rocket::Core::Element* v);
+   v8::Handle<v8::Object> WrapElement(v8::Handle<v8::Context> context, Rocket::Core::Element* v);
    Rocket::Core::Element* UnwrapElement(v8::Handle<v8::Value>);   
    v8::Handle<v8::FunctionTemplate> GetElementTemplate();
 

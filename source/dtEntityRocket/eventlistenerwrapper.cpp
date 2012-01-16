@@ -46,10 +46,10 @@ namespace dtEntityRocket
    }*/
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapEventListener(Rocket::Core::EventListener* v)
+   v8::Handle<v8::Object> WrapEventListener(Handle<Context> context, Rocket::Core::EventListener* v)
    {      
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       if(s_eventListenerTemplate.IsEmpty())
       {

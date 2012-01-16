@@ -58,7 +58,7 @@ namespace dtEntityWrappers
       }      
    }
 
-   v8::Handle<v8::Value> PropToVal(const dtEntity::Property* prop)
+   v8::Handle<v8::Value> PropToVal(v8::Handle<v8::Context> context, const dtEntity::Property* prop)
    {
       using namespace v8;
 
@@ -68,14 +68,13 @@ namespace dtEntityWrappers
       {
          dtEntity::PropertyArray arr = prop->ArrayValue();
          HandleScope scope;
-         Handle<Context> context = GetGlobalContext();
          Context::Scope context_scope(context);
 
          Handle<Array> out = Array::New(arr.size());
 
          for(unsigned int i = 0; i < arr.size(); ++i)
          {
-            out->Set(Integer::New(i), PropToVal(arr[i]));
+            out->Set(Integer::New(i), PropToVal(context, arr[i]));
          }
          
          return scope.Close(out);
@@ -87,14 +86,13 @@ namespace dtEntityWrappers
       {
          dtEntity::PropertyGroup grp = prop->GroupValue();
          HandleScope scope;
-         Handle<Context> context = GetGlobalContext();
          Context::Scope context_scope(context);
 
          Handle<Object> out = Object::New();
 
          for(dtEntity::PropertyGroup::iterator i = grp.begin(); i != grp.end(); ++i)
          {
-            out->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), PropToVal(i->second));
+            out->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), PropToVal(context, i->second));
          }
          
          return scope.Close(out);

@@ -74,8 +74,8 @@ namespace dtEntityWrappers
       virtual bool KeyUp(const std::string& name, bool handled, unsigned int contextId) {
          if(!mKeyUpFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mKeyUpFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[3] = { String::New(name.c_str()), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mKeyUpFunc->Call(mObject, 3, argv);
@@ -93,8 +93,8 @@ namespace dtEntityWrappers
       {
          if(!mKeyDownFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mKeyDownFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[3] = { String::New(name.c_str()), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mKeyDownFunc->Call(mObject, 3, argv);
@@ -112,8 +112,8 @@ namespace dtEntityWrappers
       {
          if(!mMouseUpFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mMouseUpFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[3] = { Integer::New(button), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mMouseUpFunc->Call(mObject, 3, argv);
@@ -131,8 +131,8 @@ namespace dtEntityWrappers
       {
          if(!mMouseDownFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mMouseDownFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[3] = { Integer::New(button), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mMouseDownFunc->Call(mObject, 3, argv);
@@ -151,8 +151,8 @@ namespace dtEntityWrappers
       {
          if(!mMouseWheelFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mMouseWheelFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[3] = { Integer::New(dir), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mMouseWheelFunc->Call(mObject, 3, argv);
@@ -170,8 +170,8 @@ namespace dtEntityWrappers
       {
          if(!mMouseMoveFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mMouseMoveFunc->CreationContext());
             TryCatch try_catch;
             Handle<Value> argv[4] = { Number::New(x), Number::New(y), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mMouseMoveFunc->Call(mObject, 4, argv);
@@ -189,8 +189,8 @@ namespace dtEntityWrappers
       {
          if(!mMouseEnterLeaveFunc.IsEmpty())
          {
-            Context::Scope context_scope(GetGlobalContext());
             HandleScope scope;
+            Context::Scope context_scope(mMouseEnterLeaveFunc->CreationContext());            
             TryCatch try_catch;
             Handle<Value> argv[2] = { Boolean::New(focused), Uint32::New(contextId) };
             Handle<Value> ret = mMouseEnterLeaveFunc->Call(mObject, 2, argv);
@@ -418,10 +418,9 @@ namespace dtEntityWrappers
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapInputHandler(dtEntity::InputHandler* v)
+   v8::Handle<v8::Object> WrapInputHandler(Handle<Context> context, dtEntity::InputHandler* v)
    {
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
       Context::Scope context_scope(context);
 
       Handle<FunctionTemplate> templt = FunctionTemplate::New();

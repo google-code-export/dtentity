@@ -23,6 +23,7 @@
 #include <dtEntity/messagepump.h>
 #include <Rocket/Core/Event.h>
 #include <Rocket/Core/EventListenerInstancer.h>
+#include <v8.h>
 
 namespace dtEntityRocket
 {
@@ -30,7 +31,7 @@ namespace dtEntityRocket
   class EventListenerInstancer : public Rocket::Core::EventListenerInstancer
   {
   public:
-	  EventListenerInstancer(dtEntity::MessagePump& p);
+	  EventListenerInstancer(v8::Handle<v8::Context> context, dtEntity::MessagePump& p);
 	  virtual ~EventListenerInstancer();
 
      virtual Rocket::Core::EventListener* InstanceEventListener(const Rocket::Core::String& value);
@@ -39,6 +40,7 @@ namespace dtEntityRocket
 
   private:
     dtEntity::MessagePump* mMessagePump;
+    v8::Persistent<v8::Context> mContext;
 
   };
 }

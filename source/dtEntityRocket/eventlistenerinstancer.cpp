@@ -30,20 +30,22 @@ namespace dtEntityRocket
    using namespace v8;
 
    ////////////////////////////////////////////////////////////////////////////////
-   EventListenerInstancer::EventListenerInstancer(dtEntity::MessagePump& p)
+   EventListenerInstancer::EventListenerInstancer(v8::Handle<v8::Context> context, dtEntity::MessagePump& p)
       : mMessagePump(&p)
+      , mContext(Persistent<Context>::New(context))
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    EventListenerInstancer::~EventListenerInstancer()
    {
+      mContext.Dispose();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value)
    {
-      return new EventListener(value.CString());
+      return new EventListener(mContext, value.CString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

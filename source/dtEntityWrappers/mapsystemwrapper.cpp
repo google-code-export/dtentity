@@ -253,7 +253,7 @@ namespace dtEntityWrappers
          {
             std::string propname = dtEntity::GetStringFromSID(j->first);
             const dtEntity::Property* prop = j->second;
-            jscomp->Set(String::New(propname.c_str()), PropToVal(prop));
+            jscomp->Set(String::New(propname.c_str()), PropToVal(args.Holder()->CreationContext(), prop));
          }
          
          obj->Set(String::New(compname.c_str()), jscomp);
@@ -314,10 +314,10 @@ namespace dtEntityWrappers
    }
   
    ////////////////////////////////////////////////////////////////////////////////
-   void InitMapSystemWrapper()
+   void InitMapSystemWrapper(Handle<Context> context)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(context);
 
       Handle<FunctionTemplate> templt= FunctionTemplate::New();
       templt->SetClassName(String::New("MapSystem"));
@@ -342,6 +342,6 @@ namespace dtEntityWrappers
       proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
       proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
       
-      RegisterEntitySystempWrapper(dtEntity::MapComponent::TYPE, templt);
+      RegisterEntitySystempWrapper(context, dtEntity::MapComponent::TYPE, templt);
    }
 }

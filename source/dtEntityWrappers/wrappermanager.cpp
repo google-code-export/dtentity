@@ -148,4 +148,14 @@ namespace dtEntityWrappers
       }
       return Local<Value>();
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void WrapperManager::ExecuteFileOnce(const std::string& path)
+   {
+      if(mIncludedFiles.find(path) == mIncludedFiles.end())
+      {
+         mIncludedFiles.insert(path);
+         ExecuteFile(path);
+      }
+   }
 }

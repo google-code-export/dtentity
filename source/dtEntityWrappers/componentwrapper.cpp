@@ -45,7 +45,7 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
-      return scope.Close(PropToVal(prop));
+      return scope.Close(PropToVal(info.Holder()->CreationContext(), prop));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ namespace dtEntityWrappers
       {
          std::string propname = dtEntity::GetStringFromSID(i->first);
          const dtEntity::Property* prop = i->second;
-         obj->Set(String::New(propname.c_str()), PropToVal(prop));
+         obj->Set(String::New(propname.c_str()), PropToVal(args.Holder()->CreationContext(), prop));
       }
 
       return scope.Close(obj);
@@ -132,11 +132,11 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapComponent(dtEntity::Component* v)
+   v8::Handle<v8::Object> WrapComponent(Handle<Context> context, dtEntity::Component* v)
    {
 
      v8::HandleScope handle_scope;
-     v8::Context::Scope context_scope(GetGlobalContext());
+     v8::Context::Scope context_scope(context);
 
      if(s_componentTemplate.IsEmpty())
      {
