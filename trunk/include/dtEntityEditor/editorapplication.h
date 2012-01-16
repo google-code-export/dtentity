@@ -70,6 +70,9 @@ namespace dtEntityEditor
        */
       void SetAdditionalPluginPath(const QString &path, bool bBeforeDefaultPath = false);
 
+      /// Adds a specific plugin to the component plugin manager
+      void AddPluginLibrary(std::string fileName);
+
       /**
        * Get list of osg data paths
        */

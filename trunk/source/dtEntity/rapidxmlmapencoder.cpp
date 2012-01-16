@@ -811,6 +811,37 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void ParseScene(EntityManager& em, xml_node<>* element, std::list<std::string>& mapsToLoad)
    {
+      // first load all libraries
+      for(xml_node<>* rootLibNode(element->first_node());
+         rootLibNode != NULL; rootLibNode = rootLibNode->next_sibling())
+      {
+         if(rootLibNode->type() == node_element)
+         {
+            if(strcmp(rootLibNode->name(), "libraries") == 0)
+            {
+               MapSystem* mapSystem;
+               em.GetEntitySystem(MapComponent::TYPE, mapSystem);
+               ComponentPluginManager& pluginManager = mapSystem->GetPluginManager();
+
+               // parse all child element as they contain library names
+               for(xml_node<>* currLibNode(rootLibNode->first_node());
+                  currLibNode != NULL; currLibNode = currLibNode->next_sibling())
+               {
+                  if(currLibNode->type() == node_element)
+                  {
+                     if(strcmp(currLibNode->name(), "library") == 0)
+                     {
+                        std::string fullLibName =
+                           osgDB::Registry::instance()->createLibraryNameForNodeKit(currLibNode->value());
+                        pluginManager.AddPlugin(fullLibName, true);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      // then parse entity systems
       for(xml_node<>* currentNode(element->first_node());
           currentNode != NULL; currentNode = currentNode->next_sibling())
       {
@@ -851,6 +882,8 @@ namespace dtEntity
          mFalse = doc.allocate_string("false");
          mGuiCategory = doc.allocate_string("guicategory");
          mIconPath = doc.allocate_string("iconpath");
+         mLibraries = doc.allocate_string("libraries");
+         mLibrary = doc.allocate_string("library");
          mMap = doc.allocate_string("map");
          mMaps = doc.allocate_string("maps");
          mName = doc.allocate_string("name");
@@ -890,6 +923,8 @@ namespace dtEntity
       char* mFalse;
       char* mGuiCategory;
       char* mIconPath;
+      char* mLibrary;
+      char* mLibraries;
       char* mMap;
       char* mMaps;
       char* mName;
@@ -1446,6 +1481,27 @@ namespace dtEntity
       xml_node<>* sceneelem = doc.allocate_node(node_element, "scene");
       doc.append_node(sceneelem);
       Names names(doc);
+
+      // first output the list of plugins to load with scene
+      xml_node<>* libsElem = doc.allocate_node(node_element, names.mLibraries);
+      sceneelem->append_node(libsElem);
+      MapSystem* mapSystem;
+      mEntityManager->GetEntitySystem(MapComponent::TYPE, mapSystem);
+      ComponentPluginManager& pluginManager = mapSystem->GetPluginManager();
+
+      const std::map<std::string, bool>& pluginList = pluginManager.GetLoadedPlugins();
+      std::map<std::string, bool>::const_iterator itr;
+      for(itr = pluginList.begin(); itr != pluginList.end(); itr++)
+      {
+         if (itr->second == true)
+         {
+            // this plugin must be saved to file: add it
+            std::string currLib(itr->first);
+            xml_node<>* currLibElem = doc.allocate_node(node_element, names.mLibrary);
+            libsElem->append_node(currLibElem);
+            currLibElem->value(doc.allocate_string(currLib.c_str()));
+         }
+      }
 
       std::vector<const EntitySystem*> es;
       mEntityManager->GetEntitySystems(es);

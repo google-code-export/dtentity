@@ -195,6 +195,9 @@ namespace dtEntityEditor
       connect(mSaveAllAct , SIGNAL(triggered()), this, SLOT(OnSaveAll()));
       mSaveAllAct->setEnabled(false);
 
+      mAddPluginAct = new QAction(tr("Add Plugin/Library..."), this);
+      connect(mAddPluginAct, SIGNAL(triggered()), this, SLOT(OnAddPlugin()));
+
       mResetSystemAct = new QAction(tr("Reset System"), this);
       connect(mResetSystemAct , SIGNAL(triggered()), this, SLOT(OnResetSystem()));
 
@@ -220,6 +223,8 @@ namespace dtEntityEditor
       mFileMenu->addAction(mSaveAllAct);
       mFileMenu->addSeparator();
       mFileMenu->addAction(mChangeDataPathsAct);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(mAddPluginAct);
       mFileMenu->addSeparator();
       mFileMenu->addAction(mResetSystemAct);
       mFileMenu->addAction(mExitAct);
@@ -653,6 +658,23 @@ namespace dtEntityEditor
          mSaveAllAct->setEnabled(true);
          mSaveSceneAct->setEnabled(true);
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnAddPlugin()
+   {
+      std::string newLib;
+
+      QString fileName = QFileDialog::getOpenFileName(this, tr("Load Library"),
+         QString(),
+         QString());
+
+//      newLib.assign("D:\\dev\\gilgamesh\\VC_2008\\bin\\gmGamed.dll");
+//      newLib.assign("D:\\dev\\dtentity\\VC_2008\\Debug\\plugins\\dtEntityRocketd.dll");
+      newLib.assign(fileName.toStdString());
+
+      // invoke method on application to actually load the plugin
+      mApplication->AddPluginLibrary(newLib);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

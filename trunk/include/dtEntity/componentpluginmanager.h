@@ -90,8 +90,18 @@ namespace dtEntity
       /**
        * Load a shared library / dll from abs path and register
        * the contained entity system factories
+       * A library can also be stored in the scene file, if desired (this can make it easier
+       * for applications to know what specific plugins to load).
+       * @abspath File name with path of plugin to load
+       * @saveWithScene Flag to tell if library will be saved with the scene (false by default)
+       *
+       * @return The list of new component types loaded from the plugin
        */
-      void AddPlugin(const std::string& abspath);
+      std::set<ComponentType> AddPlugin(const std::string& abspath, bool saveWithScene = false);
+
+      /// Retrieves the names of the currently loaded plugins (with no path and no extension)
+      const std::map<std::string, bool>& GetLoadedPlugins() const { return mLoadedPlugins; }
+
       
       EntityManager& GetEntityManager() const { return *mEntityManager; }
 
@@ -113,5 +123,14 @@ namespace dtEntity
       EntityManager* mEntityManager;
       MessageFactory* mMessageFactory;
 
+      /// List of libraries (plugins) currently loaded
+      /**
+      *  We assume the library name is the same as the file name, with
+      *  no path nor extension. We therefore just store the library name
+      *
+         The map stores each name with a flag that indicates if the library must be saved to
+         scene. It is up to the code filling this list to decide what libs must go to file.
+      */
+      std::map<std::string, bool> mLoadedPlugins;
    };
 }

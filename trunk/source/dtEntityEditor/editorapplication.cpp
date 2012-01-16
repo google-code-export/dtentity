@@ -157,7 +157,7 @@ namespace dtEntityEditor
             // load and start all entity systems in plugins
             mapSystem->GetPluginManager().LoadPluginsInDir(mPluginPaths[i]);
          }
-         // add new factories to list of know ones
+         // add new factories to list of known ones
          std::set<dtEntity::ComponentType> newTypes;
          dtEntity::ComponentPluginManager::PluginFactoryMap& factories = mapSystem->GetPluginManager().GetFactories();
          dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
@@ -185,6 +185,22 @@ namespace dtEntityEditor
          LoadScene(sceneToLoad);
       }
 
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+
+   void EditorApplication::AddPluginLibrary(std::string fileName)
+   {
+      // get Map system
+      dtEntity::MapSystem* mapSystem;
+      if (mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem))
+      {
+         // load plugin, set it to be saved to scene file. Also start all entity systems in it
+         std::set<dtEntity::ComponentType> newTypes = 
+            mapSystem->GetPluginManager().AddPlugin(fileName, true);
+         // notify GUI that new types are now available
+         mMainWindow->AddToKnownComponentList(newTypes);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
