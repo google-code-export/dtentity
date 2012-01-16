@@ -22,7 +22,6 @@
 * Martin Scheffler
 */
 
-#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
@@ -76,10 +75,39 @@ int main(int argc, char** argv)
       return 0;
    }
    
-   dtEntityWrappers::ScriptSystem* scriptsys = new dtEntityWrappers::ScriptSystem(*em);
-   em->AddEntitySystem(*scriptsys);
+   dtEntity::MapSystem* mapSystem;
+   em->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+
+   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityV8Plugin", true);
+   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityRocket", true);
+   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntitySimulation", true);
    
-   scriptsys->ExecuteFile(script);
+   dtEntity::StringId scriptId = dtEntity::SID("Script");
+      
+   if(!em->HasEntitySystem(scriptId))
+   {
+      if(!mapSystem->GetPluginManager().FactoryExists(scriptId))
+      {
+         LOG_ERROR("Cannot start scripting, script plugin not loaded!");
+         return 1;
+      }         
+         
+      bool success = mapSystem->GetPluginManager().StartEntitySystem(scriptId);
+      if(!success)
+      {
+         LOG_ERROR("Cannot start scripting, script plugin not loaded!");
+         return 1;
+      }
+   }
+
+   dtEntity::Message* msg;
+   bool success = mapSystem->GetMessageFactory().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
+   assert(success);
+   dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));
+
+   pathprop->SetString(script); 
+   em->EmitMessage(*msg);
+   delete msg;
 
    dtEntity::ApplicationSystem* appsys;
    em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);

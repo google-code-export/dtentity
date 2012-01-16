@@ -291,7 +291,7 @@ function SelectTool() {
       var mouseY = Input.getAxis(Axis.MouseYRaw);
       var pick = Screen.pickEntity(mouseX, mouseY);
 
-      if (pick === null  || !positionAttitudeTransformSystem.hasComponent(pick.Id, true)) {
+      if (pick === null  || !positionAttitudeTransformSystem.hasComponent(pick, true)) {
         return;
       }
 

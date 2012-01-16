@@ -22,6 +22,7 @@
 
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/globalfunctions.h>
+#include <dtEntityWrappers/messages.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 
@@ -105,6 +106,8 @@ namespace dtEntityWrappers
       mTickFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::Tick);
       em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "ScriptSystem::Tick");
 
+      mLoadScriptFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnLoadScript);
+      em.RegisterForMessages(ExecuteScriptMessage::TYPE, mLoadScriptFunctor, "ScriptSystem::OnLoadScript");
    }  
 
    ////////////////////////////////////////////////////////////////////////////
@@ -183,6 +186,13 @@ namespace dtEntityWrappers
 
       SetupContext();
       LoadAutoStartScripts("AutoStartScripts");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::OnLoadScript(const dtEntity::Message& m)
+   {
+      const ExecuteScriptMessage& msg = static_cast<const ExecuteScriptMessage&>(m);
+      ExecuteFile(msg.GetPath());
    }
 
    ////////////////////////////////////////////////////////////////////////////

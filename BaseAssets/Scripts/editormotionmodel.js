@@ -331,7 +331,7 @@ function EditorMotionSystem() {
   // -----------------------------------------
   var components = [];
 
-  this.componentType = "Motion";
+  this.componentType = "EditorMotion";
 
   setInterval(function() {
     for(k in components) {

@@ -34,8 +34,6 @@
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
 #include <dtEntityQtWidgets/osgadapterwidget.h>
-#include <dtEntityWrappers/wrappers.h>
-#include <dtEntityWrappers/scriptcomponent.h>
 #include <osgViewer/GraphicsWindow>
 #include <osg/MatrixTransform>
 #include <osgViewer/View>
@@ -184,6 +182,9 @@ namespace dtEntityEditor
       {
          LoadScene(sceneToLoad);
       }
+
+      dtEntity::StartSystemMessage msg;
+      mEntityManager->EmitMessage(msg);
 
    }
 
@@ -375,23 +376,43 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::InitializeScripting()
    {
-      //DtScript needs to get key events for all views. Add Script component
-      // as a keyboard / mouse event recipient
 
-      dtEntityWrappers::ScriptSystem* ss;
-      if(!GetEntityManager().GetEntitySystem(dtEntityWrappers::ScriptSystem::TYPE, ss))
-      {
-         ss = new dtEntityWrappers::ScriptSystem(GetEntityManager());
-         GetEntityManager().AddEntitySystem(*ss);
-      }
+      dtEntity::StringId scriptId = dtEntity::SID("Script");
+
+      dtEntity::MapSystem* mapSystem;
+      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
       
-      std::string source = ""
-          "include_once(\"Scripts/osgveclib.js\");\n"
-          "include_once(\"Scripts/stdlib.js\");\n"
-          "include_once(\"Scripts/editormotionmodel.js\");\n"
-          "include_once(\"Scripts/manipulators.js\");\n";
+      
+      if(!GetEntityManager().HasEntitySystem(scriptId))
+      {
+         if(!mapSystem->GetPluginManager().FactoryExists(scriptId))
+         {
+            LOG_ERROR("Cannot start scripting, script plugin not loaded!");
+            return;
+         }         
+            
+         bool success = mapSystem->GetPluginManager().StartEntitySystem(scriptId);
+         if(!success)
+         {
+            LOG_ERROR("Cannot start scripting, script plugin not loaded!");
+            return;
+         }
+      }
 
-      ss->ExecuteScript(source);
+      dtEntity::Message* msg;
+      bool success = mapSystem->GetMessageFactory().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
+      assert(success);
+      dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));
 
+      pathprop->SetString("Scripts/osgveclib.js"); 
+      GetEntityManager().EmitMessage(*msg);
+      pathprop->SetString("Scripts/stdlib.js"); 
+      GetEntityManager().EmitMessage(*msg);
+      pathprop->SetString("Scripts/editormotionmodel.js"); 
+      GetEntityManager().EmitMessage(*msg);
+      pathprop->SetString("Scripts/manipulators.js"); 
+      GetEntityManager().EmitMessage(*msg);
+
+      delete msg;
    }
 }

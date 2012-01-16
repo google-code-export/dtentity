@@ -58,7 +58,6 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${OPENTHREADS_LIBRARIES}
                            dtEntity
 						   dtEntityQtWidgets
-						   dtEntityWrappers
 )
 
 IF (MSVC)

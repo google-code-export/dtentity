@@ -268,7 +268,7 @@ namespace dtEntity
          }
       }
 
-      mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
+      //mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
 
       StartSystemMessage msg;
       em->EnqueueMessage(msg);

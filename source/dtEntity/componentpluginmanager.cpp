@@ -55,6 +55,22 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string ComponentPluginManager::GetLibExtension()
+   {
+      // find out library extension for this system
+      // take care of debug/release library stuff on windows
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#if defined (_DEBUG)       
+      return "d.dll";
+#else
+      return ".dll";
+#endif
+#else
+      return ".so";
+#endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    /** load all dlls in dir and check for plugin factories */
    void ComponentPluginManager::LoadPluginsInDir(const std::string& path)
    {
@@ -64,17 +80,7 @@ namespace dtEntity
          return;
       }
 
-      // find out library extension for this system
-      // take care of debug/release library stuff on windows
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#if defined (_DEBUG)       
-      std::string libExtension = "d.dll";
-#else
-      std::string libExtension = ".dll";
-#endif
-#else
-         std::string libExtension = ".so";
-#endif
+      std::string libExtension = GetLibExtension();
 
       // get libs from directory
       osgDB::DirectoryContents files = osgDB::getDirectoryContents(path);
@@ -97,6 +103,25 @@ namespace dtEntity
          libpath << path << "/" << fileName;
          AddPlugin(libpath.str());
       }
+   }
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::set<ComponentType> ComponentPluginManager::AddPlugin(const std::string& path, const std::string& libname, bool saveWithScene)
+   {
+      osgDB::FilePathList paths = osgDB::getDataFilePathList();
+      paths.push_back(path);
+      
+      std::string filename = libname + GetLibExtension();
+      std::string p = osgDB::findFileInPath(filename, paths);
+      if(p == "")
+      {
+         std::set<ComponentType> ret;
+         return ret;
+      }
+
+      return AddPlugin(p, saveWithScene);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
