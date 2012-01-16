@@ -26,6 +26,7 @@
 #include <v8.h>
 #include <assert.h>
 #include <string>
+#include <set>
 
 namespace dtEntityWrappers
 {
@@ -59,11 +60,16 @@ namespace dtEntityWrappers
       /** load and execute a javascript file */
       v8::Local<v8::Value> ExecuteFile(const std::string& path);
 
+      void ExecuteFileOnce(const std::string& path);
+      
       /**
        * Setup a new global context object. All loaded scripts and varibles
        * are discarded!
        */
       void ResetGlobalContext();
+
+   private:
+      std::set<std::string> mIncludedFiles;
       
    };
 }

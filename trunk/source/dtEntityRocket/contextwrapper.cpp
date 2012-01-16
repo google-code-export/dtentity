@@ -64,7 +64,7 @@ namespace dtEntityRocket
          Rocket::Core::ElementDocument* doc = rs->LoadDocument(path.c_str());
          if(doc != NULL)
          {
-            return WrapElementDocument(doc);
+            return WrapElementDocument(args.Holder()->CreationContext(), doc);
          }
       }
       return Null();
@@ -87,11 +87,11 @@ namespace dtEntityRocket
       return Undefined();      
    }
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapContext(Rocket::Core::Context* v)
+   v8::Handle<v8::Object> WrapContext(Handle<Context> context, Rocket::Core::Context* v)
    {
       
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       if(s_contextTemplate.IsEmpty())
       {

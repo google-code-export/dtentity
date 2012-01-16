@@ -103,6 +103,7 @@ int main(int argc, char** argv)
    dtEntity::Message* msg;
    bool success = mapSystem->GetMessageFactory().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
    assert(success);
+   msg->Get(dtEntity::SID("IncludeOnce"))->SetBool(true);
    dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));
 
    pathprop->SetString(script); 

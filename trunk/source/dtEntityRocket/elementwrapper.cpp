@@ -135,7 +135,7 @@ namespace dtEntityRocket
       }
       else
       {
-         return WrapElement(el);
+         return WrapElement(args.Holder()->CreationContext(), el);
       }
    }
 
@@ -466,10 +466,10 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapElement(Rocket::Core::Element* v)
+   v8::Handle<v8::Object> WrapElement(Handle<Context> context, Rocket::Core::Element* v)
    {      
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       CreateTemplate();
       Local<Object> instance = s_elementTemplate->GetFunction()->NewInstance();

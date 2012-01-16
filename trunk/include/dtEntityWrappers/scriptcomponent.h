@@ -22,6 +22,8 @@
 
 #include <dtEntityWrappers/export.h>
 
+#include <v8.h>
+
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
@@ -47,6 +49,9 @@ namespace dtEntityWrappers
       ~ScriptSystem();
 
       virtual void Finished();
+
+      virtual void OnAddedToEntityManager(dtEntity::EntityManager& em);
+
       void OnSceneLoaded(const dtEntity::Message& msg);
       void OnResetSystem(const dtEntity::Message& msg);
       void OnLoadScript(const dtEntity::Message& msg);
@@ -61,6 +66,8 @@ namespace dtEntityWrappers
       void LoadAutoStartScripts(const std::string& path);
 
       virtual bool StorePropertiesToScene() const { return true; }
+
+      v8::Handle<v8::Context> GetGlobalContext();
 
    private:
       void SetupContext();

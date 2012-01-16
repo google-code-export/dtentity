@@ -63,11 +63,11 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapElementDocument(Rocket::Core::ElementDocument* v)
+   v8::Handle<v8::Object> WrapElementDocument(v8::Handle<v8::Context> context, Rocket::Core::ElementDocument* v)
    {
       
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       if(s_elementDocumentTemplate.IsEmpty())
       {

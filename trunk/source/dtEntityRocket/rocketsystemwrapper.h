@@ -26,7 +26,7 @@
 namespace dtEntityRocket
 {
    class RocketSystem;
-   v8::Handle<v8::Object> WrapRocketSystem(RocketSystem* v);
+   v8::Handle<v8::Object> WrapRocketSystem(v8::Handle<v8::Context> context, RocketSystem* v);
    RocketSystem* UnwrapRocketSystem(v8::Handle<v8::Value>);   
-   void InitRocketSystemWrapper();
+   void InitRocketSystemWrapper(v8::Handle<v8::Context>);
 }

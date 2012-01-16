@@ -31,7 +31,7 @@
 #include <dtEntityWrappers/entitysystemwrapper.h>
 #include <dtEntityWrappers/propertyconverter.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <osgDB/FileUtils>
 #include <iostream>
@@ -76,7 +76,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ConvertMessageToJS(const dtEntity::Message& msg)
+   Handle<Value> ConvertMessageToJS(Handle<Context> context, const dtEntity::Message& msg)
    {
       const dtEntity::PropertyContainer::PropertyMap& params = msg.GetAllProperties();
 
@@ -88,7 +88,7 @@ namespace dtEntityWrappers
       {
          dtEntity::StringId n = i->first;
          const dtEntity::Property* p = i->second;
-         Handle<Value> v = PropToVal(p);
+         Handle<Value> v = PropToVal(context, p);
          Handle<String> str = GetString(n);
          o->Set(str, v);
       }
@@ -115,12 +115,12 @@ namespace dtEntityWrappers
       void Call(const dtEntity::Message& msg)
       {
          HandleScope scope;
-         Handle<Context> context = GetGlobalContext();
+         Handle<Context> context = mFunction->CreationContext();
          Context::Scope context_scope(context);
    
          TryCatch try_catch;
 
-         Handle<Value> argv[2] = { mMessageTypeStr, ConvertMessageToJS(msg) };
+         Handle<Value> argv[2] = { mMessageTypeStr, ConvertMessageToJS(context, msg) };
 
          Handle<Value> result = mFunction->Call(mFunction, 2, argv);
 
@@ -173,7 +173,7 @@ namespace dtEntityWrappers
       for(i = comps.begin(); i != comps.end(); ++i)
       {
         std::string str = dtEntity::GetStringFromSID((*i)->GetType());
-        obj->Set(String::New(str.c_str()), WrapComponent(*i));
+        obj->Set(String::New(str.c_str()), WrapComponent(args.Holder()->CreationContext(), *i));
       }
       return scope.Close(obj);
    }
@@ -347,11 +347,11 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UnregisterJavaScriptFromMessages()
+   void UnregisterJavaScriptFromMessages(ScriptSystem* scriptSystem)
    {  
       HandleScope scope;
 
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = scriptSystem->GetGlobalContext();
       Context::Scope context_scope(context);
       Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
 
@@ -461,7 +461,7 @@ namespace dtEntityWrappers
             return Null();
          }
       }
-      return WrapEntitySystem(es);
+      return WrapEntitySystem(args.Holder()->CreationContext(), es);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -482,11 +482,11 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapEntityManager(dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
+   v8::Handle<v8::Object> WrapEntityManager(Handle<Context> context, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
    {
 
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(context);
 
       if(s_entityManagerTemplate.IsEmpty())
       {

@@ -45,11 +45,13 @@ namespace dtEntityWrappers
 
       static const dtEntity::MessageType TYPE;
       static const dtEntity::StringId PathId;
+      static const dtEntity::StringId IncludeOnceId;
 
       ExecuteScriptMessage()
          : dtEntity::Message(TYPE)
       {
          Register(PathId, &mPath);
+         Register(IncludeOnceId, &mIncludeOnce);
       }
 
       // Create a copy of this message on the heap
@@ -58,8 +60,12 @@ namespace dtEntityWrappers
       void SetPath(const std::string& v) { mPath.Set(v); }
       std::string GetPath() const { return mPath.Get(); }
 
+      void SetIncludeOnce(bool v) { mIncludeOnce.Set(v); }
+      bool GetIncludeOnce() const { return mIncludeOnce.Get(); }
+
    private:
 
       dtEntity::StringProperty mPath;
+      dtEntity::BoolProperty mIncludeOnce;
    };
 }

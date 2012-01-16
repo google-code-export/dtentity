@@ -29,7 +29,7 @@
 
 namespace dtEntityWrappers
 {
-   v8::Handle<v8::Value> PropToVal(const dtEntity::Property* prop);
+   v8::Handle<v8::Value> PropToVal(v8::Handle<v8::Context> context, const dtEntity::Property* prop);
    v8::Handle<v8::Value> ValToProp(v8::Handle<v8::Value> val, dtEntity::Property*& prop);
    dtEntity::Property* CreatePropFromType(dtEntity::DataType::e t);
    dtEntity::Property* Convert(v8::Handle<v8::Value> val);

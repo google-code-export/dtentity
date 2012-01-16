@@ -80,15 +80,9 @@
 namespace dtEntityWrappers
 {
 
-   inline v8::Handle<v8::Context> DTENTITY_WRAPPERS_EXPORT GetGlobalContext()
-   {
-      return WrapperManager::GetInstance().GetGlobalContext();
-   }
-
-   inline v8::Handle<v8::Value> BYTESTORAGE_TO_JS(ByteStorage * bs) {
+   inline v8::Handle<v8::Value> BYTESTORAGE_TO_JS(v8::Handle<v8::Context> context, ByteStorage * bs) {
       using namespace v8;
       HandleScope scope;
-      Handle<Context> context = GetGlobalContext();
       Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::New("Buffer")));
       assert(!buffer.IsEmpty() && buffer->IsFunction());
       Handle<v8::Value> newargs[] = { External::New((void*)bs) };
@@ -100,9 +94,9 @@ namespace dtEntityWrappers
 		return reinterpret_cast<ByteStorage *>(object->GetPointerFromInternalField(0));
 	}
 
-	inline v8::Handle<v8::Value> JS_BUFFER(char * data, size_t length) {
+	inline v8::Handle<v8::Value> JS_BUFFER(v8::Handle<v8::Context> context, char * data, size_t length) {
 		ByteStorage * bs = new ByteStorage(data, length);
-		return BYTESTORAGE_TO_JS(bs);
+		return BYTESTORAGE_TO_JS(context, bs);
 	}
 
 	inline char * JS_BUFFER_TO_CHAR(v8::Handle<v8::Value> value, size_t * size) {
@@ -111,12 +105,11 @@ namespace dtEntityWrappers
 		return bs->getData();
 	}
 
-	inline bool IS_BUFFER(v8::Handle<v8::Value> value) {
+   inline bool IS_BUFFER(v8::Handle<v8::Context> context, v8::Handle<v8::Value> value) {
       using namespace v8;
 		if (!value->IsObject()) { return false; }
 		Handle<Value> proto = value->ToObject()->GetPrototype();
 		HandleScope scope;
-		Handle<Context> context = GetGlobalContext();
 		Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::New("Buffer")));
 		assert(!buffer.IsEmpty() && buffer->IsFunction());
 		Handle<Value> prototype = buffer->Get(JS_STR("prototype"));
@@ -131,7 +124,7 @@ namespace dtEntityWrappers
    /** helper function to get string from file */
    bool GetFileContents(const std::string& fileName, std::string& recipient);
 
-   dtEntity::EntityManager* GetEntityManager();
+   dtEntity::EntityManager* GetEntityManager(v8::Handle<v8::Context>);
 
    /** 
      * helper function to extract internal field from object.

@@ -25,8 +25,9 @@
 
 namespace dtEntityWrappers
 {   
-   
-   v8::Handle<v8::Object> WrapScreen(osgViewer::View*, osgViewer::GraphicsWindow*);
+   class ScriptSystem;
+
+   v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss, osgViewer::View*, osgViewer::GraphicsWindow*);
    osgViewer::View* UnwrapScreenView(v8::Handle<v8::Value>);
    osgViewer::GraphicsWindow* UnwrapScreenWindow(v8::Handle<v8::Value>);
 

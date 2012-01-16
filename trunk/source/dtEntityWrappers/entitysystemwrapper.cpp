@@ -86,7 +86,7 @@ namespace dtEntityWrappers
       bool found = es->GetEntityManager().GetComponent(args[0]->Uint32Value(), es->GetComponentType(), comp, args[1]->BooleanValue());
       if(found)
       {
-         return WrapComponent(comp);
+         return WrapComponent(args.Holder()->CreationContext(), comp);
       }
       else
       {
@@ -111,7 +111,7 @@ namespace dtEntityWrappers
          dtEntity::Component* comp;
          if(es->GetComponent(*i, comp)) 
          {
-            arr->Set(Integer::New(count++), WrapComponent(comp));
+            arr->Set(Integer::New(count++), WrapComponent(args.Holder()->CreationContext(), comp));
          }
       }
       return scope.Close(arr);
@@ -155,7 +155,7 @@ namespace dtEntityWrappers
       
       if(es->CreateComponent(args[0]->Uint32Value(), component))
       {
-         return WrapComponent(component);
+         return WrapComponent(args.Holder()->CreationContext(), component);
       }
       else
       {
@@ -294,8 +294,8 @@ namespace dtEntityWrappers
          Handle<Value> r = Null();
          if(ret != NULL)
          {
-             r = PropToVal(ret);
-             delete ret;
+            r = PropToVal(args.Holder()->CreationContext(), ret);
+            delete ret;
          }
          return scope.Close(r);
       }
@@ -314,7 +314,7 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
-      return scope.Close(PropToVal(prop));
+      return scope.Close(PropToVal(info.Holder()->CreationContext(), prop));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -339,13 +339,13 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InitEntitySystemWrapper()
+   void InitEntitySystemWrapper(v8::Handle<v8::Context> context)
    {
       
       if(s_entitySystemTemplate.IsEmpty())
       {
         HandleScope handle_scope;
-        Context::Scope context_scope(GetGlobalContext());
+        Context::Scope context_scope(context);
 
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_entitySystemTemplate = Persistent<FunctionTemplate>::New(templt);
@@ -372,13 +372,13 @@ namespace dtEntityWrappers
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Object> WrapEntitySystem(dtEntity::EntitySystem* v)
+   Handle<Object> WrapEntitySystem(Handle<Context> context, dtEntity::EntitySystem* v)
    {
 
-      InitEntitySystemWrapper();
+      InitEntitySystemWrapper(context);
 
       HandleScope handle_scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(context);
 
       Handle<FunctionTemplate> tpl = s_entitySystemTemplate;
       
@@ -438,9 +438,9 @@ namespace dtEntityWrappers
    }      
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterEntitySystempWrapper(dtEntity::ComponentType ctype, Handle<FunctionTemplate> ftpl)
+   void RegisterEntitySystempWrapper(Handle<Context> context, dtEntity::ComponentType ctype, Handle<FunctionTemplate> ftpl)
    {
-      InitEntitySystemWrapper();
+      InitEntitySystemWrapper(context);
       s_subWrapperMap[ctype] = Persistent<FunctionTemplate>::New(ftpl);
       ftpl->Inherit(s_entitySystemTemplate);
    }

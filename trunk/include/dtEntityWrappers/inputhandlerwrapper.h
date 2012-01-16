@@ -34,7 +34,7 @@ namespace dtEntity
 namespace dtEntityWrappers
 {   
    
-   v8::Handle<v8::Object> WrapInputHandler(dtEntity::InputHandler* v);
+   v8::Handle<v8::Object> WrapInputHandler(v8::Handle<v8::Context> context, dtEntity::InputHandler* v);
    dtEntity::InputHandler* UnwrapInputHandler(v8::Handle<v8::Value>);
    v8::Handle<v8::Object> WrapTouchPhases();
    v8::Handle<v8::Object> WrapKeys(dtEntity::InputHandler* ih);

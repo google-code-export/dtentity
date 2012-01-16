@@ -92,28 +92,8 @@ namespace dtEntityWrappers
       }
 
       std::string path = ToStdString(args[0]);
-
-      HandleScope scope;
-      Handle<Context> context = GetGlobalContext();
-      Handle<String> arrname = String::New("__includeOnceFiles");
-      
-      if(!context->Global()->Has(arrname)) 
-      {
-         context->Global()->Set(arrname, Array::New());
-      }
-
-      Handle<Array> includes = Handle<Array>::Cast(context->Global()->Get(arrname));
-      
-      for(unsigned int i = 0; i < includes->Length(); ++i)
-      {
-         std::string other = ToStdString(includes->Get(Integer::New(i)));
-         if(other == path)
-         {
-            return Undefined();
-         }
-      }
-      includes->Set(Integer::New(includes->Length()), String::New(path.c_str()));
-      return WrapperManager::GetInstance().ExecuteFile(path);
+      WrapperManager::GetInstance().ExecuteFileOnce(path);
+      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -164,10 +144,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterGlobalFunctions()
+   void RegisterGlobalFunctions(Handle<Context> context)
    {
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
       Context::Scope context_scope(context);
       
       context->Global()->Set(String::New("findDataFile"), FunctionTemplate::New(FindDataFile)->GetFunction());

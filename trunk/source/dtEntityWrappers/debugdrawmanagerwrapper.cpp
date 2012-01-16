@@ -401,7 +401,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
 	Handle<Value> DebugDrawManager_create(const Arguments& args) {
       v8::HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = args.Holder()->CreationContext();
      
 		Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
       dtEntity::EntityManager* em = UnwrapEntityManager(emh);
@@ -410,10 +410,9 @@ namespace dtEntityWrappers
 	}
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Function> CreateDebugDrawManager()
+   v8::Handle<v8::Function> CreateDebugDrawManager(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
       v8::Context::Scope context_scope(context);
 
       if(s_debugDrawManagerTemplate.IsEmpty())
