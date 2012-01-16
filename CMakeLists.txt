@@ -21,7 +21,6 @@ OPTION(BUILD_JAVASCRIPT_WRAPPERS "Build wrappers for dtScript" OFF)
 OPTION(BUILD_PHYSX "Build physx component" OFF)
 OPTION(BUILD_QT "Build Qt widgets" OFF)
 OPTION(BUILD_LIBROCKET "Build LibRocket bindings" OFF)
-OPTION(BUILD_XERCES "Build Xerces map encoder" OFF)
 OPTION(BUILD_EXAMPLES "Build examples" OFF)
 
 IF (BUILD_WITH_DELTA3D)
