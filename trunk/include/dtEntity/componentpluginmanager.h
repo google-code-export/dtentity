@@ -116,6 +116,9 @@ namespace dtEntity
       // get extension appended to lib name to point to shared library name
       std::string GetLibExtension();
 
+      // get library file name from plugin name, platform dependent
+      std::string GetSharedLibNameFromPluginName(const std::string& pluginName);
+
    private:
 
       /** Get PluginFactory for Plugin with this name.
