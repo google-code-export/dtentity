@@ -20,6 +20,7 @@
 
 #include <dtEntityWrappers/scriptcomponent.h>
 
+#include <dtEntityWrappers/componentwrapper.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/globalfunctions.h>
 #include <dtEntityWrappers/messages.h>
@@ -400,10 +401,34 @@ namespace dtEntityWrappers
       }      
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ComponentWrapperDestructor(v8::Persistent<Value> v, void* scriptsysnull)
+   {      
+      dtEntity::Component* component = UnwrapComponent(v);
+      if(component != NULL)
+      {
+         ScriptSystem* scriptsys = static_cast<ScriptSystem*>(scriptsysnull);
+         HandleScope scope;
+         Handle<Object> o = Handle<Object>::Cast(v);
+         assert(!o.IsEmpty());
+         Handle<Value> val = o->GetHiddenValue(String::New("__entityid__"));
+         assert(!val.IsEmpty());
+         dtEntity::EntityId id = val->Uint32Value();
+         scriptsys->RemoveFromComponentMap(component->GetType(), id);         
+      } 
+
+      // is already called in RemoveFromComponentMap:
+      //v.Dispose();
+   }
+
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::AddToComponentMap(dtEntity::ComponentType ct, dtEntity::EntityId eid, v8::Handle<v8::Object> obj)
    {
-      mComponentMap[std::make_pair(ct, eid)] = Persistent<Object>::New(obj);
+      HandleScope scope;
+      Persistent<Object> pobj = Persistent<Object>::New(obj);
+      pobj.MakeWeak(this, &ComponentWrapperDestructor);
+      V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
+      mComponentMap[std::make_pair(ct, eid)] = pobj;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -432,6 +457,7 @@ namespace dtEntityWrappers
       obj->SetInternalField(0, External::New(0));
       obj.Dispose();
       mComponentMap.erase(it);
+      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(dtEntity::Component));
       return true;
 
    }
