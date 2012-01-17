@@ -22,5 +22,6 @@
 
 namespace dtEntityWrappers
 {
-   void InitAnimationSystemWrapper();
+   class ScriptSystem;
+   void InitAnimationSystemWrapper(ScriptSystem*);
 }

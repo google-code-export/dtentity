@@ -37,6 +37,7 @@
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
+#include <iostream>
 
 namespace dtEntity
 {   
@@ -83,6 +84,7 @@ namespace dtEntity
       virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
       {
 
+         
          const osg::FrameStamp* fs = nv->getFrameStamp();
 
          if(fs->getFrameNumber() == mLastFrameNumber)
@@ -93,6 +95,10 @@ namespace dtEntity
 
          double simtime = fs->getSimulationTime();
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
+         
+         double tval = (double)currentTick * osg::Timer::instance()->getSecondsPerTick();         
+         
+         //std::cout << std::fixed << "SimTime Dif: " << (simtime - tval) <<"\n";
          double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
          
          double timeScale = mApplicationSystem->GetTimeScale();

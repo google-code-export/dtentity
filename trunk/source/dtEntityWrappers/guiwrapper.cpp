@@ -21,8 +21,8 @@
 #include <dtEntityWrappers/guiwrapper.h>
 
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/guiwidgetwrapper.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntity/gui.h>
 #include <dtEntity/applicationcomponent.h>
 #include <iostream>
@@ -45,11 +45,10 @@ namespace dtEntityWrappers
    Persistent<FunctionTemplate> s_guiTemplate;
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MakeContextCurrent()
+   void MakeContextCurrent(const Arguments& args)
    {
-      dtEntity::ApplicationSystem* appsys;
-      GetEntityManager()->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetPrimaryWindow()->makeCurrent();
+      osgViewer::GraphicsWindow* win = static_cast<osgViewer::GraphicsWindow*>(External::Unwrap(args.Data()));
+      win->makeCurrent();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +60,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUILoadScheme(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() < 1)
       {
          return ThrowException(Exception::SyntaxError(String::New("loadScheme usage: loadScheme(path)")));
@@ -119,7 +118,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUILoadLayout(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() < 1)
       {
          return ThrowException(Exception::SyntaxError(String::New("loadLayout usage: loadLayout(layoutname)")));
@@ -164,6 +163,7 @@ namespace dtEntityWrappers
          return ThrowException(Exception::SyntaxError(String::New("getWidget usage: getWidget(widgetname)")));
       }
       dtEntity::GUI* gui; GetInternal(args.This(), 0, gui);
+      ScriptSystem* ss; GetInternal(args.This(), 1, ss);
 
       std::string name = ToStdString(args[0]);
       if(!gui->IsWindowPresent(name))
@@ -171,19 +171,19 @@ namespace dtEntityWrappers
          return Null();
       }
       CEGUI::Window* w = gui->GetWidget(name);
-      return WrapGuiWidget(w);
+      return WrapGuiWidget(ss, w);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUICreateWidget(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() < 2 || (!args[0]->IsNull() && !IsGuiWidget(args[0])) || !args[1]->IsString())
       {
          return ThrowSyntaxError("createWidget usage: createWidget(widget parent, string typename, [string name])");
       }
       dtEntity::GUI* gui; GetInternal(args.This(), 0, gui);
-
+      ScriptSystem* ss; GetInternal(args.This(), 1, ss);
 
       CEGUI::Window* parent = NULL;
       if(!args[0]->IsNull())
@@ -203,7 +203,7 @@ namespace dtEntityWrappers
       {
          return Null();
       }
-      return WrapGuiWidget(newwindow);
+      return WrapGuiWidget(ss, newwindow);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUICreateImageset(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() < 2 || !args[0]->IsString() || !args[1]->IsString())
       {
          return ThrowSyntaxError("usage: createImageset(imagesetName, filename [, resourceGroupName])");
@@ -241,7 +241,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUIDestroyImageset(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() < 1 || !args[0]->IsString())
       {
          return ThrowSyntaxError("usage: destroyImageset(imagesetName)");
@@ -257,7 +257,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GUIDestroyWidget(const Arguments& args)
    {
-      MakeContextCurrent();
+      MakeContextCurrent(args);
       if(args.Length() != 1 || !IsGuiWidget(args[0]))
       {
          return ThrowException(Exception::SyntaxError(String::New("destroyWidget usage: destroyWidget(widget toDestroy)")));
@@ -279,37 +279,42 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapGui(dtEntity::GUI* v)
+   v8::Handle<v8::Object> WrapGui(ScriptSystem* ss, dtEntity::GUI* v)
    {
       v->ref();
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(ss->GetGlobalContext());
 
       if(s_guiTemplate.IsEmpty())
       {
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_guiTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("GUI"));
-        templt->InstanceTemplate()->SetInternalFieldCount(1);
+        templt->InstanceTemplate()->SetInternalFieldCount(2);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-        proto->Set("createImageset", FunctionTemplate::New(GUICreateImageset));
-        proto->Set("createWidget", FunctionTemplate::New(GUICreateWidget));
-        proto->Set("destroyImageset", FunctionTemplate::New(GUIDestroyImageset));
-        proto->Set("destroyWidget", FunctionTemplate::New(GUIDestroyWidget));
-        proto->Set("getWidget", FunctionTemplate::New(GUIGetWidget));
-        proto->Set("hideCursor", FunctionTemplate::New(GUIHideCursor));
-        proto->Set("isImagesetPresent", FunctionTemplate::New(GUIIsImagesetPresent));
-        proto->Set("loadLayout", FunctionTemplate::New(GUILoadLayout));
-        proto->Set("loadScheme", FunctionTemplate::New(GUILoadScheme));
-        proto->Set("setMouseCursor", FunctionTemplate::New(GUISetMouseCursor));
-        proto->Set("showCursor", FunctionTemplate::New(GUIShowCursor));
-        proto->Set("toString", FunctionTemplate::New(GUIToString));
+        dtEntity::ApplicationSystem* appsys;
+        ss->GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+        osgViewer::GraphicsWindow* win = appsys->GetPrimaryWindow();
+
+        proto->Set("createImageset", FunctionTemplate::New(GUICreateImageset, External::New(win)));
+        proto->Set("createWidget", FunctionTemplate::New(GUICreateWidget, External::New(win)));
+        proto->Set("destroyImageset", FunctionTemplate::New(GUIDestroyImageset, External::New(win)));
+        proto->Set("destroyWidget", FunctionTemplate::New(GUIDestroyWidget, External::New(win)));
+        proto->Set("getWidget", FunctionTemplate::New(GUIGetWidget, External::New(win)));
+        proto->Set("hideCursor", FunctionTemplate::New(GUIHideCursor, External::New(win)));
+        proto->Set("isImagesetPresent", FunctionTemplate::New(GUIIsImagesetPresent, External::New(win)));
+        proto->Set("loadLayout", FunctionTemplate::New(GUILoadLayout, External::New(win)));
+        proto->Set("loadScheme", FunctionTemplate::New(GUILoadScheme, External::New(win)));
+        proto->Set("setMouseCursor", FunctionTemplate::New(GUISetMouseCursor, External::New(win)));
+        proto->Set("showCursor", FunctionTemplate::New(GUIShowCursor, External::New(win)));
+        proto->Set("toString", FunctionTemplate::New(GUIToString, External::New(win)));
         
       }
       Local<Object> instance = s_guiTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
+      instance->SetInternalField(1, External::New(ss));
       
       Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
       pobj.MakeWeak(NULL, &GUIDestructor);
