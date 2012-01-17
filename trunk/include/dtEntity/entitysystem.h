@@ -100,6 +100,11 @@ namespace dtEntity
       virtual bool CreateComponent(EntityId eid, Component*& component) { return false; }
 
       /**
+       * Delete component. It is best to not call this directly but instead use
+       * the method EntityManager::DeleteComponent. Calling this method
+       * directly will not execute the component deletion callbacks, which
+       * can result in wrappers for that component not being invalidated
+       *
        * @param eid Delete component for entity with this id
        * @return true if entity had a component of this type
        */

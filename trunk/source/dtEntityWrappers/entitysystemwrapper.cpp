@@ -173,8 +173,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESDeleteComponent(const Arguments& args)
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
-
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
 
       if(!args[0]->IsUint32())
@@ -182,7 +180,7 @@ namespace dtEntityWrappers
          return ThrowError("Usage: deleteComponent(int)");
       }
       
-      if(es->DeleteComponent(args[0]->Uint32Value()))
+      if(es->GetEntityManager().DeleteComponent(args[0]->Uint32Value(), es->GetComponentType()))
       {
          return True();
       }

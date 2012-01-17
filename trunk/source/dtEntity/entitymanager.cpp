@@ -420,27 +420,33 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityManager::DeleteComponent(EntityId eid, Component& component)
+   bool EntityManager::DeleteComponent(EntityId eid, Component& component)
    {
-      ComponentType t = component.GetType();
+      return DeleteComponent(eid, component.GetType());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::DeleteComponent(EntityId eid, ComponentType componentType)
+   {
       EntitySystem* es;
-      if(!GetEntitySystem(t, es))
+      if(!GetEntitySystem(componentType, es))
       {
-         LOG_ERROR("Could not remove component: no entity system of this type!");
-         return;
+         return false;
       }
 
-      if(es->HasComponent(eid))
-      {                  
-         if(!mDeletedCallbacks.empty())
-         {
-            for(ComponentDeletedCallbacks::iterator i = mDeletedCallbacks.begin(); i != mDeletedCallbacks.end(); ++i)
-            {
-               (*i)->ComponentDeleted(t, eid);
-            }
-         }
-         es->DeleteComponent(eid);
+      if(!es->HasComponent(eid))
+      {    
+         return false;
       }
+      if(!mDeletedCallbacks.empty())
+      {
+         for(ComponentDeletedCallbacks::iterator i = mDeletedCallbacks.begin(); i != mDeletedCallbacks.end(); ++i)
+         {
+            (*i)->ComponentDeleted(componentType, eid);
+         }
+      }
+      es->DeleteComponent(eid);
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
