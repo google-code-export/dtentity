@@ -151,13 +151,6 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ComponentWrapperDestructor(v8::Persistent<Value> v, void*)
-   {
-      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(dtEntity::Component));
-      v.Dispose();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    Handle<Object> WrapComponent(ScriptSystem* scriptsys, dtEntity::EntityId eid, dtEntity::Component* v)
    {
 
@@ -189,6 +182,7 @@ namespace dtEntityWrappers
 
       Local<Object> instance = s_componentTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
+      instance->SetHiddenValue(String::New("__entityid__"), Uint32::New(eid));
 
       const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
 
@@ -201,10 +195,7 @@ namespace dtEntityWrappers
                          COPropertyGetter, COPropertySetter,
                          ext);
       }
-      Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
-      pobj.MakeWeak(NULL, &ComponentWrapperDestructor);
-      V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
-
+      
       // store wrapped component to script system
       scriptsys->AddToComponentMap(v->GetType(), eid, instance);
       return handle_scope.Close(instance);
