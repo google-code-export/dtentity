@@ -172,6 +172,13 @@ namespace dtEntityWrappers
    void ScriptSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
       SetupContext();      
+      em.AddDeletedCallback(this);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::OnRemovedFromEntityManager(dtEntity::EntityManager& em)
+   {
+      em.RemoveDeletedCallback(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -386,5 +393,47 @@ namespace dtEntityWrappers
             }
          }
       }      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::AddToComponentMap(dtEntity::ComponentType ct, dtEntity::EntityId eid, v8::Handle<v8::Object> obj)
+   {
+      mComponentMap[std::make_pair(ct, eid)] = Persistent<Object>::New(obj);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Handle<Object> ScriptSystem::GetFromComponentMap(dtEntity::ComponentType ct, dtEntity::EntityId eid) const
+   {
+      ComponentMap::const_iterator it = mComponentMap.find(std::make_pair(ct, eid));
+      if(it == mComponentMap.end())
+      {
+         return Handle<Object>();
+      }
+      return it->second;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool ScriptSystem::RemoveFromComponentMap(dtEntity::ComponentType ct, dtEntity::EntityId eid)
+   {
+      ComponentMap::iterator it = mComponentMap.find(std::make_pair(ct, eid));
+      if(it == mComponentMap.end())
+      {
+         return false;
+      }
+      HandleScope scope;
+      Persistent<Object> obj = it->second;
+      assert(!obj.IsEmpty() && obj->IsObject());
+      // invalidate component wrapper
+      obj->SetInternalField(0, External::New(0));
+      obj.Dispose();
+      mComponentMap.erase(it);
+      return true;
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::ComponentDeleted(dtEntity::ComponentType t, dtEntity::EntityId id)
+   {
+      RemoveFromComponentMap(t, id);
    }
 }

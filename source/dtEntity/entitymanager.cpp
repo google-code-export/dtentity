@@ -170,7 +170,6 @@ namespace dtEntity
       {
          if(i->second->HasComponent(id))
          {
-            i->second->DeleteComponent(id);
             if(!mDeletedCallbacks.empty())
             {
                for(ComponentDeletedCallbacks::iterator j = mDeletedCallbacks.begin(); j != mDeletedCallbacks.end(); ++j)
@@ -178,6 +177,7 @@ namespace dtEntity
                   (*j)->ComponentDeleted(i->first, id);
                }
             }
+            i->second->DeleteComponent(id);            
          }
       }
       
@@ -431,15 +431,15 @@ namespace dtEntity
       }
 
       if(es->HasComponent(eid))
-      {         
-         es->DeleteComponent(eid);
+      {                  
          if(!mDeletedCallbacks.empty())
          {
             for(ComponentDeletedCallbacks::iterator i = mDeletedCallbacks.begin(); i != mDeletedCallbacks.end(); ++i)
             {
                (*i)->ComponentDeleted(t, eid);
             }
-         }         
+         }
+         es->DeleteComponent(eid);
       }
    }
 
