@@ -22,6 +22,7 @@
 #include "rocketcomponent.h"
 #include "contextwrapper.h"
 #include "elementwrapper.h"
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/entitysystemwrapper.h>
 #include <Rocket/Core/Factory.h>
@@ -137,10 +138,10 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InitRocketSystemWrapper(Handle<Context> context)
+   void InitRocketSystemWrapper(dtEntityWrappers::ScriptSystem* ss)
    {
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
+      v8::Context::Scope context_scope(ss->GetGlobalContext());
       Handle<FunctionTemplate> templt = FunctionTemplate::New();
       s_rocketSystemTemplate = Persistent<FunctionTemplate>::New(templt);
       templt->SetClassName(String::New("Rocket"));
@@ -151,6 +152,6 @@ namespace dtEntityRocket
       proto->Set("getContext", FunctionTemplate::New(RSGetContext));
       proto->Set("instanceElement", FunctionTemplate::New(RSInstanceElement));
       proto->Set("loadFontFace", FunctionTemplate::New(RSLoadFontFace));
-      dtEntityWrappers::RegisterEntitySystempWrapper(context, RocketComponent::TYPE, templt);
+      dtEntityWrappers::RegisterEntitySystempWrapper(ss, RocketComponent::TYPE, templt);
    }
 }

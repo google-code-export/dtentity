@@ -26,7 +26,8 @@
 
 namespace dtEntityWrappers
 { 
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapComponent(v8::Handle<v8::Context>, dtEntity::Component* v);
+   class ScriptSystem;
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapComponent(ScriptSystem*, dtEntity::Component* v);
    DTENTITY_WRAPPERS_EXPORT dtEntity::Component* UnwrapComponent(v8::Handle<v8::Value>);
    DTENTITY_WRAPPERS_EXPORT bool IsComponent(v8::Handle<v8::Value>);
 }

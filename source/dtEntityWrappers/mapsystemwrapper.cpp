@@ -24,6 +24,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntityWrappers/propertyconverter.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
 
@@ -313,10 +314,10 @@ namespace dtEntityWrappers
    }
   
    ////////////////////////////////////////////////////////////////////////////////
-   void InitMapSystemWrapper(Handle<Context> context)
+   void InitMapSystemWrapper(ScriptSystem* ss)
    {
       HandleScope scope;
-      Context::Scope context_scope(context);
+      Context::Scope context_scope(ss->GetGlobalContext());
 
       Handle<FunctionTemplate> templt= FunctionTemplate::New();
       templt->SetClassName(String::New("MapSystem"));
@@ -341,6 +342,6 @@ namespace dtEntityWrappers
       proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
       proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
       
-      RegisterEntitySystempWrapper(context, dtEntity::MapComponent::TYPE, templt);
+      RegisterEntitySystempWrapper(ss, dtEntity::MapComponent::TYPE, templt);
    }
 }

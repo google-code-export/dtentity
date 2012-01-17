@@ -35,7 +35,7 @@ namespace dtEntityWrappers
    class ScriptSystem;
 
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapEntityManager
-      (v8::Handle<v8::Context> context, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf);
+      (ScriptSystem*, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf);
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapPriorities();
    DTENTITY_WRAPPERS_EXPORT dtEntity::EntityManager* UnwrapEntityManager(v8::Handle<v8::Value>);
    DTENTITY_WRAPPERS_EXPORT dtEntity::MessageFactory* UnwrapMessageFactory(v8::Handle<v8::Value>);

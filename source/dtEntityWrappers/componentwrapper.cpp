@@ -24,6 +24,7 @@
 #include <dtEntityWrappers/propertyconverter.h>
 #include <dtEntity/component.h>
 
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
 
@@ -131,11 +132,11 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapComponent(Handle<Context> context, dtEntity::Component* v)
+   v8::Handle<v8::Object> WrapComponent(ScriptSystem* scriptsys, dtEntity::Component* v)
    {
 
      v8::HandleScope handle_scope;
-     v8::Context::Scope context_scope(context);
+     v8::Context::Scope context_scope(scriptsys->GetGlobalContext());
 
      if(s_componentTemplate.IsEmpty())
      {
