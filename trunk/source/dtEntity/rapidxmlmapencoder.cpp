@@ -1534,6 +1534,8 @@ namespace dtEntity
             LOG_ERROR("Cannot save scene, no data paths defined!");
             return false;
          }
+
+         // TODO check if sub folder given in path exists
          std::ostringstream os;
          os << osgDB::getDataFilePathList().back();
          os << osgDB::getNativePathSeparator();

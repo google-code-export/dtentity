@@ -83,11 +83,12 @@ namespace dtEntityWrappers
          return ThrowError("Usage: getComponent(int)");
       }
 
+      dtEntity::EntityId eid = args[0]->Uint32Value();
       dtEntity::Component* comp;
-      bool found = es->GetEntityManager().GetComponent(args[0]->Uint32Value(), es->GetComponentType(), comp, args[1]->BooleanValue());
+      bool found = es->GetEntityManager().GetComponent(eid, es->GetComponentType(), comp, args[1]->BooleanValue());
       if(found)
       {
-         return WrapComponent(ss, comp);
+         return WrapComponent(ss, eid, comp);
       }
       else
       {
@@ -110,10 +111,11 @@ namespace dtEntityWrappers
       unsigned int count = 0;
       for(std::list<dtEntity::EntityId>::const_iterator i = eids.begin(); i != eids.end(); ++i)
       {
+         dtEntity::EntityId eid = *i;
          dtEntity::Component* comp;
-         if(es->GetComponent(*i, comp)) 
+         if(es->GetComponent(eid, comp))
          {
-            arr->Set(Integer::New(count++), WrapComponent(ss, comp));
+            arr->Set(Integer::New(count++), WrapComponent(ss, eid, comp));
          }
       }
       return scope.Close(arr);
@@ -157,9 +159,10 @@ namespace dtEntityWrappers
       }
       dtEntity::Component* component;
       
-      if(es->CreateComponent(args[0]->Uint32Value(), component))
+      dtEntity::EntityId eid = args[0]->Uint32Value();
+      if(es->CreateComponent(eid, component))
       {
-         return WrapComponent(ss, component);
+         return WrapComponent(ss, eid, component);
       }
       else
       {

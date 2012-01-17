@@ -36,6 +36,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    class DTENTITY_WRAPPERS_EXPORT ScriptSystem
       : public dtEntity::EntitySystem
+      , public dtEntity::ComponentDeletedCallback
    {
       static const dtEntity::StringId ScriptsId;
       static const dtEntity::StringId DebugPortId;
@@ -51,6 +52,7 @@ namespace dtEntityWrappers
       virtual void Finished();
 
       virtual void OnAddedToEntityManager(dtEntity::EntityManager& em);
+      virtual void OnRemovedFromEntityManager(dtEntity::EntityManager& em);
 
       void OnSceneLoaded(const dtEntity::Message& msg);
       void OnResetSystem(const dtEntity::Message& msg);
@@ -84,6 +86,19 @@ namespace dtEntityWrappers
 
       v8::Handle<v8::Context> GetGlobalContext();
 
+      /* Methods to store and retrieve component wrappers.
+       * Component wrappers are stored to prevent creating different
+       * wrappers for the same component, also for being able to invalidate
+       * wrappers once the wrapped component is deleted
+       */
+      void AddToComponentMap(dtEntity::ComponentType, dtEntity::EntityId, v8::Handle<v8::Object>);
+      v8::Handle<v8::Object> GetFromComponentMap(dtEntity::ComponentType, dtEntity::EntityId) const;
+      bool RemoveFromComponentMap(dtEntity::ComponentType, dtEntity::EntityId);
+
+
+      // implementation of dtEntity::ComponentDeletedCallback
+      virtual void ComponentDeleted(dtEntity::ComponentType t, dtEntity::EntityId id);
+
    private:
       void SetupContext();
       
@@ -100,8 +115,8 @@ namespace dtEntityWrappers
       v8::Persistent<v8::Context> mGlobalContext;
       std::set<std::string> mIncludedFiles;
 
-     // typedef std::map<dtEntity::EntityId, v8::Persistent<v8::Object> >
-     // typedef std::map<dtEntity::ComponentType, 
+      typedef std::map<std::pair<dtEntity::ComponentType, dtEntity::EntityId>, v8::Persistent<v8::Object> > ComponentMap;
+      ComponentMap mComponentMap;
       
    };
 

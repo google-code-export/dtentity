@@ -175,7 +175,7 @@ namespace dtEntityWrappers
       for(i = comps.begin(); i != comps.end(); ++i)
       {
         std::string str = dtEntity::GetStringFromSID((*i)->GetType());
-        obj->Set(String::New(str.c_str()), WrapComponent(ss, *i));
+        obj->Set(String::New(str.c_str()), WrapComponent(ss, id, *i));
       }
       return scope.Close(obj);
    }

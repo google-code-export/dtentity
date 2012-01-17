@@ -42,6 +42,12 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> COPropertyGetter(Local<String> propname, const AccessorInfo& info)
    {
+      dtEntity::Component* component = UnwrapComponent(info.Holder());
+      if(component == NULL)
+      {
+         return ThrowError("Trying to access deleted component!");
+      }
+
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
@@ -53,12 +59,18 @@ namespace dtEntityWrappers
                                Local<Value> value,
                                const AccessorInfo& info)
    {
+
+      dtEntity::Component* component = UnwrapComponent(info.Holder());
+      if(component == NULL)
+      {
+         LOG_ERROR("Trying to access deleted component!");
+         return;
+      }
+
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
       ValToProp(value, prop);      
-      dtEntity::Component* component = UnwrapComponent(info.Holder());
-      assert(component != NULL);
       component->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
    }
 
@@ -72,6 +84,10 @@ namespace dtEntityWrappers
    Handle<Value> COGetType(const Arguments& args)
    {
       dtEntity::Component* component = UnwrapComponent(args.Holder());
+      if(component == NULL)
+      {
+         return ThrowError("Accessing a deleted component!");
+      }
       return String::New(dtEntity::GetStringFromSID(component->GetType()).c_str());
    }
 
@@ -79,6 +95,11 @@ namespace dtEntityWrappers
    Handle<Value> COProperties(const Arguments& args)
    {
       dtEntity::Component* component = UnwrapComponent(args.Holder());
+      if(component == NULL)
+      {
+         return ThrowError("Accessing a deleted component!");
+      }
+
       HandleScope scope;
       Handle<Object> obj = Object::New();
 
@@ -99,6 +120,11 @@ namespace dtEntityWrappers
    Handle<Value> COFinished(const Arguments& args)
    {
       dtEntity::Component* component = UnwrapComponent(args.Holder());
+      if(component == NULL)
+      {
+         return ThrowError("Accessing a deleted component!");
+      }
+
       component->Finished();
       return Undefined();
    }
@@ -107,7 +133,7 @@ namespace dtEntityWrappers
    Handle<Value> ConstructCO(const v8::Arguments& args)
    {  
       Handle<External> ext = Handle<External>::Cast(args[0]);
-      dtEntity::Component* co = static_cast<dtEntity::Component*>(ext->Value());   
+      dtEntity::Component* co = static_cast<dtEntity::Component*>(ext->Value());
       args.Holder()->SetInternalField(0, External::New(co));
       return Undefined();
    }
@@ -132,52 +158,61 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapComponent(ScriptSystem* scriptsys, dtEntity::Component* v)
+   Handle<Object> WrapComponent(ScriptSystem* scriptsys, dtEntity::EntityId eid, dtEntity::Component* v)
    {
 
-     v8::HandleScope handle_scope;
-     v8::Context::Scope context_scope(scriptsys->GetGlobalContext());
+      HandleScope handle_scope;
 
-     if(s_componentTemplate.IsEmpty())
-     {
-       Handle<FunctionTemplate> templt = FunctionTemplate::New();
-       s_componentTemplate = Persistent<FunctionTemplate>::New(templt);
-       templt->SetClassName(String::New("Component"));
-       templt->InstanceTemplate()->SetInternalFieldCount(1);
+      Handle<Object> wrapped = scriptsys->GetFromComponentMap(v->GetType(), eid);
+      if(!wrapped.IsEmpty())
+      {
+         return wrapped;
+      }
 
-       Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
+      Context::Scope context_scope(scriptsys->GetGlobalContext());
 
-       proto->Set("equals", FunctionTemplate::New(COEquals));
-       proto->Set("getType", FunctionTemplate::New(COGetType));
-       proto->Set("properties", FunctionTemplate::New(COProperties));
-       proto->Set("toString", FunctionTemplate::New(COToString));
-       proto->Set("finished", FunctionTemplate::New(COFinished));
-     }
+      if(s_componentTemplate.IsEmpty())
+      {
+         Handle<FunctionTemplate> templt = FunctionTemplate::New();
+         s_componentTemplate = Persistent<FunctionTemplate>::New(templt);
+         templt->SetClassName(String::New("Component"));
+         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
-     Local<Object> instance = s_componentTemplate->GetFunction()->NewInstance();
-     instance->SetInternalField(0, External::New(v));
+         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-     const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
+         proto->Set("equals", FunctionTemplate::New(COEquals));
+         proto->Set("getType", FunctionTemplate::New(COGetType));
+         proto->Set("properties", FunctionTemplate::New(COProperties));
+         proto->Set("toString", FunctionTemplate::New(COToString));
+         proto->Set("finished", FunctionTemplate::New(COFinished));
+      }
 
-     dtEntity::PropertyContainer::PropertyMap::const_iterator i;
-     for(i = props.begin(); i != props.end(); ++i)
-     {
-        Handle<External> ext = v8::External::New(static_cast<void*>(i->second));
-        std::string propname = dtEntity::GetStringFromSID(i->first);
-        instance->SetAccessor(String::New(propname.c_str()),
+      Local<Object> instance = s_componentTemplate->GetFunction()->NewInstance();
+      instance->SetInternalField(0, External::New(v));
+
+      const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
+
+      dtEntity::PropertyContainer::PropertyMap::const_iterator i;
+      for(i = props.begin(); i != props.end(); ++i)
+      {
+         Handle<External> ext = v8::External::New(static_cast<void*>(i->second));
+         std::string propname = dtEntity::GetStringFromSID(i->first);
+         instance->SetAccessor(String::New(propname.c_str()),
                          COPropertyGetter, COPropertySetter,
                          ext);
-     }
-     Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
-     pobj.MakeWeak(NULL, &ComponentWrapperDestructor);
-     V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
-     return handle_scope.Close(instance);
+      }
+      Persistent<v8::Object> pobj = v8::Persistent<v8::Object>::New(instance);
+      pobj.MakeWeak(NULL, &ComponentWrapperDestructor);
+      V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
+
+      // store wrapped component to script system
+      scriptsys->AddToComponentMap(v->GetType(), eid, instance);
+      return handle_scope.Close(instance);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Component* UnwrapComponent(v8::Handle<v8::Value> val)
    {
-
       Handle<Object> obj = Handle<Object>::Cast(val);
       dtEntity::Component* v;
       GetInternal(obj, 0, v);
