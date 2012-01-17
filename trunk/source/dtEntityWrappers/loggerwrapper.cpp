@@ -22,7 +22,6 @@
 #include <dtEntityWrappers/loggerwrapper.h>
 #include <dtEntity/log.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <iostream>
 

@@ -32,7 +32,6 @@
 #include <dtEntity/stringid.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntity/inputhandler.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/screenwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
@@ -86,11 +85,6 @@ namespace dtEntityWrappers
       Register(DebugEnabledId, &mDebugEnabled);
       mDebugPort.Set(9222);
       
-      HandleScope handle_scope;
-
-      Handle<Context> context = GetGlobalContext();
-      Context::Scope context_scope(context);
-     
       //V8::AddGCPrologueCallback(GCStartCallback);
       //V8::AddGCEpilogueCallback(GCEndCallback);
 
@@ -114,15 +108,25 @@ namespace dtEntityWrappers
       //V8::RemoveGCPrologueCallback(GCStartCallback);
       //V8::RemoveGCEpilogueCallback(GCEndCallback);
 
-      WrapperManager::DestroyInstance();
+      mGlobalContext.Dispose();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::SetupContext()
    {
       HandleScope handle_scope;
+      if(!mGlobalContext.IsEmpty())
+      {
+         mGlobalContext.Dispose();
+      }
 
-      RegisterGlobalFunctions(GetGlobalContext());
+      // create a template for the global object
+      Handle<ObjectTemplate> global = ObjectTemplate::New();
+
+      // create persistent global context
+      mGlobalContext = Persistent<Context>::New(Context::New(NULL, global));
+
+      RegisterGlobalFunctions(this);
       
       InitializeAllWrappers(GetEntityManager());
 
@@ -135,7 +139,6 @@ namespace dtEntityWrappers
 
       dtEntity::ApplicationSystem* as;
       GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as);
-      mView = as->GetPrimaryView();
       osgViewer::GraphicsWindow* window = as->GetPrimaryWindow();
 
       dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
@@ -144,7 +147,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));
       context->Global()->Set(String::New("Key"), WrapKeys(input));
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
-      context->Global()->Set(String::New("Screen"), WrapScreen(this, mView.get(), window));
+      context->Global()->Set(String::New("Screen"), WrapScreen(this, as->GetPrimaryView(), window));
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());
@@ -180,7 +183,7 @@ namespace dtEntityWrappers
       {
          std::string script = (*i)->StringValue();
          v8::HandleScope scope;
-         v8::Handle<v8::Value> val = WrapperManager::GetInstance().ExecuteFile(script);
+         v8::Handle<v8::Value> val = ExecuteFile(script);
       }
    }
 
@@ -188,10 +191,7 @@ namespace dtEntityWrappers
    void ScriptSystem::OnResetSystem(const dtEntity::Message& msg)
    {
       UnregisterJavaScriptFromMessages(this);
-      WrapperManager::GetInstance().ResetGlobalContext();
-
       SetupContext();
-      LoadAutoStartScripts("AutoStartScripts");
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -205,18 +205,18 @@ namespace dtEntityWrappers
       
       if(msg.GetIncludeOnce())
       {
-         WrapperManager::GetInstance().ExecuteFileOnce(msg.GetPath());
+         ExecuteFileOnce(msg.GetPath());
       }
       else
       {
-         WrapperManager::GetInstance().ExecuteFile(msg.GetPath());
+         ExecuteFile(msg.GetPath());
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Context> ScriptSystem::GetGlobalContext()
    {
-      return WrapperManager::GetInstance().GetGlobalContext();
+      return mGlobalContext;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -258,18 +258,94 @@ namespace dtEntityWrappers
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::ExecuteFile(const std::string& path)
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Script> ScriptSystem::GetScriptFromFile(const std::string& path)
    {
-      v8::HandleScope scope;
-      WrapperManager::GetInstance().ExecuteFile(path);
+     
+      std::string code;
+      bool success = GetFileContents(path, code);
+      if(!success)
+      {
+         LOG_ERROR("Could not load script file from " + path);
+         return Handle<Script>();
+      }
+
+      HandleScope handle_scope;
+      Context::Scope context_scope(GetGlobalContext());
+      TryCatch try_catch;
+      Local<Script> compiled_script = Script::Compile(String::New(code.c_str()), String::New(path.c_str()));
+
+      if(try_catch.HasCaught())
+      {
+         ReportException(&try_catch);
+         return Handle<Script>();
+      }
+
+      return handle_scope.Close(compiled_script);
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::ExecuteScript(const std::string& script)
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ScriptSystem::ExecuteJS(const std::string& code, const std::string& path)
    {
-      v8::HandleScope scope;
-      WrapperManager::GetInstance().ExecuteJS(script);
+       // Init JavaScript context
+      HandleScope handle_scope;
+      Context::Scope context_scope(GetGlobalContext());
+
+      // We're just about to compile the script; set up an error handler to
+      // catch any exceptions the script might throw.
+      TryCatch try_catch;
+
+      // Compile the source code.
+      Local<Script> compiled_script = Script::Compile(String::New(code.c_str()), String::New(path.c_str()));
+
+      // if an exception occured
+      if(try_catch.HasCaught())
+      {
+         ReportException(&try_catch);
+   //      return try_catch;
+      }
+
+      // Run the script!
+      Local<Value> ret = compiled_script->Run();
+      if(try_catch.HasCaught())
+      {
+         ReportException(&try_catch);
+   //      return try_catch;
+      }
+
+      return handle_scope.Close(ret);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Local<Value> ScriptSystem::ExecuteFile(const std::string& path)
+   {
+      HandleScope handle_scope;
+
+      Handle<Script> script = GetScriptFromFile(path);
+
+      if(!script.IsEmpty())
+      {
+         v8::Context::Scope context_scope(GetGlobalContext());
+         TryCatch try_catch;
+         Local<Value> ret = script->Run();
+         if(try_catch.HasCaught())
+         {
+            ReportException(&try_catch);
+            return Local<Value>();
+         }
+         return handle_scope.Close(ret);
+      }
+      return Local<Value>();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::ExecuteFileOnce(const std::string& path)
+   {
+      if(mIncludedFiles.find(path) == mIncludedFiles.end())
+      {
+         mIncludedFiles.insert(path);
+         ExecuteFile(path);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////

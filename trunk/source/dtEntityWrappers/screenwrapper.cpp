@@ -30,7 +30,6 @@
 #include <dtEntity/windowmanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/scriptcomponent.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntity/basemessages.h>

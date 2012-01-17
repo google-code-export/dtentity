@@ -20,7 +20,6 @@
 
 #include <dtEntity/inputhandler.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntity/basemessages.h>
 #include <iostream>

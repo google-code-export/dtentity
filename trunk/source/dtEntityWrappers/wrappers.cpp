@@ -24,7 +24,6 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/debugdrawmanagerwrapper.h>
 #include <dtEntityWrappers/buffer.h>
 #include <dtEntityWrappers/file.h>
@@ -106,9 +105,6 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Handle<Context> context = scriptsystem->GetGlobalContext();      
       Context::Scope context_scope(context);
-
-      RegisterGlobalFunctions(context);
-      
       
 #if BUILD_CEGUI_WRAPPER
       
@@ -141,10 +137,4 @@ namespace dtEntityWrappers
 #endif
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void ExecuteScript(const std::string& path)
-   {
-      HandleScope scope;
-      WrapperManager::GetInstance().ExecuteFile(path);
-   }
 }

@@ -21,7 +21,6 @@
 #include <dtEntityWrappers/globalfunctions.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/profile.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
@@ -80,7 +79,9 @@ namespace dtEntityWrappers
          return ThrowError("usage: include(string path)");
       }
       std::string path = ToStdString(args[0]);
-      return WrapperManager::GetInstance().ExecuteFile(path);
+      void* data = External::Unwrap(args.Data());
+      ScriptSystem* ss = static_cast<ScriptSystem*>(data);
+      return ss->ExecuteFile(path);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -91,8 +92,10 @@ namespace dtEntityWrappers
          return ThrowError("usage: include_once(string path)");
       }
 
+      void* data = External::Unwrap(args.Data());
+      ScriptSystem* ss = static_cast<ScriptSystem*>(data);
       std::string path = ToStdString(args[0]);
-      WrapperManager::GetInstance().ExecuteFileOnce(path);
+      ss->ExecuteFileOnce(path);
       return Undefined();
    }
 
@@ -144,14 +147,15 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterGlobalFunctions(Handle<Context> context)
+   void RegisterGlobalFunctions(ScriptSystem* ss)
    {
       HandleScope handle_scope;
+      Handle<Context> context = ss->GetGlobalContext();
       Context::Scope context_scope(context);
       
       context->Global()->Set(String::New("findDataFile"), FunctionTemplate::New(FindDataFile)->GetFunction());
-      context->Global()->Set(String::New("include"), FunctionTemplate::New(Include)->GetFunction());
-      context->Global()->Set(String::New("include_once"), FunctionTemplate::New(IncludeOnce)->GetFunction());
+      context->Global()->Set(String::New("include"), FunctionTemplate::New(Include, External::New(ss))->GetFunction());
+      context->Global()->Set(String::New("include_once"), FunctionTemplate::New(IncludeOnce, External::New(ss))->GetFunction());
       context->Global()->Set(String::New("print"), FunctionTemplate::New(Print)->GetFunction());
       context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
       context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());

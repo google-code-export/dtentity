@@ -25,7 +25,6 @@
 #include <dtEntity/component.h>
 
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 
 #include <iostream>
