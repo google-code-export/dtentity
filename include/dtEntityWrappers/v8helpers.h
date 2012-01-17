@@ -24,7 +24,6 @@
 #include <string>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityWrappers/export.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/bytestorage.h>
 #include <osg/Vec2>
 #include <osg/Vec3>

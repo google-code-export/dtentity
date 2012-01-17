@@ -57,8 +57,23 @@ namespace dtEntityWrappers
       void OnLoadScript(const dtEntity::Message& msg);
       void Tick(const dtEntity::Message& msg);
 
-      void ExecuteFile(const std::string& path);
-      void ExecuteScript(const std::string& script);
+      
+
+      /** 
+         Load and compile script file, return script handle.
+         Uses caching if usecache = true.
+         */
+      v8::Handle<v8::Script> GetScriptFromFile(const std::string& path);
+      
+
+      /** execute JavaScript, returns output from script (last variable in code)*/
+      v8::Handle<v8::Value> ExecuteJS(const std::string& code, const std::string& path = "<eval>");
+      
+      /** load and execute a javascript file */
+      v8::Local<v8::Value> ExecuteFile(const std::string& path);
+
+      void ExecuteFileOnce(const std::string& path);
+
 
       // look in given directory for scripts ending with "*.js",
       // execute them and try to add entity system with name
@@ -76,12 +91,14 @@ namespace dtEntityWrappers
       dtEntity::MessageFunctor mResetSystemFunctor;
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mLoadScriptFunctor;
-      osg::observer_ptr<osgViewer::View> mView;
       
       dtEntity::BoolProperty mDebugEnabled;
       bool mDebugPortOpened;
       dtEntity::ArrayProperty mScripts;
       dtEntity::UIntProperty mDebugPort;
+
+      v8::Persistent<v8::Context> mGlobalContext;
+      std::set<std::string> mIncludedFiles;
       
    };
 

@@ -22,7 +22,6 @@
 
 #include <dtEntityWrappers/export.h>
 #include <dtEntity/property.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <v8.h>
 

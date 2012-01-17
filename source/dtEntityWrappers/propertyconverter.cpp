@@ -19,10 +19,7 @@
 */
 
 #include <dtEntityWrappers/propertyconverter.h>
-
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
-
 #include <iostream>
 #include <sstream>
 #include <assert.h>

@@ -50,7 +50,6 @@ SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/screenwrapper.h
 	${HEADER_PATH}/scriptcomponent.h
 	${HEADER_PATH}/v8helpers.h
-	${HEADER_PATH}/wrappermanager.h
 	${HEADER_PATH}/wrappers.h
 )
 
@@ -72,7 +71,6 @@ SET(LIB_SOURCES
 	${SOURCE_PATH}/screenwrapper.cpp
 	${SOURCE_PATH}/scriptcomponent.cpp	
 	${SOURCE_PATH}/v8helpers.cpp
-	${SOURCE_PATH}/wrappermanager.cpp
 	${SOURCE_PATH}/wrappers.cpp
 )
 

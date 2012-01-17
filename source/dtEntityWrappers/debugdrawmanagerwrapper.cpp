@@ -24,7 +24,6 @@
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <iostream>
 #include <sstream>
 #include <assert.h>

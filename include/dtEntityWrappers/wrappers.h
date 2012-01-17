@@ -31,5 +31,4 @@ namespace dtEntity
 namespace dtEntityWrappers
 {
    void DTENTITY_WRAPPERS_EXPORT InitializeAllWrappers(dtEntity::EntityManager& em);
-   void DTENTITY_WRAPPERS_EXPORT ExecuteScript(const std::string& path);
 }
