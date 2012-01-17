@@ -52,8 +52,8 @@ namespace dtEntityWrappers
       virtual void Finished();
 
       virtual void OnAddedToEntityManager(dtEntity::EntityManager& em);
-      virtual void OnRemovedFromEntityManager(dtEntity::EntityManager& em);
-
+      virtual void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
+      
       void OnSceneLoaded(const dtEntity::Message& msg);
       void OnResetSystem(const dtEntity::Message& msg);
       void OnLoadScript(const dtEntity::Message& msg);

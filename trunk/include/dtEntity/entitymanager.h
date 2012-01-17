@@ -44,13 +44,13 @@ namespace dtEntity
     * can be used to clean up wrappers for components or
     * execute other actions
     */
-   class ComponentDeletedCallback : public osg::Referenced
+   class ComponentDeletedCallback
    {
    public:
       virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
    };
 
-   typedef std::vector<osg::ref_ptr<ComponentDeletedCallback> > ComponentDeletedCallbacks;
+   typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
 
    /**
     * Entity manager is a container for entity systems. 
