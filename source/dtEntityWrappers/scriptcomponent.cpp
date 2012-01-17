@@ -108,6 +108,11 @@ namespace dtEntityWrappers
       //V8::RemoveGCPrologueCallback(GCStartCallback);
       //V8::RemoveGCEpilogueCallback(GCEndCallback);
 
+      for(ComponentMap::iterator i = mComponentMap.begin(); i != mComponentMap.end(); ++i)
+      {
+         i->second.Dispose();
+      }
+      mComponentMap.clear();
       mGlobalContext.Dispose();
    }
 
@@ -176,7 +181,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::OnRemovedFromEntityManager(dtEntity::EntityManager& em)
+   void ScriptSystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
       em.RemoveDeletedCallback(this);
    }
