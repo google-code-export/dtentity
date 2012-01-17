@@ -162,6 +162,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMGetComponents(const v8::Arguments& args)
    {
+      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
+
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       dtEntity::EntityId id = args[0]->Uint32Value();
       std::list<dtEntity::Component*> comps;
@@ -173,7 +175,7 @@ namespace dtEntityWrappers
       for(i = comps.begin(); i != comps.end(); ++i)
       {
         std::string str = dtEntity::GetStringFromSID((*i)->GetType());
-        obj->Set(String::New(str.c_str()), WrapComponent(args.Holder()->CreationContext(), *i));
+        obj->Set(String::New(str.c_str()), WrapComponent(ss, *i));
       }
       return scope.Close(obj);
    }
@@ -461,7 +463,9 @@ namespace dtEntityWrappers
             return Null();
          }
       }
-      return WrapEntitySystem(args.Holder()->CreationContext(), es);
+      ScriptSystem* ss;
+      em->GetEntitySystem(ScriptSystem::TYPE, ss);
+      return WrapEntitySystem(ss, es);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -482,11 +486,11 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapEntityManager(Handle<Context> context, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
+   v8::Handle<v8::Object> WrapEntityManager(ScriptSystem* ss, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
    {
 
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
+      v8::Context::Scope context_scope(ss->GetGlobalContext());
 
       if(s_entityManagerTemplate.IsEmpty())
       {
@@ -500,7 +504,7 @@ namespace dtEntityWrappers
         proto->Set("addEntitySystem", FunctionTemplate::New(EMAddEntitySystem));
         proto->Set("addToScene", FunctionTemplate::New(EMAddToScene));
         proto->Set("createEntity", FunctionTemplate::New(EMCreateEntity));
-        proto->Set("getComponents", FunctionTemplate::New(EMGetComponents));
+        proto->Set("getComponents", FunctionTemplate::New(EMGetComponents, External::New(ss)));
         proto->Set("getEntityIds", FunctionTemplate::New(EMGetEntityIds));
         proto->Set("emitMessage", FunctionTemplate::New(EMEmitMessage));
         proto->Set("enqueueMessage", FunctionTemplate::New(EMEnqueueMessage));

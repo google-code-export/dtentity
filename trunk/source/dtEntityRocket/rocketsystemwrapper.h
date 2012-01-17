@@ -23,10 +23,15 @@
 #include <dtEntityWrappers/export.h>
 #include <v8.h>
 
+namespace dtEntityWrappers
+{
+   class ScriptSystem;
+}
+
 namespace dtEntityRocket
 {
    class RocketSystem;
    v8::Handle<v8::Object> WrapRocketSystem(v8::Handle<v8::Context> context, RocketSystem* v);
    RocketSystem* UnwrapRocketSystem(v8::Handle<v8::Value>);   
-   void InitRocketSystemWrapper(v8::Handle<v8::Context>);
+   void InitRocketSystemWrapper(dtEntityWrappers::ScriptSystem*);
 }

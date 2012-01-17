@@ -24,5 +24,6 @@
 
 namespace dtEntityWrappers
 {
-   void InitMapSystemWrapper(v8::Handle<v8::Context>);
+   class ScriptSystem;
+   void InitMapSystemWrapper(ScriptSystem*);
 }

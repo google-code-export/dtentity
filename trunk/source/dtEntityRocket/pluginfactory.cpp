@@ -41,7 +41,7 @@ namespace dtEntityRocket
          dtEntityWrappers::ScriptSystem* scriptsys;
          bool success = em->GetEntitySystem(dtEntityWrappers::ScriptSystem::TYPE, scriptsys);
          assert(success);
-         InitRocketSystemWrapper(scriptsys->GetGlobalContext());
+         InitRocketSystemWrapper(scriptsys);
          es = new RocketSystem(*em);        
 
          return true;

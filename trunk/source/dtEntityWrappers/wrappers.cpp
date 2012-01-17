@@ -118,7 +118,7 @@ namespace dtEntityWrappers
       //context->Global()->Set(String::New("Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
 
       // make entity manager accessible as a global variable
-      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(context, &em, &mapsystem->GetMessageFactory()));
+      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(scriptsystem, &em, &mapsystem->GetMessageFactory()));
 
       context->Global()->Set(String::New("NodeMasks"), WrapNodeMasks());
 
@@ -126,7 +126,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("File"), CreateFile());
       context->Global()->Set(String::New("Log"), WrapLogger(context));
 
-      InitMapSystemWrapper(context);
+      InitMapSystemWrapper(scriptsystem);
       
 #if BUILD_OPENAL_WRAPPER
       InitSoundSystemWrapper();

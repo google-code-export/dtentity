@@ -99,6 +99,9 @@ namespace dtEntityWrappers
 
       v8::Persistent<v8::Context> mGlobalContext;
       std::set<std::string> mIncludedFiles;
+
+     // typedef std::map<dtEntity::EntityId, v8::Persistent<v8::Object> >
+     // typedef std::map<dtEntity::ComponentType, 
       
    };
 
