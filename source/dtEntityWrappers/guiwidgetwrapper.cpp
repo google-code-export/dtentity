@@ -20,8 +20,8 @@
 
 #include <dtEntityWrappers/guiwidgetwrapper.h>
 
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <dtEntity/scriptmodule.h>
 #include <osg/Referenced>
@@ -40,11 +40,10 @@ namespace dtEntityWrappers
    Persistent<FunctionTemplate> s_guiWidgetTemplate;
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MakeCEGUIContextCurrent()
+   void MakeCEGUIContextCurrent(Handle<Value> val)
    {
-      dtEntity::ApplicationSystem* appsys;
-      GetEntityManager()->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetPrimaryWindow()->makeCurrent();
+      osgViewer::GraphicsWindow* win = static_cast<osgViewer::GraphicsWindow*>(External::Unwrap(val));
+      win->makeCurrent();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +140,7 @@ namespace dtEntityWrappers
    bool EventHandler::onEvent(const CEGUI::EventArgs& e)
    {
       HandleScope handle_scope;
-      Handle<Context> context = GetGlobalContext();
+      Handle<Context> context = mObject->CreationContext();
       Context::Scope context_scope(context);
       std::string evtName = "on" + mEventName;
       Handle<String> name = String::New(evtName.c_str());
@@ -213,7 +212,7 @@ namespace dtEntityWrappers
 
       if(propname.substr(0, 2) == "on")
       {
-         MakeCEGUIContextCurrent();
+         MakeCEGUIContextCurrent(info.Data());
          std::string eventName = propname.substr(2, propname.length());
          EventHandler* eh = new EventHandler(info.Holder(), eventName);
          AddEventHandler(window, eh);
@@ -221,7 +220,7 @@ namespace dtEntityWrappers
       }
       else
       {
-         MakeCEGUIContextCurrent();
+         MakeCEGUIContextCurrent(info.Data());
          window->setProperty(ToStdString(namestr),ToStdString(value));
          return value;
       }
@@ -266,7 +265,7 @@ namespace dtEntityWrappers
       {
          return ThrowSyntaxError("setVisible usage: setVisible(bool)");
       }
-      MakeCEGUIContextCurrent();
+      MakeCEGUIContextCurrent(args.Data());
       CEGUI::Window* window; GetInternal(args.Holder(), 0, window);
       window->setVisible(args[0]->BooleanValue());
       return Undefined();
@@ -279,7 +278,7 @@ namespace dtEntityWrappers
       {
          return ThrowSyntaxError("setAlpha usage: setAlpha(number)");
       }
-      MakeCEGUIContextCurrent();
+      MakeCEGUIContextCurrent(args.Data());
       CEGUI::Window* window; GetInternal(args.Holder(), 0, window);
       window->setAlpha(args[0]->NumberValue());
       return Undefined();
@@ -295,7 +294,7 @@ namespace dtEntityWrappers
       CEGUI::Window* window; GetInternal(args.Holder(), 0, window);
       try
       {
-         MakeCEGUIContextCurrent();
+         MakeCEGUIContextCurrent(args.Data());
          window->setProperty(ToStdString(args[0]),ToStdString(args[1]));
       }
       catch(std::exception& e)
@@ -332,7 +331,7 @@ namespace dtEntityWrappers
       {
          return ThrowSyntaxError("addChildWidget usage: addChildWidget(window child)");
       }
-      MakeCEGUIContextCurrent();
+      MakeCEGUIContextCurrent(args.Data());
       CEGUI::Window* window; GetInternal(args.Holder(), 0, window);
       CEGUI::Window* child = UnwrapGuiWidget(args[0]);
       window->addChildWindow(child);
@@ -349,14 +348,18 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapGuiWidget(CEGUI::Window* v)
+   v8::Handle<v8::Object> WrapGuiWidget(ScriptSystem* ss, CEGUI::Window* v)
    {
 
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(GetGlobalContext());
+      v8::Context::Scope context_scope(ss->GetGlobalContext());
 
       if(s_guiWidgetTemplate.IsEmpty())
       {
+        dtEntity::ApplicationSystem* appsys;
+        ss->GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+        osgViewer::GraphicsWindow* win = appsys->GetPrimaryWindow();
+
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_guiWidgetTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("GUIWidget"));
@@ -364,19 +367,20 @@ namespace dtEntityWrappers
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-        proto->Set("toString", FunctionTemplate::New(GUIWidgetToString));
-        proto->Set("setVisible", FunctionTemplate::New(GUISetVisible));
-        proto->Set("setAlpha", FunctionTemplate::New(GUISetAlpha));
-        proto->Set("setProperty", FunctionTemplate::New(GUISetProperty));
-        proto->Set("getProperty", FunctionTemplate::New(GUIGetProperty));
-        proto->Set("addChildWidget", FunctionTemplate::New(GUIAddChildWidget));
+        proto->Set("toString", FunctionTemplate::New(GUIWidgetToString, External::New(win)));
+        proto->Set("setVisible", FunctionTemplate::New(GUISetVisible, External::New(win)));
+        proto->Set("setAlpha", FunctionTemplate::New(GUISetAlpha, External::New(win)));
+        proto->Set("setProperty", FunctionTemplate::New(GUISetProperty, External::New(win)));
+        proto->Set("getProperty", FunctionTemplate::New(GUIGetProperty, External::New(win)));
+        proto->Set("addChildWidget", FunctionTemplate::New(GUIAddChildWidget, External::New(win)));
         
         templt->InstanceTemplate()->SetNamedPropertyHandler(
            GUIWidgetNamedPropertyGetter,
            GUIWidgetNamedPropertySetter,
            GUIWidgetNamedPropertyQuery,
            0, // no deleter
-           GUIWidgetNamedPropertyEnumerator
+           GUIWidgetNamedPropertyEnumerator,
+           External::New(win)
         );
       }
       Local<Object> instance = s_guiWidgetTemplate->GetFunction()->NewInstance();

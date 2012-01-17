@@ -22,9 +22,8 @@
 #include <dtEntityWrappers/entitysystemwrapper.h>
 #include <dtEntityWrappers/propertyconverter.h>
 #include <dtEntity/soundcomponent.h>
-
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 
 #include <iostream>
@@ -59,10 +58,10 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InitSoundSystemWrapper()
+   void InitSoundSystemWrapper(ScriptSystem* ss)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(ss->GetGlobalContext());
 
       Handle<FunctionTemplate> templt = FunctionTemplate::New();
       templt->SetClassName(String::New("SoundSystem"));
@@ -73,7 +72,7 @@ namespace dtEntityWrappers
       proto->Set("toString", FunctionTemplate::New(SSToString));
       proto->Set("playSound", FunctionTemplate::New(SSPlaySound));
       
-      RegisterEntitySystempWrapper(dtEntity::SoundComponent::TYPE, templt);
+      RegisterEntitySystempWrapper(ss, dtEntity::SoundComponent::TYPE, templt);
    }
 
 }

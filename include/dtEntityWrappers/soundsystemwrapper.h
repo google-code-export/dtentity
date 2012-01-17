@@ -22,5 +22,6 @@
 
 namespace dtEntityWrappers
 {
-   void InitSoundSystemWrapper();
+   class ScriptSystem;
+   void InitSoundSystemWrapper(ScriptSystem*);
 }

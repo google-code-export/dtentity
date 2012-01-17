@@ -23,8 +23,8 @@
 #include <dtEntityWrappers/propertyconverter.h>
 #include <dtEntity/animationcomponent.h>
 
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntityWrappers/wrappermanager.h>
 #include <dtEntityWrappers/wrappers.h>
 
 #include <dtAnim/animatable.h>
@@ -205,10 +205,10 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InitAnimationSystemWrapper()
+   void InitAnimationSystemWrapper(ScriptSystem* ss)
    {
       HandleScope scope;
-      Context::Scope context_scope(GetGlobalContext());
+      Context::Scope context_scope(ss->GetGlobalContext());
 
       Handle<FunctionTemplate> templt = FunctionTemplate::New();
       templt->SetClassName(String::New("SoundSystem"));
@@ -224,7 +224,7 @@ namespace dtEntityWrappers
       proto->Set("clearAll", FunctionTemplate::New(ASClearAll));
       proto->Set("getRegisteredAnimations", FunctionTemplate::New(ASGetRegisteredAnimations));
       
-      RegisterEntitySystempWrapper(dtEntity::AnimationComponent::TYPE, templt);
+      RegisterEntitySystempWrapper(ss, dtEntity::AnimationComponent::TYPE, templt);
    }
 
 }

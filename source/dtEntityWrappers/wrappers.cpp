@@ -129,11 +129,11 @@ namespace dtEntityWrappers
       InitMapSystemWrapper(scriptsystem);
       
 #if BUILD_OPENAL_WRAPPER
-      InitSoundSystemWrapper();
+      InitSoundSystemWrapper(scriptsystem);
 #endif
 
 #if BUILD_CAL3D_WRAPPER
-      InitAnimationSystemWrapper();
+      InitAnimationSystemWrapper(scriptsystem);
 #endif
    }
 

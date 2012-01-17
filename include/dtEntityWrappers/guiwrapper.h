@@ -30,7 +30,8 @@ namespace dtEntity
 
 namespace dtEntityWrappers
 {
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapGui(dtEntity::GUI* v);
+   class ScriptSystem;
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapGui(ScriptSystem* ss, dtEntity::GUI* v);
    DTENTITY_WRAPPERS_EXPORT dtEntity::GUI* UnwrapGui(v8::Handle<v8::Value>);
    DTENTITY_WRAPPERS_EXPORT bool IsGui(v8::Handle<v8::Value>);
 }

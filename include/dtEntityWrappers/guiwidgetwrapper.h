@@ -34,8 +34,8 @@ namespace CEGUI
 
 namespace dtEntityWrappers
 {
-
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapGuiWidget(CEGUI::Window* v);
+   class ScriptSystem;
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapGuiWidget(ScriptSystem* ss, CEGUI::Window* v);
    DTENTITY_WRAPPERS_EXPORT CEGUI::Window*  UnwrapGuiWidget(v8::Handle<v8::Value>);
    DTENTITY_WRAPPERS_EXPORT bool IsGuiWidget(v8::Handle<v8::Value>);
 
