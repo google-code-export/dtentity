@@ -229,7 +229,16 @@ namespace dtEntity
        */      
       template <typename T>
       bool CreateComponent(EntityId eid, T*& component);
-      void DeleteComponent(EntityId eid, Component& component);
+
+      /**
+       * Delete component.
+       */
+      bool DeleteComponent(EntityId eid, Component& component);
+
+      /**
+       * Delete component.
+       */
+      bool DeleteComponent(EntityId eid, ComponentType componentType);
 
 	  /**
 	   * @return default message pump for inter-system communication

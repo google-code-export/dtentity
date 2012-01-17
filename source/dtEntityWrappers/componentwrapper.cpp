@@ -60,6 +60,7 @@ namespace dtEntityWrappers
                                const AccessorInfo& info)
    {
 
+      assert(!info.Holder().IsEmpty());
       dtEntity::Component* component = UnwrapComponent(info.Holder());
       if(component == NULL)
       {
@@ -70,6 +71,7 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
+      assert(prop);
       ValToProp(value, prop);      
       component->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
    }
@@ -189,7 +191,8 @@ namespace dtEntityWrappers
       dtEntity::PropertyContainer::PropertyMap::const_iterator i;
       for(i = props.begin(); i != props.end(); ++i)
       {
-         Handle<External> ext = v8::External::New(static_cast<void*>(i->second));
+         dtEntity::Property* prop = i->second;
+         Handle<External> ext = v8::External::New(static_cast<void*>(prop));
          std::string propname = dtEntity::GetStringFromSID(i->first);
          instance->SetAccessor(String::New(propname.c_str()),
                          COPropertyGetter, COPropertySetter,
