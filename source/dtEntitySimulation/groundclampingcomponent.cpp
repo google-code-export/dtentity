@@ -143,7 +143,6 @@ namespace dtEntitySimulation
 
       SetIntersectLayer(dtEntity::LayerAttachPointSystem::DefaultLayerId);
 
-      //mDebugDraw = new dtEntity::DebugDrawManager(em);
    }
 
    ////////////////////////////////////////////////////////////////////////////
