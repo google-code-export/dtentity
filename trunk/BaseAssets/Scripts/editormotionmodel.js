@@ -401,6 +401,7 @@ function EditorMotionSystem() {
 
   // don't store motion component to map, should be created by script at load time
   this.storeComponentToMap = function() { return false; }
+  this.storePropertiesToScene = function() { return false; }
 
   // -----------------------------------------
   function doJump(name, params) {
