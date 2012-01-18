@@ -159,7 +159,13 @@ namespace dtEntityWrappers
    inline std::string ToStdString(v8::Handle<v8::Value> val)
    {
       v8::String::Utf8Value str(val);
-      return *str ? *str : "<string conversion failed>";
+      std::string strbuf(*str, str.length() );
+      return strbuf;
+   }
+
+   inline v8::Handle<v8::String> ToJSString(const std::string& value)
+   {
+      return v8::String::New(value.c_str(), value.size());
    }
 
    /** write a JavaScript exception to log */

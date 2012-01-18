@@ -144,7 +144,7 @@ namespace dtEntityWrappers
    Handle<Value> ESGetComponentType(const Arguments& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
-      return String::New(dtEntity::GetStringFromSID(es->GetComponentType()).c_str());
+      return ToJSString(dtEntity::GetStringFromSID(es->GetComponentType()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -417,7 +417,7 @@ namespace dtEntityWrappers
          for(std::vector<std::string>::const_iterator i = names.begin(); i != names.end(); ++i)
          {
             std::string name = *i;
-            Handle<Value> namestr = String::New(name.c_str());
+            Handle<Value> namestr = ToJSString(name);
             instance->Set(namestr, FunctionTemplate::New(ESCallScriptMethod, namestr)->GetFunction());
          }
       }

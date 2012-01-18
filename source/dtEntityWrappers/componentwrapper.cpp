@@ -90,7 +90,7 @@ namespace dtEntityWrappers
       {
          return ThrowError("Accessing a deleted component!");
       }
-      return String::New(dtEntity::GetStringFromSID(component->GetType()).c_str());
+      return ToJSString(dtEntity::GetStringFromSID(component->GetType()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ namespace dtEntityWrappers
       {
          std::string propname = dtEntity::GetStringFromSID(i->first);
          const dtEntity::Property* prop = i->second;
-         obj->Set(String::New(propname.c_str()), PropToVal(args.Holder()->CreationContext(), prop));
+         obj->Set(ToJSString(propname), PropToVal(args.Holder()->CreationContext(), prop));
       }
 
       return scope.Close(obj);
@@ -194,7 +194,7 @@ namespace dtEntityWrappers
          dtEntity::Property* prop = i->second;
          Handle<External> ext = v8::External::New(static_cast<void*>(prop));
          std::string propname = dtEntity::GetStringFromSID(i->first);
-         instance->SetAccessor(String::New(propname.c_str()),
+         instance->SetAccessor(ToJSString(propname),
                          COPropertyGetter, COPropertySetter,
                          ext);
       }

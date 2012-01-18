@@ -76,7 +76,7 @@ namespace dtEntityWrappers
             HandleScope scope;
             Context::Scope context_scope(mKeyUpFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { String::New(name.c_str()), Boolean::New(handled), Uint32::New(contextId) };
+            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mKeyUpFunc->Call(mObject, 3, argv);
 
             if(ret.IsEmpty()) 
@@ -95,7 +95,7 @@ namespace dtEntityWrappers
             HandleScope scope;
             Context::Scope context_scope(mKeyDownFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { String::New(name.c_str()), Boolean::New(handled), Uint32::New(contextId) };
+            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(handled), Uint32::New(contextId) };
             Handle<Value> ret = mKeyDownFunc->Call(mObject, 3, argv);
 
             if(ret.IsEmpty()) 
@@ -260,7 +260,7 @@ namespace dtEntityWrappers
    Handle<Value> IHGetInputString(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return String::New(input->GetInputString().c_str());
+      return ToJSString(input->GetInputString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ namespace dtEntityWrappers
       
       for(i = keynames.begin(); i != keynames.end(); ++i)
       {
-         obj->Set(String::New(i->first.c_str()), Integer::New(i->second));
+         obj->Set(ToJSString(i->first), Integer::New(i->second));
       }
 
       return scope.Close(obj);

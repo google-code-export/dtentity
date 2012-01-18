@@ -202,14 +202,16 @@ namespace dtEntityRocket
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELSetInnerRML(const Arguments& args)
-   {  
+   {
       if(args.Length() < 1)
       {
          return ThrowError("Usage: setInnerRML(string val)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());      
-      element->SetInnerRML(ToStdString(args[0]).c_str());
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      std::string rml = ToStdString(args[0]);
+      element->SetInnerRML(rml.c_str());
       return Undefined();
+
    }
 
 	////////////////////////////////////////////////////////////////////////////////

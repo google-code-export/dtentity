@@ -135,7 +135,7 @@ namespace dtEntityWrappers
          TryCatch try_catch;
 
          Handle<Function> func = Handle<Function>::Cast(cb);
-         Handle<String> propstr = String::New(propname.c_str());
+         Handle<String> propstr = ToJSString(propname);
          Handle<Value> argv[1] = { propstr };
          Handle<Value> ret = func->Call(mComponent, 1, argv);
 
@@ -287,7 +287,7 @@ namespace dtEntityWrappers
       HandleScope scope;
          
       Handle<Value> newval = PropToVal(mSystem->CreationContext(), &prop);
-      Handle<String> propnamestr = String::New(propname.c_str());
+      Handle<String> propnamestr = ToJSString(propname);
       mSystem->Set(propnamestr, newval);
 
       Handle<Value> cb = mSystem->Get(mStringOnPropertyChanged);

@@ -286,7 +286,7 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Context::Scope context_scope(GetGlobalContext());
       TryCatch try_catch;
-      Local<Script> compiled_script = Script::Compile(String::New(code.c_str()), String::New(path.c_str()));
+      Local<Script> compiled_script = Script::Compile(ToJSString(code), ToJSString(path));
 
       if(try_catch.HasCaught())
       {
@@ -309,7 +309,7 @@ namespace dtEntityWrappers
       TryCatch try_catch;
 
       // Compile the source code.
-      Local<Script> compiled_script = Script::Compile(String::New(code.c_str()), String::New(path.c_str()));
+      Local<Script> compiled_script = Script::Compile(ToJSString(code), ToJSString(path));
 
       // if an exception occured
       if(try_catch.HasCaught())

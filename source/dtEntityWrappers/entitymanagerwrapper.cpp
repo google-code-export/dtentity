@@ -59,7 +59,7 @@ namespace dtEntityWrappers
          }
          HandleScope scope;
          std::string str = dtEntity::GetStringFromSID(v);
-         Handle<String> jsstr = String::New(str.c_str());
+         Handle<String> jsstr = ToJSString(str);
          mStrings[v] = Persistent<String>::New(jsstr);
          return scope.Close(jsstr);
       }
@@ -175,7 +175,7 @@ namespace dtEntityWrappers
       for(i = comps.begin(); i != comps.end(); ++i)
       {
         std::string str = dtEntity::GetStringFromSID((*i)->GetType());
-        obj->Set(String::New(str.c_str()), WrapComponent(ss, id, *i));
+        obj->Set(ToJSString(str), WrapComponent(ss, id, *i));
       }
       return scope.Close(obj);
    }
