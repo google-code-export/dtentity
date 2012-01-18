@@ -1526,33 +1526,18 @@ namespace dtEntity
          }
       }
 
-      std::string foundPath = osgDB::findDataFile(path);
-      if(foundPath == "")
-      {
-         if(osgDB::getDataFilePathList().empty())
-         {
-            LOG_ERROR("Cannot save scene, no data paths defined!");
-            return false;
-         }
 
-         // TODO check if sub folder given in path exists
-         std::ostringstream os;
-         os << osgDB::getDataFilePathList().back();
-         os << osgDB::getNativePathSeparator();
-         os << path;
-         foundPath = os.str();
-      }
-      
       // TODO under windows I get a crash in RapidXML if I 
       // directly stream to the ofstream. Hmmm...
       std::ostringstream os;
       os << doc;
-      std::ofstream of(foundPath.c_str());
-	  if(of.fail())
-	  {
-		  LOG_ERROR("Cannot open file for writing: " << foundPath);
+      std::ofstream of(path.c_str());
+
+		if(of.fail())
+		{
+		  LOG_ERROR("Cannot open file for writing: " << path);
 		  return false;
-	  }
+		}
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
       of << os.str();
       of.close();
