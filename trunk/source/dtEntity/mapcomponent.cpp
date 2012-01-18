@@ -266,6 +266,12 @@ namespace dtEntity
       std::string scenedatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
       std::string abspath = osgDB::findDataFile(path);
+      if(abspath == "")
+      {
+         LOG_ERROR("Cannot find scene file: " << path);
+         return false;
+      }
+
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = *i;
