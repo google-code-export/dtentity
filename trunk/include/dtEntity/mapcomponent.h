@@ -203,12 +203,18 @@ namespace dtEntity
       /**
        * Unload current scene and create new, empty scene
        */
-      bool CreateScene(const std::string& path);
+      bool CreateScene(const std::string& datapath, const std::string& scenepath);
 
       /**
        * Get path of currently loaded scene
        */
       std::string GetCurrentScene() const { return mCurrentScene; }
+
+      /**
+       * Save entity system configurations to current scene file,
+       * @param saveAllMaps if set, save all currently loaded maps to map files
+       */
+      bool SaveCurrentScene(bool saveAllMaps = true);
 
       /**
        * Save entity system configurations to scene file,
@@ -250,7 +256,7 @@ namespace dtEntity
       /**
         * Add an empty, named map to system
         */
-      bool AddEmptyMap(const std::string& mapname);
+      bool AddEmptyMap(const std::string& dataPath, const std::string& mapname);
 
       /**
        * Check if a map of that name exists
@@ -284,7 +290,8 @@ namespace dtEntity
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
 
-      std::set<std::string> mLoadedMaps;
+      typedef std::set<std::pair<std::string, std::string> > LoadedMaps;
+      LoadedMaps mLoadedMaps;
 
       // store spawners in a map
       SpawnerStorage mSpawners;
@@ -301,6 +308,7 @@ namespace dtEntity
       std::map<std::string, EntityId> mEntitiesByUniqueId;
 
       std::string mCurrentScene;
+      std::string mCurrentSceneDataPath;
 
       osg::ref_ptr<MapEncoder> mMapEncoder;
    };

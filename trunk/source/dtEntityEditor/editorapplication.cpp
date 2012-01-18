@@ -351,29 +351,30 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::AddScene(const QString& name)
+   void EditorApplication::AddScene(const QString& datapath, const QString& mappath)
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
-      mapSystem->CreateScene(name.toStdString());
+      mapSystem->CreateScene(datapath.toStdString(), mappath.toStdString());
       CreateCameraEntityIfNotExists();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::SaveScene(const QString& path)
+   void EditorApplication::SaveScene()
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      mapSystem->SaveScene(path.toStdString(), false);
+      std::ostringstream os;
+      mapSystem->SaveCurrentScene(false);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::SaveAll(const QString& path)
+   void EditorApplication::SaveAll()
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      mapSystem->SaveScene(path.toStdString(), true);
+      mapSystem->SaveCurrentScene(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

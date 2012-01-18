@@ -36,6 +36,9 @@
    #include <Rpcdce.h>
 #else
 #include <uuid/uuid.h>
+   #include <sys/stat.h>
+   #include <sys/types.h>
+
 #endif
 
 namespace dtEntity
@@ -245,25 +248,42 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::CreateScene(const std::string& path)
+   bool MapSystem::CreateScene(const std::string& datapath, const std::string& mapname)
    {
       UnloadScene();
       SceneLoadedMessage msg;
-      msg.SetSceneName(path);
+      msg.SetSceneName(mapname);
       GetEntityManager().EmitMessage(msg);
-      mCurrentScene = path;
+      mCurrentScene = mapname;
+      mCurrentSceneDataPath = datapath;
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::LoadScene(const std::string& path)
    {
+      // get data path containing this map
+      std::string scenedatapath = "";
+      osgDB::FilePathList paths = osgDB::getDataFilePathList();
+      std::string abspath = osgDB::findDataFile(path);
+      for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
+      {
+         std::string datapath = *i;
+         if(abspath.compare(0, datapath.size(), datapath) == 0)
+         {
+            scenedatapath = *i;
+            break;
+         }
+      }
+      assert(scenedatapath != "");
+
       bool success = mMapEncoder->LoadSceneFromFile(path);
       
       SceneLoadedMessage msg;
       msg.SetSceneName(path);
       GetEntityManager().EmitMessage(msg);
       mCurrentScene = path;
+      mCurrentSceneDataPath = scenedatapath;
       return success;
    }
 
@@ -275,13 +295,22 @@ namespace dtEntity
 
       // copy map name list so that removing maps from original list does not
       // cause crash
-      std::set<std::string> maps = mLoadedMaps;
-      for(std::set<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
+      LoadedMaps maps = mLoadedMaps;
+      for(LoadedMaps::iterator i = maps.begin(); i != maps.end(); ++i)
       {
-         UnloadMap(*i);
+         UnloadMap(i->second);
       }
       mCurrentScene = "";
+      mCurrentSceneDataPath = "";
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::SaveCurrentScene(bool saveAllMaps)
+   {
+      std::ostringstream os;
+      os << mCurrentSceneDataPath << "/" << mCurrentScene;
+      return SaveScene(os.str(), saveAllMaps);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -291,13 +320,12 @@ namespace dtEntity
 
       if(success && saveAllMaps)
       {
-         std::set<std::string>::const_iterator i;
-         for(i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+         for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
          {
-            bool success = SaveMap(*i);
+            bool success = SaveMap(i->second);
             if(!success)
             {
-               LOG_ERROR("Could not save map file " + *i);
+               LOG_ERROR("Could not save map file " << i->second);
             }
          }
       }
@@ -327,6 +355,21 @@ namespace dtEntity
          return false;
       }
 
+      // get data path containing this map
+      std::string mapdatapath = "";
+      osgDB::FilePathList paths = osgDB::getDataFilePathList();
+      std::string abspath = osgDB::findDataFile(path);
+      for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
+      {
+         std::string datapath = *i;
+         if(abspath.compare(0, datapath.size(), datapath) == 0)
+         {
+            mapdatapath = *i;
+            break;
+         }
+      }
+      assert(mapdatapath != "");
+
       MapBeginLoadMessage msg;
       msg.SetMapPath(path);
       GetEntityManager().EmitMessage(msg);
@@ -334,7 +377,7 @@ namespace dtEntity
       bool success = mMapEncoder->LoadMapFromFile(path);
       if(success)
       {
-         mLoadedMaps.insert(path);
+         mLoadedMaps.insert(std::make_pair(mapdatapath, path));
 
          MapLoadedMessage msg1;
          msg1.SetMapPath(path);
@@ -426,7 +469,13 @@ namespace dtEntity
       }
 
 
-      mLoadedMaps.erase(path);
+      for(LoadedMaps::iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+      {
+         if(i->second == path)
+         {
+            mLoadedMaps.erase(i);
+         }
+      }
       MapUnloadedMessage msg1;
       msg1.SetMapPath(path);
       GetEntityManager().EmitMessage(msg1);
@@ -460,19 +509,26 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::SaveMap(const std::string& path)
+   bool MapSystem::SaveMap(const std::string& mappath)
    {
-      if(!IsMapLoaded(path))
+      std::string datapath = "";
+      for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+      {
+         if(i->second == mappath)
+         {
+            datapath = i->first;
+            break;
+         }
+      }
+      if(datapath.empty())
       {
          LOG_ERROR("Cannot save map: No map of this name exists!");
          return false;
       }
-      std::string abspath = osgDB::findDataFile(path);
-      if(abspath == "")
-      {
-         abspath = osgDB::getDataFilePathList().front() + "/" + path;
-      }
-      bool success = mMapEncoder->SaveMapToFile(path, abspath);
+
+      std::ostringstream os;
+      os << datapath << "/" << mappath;
+      bool success = mMapEncoder->SaveMapToFile(mappath, os.str());
       
       return success;
    }
@@ -491,7 +547,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::AddEmptyMap(const std::string& mapname)
+   bool MapSystem::AddEmptyMap(const std::string& dataPath, const std::string& mapname)
    {
       if(IsMapLoaded(mapname))
       {
@@ -499,14 +555,25 @@ namespace dtEntity
       }
       if(osgDB::findDataFile(mapname) != "")
       {
-         mLoadedMaps.insert(mapname);
+         mLoadedMaps.insert(std::make_pair(dataPath, mapname));
          return false;
       }
+
+      std::string mappathrel = osgDB::getFilePath(mapname);
+      std::ostringstream os; os << dataPath << "/" << mappathrel;
+      std::string mappathabs = os.str();
+
+      if(!osgDB::fileExists(mappathabs))
+      {
+         LOG_ERROR("Cannot create map in directory " << mappathabs << "! Does it exist?");
+         return false;
+      }
+
 
       MapBeginLoadMessage msg;
       msg.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg);
-      mLoadedMaps.insert(mapname);
+      mLoadedMaps.insert(std::make_pair(dataPath, mapname));
       MapLoadedMessage msg2;
       msg2.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg2);
@@ -516,17 +583,24 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::IsMapLoaded(const std::string& path) const
    {
-      return (mLoadedMaps.find(path) != mLoadedMaps.end());
+      for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+      {
+         if(i->second == path)
+         {
+            return true;
+         }
+      }
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    std::vector<std::string> MapSystem::GetLoadedMaps() const
    {
       std::vector<std::string> ret;
-      std::set<std::string>::const_iterator i;
-      for(i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+
+      for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
-         ret.push_back(*i);
+         ret.push_back(i->second);
       }
       return ret;
    }
