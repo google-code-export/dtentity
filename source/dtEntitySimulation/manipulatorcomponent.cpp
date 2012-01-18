@@ -121,7 +121,11 @@ namespace dtEntitySimulation
 
        {
           addChild(dragger);
-          _dragger->setMatrix( osg::Matrix::scale(1, 1, 1) * osg::Matrix::translate(transform->GetTranslation()) );
+
+
+          setInitialBound(osg::BoundingSphere(osg::Vec3(0,0,0), 100));
+          osg::BoundingSphere bs = mTransform->GetNode()->getBound();
+          _dragger->setMatrix( osg::Matrix::scale(1, 1, 1) * osg::Matrix::translate(bs.center()) );
        }
 
        void setDraggerSize( float size ) { _draggerSize = size; }

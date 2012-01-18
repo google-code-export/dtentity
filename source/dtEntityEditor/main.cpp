@@ -228,7 +228,6 @@ int main(int argc, char *argv[])
 
    if(!singleThread)
    {
-      viewerThread->quit();
       viewerThread->wait();
       delete viewerThread;
    }

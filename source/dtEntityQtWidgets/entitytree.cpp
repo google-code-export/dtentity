@@ -1217,10 +1217,9 @@ namespace dtEntityQtWidgets
       if(!entity->GetComponent(comp))
       {
 	     entity->CreateComponent(comp);
-	  }
+		}
       comp->SetEntityName(entityname.toStdString());
       comp->SetUniqueId(entityname.toStdString());
-  
       mEntityManager->AddToScene(entity->GetId());
    }
 
