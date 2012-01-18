@@ -409,13 +409,7 @@ namespace dtEntityEditor
       msg->Get(dtEntity::SID("IncludeOnce"))->SetBool(true);
       dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));
 
-      pathprop->SetString("Scripts/osgveclib.js"); 
-      GetEntityManager().EmitMessage(*msg);
-      pathprop->SetString("Scripts/stdlib.js"); 
-      GetEntityManager().EmitMessage(*msg);
-      pathprop->SetString("Scripts/editormotionmodel.js"); 
-      GetEntityManager().EmitMessage(*msg);
-      pathprop->SetString("Scripts/manipulators.js"); 
+      pathprop->SetString("Scripts/editorautostart.js");
       GetEntityManager().EmitMessage(*msg);
 
       delete msg;
