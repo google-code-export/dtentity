@@ -43,6 +43,7 @@ namespace dtEntityRocket
       static const dtEntity::StringId OffsetId;
       static const dtEntity::StringId PixelOffsetId;
       static const dtEntity::StringId VisibleId;
+      static const dtEntity::StringId AlignToBoundingSphereCenterId;
 
       HUDComponent();
       virtual ~HUDComponent();
@@ -69,9 +70,15 @@ namespace dtEntityRocket
       osg::Vec3 GetOffset() const  { return mOffset.Get(); }
       void SetOffset(const osg::Vec3& o) { mOffset.Set(o); }
 
-
       void SetPixelOffset(const osg::Vec2& o) { mPixelOffset.Set(o); }
       osg::Vec2 GetPixelOffset() const { return mPixelOffset.Get(); }
+
+      /**
+        * if false, set HUD to origin of transform.
+        * if true, get bounding sphere of entity and set HUD to center
+        */
+      void SetAlignToBoundingSphereCenter(bool v) { mAlignToBoundingSphereCenter.Set(v); }
+      bool GetAlignToBoundingSphereCenter() const { return mAlignToBoundingSphereCenter.Get(); }
 
    private:
 
@@ -81,6 +88,7 @@ namespace dtEntityRocket
       dtEntity::Vec3Property mOffset;
       dtEntity::Vec2Property mPixelOffset;
       dtEntity::BoolProperty mVisible;
+      dtEntity::BoolProperty mAlignToBoundingSphereCenter;
       
    };
 

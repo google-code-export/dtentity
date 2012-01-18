@@ -141,7 +141,7 @@ namespace dtEntityWrappers
       int idx = 0;
       for(std::vector<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
       {
-         arr->Set(Integer::New(idx), String::New(i->c_str()));
+         arr->Set(Integer::New(idx), ToJSString(*i));
          ++idx;
       }
       return scope.Close(arr);
@@ -257,10 +257,10 @@ namespace dtEntityWrappers
          {
             std::string propname = dtEntity::GetStringFromSID(j->first);
             const dtEntity::Property* prop = j->second;
-            jscomp->Set(String::New(propname.c_str()), PropToVal(args.Holder()->CreationContext(), prop));
+            jscomp->Set(ToJSString(propname), PropToVal(args.Holder()->CreationContext(), prop));
          }
          
-         obj->Set(String::New(compname.c_str()), jscomp);
+         obj->Set(ToJSString(compname), jscomp);
       }
       
       return scope.Close(obj);
@@ -277,7 +277,7 @@ namespace dtEntityWrappers
       Handle<Array> arr = Array::New();
       for(unsigned int i = 0; i < names.size(); ++i)
       {
-         arr->Set(Integer::New(i), String::New(names[i].c_str()));
+         arr->Set(Integer::New(i), ToJSString(names[i]));
       }
       return scope.Close(arr);
    }

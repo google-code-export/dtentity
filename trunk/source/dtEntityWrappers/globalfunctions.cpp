@@ -39,8 +39,7 @@ namespace dtEntityWrappers
    {
       for (int i = 0; i < args.Length(); i++)
       {
-         String::Utf8Value val(args[i]);
-         fprintf(stdout, "%s", *val);
+         std::cout << ToStdString(args[i]);
       }      
       std::cout << "\n";
       fflush(stdout);
@@ -52,8 +51,7 @@ namespace dtEntityWrappers
    {
       for (int i = 0; i < args.Length(); i++)
       {
-         String::Utf8Value val(args[i]);
-         fprintf(stdout, "%s", *val);
+         std::cout << ToStdString(args[i]);
       }
       fflush(stdout);
       return Undefined();
@@ -68,7 +66,7 @@ namespace dtEntityWrappers
       }
       std::string path = ToStdString(args[0]);
       std::string result = osgDB::findDataFile(path);
-      return String::New(result.c_str());
+      return ToJSString(result);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +125,7 @@ namespace dtEntityWrappers
 
       for(unsigned int i = 0; i < pl.size(); ++i)
       {
-         arr->Set(Integer::New(i), String::New(pl[i].c_str()));
+         arr->Set(Integer::New(i), ToJSString(pl[i]));
       }
       return scope.Close(arr);
    }

@@ -89,7 +89,7 @@ namespace dtEntityWrappers
 
          for(dtEntity::PropertyGroup::iterator i = grp.begin(); i != grp.end(); ++i)
          {
-            out->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), PropToVal(context, i->second));
+            out->Set(ToJSString(dtEntity::GetStringFromSID(i->first)), PropToVal(context, i->second));
          }
          
          return scope.Close(out);
@@ -98,8 +98,8 @@ namespace dtEntityWrappers
       case DataType::UINT:     return Uint32::New(prop->UIntValue());
       case DataType::QUAT:     return WrapQuat(prop->QuatValue());
       case DataType::MATRIX:   return WrapMatrix(prop->MatrixValue());
-      case DataType::STRING:   return String::New(prop->StringValue().c_str());
-      case DataType::STRINGID: return String::New(dtEntity::GetStringFromSID(prop->StringIdValue()).c_str());
+      case DataType::STRING:   return ToJSString(prop->StringValue());
+      case DataType::STRINGID: return ToJSString(dtEntity::GetStringFromSID(prop->StringIdValue()));
       case DataType::VEC2:
       case DataType::VEC2D:    return WrapVec2(prop->Vec2dValue());
       case DataType::VEC3:

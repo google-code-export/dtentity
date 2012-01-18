@@ -111,10 +111,10 @@ namespace dtEntityWrappers
 
          Handle<Value> argv[5] = {
             loglevel,
-            String::New(filename.c_str()),
-            String::New(methodname.c_str()),
+            ToJSString(filename),
+            ToJSString(methodname),
             Integer::New(linenumber),
-            String::New(msg.c_str())
+            ToJSString(msg)
          };
 
          Context::Scope context_scope(mFunction->CreationContext());

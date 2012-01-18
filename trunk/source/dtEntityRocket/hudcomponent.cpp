@@ -35,6 +35,7 @@ namespace dtEntityRocket
    const dtEntity::StringId HUDComponent::OffsetId(dtEntity::SID("Offset"));
    const dtEntity::StringId HUDComponent::PixelOffsetId(dtEntity::SID("PixelOffset"));
    const dtEntity::StringId HUDComponent::VisibleId(dtEntity::SID("Visible"));
+   const dtEntity::StringId HUDComponent::AlignToBoundingSphereCenterId(dtEntity::SID("AlignToBoundingSphereCenter"));
 
    ////////////////////////////////////////////////////////////////////////////
    HUDComponent::HUDComponent()
@@ -45,6 +46,7 @@ namespace dtEntityRocket
       Register(OffsetId, &mOffset);
       Register(PixelOffsetId, &mPixelOffset);
       Register(VisibleId, &mVisible);
+      Register(AlignToBoundingSphereCenterId, &mAlignToBoundingSphereCenter);
 
       mVisible.Set(true);
    }
@@ -92,7 +94,12 @@ namespace dtEntityRocket
       mElementProp.Set(id);
       mElement = NULL;
       RocketSystem* rs;
-      mEntity->GetEntityManager().GetEntitySystem(RocketComponent::TYPE, rs);
+      bool success = mEntity->GetEntityManager().GetEntitySystem(RocketComponent::TYPE, rs);
+      if(!success)
+      {
+         LOG_ERROR("Cannot set element by id: rocket system not started!");
+         return;
+      }
 
       for(RocketSystem::ComponentStore::iterator i = rs->begin(); i != rs->end(); ++i)
       {
@@ -190,6 +197,13 @@ namespace dtEntityRocket
          return;
       }
 
+      RocketSystem* rsys;
+      bool success = GetEntityManager().GetEntitySystem(RocketComponent::TYPE, rsys);
+      if(!success)
+      {
+         return;
+      }
+
       dtEntity::ApplicationSystem* appsys;
       if(!GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys))
       {
@@ -221,8 +235,6 @@ namespace dtEntityRocket
       }
 
 
-      RocketSystem* rsys;
-      GetEntityManager().GetEntitySystem(RocketComponent::TYPE, rsys);
       for(RocketSystem::ComponentStore::iterator i = rsys->begin(); i != rsys->end(); ++i)
       {
          RocketComponent* rocketcomponent = i->second;
@@ -243,7 +255,15 @@ namespace dtEntityRocket
             dtEntity::TransformComponent* tc;
             if(GetEntityManager().GetComponent(id, tc, true))
             {
-               osg::Vec4 trans = osg::Vec4(tc->GetTranslation() + comp->GetOffset(), 1);
+               osg::Vec4 trans;
+               if(comp->GetAlignToBoundingSphereCenter())
+               {
+                  trans = osg::Vec4(tc->GetNode()->getBound().center() + comp->GetOffset(), 1);
+               }
+               else
+               {
+                  trans = osg::Vec4(tc->GetTranslation() + comp->GetOffset(), 1);
+               }
 
                trans = trans * matrix;
                double w = trans[3];
