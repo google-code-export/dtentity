@@ -180,10 +180,10 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
    std::string mapname = "TestData/testmap_generated.dtemap";
 
    {
-      mMapSystem->AddEmptyMap(mapname);
+      mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(), mapname);
       dtEntity::Entity* entity;
       mEntityManager->CreateEntity(entity);
-	  mEntityManager->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*mEntityManager));
+      mEntityManager->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*mEntityManager));
       dtEntity::PositionAttitudeTransformComponent* transcomp;
       entity->CreateComponent(transcomp);
       transcomp->SetPosition(osg::Vec3(1,2,3));
@@ -240,7 +240,7 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
    std::string mapname = "TestData/testmap_generated.dtemap";
 
    {
-      mMapSystem->AddEmptyMap(mapname);
+      mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(),mapname);
 
       dtEntity::Spawner* spawner1 = new dtEntity::Spawner("TestSpawner1", mapname);
       spawner1->SetAddToSpawnerStore(true);

@@ -191,31 +191,31 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    bool IsVec2(v8::Handle<v8::Value> v)
    {
-      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() == 2);
+      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 2);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool IsVec3(v8::Handle<v8::Value> v)
    {
-      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() == 3);
+      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 3);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool IsVec4(v8::Handle<v8::Value> v)
    {
-      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() == 4);
+      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 4);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool IsQuat(v8::Handle<v8::Value> v)
    {
-      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() == 4);
+      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 4);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool IsMatrix(v8::Handle<v8::Value> v)
    {
-      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() == 16);
+      return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 16);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
