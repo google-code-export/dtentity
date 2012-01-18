@@ -28,10 +28,10 @@
 #include <dtEntityQtWidgets/entitytree.h>
 #include <dtEntityQtWidgets/listdialog.h>
 #include <dtEntity/basemessages.h>
+#include <dtEntityQtWidgets/assetcreationdialog.h>
 #include <dtEntityQtWidgets/osgadapterwidget.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
 #include <dtEntityQtWidgets/propertyeditor.h>
-#include <dtEntityQtWidgets/messagestore.h>
 #include <dtEntityQtWidgets/qtguiwindowsystemwrapper.h>
 #include <dtEntityQtWidgets/spawnerstore.h>
 #include <dtEntity/log.h>
@@ -76,7 +76,6 @@ namespace dtEntityEditor
       : QMainWindow(parent) 
       , mApplication(app)
       , mEntityTreeDock(NULL)
-      , mMessageStoreDock(NULL)
       , mSpawnersDock(NULL)
       , mPropertyEditorDock(NULL)
    {
@@ -116,9 +115,9 @@ namespace dtEntityEditor
       CreateDockWidgets();
       
       connect(this, SIGNAL(LoadScene(const QString&)), app, SLOT(LoadScene(const QString&)));
-      connect(this, SIGNAL(AddScene(const QString&)), app, SLOT(AddScene(const QString&)));
-      connect(this, SIGNAL(SaveScene(const QString&)), app, SLOT(SaveScene(const QString&)));
-      connect(this, SIGNAL(SaveAll(const QString&)), app, SLOT(SaveAll(const QString&)));
+      connect(this, SIGNAL(AddScene(QString, QString)), app, SLOT(AddScene(QString, QString)));
+      connect(this, SIGNAL(SaveScene()), app, SLOT(SaveScene()));
+      connect(this, SIGNAL(SaveAll()), app, SLOT(SaveAll()));
 
    }
 
@@ -447,29 +446,6 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::CreateMessageStore()
-   {
-
-      mMessageStoreDock = new QDockWidget("Message Store");
-      mMessageStoreDock->setObjectName("MessageStoreDock");
-
-      using namespace dtEntityQtWidgets;
-
-      MessageStoreView* view = new MessageStoreView();
-      MessageStoreController* controller = new MessageStoreController(&mApplication->GetEntityManager());
-
-      controller->moveToThread(mApplication->thread());
-      controller->SetupSlots(view);
-      QTimer::singleShot(0, controller, SLOT(Init()));
-
-      mMessageStoreDock->setWidget(view);
-      addDockWidget(Qt::LeftDockWidgetArea, mMessageStoreDock);
-
-      mViewMenu->addAction(mMessageStoreDock->toggleViewAction());
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::CreateSpawners()
    {
 
@@ -530,7 +506,6 @@ namespace dtEntityEditor
    void EditorMainWindow::CreateDockWidgets()
    {      
       CreateEntityTree();
-     // CreateMessageStore();
       CreateSpawners();
       CreatePropertyEditor();
    }
@@ -589,13 +564,13 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnSaveScene()
    {
-      emit SaveScene(mCurrentScene);
+      emit SaveScene();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnSaveAll()
    {
-      emit SaveAll(mCurrentScene);
+      emit SaveAll();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -648,13 +623,14 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnNewScene()
    {
-      bool ok;
-      QString text = QInputDialog::getText(this, tr("Enter name for new scene"),
-                                          tr("Enter name for new scene:"), QLineEdit::Normal,
-                                          "Scenes/NewScene.dtescene", &ok);
-      if (ok && !text.isEmpty())
+      QSettings settings;
+      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      dtEntityQtWidgets::AssetCreationDialog dialog(paths, "Scenes/MyScene", ".dtescene");
+
+      if(dialog.exec() == QDialog::Accepted)
       {
-         emit AddScene(text);
+         emit AddScene(dialog.GetDataPath(), dialog.GetMapPath());
          mSaveAllAct->setEnabled(true);
          mSaveSceneAct->setEnabled(true);
       }

@@ -25,6 +25,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
+#include <dtEntityQtWidgets/assetcreationdialog.h>
 #include <dtEntityQtWidgets/listdialog.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <osgDB/FileUtils>
@@ -847,14 +848,14 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::OnAddNewMapAction(bool)
    {
-      bool ok;
-      QString text = QInputDialog::getText(this, tr("Enter name for new Map"),
-                                          tr("Enter name for new Map:"), QLineEdit::Normal,
-                                          "MyMap", &ok);
-      if (ok && !text.isEmpty())
+      QSettings settings;
+      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      AssetCreationDialog dialog(paths, "maps/MyMap", ".dtemap");
+
+      if(dialog.exec() == QDialog::Accepted)
       {
-         QString path = QString("maps/%1.dtemap").arg(text);
-         emit CreateNewMap(path);
+         emit CreateNewMap(dialog.GetDataPath(), dialog.GetMapPath());
       }
    }
 
@@ -1088,7 +1089,7 @@ namespace dtEntityQtWidgets
               this, SLOT(OnCreateSpawnerInMap(const QString&, const QString&)));
       connect(view, SIGNAL(CreateSpawnerAsChild(const QString&, const QString&)),
               this, SLOT(OnCreateSpawnerAsChild(const QString&, const QString&)));
-      connect(view, SIGNAL(CreateNewMap(const QString&)), this, SLOT(OnCreateNewMap(const QString&)));
+      connect(view, SIGNAL(CreateNewMap(QString,QString)), this, SLOT(OnCreateNewMap(QString,QString)));
       connect(view, SIGNAL(AddExistingMap(const QString&)), this, SLOT(OnAddExistingMap(const QString&)));
       connect(view, SIGNAL(UnloadMap(const QString&)), this, SLOT(OnUnloadMap(const QString&)));
       connect(view, SIGNAL(SaveMap(const QString&)), this, SLOT(OnSaveMap(const QString&)));
@@ -1273,12 +1274,12 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityTreeController::OnCreateNewMap(const QString& path)
+   void EntityTreeController::OnCreateNewMap(const QString& datapath, const QString& mappath)
    {
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
       assert(success);
-      success = mtsystem->AddEmptyMap(path.toStdString());
+      success = mtsystem->AddEmptyMap(datapath.toStdString(), mappath.toStdString());
       if(!success)
       {
          emit ShowErrorMessage("Could not create new map, unknown reason!");

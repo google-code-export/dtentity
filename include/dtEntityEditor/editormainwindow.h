@@ -76,14 +76,14 @@ namespace dtEntityEditor
    signals:      
 
       void LoadScene(const QString& path);
-      void AddScene(const QString& name);
+      void AddScene(const QString& dataPath, const QString& scenename);
       void Closed(bool);
       void ViewResized(const QSize& size);
       void ViewClosing();
       void DataPathsChanged(const QStringList&);
 
-      void SaveScene(const QString& path);
-      void SaveAll(const QString& path);
+      void SaveScene();
+      void SaveAll();
 
       void TextDroppedOntoGLWidget(const QPointF& pos, const QString&);
 
@@ -106,7 +106,6 @@ namespace dtEntityEditor
       void ShutDown();
 
       void CreateEntityTree();
-      void CreateMessageStore();
       void CreateSpawners();
       void CreatePropertyEditor();
       void AddToKnownComponentList(std::set<dtEntity::ComponentType> newTypes);
@@ -166,7 +165,6 @@ namespace dtEntityEditor
       QTimer* mUpdateTimer;
 
       QDockWidget* mEntityTreeDock;
-      QDockWidget* mMessageStoreDock;
       QDockWidget* mSpawnersDock;
       QDockWidget* mPropertyEditorDock;
    };

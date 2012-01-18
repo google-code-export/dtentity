@@ -105,10 +105,10 @@ namespace dtEntityEditor
       /**
        * Add and save empty new scene
        */
-      void AddScene(const QString& path);
+      void AddScene(const QString& datapath, const QString& mappath);
 
-      void SaveScene(const QString& scenepath);
-      void SaveAll(const QString& scenepath);
+      void SaveScene();
+      void SaveAll();
 
       void ViewResized(const QSize& size);
 

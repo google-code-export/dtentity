@@ -7,6 +7,7 @@ SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 set(LIB_PUBLIC_HEADERS
+   ${HEADER_PATH}/assetcreationdialog.h
    ${HEADER_PATH}/assetselector.h
    ${HEADER_PATH}/datapatheditor.h
    ${HEADER_PATH}/delegatefactory.h
@@ -16,7 +17,6 @@ set(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/glwidgetfactory.h
    ${HEADER_PATH}/listdialog.h
    ${HEADER_PATH}/messages.h
-   ${HEADER_PATH}/messagestore.h
    ${HEADER_PATH}/osgadapterwidget.h
    ${HEADER_PATH}/osggraphicswindowqt.h
    ${HEADER_PATH}/propertydelegate.h
@@ -27,6 +27,7 @@ set(LIB_PUBLIC_HEADERS
 
 
 SET(LIB_SOURCES
+   ${SOURCE_PATH}/assetcreationdialog.cpp
    ${SOURCE_PATH}/assetselector.cpp
    ${SOURCE_PATH}/datapatheditor.cpp
    ${SOURCE_PATH}/datapatheditor.ui
@@ -36,8 +37,6 @@ SET(LIB_SOURCES
    ${SOURCE_PATH}/icons
    ${SOURCE_PATH}/listdialog.cpp
    ${SOURCE_PATH}/messages.cpp
-   ${SOURCE_PATH}/messagestore.cpp
-   ${SOURCE_PATH}/messagestore.ui
    ${SOURCE_PATH}/osgadapterwidget.cpp
    ${SOURCE_PATH}/osggraphicswindowqt.cpp
    ${SOURCE_PATH}/propertydelegate.cpp
@@ -50,12 +49,12 @@ SET(LIB_SOURCES
 
 
 set(MOC_INPUT
+   ${HEADER_PATH}/assetcreationdialog.h
    ${HEADER_PATH}/assetselector.h
    ${HEADER_PATH}/datapatheditor.h
    ${HEADER_PATH}/entitylist.h
    ${HEADER_PATH}/entitytree.h
    ${HEADER_PATH}/listdialog.h
-   ${HEADER_PATH}/messagestore.h
    ${HEADER_PATH}/osgadapterwidget.h
    ${HEADER_PATH}/osggraphicswindowqt.h
    ${HEADER_PATH}/propertydelegate.h
@@ -80,11 +79,11 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 QT4_WRAP_CPP(MOC_SOURCES ${MOC_INPUT})
 
 QT4_WRAP_UI(LIB_SOURCES 
+	assetcreationdialog.ui
 	assetselector.ui
 	datapatheditor.ui
 	entitytree.ui
 	listdialog.ui
-	messagestore.ui
 	propertyeditor.ui
 	spawnerstore.ui
 )

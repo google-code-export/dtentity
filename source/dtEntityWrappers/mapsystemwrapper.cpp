@@ -53,8 +53,12 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> MSAddEmptyMap(const Arguments& args)
    {
+      if(args.Length() != 2)
+       {
+          return ThrowError("usage: addEmptyMap(datapath, mappath");
+       }
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
-      ms->AddEmptyMap(ToStdString(args[0]));
+      ms->AddEmptyMap(ToStdString(args[0]), ToStdString(args[1]));
       return Undefined();
    }
 

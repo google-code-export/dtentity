@@ -191,7 +191,7 @@ namespace dtEntityQtWidgets
       void CreateEntityInMap(const QString& mapname);
       void CreateSpawnerInMap(const QString& spawnername, const QString& mapname);
       void CreateSpawnerAsChild(const QString& spawnername, const QString& mapname);
-      void CreateNewMap(const QString& name);
+      void CreateNewMap(const QString& datapath, const QString& mappath);
       void AddExistingMap(const QString& name);
       void UnloadMap(const QString& name);
       void SaveMap(const QString& name);
@@ -267,7 +267,7 @@ namespace dtEntityQtWidgets
       void OnCreateEntityInMap(const QString& mapname);
       void OnCreateSpawnerInMap(const QString& spawnername, const QString& mapname);
       void OnCreateSpawnerAsChild(const QString& spawnername, const QString& parentname);
-      void OnCreateNewMap(const QString& mapname);
+      void OnCreateNewMap(const QString& datapath, const QString& mapname);
       void OnAddExistingMap(const QString& mapname);
       void OnUnloadMap(const QString& mapname);
       void OnSaveMap(const QString& mapname);

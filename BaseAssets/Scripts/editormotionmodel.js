@@ -399,6 +399,9 @@ function EditorMotionSystem() {
     return null;
   }
 
+  // don't store motion component to map, should be created by script at load time
+  this.storeComponentToMap = function() { return false; }
+
   // -----------------------------------------
   function doJump(name, params) {
     var context = params.ContextId;
