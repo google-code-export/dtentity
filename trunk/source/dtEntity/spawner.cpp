@@ -203,6 +203,7 @@ namespace dtEntity
          entity.CreateComponent(mapcomp);
       }
       mapcomp->SetSpawnerName(this->GetName());
+      mapcomp->SetMapName(this->GetMapName());
 
       return true;
    }
