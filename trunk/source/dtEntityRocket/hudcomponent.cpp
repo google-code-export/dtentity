@@ -26,6 +26,7 @@
 #include <Rocket/Core/Context.h>
 #include <Rocket/Core/ElementDocument.h>
 #include <iostream>
+#include <osg/Camera>
 
 namespace dtEntityRocket
 {

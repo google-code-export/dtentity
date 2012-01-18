@@ -24,7 +24,6 @@
 #include <dtEntitySimulation/export.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/component.h>
-#include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
@@ -169,7 +168,6 @@ namespace dtEntitySimulation
 
       osgSim::LineOfSight mLos;
       dtEntity::CameraComponent* mCamera;
-      //osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDraw;
 
    };
 }

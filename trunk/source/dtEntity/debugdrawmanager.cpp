@@ -114,6 +114,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    DebugDrawManager::~DebugDrawManager()
    {
+      mEntityManager->UnregisterForMessages(EnableDebugDrawingMessage::TYPE, mEnableFunctor);
       SetEnabled(false);
       while(mGroupDepthTest->getNumParents() > 0)
       {
