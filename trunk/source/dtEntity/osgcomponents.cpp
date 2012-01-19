@@ -441,6 +441,21 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void StaticMeshComponent::OnPropertyChanged(StringId propname, Property &prop)
+   {
+      if(propname == IsTerrainId)
+      {
+         unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
+               NodeMasks::RECEIVES_SHADOWS;
+         if(mIsTerrain.Get())
+         {
+            nm |= NodeMasks::TERRAIN;
+         }
+         SetNodeMask(nm, true);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::Finished()
    {
       SetMesh(mMeshPathProperty.Get(), mCacheHint.Get());
@@ -509,17 +524,9 @@ namespace dtEntity
    {
       assert(mEntity != NULL);
 
-      
       SetNode(node); 
-      
-      unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
-            NodeMasks::RECEIVES_SHADOWS;
-      if(mIsTerrain.Get())
-      {
-         nm |= NodeMasks::TERRAIN;
-      }
-      SetNodeMask(nm, true);
-    
+      OnPropertyChanged(IsTerrainId, mIsTerrain);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////

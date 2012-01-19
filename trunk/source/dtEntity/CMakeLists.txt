@@ -50,14 +50,12 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(LIB_PUBLIC_HEADERS
-  ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/applicationcomponent.h
   ${HEADER_PATH}/basemessages.h
   ${HEADER_PATH}/cameracomponent.h
+  ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/component.h
   ${HEADER_PATH}/componentfactories.h
-  ${HEADER_PATH}/componentplugin.h
-  ${HEADER_PATH}/componentpluginmanager.h
   ${HEADER_PATH}/componentplugin.h
   ${HEADER_PATH}/componentpluginmanager.h
   ${HEADER_PATH}/crc32.h
@@ -110,9 +108,10 @@ SET(LIB_PUBLIC_HEADERS
 
 SET(LIB_SOURCES
 	
-  ${SOURCE_PATH}/commandmessages.cpp
+
   ${SOURCE_PATH}/applicationcomponent.cpp
   ${SOURCE_PATH}/cameracomponent.cpp
+  ${SOURCE_PATH}/commandmessages.cpp
   ${SOURCE_PATH}/componentfactories.cpp
   ${SOURCE_PATH}/componentpluginmanager.cpp
   ${SOURCE_PATH}/crc32.cpp
