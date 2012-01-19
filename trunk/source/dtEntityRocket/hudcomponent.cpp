@@ -60,6 +60,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    void HUDComponent::OnAddedToEntity(dtEntity::Entity& e)
    {
+      BaseClass::OnAddedToEntity(e);
       mEntity = &e;
    }
 

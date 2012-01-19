@@ -35,6 +35,7 @@ namespace dtEntityRocket
    class DT_ROCKET_EXPORT HUDComponent : public dtEntity::NodeComponent
    {
 
+      typedef dtEntity::NodeComponent BaseClass;
    public:
       
       static const dtEntity::ComponentType TYPE;
