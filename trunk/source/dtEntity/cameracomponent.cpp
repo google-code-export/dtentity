@@ -122,7 +122,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::OnAddedToEntity(Entity& entity)
    {
-      mEntity = &entity;
+      BaseClass::OnAddedToEntity(entity);
       FetchCamera();
    }
 

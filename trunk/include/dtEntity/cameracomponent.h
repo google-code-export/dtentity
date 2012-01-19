@@ -41,6 +41,8 @@ namespace dtEntity
       : public TransformComponent
    {
   
+      typedef TransformComponent BaseClass;
+
    public:
 
       static const ComponentType TYPE;
@@ -153,7 +155,6 @@ namespace dtEntity
 
    private:
 
-      Entity* mEntity;
       osg::ref_ptr<osg::Camera> mCamera;
 
       UIntProperty mContextId;
