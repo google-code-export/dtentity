@@ -47,6 +47,7 @@ namespace dtEntitySimulation
       dtEntity::SID("SetHeightAndRotationToTerrain"));
    const dtEntity::StringId GroundClampingComponent::VerticalOffsetId(dtEntity::SID("VerticalOffset"));
    const dtEntity::StringId GroundClampingComponent::MinDistToCameraId(dtEntity::SID("MinDistToCamera"));
+   const dtEntity::StringId GroundClampingComponent::KeepLastClampedHeightId(dtEntity::SID("KeepLastClampedHeight"));
 
    ////////////////////////////////////////////////////////////////////////////
    GroundClampingComponent::GroundClampingComponent()
@@ -58,8 +59,10 @@ namespace dtEntitySimulation
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
       Register(MinDistToCameraId, &mMinDistToCamera);
+      Register(KeepLastClampedHeightId, &mKeepLastClampedHeight);
 
       mMinDistToCamera.Set(500);
+      mKeepLastClampedHeight.Set(true);
       
    }
     
@@ -330,7 +333,10 @@ namespace dtEntitySimulation
             distMovedY < MINIMUM_MOVEMENT_DISTANCE
             )
          {
-            transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
+            if(component->GetKeepLastClampedHeight())
+            {
+               transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
+            }
             if(component->GetClampingMode() == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
             {
                transformcomp->SetRotation(component->GetLastClampedAttitude());

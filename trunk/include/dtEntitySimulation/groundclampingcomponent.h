@@ -54,7 +54,7 @@ namespace dtEntitySimulation
       static const dtEntity::StringId ClampingMode_SetHeightToTerrainHeightId;
       static const dtEntity::StringId ClampingMode_SetHeightAndRotationToTerrainId;
       static const dtEntity::StringId MinDistToCameraId;
-
+      static const dtEntity::StringId KeepLastClampedHeightId;
       static const dtEntity::StringId VerticalOffsetId;
 
       GroundClampingComponent();
@@ -89,8 +89,11 @@ namespace dtEntitySimulation
       void SetLastClampedAttitude(const osg::Quat& p) { mLastClampedAttitude = p; }
       osg::Quat GetLastClampedAttitude() const { return mLastClampedAttitude; }
 
-      void SetMinDistToCamera(float  p) { mMinDistToCamera.Set(p); }
+      void SetMinDistToCamera(float p) { mMinDistToCamera.Set(p); }
       float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
+
+      void SetKeepLastClampedHeight(bool v) { mKeepLastClampedHeight.Set(v); }
+      bool GetKeepLastClampedHeight() const { return mKeepLastClampedHeight.Get(); }
 
       void SetDirty(bool v) { mDirty = v; }
       bool GetDirty() const { return mDirty; }
@@ -101,6 +104,7 @@ namespace dtEntitySimulation
       dtEntity::FloatProperty mVerticalOffset;
       dtEntity::FloatProperty mMinDistToCamera;
       dtEntity::TransformComponent* mTransformComponent;
+      dtEntity::BoolProperty mKeepLastClampedHeight;
       unsigned int mIntersectIndex;
       dtEntity::Entity* mEntity;
       osg::ref_ptr<osgUtil::LineSegmentIntersector> mIntersector;
