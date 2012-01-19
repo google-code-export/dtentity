@@ -35,9 +35,11 @@ namespace dtEntitySimulation
          : public dtEntity::NodeComponent
    {
 
-   public:
       typedef dtEntity::NodeComponent BaseClass;
-      static const dtEntity::ComponentType TYPE;     
+
+
+   public:
+      static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId LayerId;
       static const dtEntity::StringId DraggerTypeId;
       static const dtEntity::StringId OffsetFromStartId;
@@ -103,7 +105,6 @@ namespace dtEntitySimulation
       osg::ref_ptr<osgManipulator::DraggerCallback> mDraggerCallback;
       dtEntity::StringIdProperty mLayerProperty;
       dtEntity::StringId mAttachPoint;
-      dtEntity::Entity* mEntity;
       dtEntity::StringIdProperty mDraggerType;
       dtEntity::Vec3dProperty mOffsetFromStart;
       dtEntity::BoolProperty mKeepSizeConstant;

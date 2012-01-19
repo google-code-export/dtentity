@@ -236,7 +236,6 @@ namespace dtEntitySimulation
    ManipulatorComponent::ManipulatorComponent()
       : BaseClass()
       , mAttachPoint(dtEntity::StringId())
-      , mEntity(NULL)
       , mDraggerContainer(NULL)
    {
       Register(LayerId, &mLayerProperty);
@@ -260,6 +259,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::OnAddedToEntity(dtEntity::Entity& e)
    {
+      BaseClass::OnAddedToEntity(e);
       mEntity = &e;
       ManipulatorSystem* ms;
       mEntity->GetEntityManager().GetEntitySystem(TYPE, ms);
@@ -269,6 +269,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::OnRemovedFromEntity(dtEntity::Entity& e)
    {
+      BaseClass:OnRemovedFromEntity(e);
       RemoveFromParent();
    }
 

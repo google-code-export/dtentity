@@ -48,6 +48,7 @@ namespace dtEntityRocket
    
    class DT_ROCKET_EXPORT RocketComponent : public dtEntity::NodeComponent
    {
+      typedef dtEntity::NodeComponent BaseClass;
 
    public:
       

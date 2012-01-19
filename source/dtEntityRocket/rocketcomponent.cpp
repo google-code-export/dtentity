@@ -198,12 +198,14 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    void RocketComponent::OnAddedToEntity(dtEntity::Entity& e)
    {
+      BaseClass::OnAddedToEntity(e);
       mEntity = &e;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void RocketComponent::OnRemovedFromEntity(dtEntity::Entity& e)
    {
+     BaseClass::OnRemovedFromEntity(e);
      osgLibRocket::GuiNode* gui = dynamic_cast<osgLibRocket::GuiNode*>(GetNode());
      if(gui)
      {
