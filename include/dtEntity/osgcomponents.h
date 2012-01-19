@@ -199,6 +199,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
+      virtual void OnPropertyChanged(StringId propname, Property &prop);
       virtual void Finished();
 
       // set existing geometry as static mesh
