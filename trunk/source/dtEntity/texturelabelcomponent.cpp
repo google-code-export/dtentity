@@ -76,8 +76,8 @@ namespace dtEntity
       Register(VisibleId, &mVisible);
       Register(AlwaysOnTopId, &mAlwaysOnTop);
 
-      mMaxSize.Set(64);
-      mMinSize.Set(64);
+      mMaxSize.Set(1024);
+      mMinSize.Set(0);
       mDistanceAttenuation.Set(osg::Vec3(0, 0, 0));
       mColor.Set(osg::Vec4(1,1,1,1));
       mVisible.Set(true);
@@ -273,13 +273,7 @@ namespace dtEntity
       unsigned int width = component.GetMaxSize();
       osg::StateSet* ss = new osg::StateSet();
       
-      osg::Point* point = new osg::Point();
-      point->setSize(width);
-      point->setMinSize(component.GetMinSize());
-      point->setMaxSize(width);
-      point->setDistanceAttenuation(component.GetDistanceAttenuation());
 
-      ss->setAttribute(point);
 
       osg::PointSprite* sprite = new osg::PointSprite();
       sprite->setCoordOriginMode(osg::PointSprite::LOWER_LEFT);
@@ -321,6 +315,14 @@ namespace dtEntity
       }
       texture->setImage(image);
       ss->addUniform(component.GetColorUniform());
+
+      osg::Point* point = new osg::Point();
+      point->setSize(image->s());
+      point->setMinSize(component.GetMinSize());
+      point->setMaxSize(width);
+      point->setDistanceAttenuation(component.GetDistanceAttenuation());
+
+      ss->setAttribute(point);
 
       return ss;
    }
