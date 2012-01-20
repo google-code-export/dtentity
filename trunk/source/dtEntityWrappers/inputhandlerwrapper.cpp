@@ -82,6 +82,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+               return false;
             }
             return ret->BooleanValue();
          }
@@ -101,6 +102,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+               return false;
             }
             return ret->BooleanValue();
          }
@@ -120,6 +122,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+               return false;
             }
             return ret->BooleanValue();
          }
@@ -139,7 +142,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
-			   return false;
+               return false;
             }
             return ret->BooleanValue();
          }
@@ -159,6 +162,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+               return false;
             }
             return ret->BooleanValue();
          }
@@ -178,6 +182,7 @@ namespace dtEntityWrappers
             if(ret.IsEmpty()) 
             {
                ReportException(&try_catch);
+               return false;
             }
             return ret->BooleanValue();
          }
