@@ -62,17 +62,19 @@ namespace dtEntity
       /**
        * Get component from this entity
        * @param component receives the component if found
+       * @param searchDerived Return components of derived typs if found
        * @return true if found
        */
       template<typename T> 
-      bool GetComponent(T*& component) const;
+      bool GetComponent(T*& component, bool searchDerived = false) const;
 
       /**
        * Get component from this entity
        * @param component receives the component if found
+       * @param searchDerived Return components of derived typs if found
        * @return true if found
        */
-      bool GetComponent(ComponentType t, Component*& component) const;
+      bool GetComponent(ComponentType t, Component*& component, bool searchDerived = false) const;
 
       /**
        * Get a list of all component associated with this entity
@@ -126,9 +128,9 @@ namespace dtEntity
    }
 
    template<typename T> 
-   bool Entity::GetComponent(T*& component) const
+   bool Entity::GetComponent(T*& component, bool derived) const
    {
-       return GetEntityManager().GetComponent<T>(this->GetId(), component);
+       return GetEntityManager().GetComponent<T>(this->GetId(), component, derived);
    }
 }
 
