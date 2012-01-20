@@ -299,12 +299,9 @@ namespace dtEntity
       SceneUnloadedMessage msg;
       GetEntityManager().EmitMessage(msg);
 
-      // copy map name list so that removing maps from original list does not
-      // cause crash
-      LoadedMaps maps = mLoadedMaps;
-      for(LoadedMaps::iterator i = maps.begin(); i != maps.end(); ++i)
+      while(!mLoadedMaps.empty())
       {
-         UnloadMap(i->second);
+         UnloadMap(mLoadedMaps.begin()->second);
       }
       mCurrentScene = "";
       mCurrentSceneDataPath = "";
