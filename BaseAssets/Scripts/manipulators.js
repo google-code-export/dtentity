@@ -357,7 +357,8 @@ function TranslateTool() {
             var manipulator = manipulatorSystem.getComponent(id);
             if(manipulator === null) continue;
             var center = getEntitySystem("Layer").getBoundingSphere(id);
-
+			
+			if(center === null) continue;
             var height = center[2];
             if(manipulatorSystem.UseGroundClamping)  {
                var h = clamper.getTerrainHeight(center);

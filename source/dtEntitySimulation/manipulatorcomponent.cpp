@@ -260,17 +260,16 @@ namespace dtEntitySimulation
    void ManipulatorComponent::OnAddedToEntity(dtEntity::Entity& e)
    {
       BaseClass::OnAddedToEntity(e);
-      mEntity = &e;
       ManipulatorSystem* ms;
-      mEntity->GetEntityManager().GetEntitySystem(TYPE, ms);
+      e.GetEntityManager().GetEntitySystem(TYPE, ms);
       SetUseLocalCoords(ms->GetUseLocalCoords());
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::OnRemovedFromEntity(dtEntity::Entity& e)
    {
-      BaseClass:OnRemovedFromEntity(e);
       RemoveFromParent();
+      BaseClass::OnRemovedFromEntity(e);      
    }
 
    ////////////////////////////////////////////////////////////////////////////

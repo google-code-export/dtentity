@@ -589,6 +589,10 @@ namespace dtEntity
       }
       EntityId id = args[0]->UIntValue();
       LayerComponent* lc = GetComponent(id);
+      if(lc == NULL)
+      {
+         return NULL;
+      }
       osg::Node* att = lc->GetAttachedComponentNode();
       if(att == NULL)
       {
