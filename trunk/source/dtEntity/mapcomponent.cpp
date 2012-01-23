@@ -272,11 +272,10 @@ namespace dtEntity
          return false;
       }
 
-      std::string abspathunixstyle = osgDB::convertFileNameToUnixStyle(abspath);
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
-         std::string datapath = *i;
-         if(abspathunixstyle.compare(0, datapath.size(), datapath) == 0)
+         std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
+         if(abspath.compare(0, datapath.size(), datapath) == 0)
          {
             scenedatapath = *i;
             break;
@@ -366,10 +365,10 @@ namespace dtEntity
       // get data path containing this map
       std::string mapdatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string abspath = osgDB::convertFileNameToUnixStyle(osgDB::findDataFile(path));
+      std::string abspath = osgDB::findDataFile(path);
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
-         std::string datapath = *i;
+         std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
          if(abspath.compare(0, datapath.size(), datapath) == 0)
          {
             mapdatapath = *i;
