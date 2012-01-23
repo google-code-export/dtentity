@@ -144,7 +144,11 @@ namespace dtEntity
                 }
                 std::ostringstream os;
                 os << "OSG_WINDOW=" << winx << " " << winy << " " << winw << " " << winh;
-                putenv(os.str().c_str());
+
+                // unix putenv only accepts non-const char. No idea why.
+                char osgwinstr[256];
+                strcpy(osgwinstr, os.str().c_str());
+                putenv(osgwinstr);
 
              }
              else if (curArgv == "--projectAssets")
