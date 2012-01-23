@@ -24,7 +24,7 @@ inputCallback.mouseMove = function(x, y, handled) {
    osg.Vec3.cross(eyedir, up, toRight);
 
    var mouseX = Input.getAxis(Axis.MouseDeltaXRaw);
-   var mouseY = Input.getAxis(Axis.MouseDeltaYRaw);
+   var mouseY = -Input.getAxis(Axis.MouseDeltaYRaw);
 
    osg.Quat.makeRotate(-mouseX * rotatespeed, up[0], up[1], up[2], rotateOp);
    osg.Quat.rotate(rotateOp, eyedir, eyedir);

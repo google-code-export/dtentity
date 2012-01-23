@@ -6,7 +6,8 @@ var camid = createEntity({
     ContextId : 0,
     CullingMode : "NoAutoNearFarCulling",
     NearClip : 1,
-    FarClip: 100000
+    FarClip: 100000,
+	ClearColor: [0.5,0.5,0.5,1]
   },
   Map: {
     EntityName : "cam_0",

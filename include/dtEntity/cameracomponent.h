@@ -47,6 +47,8 @@ namespace dtEntity
 
       static const ComponentType TYPE;
       static const StringId ContextIdId;
+      static const StringId LayerAttachPointId;
+
       static const StringId CullingModeId;
       static const StringId CullMaskId;
       static const StringId NoAutoNearFarCullingId;
@@ -94,6 +96,9 @@ namespace dtEntity
 
       void SetContextId(unsigned int id) { mContextId.Set(id); }
       unsigned int GetContextId() const { return mContextId.Get(); }
+
+      void SetLayerAttachPoint(StringId id) { mLayerAttachPoint.Set(id); }
+      StringId GetLayerAttachPoint() const { return mLayerAttachPoint.Get(); }
 
 		void SetProjectionMode(StringId);
 		StringId GetProjectionMode() const { return mProjectionMode.Get(); }
@@ -153,11 +158,14 @@ namespace dtEntity
       void SetFieldOfView(double v) { mFieldOfView.Set(v); }
       double GetFieldOfView() const { return mFieldOfView.Get(); }
 
+      void TryAssignContext();
+      
    private:
 
-      osg::ref_ptr<osg::Camera> mCamera;
 
+      
       UIntProperty mContextId;
+      StringIdProperty mLayerAttachPoint;
 
       StringIdProperty mCullingMode;
       DoubleProperty mFieldOfView;
@@ -190,14 +198,12 @@ namespace dtEntity
 
       CameraSystem(EntityManager& em);
 
-      void OnEnterWorld(const Message&);
-      void OnLeaveWorld(const Message&);
-
       EntityId GetCameraEntityByContextId(unsigned int id);
 
-   private:
+      void OnWindowCreated(const Message& msg);
 
-      MessageFunctor mEnterWorldFunctor;
+   private:
+      MessageFunctor mWindowCreatedFunctor;
 
    };
 }

@@ -121,7 +121,7 @@ namespace dtEntity
       
    protected:
 
-      osgViewer::View* OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits);
+      bool OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId);
 
    private:
       MessageFunctor mCloseWindowFunctor;
