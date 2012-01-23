@@ -146,6 +146,7 @@ namespace dtEntity
       }
       else
       {      
+         Clear();
          mEntityManager->UnregisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
       }
    }

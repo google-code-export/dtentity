@@ -206,7 +206,7 @@ namespace dtEntityWrappers
 
       if(args.Length() < 2 || !IsVec3(args[0]) || !IsVec4(args[1]))
       {
-         return ThrowError("usage: addCross(Vec3 position, Vec4 color, [Number duration, bool useDepthTest])");
+         return ThrowError("usage: addCross(Vec3 position, Vec4 color, [int linewidth, Number duration, bool useDepthTest])");
       }
       osg::Vec3f pos = UnwrapVec3(args[0]);
 
