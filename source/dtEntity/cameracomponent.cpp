@@ -120,7 +120,7 @@ namespace dtEntity
       mOrthoZFar.Set(10000);
       UpdateProjectionMatrix();
 
-      GetCamera()->setAllowEventFocus(false);
+      GetCamera()->setAllowEventFocus(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////
