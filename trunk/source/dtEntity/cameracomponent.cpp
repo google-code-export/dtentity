@@ -72,7 +72,34 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
       : BaseClass(new osg::Camera())
-      , mCullMask(NodeMasks::VISIBLE)
+      , mFieldOfView(
+           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFieldOfView),
+           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFieldOfView)
+        )
+      , mAspectRatio(
+           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetAspectRatio),
+           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetAspectRatio)
+        )
+      , mNearClip(
+           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetNearClip),
+           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetNearClip)
+        )
+      , mFarClip (
+           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFarClip),
+           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFarClip)
+        )
+      , mClearColor (
+           DynamicVec4Property::SetValueCB(this, &CameraComponent::SetClearColor),
+           DynamicVec4Property::GetValueCB(this, &CameraComponent::GetClearColor)
+        )
+      , mLODScale (
+           DynamicFloatProperty::SetValueCB(this, &CameraComponent::SetLODScale),
+           DynamicFloatProperty::GetValueCB(this, &CameraComponent::GetLODScale)
+        )
+      , mCullMask (
+           DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
+           DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
+        )
    {
 
       Register(ContextIdId, &mContextId);
@@ -100,14 +127,12 @@ namespace dtEntity
 
       mLayerAttachPoint.Set(SID("root"));
 
-      mFieldOfView.Set(45);
-      mAspectRatio.Set(1.3f);
-      mNearClip.Set(1);
-      mFarClip.Set(100000);
+      GetCamera()->setProjectionMatrixAsPerspective(45, 1, 1, 100000);
+      GetCamera()->setCullMask(NodeMasks::VISIBLE);
       mCullingMode.Set(PrimitiveNearFarCullingId);
       mUp.Set(osg::Vec3(0, 0, 1));
       mEyeDirection.Set(osg::Vec3(0, 1, 0));
-      mLODScale.Set(1);
+
       mAspectRatio.Set(1);
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
       mProjectionMode.Set(ModePerspectiveId);
@@ -143,6 +168,86 @@ namespace dtEntity
       mEntity->GetEntityManager().EmitMessage(msg);
       
       BaseClass::OnRemovedFromEntity(entity);      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetFieldOfView(double v)
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      GetCamera()->setProjectionMatrixAsPerspective(v, asp, nc, fc);
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetFieldOfView() const
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      return fov;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetAspectRatio(double v)
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      GetCamera()->setProjectionMatrixAsPerspective(fov, v, nc, fc);
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetAspectRatio() const
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      return asp;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetNearClip(double v)
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      GetCamera()->setProjectionMatrixAsPerspective(fov, asp, v, fc);
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetNearClip() const
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      return nc;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetFarClip(double v)
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      GetCamera()->setProjectionMatrixAsPerspective(fov, asp, nc, v);
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetFarClip() const
+   {
+      double fov, asp, nc, fc;
+      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
+      return fc;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetLODScale(float v)
+   {
+      GetCamera()->setLODScale(v);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   float CameraComponent::GetLODScale() const
+   {
+      return GetCamera()->getLODScale();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -274,20 +379,6 @@ namespace dtEntity
          view->setSceneData(lcomp->GetNode());
       }
 
-      
-
-/*
-      double fovy, aspectRatio, zNear, zFar;
-      cam->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-
-      double newAspectRatio = double(traits.width) / double(traits.height);
-      double aspectRatioChange = newAspectRatio / aspectRatio;
-      if (aspectRatioChange != 1.0)
-      {
-          cam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange,1.0,1.0);
-      }
-*/
-
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -297,7 +388,6 @@ namespace dtEntity
       {
          return;
       }
-
       if(propname == ContextIdId)
       {
          TryAssignContext();
@@ -309,32 +399,24 @@ namespace dtEntity
       else if(propname == OrthoLeftId || propname == OrthoRightId ||
          propname == OrthoBottomId || propname == OrthoTopId ||
          propname == OrthoZNearId || propname == OrthoZFarId ||
-         propname == FieldOfViewId || propname == AspectRatioId ||
-         propname == NearClipId || propname == FarClipId ||
          propname == ProjectionModeId
       )
       {
          UpdateProjectionMatrix();
       }
-      else if(propname == LODScaleId)
-      {
-         GetCamera()->setLODScale(prop.FloatValue());
-      }
-      else if(propname == ClearColorId)
-      {
-         SetClearColor(prop.Vec4Value());
-      }
-      else if(propname == CullMaskId)
-      {
-         SetCullMask(prop.UIntValue());
-      }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetClearColor(const osg::Vec4& v)
-   { 
-      mClearColor.Set(v);       
+   {       
       GetCamera()->setClearColor(v);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 CameraComponent::GetClearColor() const
+   {
+      return GetCamera()->getClearColor();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -367,7 +449,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Camera* CameraComponent::GetCamera()
+   osg::Camera* CameraComponent::GetCamera() const
    {
       return static_cast<osg::Camera*>(GetNode());
    }
@@ -390,7 +472,11 @@ namespace dtEntity
    {
       if(mProjectionMode.Get() == ModePerspectiveId)
       {
-         GetCamera()->setProjectionMatrixAsPerspective(mFieldOfView.Get(),  mAspectRatio.Get(), mNearClip.Get(), mFarClip.Get());
+         double fov = mFieldOfView.Get();
+         double asp = mAspectRatio.Get();
+         double nc = mNearClip.Get();
+         double fc = mFarClip.Get();
+         GetCamera()->setProjectionMatrixAsPerspective(fov, asp, nc, fc);
       }
       else if(mProjectionMode.Get() == ModeOrthoId)
       {
@@ -399,7 +485,6 @@ namespace dtEntity
                                              mOrthoZNear.Get(), mOrthoZFar.Get());
       }
    }
-
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetUp(const osg::Vec3d& v) 
@@ -440,21 +525,14 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetCullMask(unsigned int mask)
    {
-      mCullMask.Set(mask);
       GetCamera()->setCullMask(mCullMask.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
    unsigned int CameraComponent::GetCullMask() const
    {
-      return mCullMask.Get();
+      return GetCamera()->getCullMask();
    }
-
-	////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 CameraComponent::GetClearColor() const
-	{
-		return mClearColor.Get();
-	}
 
    ////////////////////////////////////////////////////////////////////////////
    CameraSystem::CameraSystem(EntityManager& em)
@@ -463,7 +541,6 @@ namespace dtEntity
       mWindowCreatedFunctor  = MessageFunctor(this, &CameraSystem::OnWindowCreated);
       em.RegisterForMessages(WindowCreatedMessage::TYPE, mWindowCreatedFunctor, "CameraSystem::OnWindowCreated");
    }
-
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraSystem::OnWindowCreated(const Message& m)

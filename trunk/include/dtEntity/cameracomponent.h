@@ -88,7 +88,7 @@ namespace dtEntity
       virtual void OnRemovedFromEntity(Entity& entity);
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
-      osg::Camera* GetCamera();
+      osg::Camera* GetCamera() const;
 
       virtual void Finished();
 
@@ -155,8 +155,20 @@ namespace dtEntity
          mEyeDirection.Set(q * osg::Vec3d(0, 1, 0));
       }
 
-      void SetFieldOfView(double v) { mFieldOfView.Set(v); }
-      double GetFieldOfView() const { return mFieldOfView.Get(); }
+      void SetFieldOfView(double v);
+      double GetFieldOfView() const;
+
+      void SetAspectRatio(double v);
+      double GetAspectRatio() const;
+
+      void SetNearClip(double v);
+      double GetNearClip() const;
+
+      void SetFarClip(double v);
+      double GetFarClip() const;
+
+      void SetLODScale(float v);
+      float GetLODScale() const;
 
       void TryAssignContext();
       
@@ -168,16 +180,16 @@ namespace dtEntity
       StringIdProperty mLayerAttachPoint;
 
       StringIdProperty mCullingMode;
-      DoubleProperty mFieldOfView;
-      DoubleProperty mAspectRatio;
-      DoubleProperty mNearClip;
-      DoubleProperty mFarClip;
-      FloatProperty mLODScale;
+      DynamicDoubleProperty mFieldOfView;
+      DynamicDoubleProperty mAspectRatio;
+      DynamicDoubleProperty mNearClip;
+      DynamicDoubleProperty mFarClip;
+      DynamicFloatProperty mLODScale;
       Vec3dProperty mPosition;
       Vec3dProperty mUp;
       Vec3dProperty mEyeDirection;
-      Vec4Property mClearColor;
-      UIntProperty mCullMask;
+      DynamicVec4Property mClearColor;
+      DynamicUIntProperty mCullMask;
       StringIdProperty mProjectionMode;
 
       DoubleProperty mOrthoLeft;

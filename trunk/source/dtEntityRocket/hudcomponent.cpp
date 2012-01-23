@@ -77,7 +77,10 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    void HUDComponent::SetVisible(bool v)
    {
-      mElement->SetProperty("visibility", v ? "visible" : "hidden");
+      if(mElement)
+      {
+         mElement->SetProperty("visibility", v ? "visible" : "hidden");
+      }
       mVisible.Set(v);
    }
 
