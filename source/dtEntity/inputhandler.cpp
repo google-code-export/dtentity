@@ -20,6 +20,7 @@
 
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/basemessages.h>
+#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/log.h>
 #include <osg/Version>
 #include <osgViewer/CompositeViewer>
@@ -546,10 +547,10 @@ namespace dtEntity
             if(win)
             {
                mMouseXRaw = ea.getXmin() + (ea.getXmax() - ea.getXmin()) * (1 + mMouseX) / 2;
-               mMouseYRaw = ea.getYmax() - (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+               mMouseYRaw = ea.getYmin() + (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+               int jump = ea.getYmax() - (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
 
-               const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw,mMouseYRaw);
-
+               const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw,jump);
                mMouseDeltaXRaw = 0;
                mMouseDeltaYRaw = 0;
 

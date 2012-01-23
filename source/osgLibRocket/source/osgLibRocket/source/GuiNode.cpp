@@ -439,8 +439,7 @@ namespace osgLibRocket
 
         Rocket::Core::Vector2i dims = _context->GetDimensions();
         x = ea.getX();
-        //y = dims.y - ea.getY();
-        y = ea.getY();
+        y = dims.y - ea.getY();
 
       }
       else
