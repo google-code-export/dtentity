@@ -529,6 +529,12 @@ namespace dtEntity
       int nxr = ea.getX();
       int nyr = ea.getY();
 
+      if(ea.getMouseYOrientation() == osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS)
+      {
+         nyr = ea.getWindowHeight() - nyr;
+      }       
+               
+
       if(mLockCursor)
       {
          bool xmodified = true;
@@ -548,7 +554,9 @@ namespace dtEntity
             {
                mMouseXRaw = ea.getXmin() + (ea.getXmax() - ea.getXmin()) * (1 + mMouseX) / 2;
                mMouseYRaw = ea.getYmin() + (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+
                int jump = ea.getYmax() - (ea.getYmax() - ea.getYmin()) * (1 + mMouseY) / 2;
+               
 
                const_cast<osgViewer::GraphicsWindow*>(win)->requestWarpPointer(mMouseXRaw,jump);
                mMouseDeltaXRaw = 0;

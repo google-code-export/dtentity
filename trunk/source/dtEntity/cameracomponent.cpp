@@ -169,12 +169,26 @@ namespace dtEntity
 
          for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
          {
-            osg::Camera* oldcam = (*i)->getCamera();
+            view = *i;
+
+            osg::Camera* oldcam = view->getCamera();
             osg::Camera* newcam = GetCamera();
+
+            if(oldcam->getGraphicsContext() == NULL)
+            {
+               if(view->getNumSlaves() != 0)
+               {
+                  oldcam = view->getSlave(0)._camera;
+               }
+               else
+               {
+                  LOG_ERROR("Camera without graphics context found!");
+                  continue;
+               }
+            }
             unsigned int cid = oldcam->getGraphicsContext()->getState()->getContextID();
             if(cid == mContextId.Get())
-            {
-               view = *i;
+            {               
                
                appsys->GetViewer()->stopThreading();
 
@@ -188,6 +202,12 @@ namespace dtEntity
                newcam->setGraphicsContext(ctx);
                view->setName(ctx->getName());
                view->setCamera(newcam);
+               
+               // no slaves supported at the moment
+               while(view->getNumSlaves() > 0)
+               {
+                  view->removeSlave(0);
+               }
 
                appsys->GetViewer()->startThreading(); 
 
@@ -197,6 +217,16 @@ namespace dtEntity
                mEntity->GetEntityManager().EmitMessage(msg);
 
                const osg::GraphicsContext::Traits& traits = *newcam->getGraphicsContext()->getTraits();
+               
+               double fovy, aspectRatio, zNear, zFar;
+               newcam->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+               double newAspectRatio = double(traits.width) / double(traits.height);
+               double aspectRatioChange = newAspectRatio / aspectRatio;
+               if (aspectRatioChange != 1.0)
+               {
+                 newcam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange, 1.0, 1.0);
+               }
+               
                newcam->setViewport(new osg::Viewport(0, 0, traits.width, traits.height));
 
                GLenum buffer = traits.doubleBuffer ? GL_BACK : GL_FRONT;

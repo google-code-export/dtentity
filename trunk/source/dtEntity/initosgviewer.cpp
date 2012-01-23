@@ -22,7 +22,7 @@
 #include <iostream>
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
-#include <osgViewer/CompositeViewer>
+#include <osgViewer/Viewer>
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 #include <dtEntity/componentfactories.h>

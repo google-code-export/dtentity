@@ -441,6 +441,14 @@ namespace osgLibRocket
         x = ea.getX();
         y = dims.y - ea.getY();
 
+        if(ea.getMouseYOrientation() == osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS)
+        {
+           y = ea.getY();
+        }
+        else
+        {
+           y = dims.y - ea.getY();
+        }
       }
       else
       {
@@ -549,7 +557,7 @@ namespace osgLibRocket
       case(osgGA::GUIEventAdapter::MOVE):
       case(osgGA::GUIEventAdapter::DRAG):
       {
-        int x, y;
+         int x, y;
         osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
         mousePosition(view,ea, ev, x, y);
         _context->ProcessMouseMove(x, y, GetKeyModifiers(ea.getModKeyMask()));
