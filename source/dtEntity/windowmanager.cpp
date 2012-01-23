@@ -146,7 +146,9 @@ namespace dtEntity
              compviewer->addView(view);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
              gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
+             gw->getEventQueue()->getCurrentEventState()->setMouseYOrientation(osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS);
              gw->setName(name);
+             
              
              contextId = gw->getState()->getContextID();
              gw->realize();
