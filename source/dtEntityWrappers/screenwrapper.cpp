@@ -329,11 +329,11 @@ namespace dtEntityWrappers
             const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
             if(entity != NULL)
             {
-				   Handle<Object> obj = Object::New();
-				   obj->Set(entityid, Uint32::New(entity->GetId()));
-				   obj->Set(normal, WrapVec3(isect.getWorldIntersectNormal()));
-				   obj->Set(position, WrapVec3(isect.getWorldIntersectPoint()));
-				   ret->Set(count++, obj);			   
+               Handle<Object> obj = Object::New();
+               obj->Set(entityid, Uint32::New(entity->GetId()));
+               obj->Set(normal, WrapVec3(isect.getWorldIntersectNormal()));
+               obj->Set(position, WrapVec3(isect.getWorldIntersectPoint()));
+               ret->Set(count++, obj);
             }
          }
       }
