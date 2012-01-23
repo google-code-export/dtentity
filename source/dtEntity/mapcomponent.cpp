@@ -272,16 +272,21 @@ namespace dtEntity
          return false;
       }
 
+      std::string abspathunixstyle = osgDB::convertFileNameToUnixStyle(abspath);
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = *i;
-         if(abspath.compare(0, datapath.size(), datapath) == 0)
+         if(abspathunixstyle.compare(0, datapath.size(), datapath) == 0)
          {
             scenedatapath = *i;
             break;
          }
       }
-      assert(scenedatapath != "");
+      if(scenedatapath == "")
+      {
+         LOG_ERROR("No data path for scene found!");
+         return false;
+      }
 
       bool success = mMapEncoder->LoadSceneFromFile(path);
       
@@ -361,7 +366,7 @@ namespace dtEntity
       // get data path containing this map
       std::string mapdatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string abspath = osgDB::findDataFile(path);
+      std::string abspath = osgDB::convertFileNameToUnixStyle(osgDB::findDataFile(path));
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = *i;
@@ -471,16 +476,18 @@ namespace dtEntity
          }
       }
 
+      MapUnloadedMessage msg1;
+      msg1.SetMapPath(path);
 
       for(LoadedMaps::iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
          if(i->second == path)
          {
             mLoadedMaps.erase(i);
+            break;
          }
       }
-      MapUnloadedMessage msg1;
-      msg1.SetMapPath(path);
+
       GetEntityManager().EmitMessage(msg1);
       return true;
    }
