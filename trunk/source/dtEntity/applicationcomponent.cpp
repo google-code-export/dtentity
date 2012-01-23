@@ -20,9 +20,8 @@
 
 #include <dtEntity/applicationcomponent.h>
 
-#include <dtEntity/cameracomponent.h>
-
 #include <dtEntity/basemessages.h>
+#include <dtEntity/cameracomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/entity.h>
@@ -179,6 +178,9 @@ namespace dtEntity
       em.RegisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor,
                              FilterOptions::ORDER_DEFAULT, "ApplicationSystem::OnResetSystem");
 
+      mCameraAddedFunctor = MessageFunctor(this, &ApplicationSystem::OnCameraAdded);
+      em.RegisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor, "ApplicationSystem::OnCameraAdded");
+
       SetWindowManager(new OSGWindowManager(em));
    }
 
@@ -217,7 +219,7 @@ namespace dtEntity
    osgViewer::GraphicsWindow* ApplicationSystem::GetPrimaryWindow() const
    {
       osgViewer::ViewerBase::Windows wins;
-      mImpl->mViewer->getWindows(wins);
+      mImpl->mViewer->getWindows(wins, false);
       return wins.front();
    }
 
@@ -482,4 +484,35 @@ namespace dtEntity
          mapsys->LoadScene(m.GetSceneName());
       }
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ApplicationSystem::OnCameraAdded(const Message& m)
+   {
+      const CameraAddedMessage& msg = static_cast<const CameraAddedMessage&>(m);
+      CameraComponent* camcomp;
+      if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
+      {
+         camcomp->GetCamera()->setEventCallback(&GetWindowManager()->GetInputHandler());
+      }
+
+      LayerAttachPointSystem* lsys;
+      GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
+      if(camcomp->GetLayerAttachPoint() == LayerAttachPointSystem::RootId)
+      {
+         InstallUpdateCallback(lsys->GetSceneGraphRoot());
+      }
+      else
+      {
+         LayerAttachPointComponent* lc;
+         if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
+         {
+            InstallUpdateCallback(lc->GetNode());
+         }
+         else
+         {
+            LOG_ERROR("Cannot install update callback for layer attach point " << GetStringFromSID(camcomp->GetLayerAttachPoint()));
+         }
+      }
+   }
+
 }

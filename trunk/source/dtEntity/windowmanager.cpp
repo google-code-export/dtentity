@@ -102,109 +102,62 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    unsigned int OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
    {
-      osgViewer::View* view = OpenWindowInternal(name, layername, traits);
-      unsigned int cid = view->getCamera()->getGraphicsContext()->getState()->getContextID();
-
-      WindowCreatedMessage msg;
-      msg.SetName(name);
-      msg.SetContextId(cid);
-      mEntityManager->EmitMessage(msg);
-      return cid;
+      unsigned int contextId = 0;
+      bool success = OpenWindowInternal(name, layername, traits, contextId);
+      
+      if(success)
+      {
+         WindowCreatedMessage msg;
+         msg.SetName(name);
+         msg.SetContextId(contextId);
+         mEntityManager->EmitMessage(msg);
+         return contextId;
+      }
+      //TODO return an error code instead
+      return 0;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osgViewer::View* OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   bool OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
    {
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-
-      osgViewer::View* view;
-
-      osgViewer::CompositeViewer* compviewer = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());
-      if(compviewer == NULL)
+      osgViewer::CompositeViewer* compviewer = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());      
+      
+	   if(compviewer == NULL)
       {
-         view = dynamic_cast<osgViewer::Viewer*>(appsys->GetViewer());
-      }
-      else
-      {
-         view = new osgViewer::View();
-         compviewer->addView(view);
-      }
-      LayerAttachPointSystem* lsys;
-      mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-
-      dtEntity::LayerAttachPointComponent* target;
-      if(!lsys->GetByName(layername, target))
-      {
-         LOG_ERROR("Layer attach point not found, cannot open window!");
-         return NULL;
-      }
-
-      view->setName(name);
-      view->setSceneData(target->GetGroup());
-
-      osg::Camera* cam = view->getCamera();
-      cam->setAllowEventFocus(true);
-
-      traits.readDISPLAY();
-      if (traits.displayNum<0) traits.displayNum = 0;
-
-	  osgViewer::ViewerBase::Windows windows;
-      appsys->GetViewer()->getWindows(windows);
-
-         
-      unsigned int contextid = 0;
-	  if(compviewer == NULL && !windows.empty())
-      {
-         windows.front()->setName(name);
          appsys->GetViewer()->realize();
+         osgViewer::ViewerBase::Windows windows;
+         appsys->GetViewer()->getWindows(windows);
+         windows.front()->setName(name);
+         contextId = 0;
       }
       else
       {
+         traits.readDISPLAY();
+         if (traits.displayNum<0) traits.displayNum = 0;
+
          osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
          osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
          if (gw)
          {
+             osgViewer::View* view = new osgViewer::View();
+             view->getCamera()->setGraphicsContext(gw);
+             compviewer->addView(view);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
              gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
              gw->setName(name);
-             cam->setGraphicsContext(gw);
-             contextid = gw->getState()->getContextID();
+             
+             contextId = gw->getState()->getContextID();
              gw->realize();
          }
          else
          {
              LOG_ERROR("GraphicsWindow has not been created successfully.");
+             return false;
          }
       }
-
-      double fovy, aspectRatio, zNear, zFar;
-      cam->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-
-      double newAspectRatio = double(traits.width) / double(traits.height);
-      double aspectRatioChange = newAspectRatio / aspectRatio;
-      if (aspectRatioChange != 1.0)
-      {
-          cam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange,1.0,1.0);
-      }
-
-      cam->setViewport(new osg::Viewport(0, 0, traits.width, traits.height));
-
-      GLenum buffer = traits.doubleBuffer ? GL_BACK : GL_FRONT;
-
-      cam->setDrawBuffer(buffer);
-      cam->setReadBuffer(buffer);
-
-      cam->addEventCallback(mInputHandler);
-
-
-      std::ostringstream os;
-      os << "cam_"  << contextid;
-      cam->setName(os.str());
-
-
-      return view;
-      
+      return true;      
    }
 
    ///////////////////////////////////////////////////////////////////////////////

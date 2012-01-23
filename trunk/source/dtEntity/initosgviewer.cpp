@@ -36,6 +36,7 @@
 #include <dtEntity/systemmessages.h>
 #include <osgGA/GUIEventAdapter>
 #include <osg/Notify>
+#include <stdlib.h>
 
 namespace dtEntity
 {
@@ -141,6 +142,9 @@ namespace dtEntity
                    std::istringstream iss(argv[curArg]);
                    iss >> winh;
                 }
+                std::ostringstream os;
+                os << "OSG_WINDOW=" << winx << " " << winy << " " << winw << " " << winh;
+                putenv(os.str().c_str());
 
              }
              else if (curArgv == "--projectAssets")
@@ -252,8 +256,8 @@ namespace dtEntity
       }
 
       appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
-      appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
-      appsystem->InstallUpdateCallback(layersys->GetSceneGraphRoot());
+     // appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
+      //appsystem->InstallUpdateCallback(layersys->GetSceneGraphRoot());
 
       if(addStatsHandler)
       {

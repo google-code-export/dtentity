@@ -112,6 +112,8 @@ namespace dtEntity
       /** reacts to ResetSystemMessage */
       void OnResetSystem(const Message& msg);
       
+      /** adds input callback to cameras */
+      void OnCameraAdded(const Message& msg);      
 
       void InstallUpdateCallback(osg::Node*);
 
@@ -177,6 +179,7 @@ namespace dtEntity
       MessageFunctor mSetComponentPropertiesFunctor;
       MessageFunctor mSetSystemPropertiesFunctor;
       MessageFunctor mResetSystemFunctor;
+      MessageFunctor mCameraAddedFunctor;
       
    };
 }
