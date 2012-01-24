@@ -344,7 +344,7 @@ namespace dtEntityEditor
 
       mapSystem->LoadScene(path.toStdString());
 
-      CreateCameraEntityIfNotExists();
+      //CreateCameraEntityIfNotExists();
       
       emit SceneLoaded(path);
 
@@ -357,7 +357,7 @@ namespace dtEntityEditor
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
       mapSystem->CreateScene(datapath.toStdString(), mappath.toStdString());
-      CreateCameraEntityIfNotExists();
+      //CreateCameraEntityIfNotExists();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
