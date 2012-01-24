@@ -145,11 +145,11 @@ namespace dtEntityRocket
 
       mTickFunctor = dtEntity::MessageFunctor(this, &HUDSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
-         mTickFunctor, dtEntity::FilterOptions::PRIORITY_LOWEST, "HUDSystem::Tick");
+         mTickFunctor, dtEntity::FilterOptions::ORDER_LATE, "HUDSystem::Tick");
 
       mVisibilityChangedFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnVisibilityChanged);
       GetEntityManager().RegisterForMessages(dtEntity::VisibilityChangedMessage::TYPE,
-         mVisibilityChangedFunctor, dtEntity::FilterOptions::PRIORITY_LOWEST, "HUDSystem::OnVisibilityChanged");
+         mVisibilityChangedFunctor, dtEntity::FilterOptions::ORDER_LATE, "HUDSystem::OnVisibilityChanged");
       mEnabled.Set(true);
    }
 
@@ -278,12 +278,18 @@ namespace dtEntityRocket
                Rocket::Core::Vector2f sizes = element->GetBox(0).GetSize(Rocket::Core::Box::MARGIN);
                if(!comp->GetVisible() || w < 0 || x < -sizes.x || x > window_w || y < -sizes.y || y > window_h)
                {
-                  element->SetProperty("visibility", "hidden");
+                  if(element->GetProperty("visibility")->ToString() == "visible")
+                  {
+                     element->SetProperty("visibility", "hidden");
+                  }
                }
                else
                {
-                  element->SetOffset(Rocket::Core::Vector2f(x, y), context->GetDocument(0), false);
-                  element->SetProperty("visibility", "visible");
+                  element->SetOffset(Rocket::Core::Vector2f(x, y), context->GetDocument(0), true);
+                  if(element->GetProperty("visibility")->ToString() != "visible")
+                  {
+                     element->SetProperty("visibility", "visible");
+                  }
                }
             }
          }
