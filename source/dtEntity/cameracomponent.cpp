@@ -129,7 +129,6 @@ namespace dtEntity
 
       GetCamera()->setProjectionMatrixAsPerspective(45, 1, 1, 100000);
       GetCamera()->setCullMask(NodeMasks::VISIBLE);
-      mCullingMode.Set(PrimitiveNearFarCullingId);
       mUp.Set(osg::Vec3(0, 0, 1));
       mEyeDirection.Set(osg::Vec3(0, 1, 0));
 
@@ -143,8 +142,8 @@ namespace dtEntity
       mOrthoTop.Set(1000);
       mOrthoZNear.Set(-10000);
       mOrthoZFar.Set(10000);
-      UpdateProjectionMatrix();
 
+      SetCullingMode(NoAutoNearFarCullingId);
       GetCamera()->setAllowEventFocus(true);
    }
 
@@ -378,6 +377,8 @@ namespace dtEntity
          }
          view->setSceneData(lcomp->GetNode());
       }
+
+      UpdateProjectionMatrix();
 
    }
 

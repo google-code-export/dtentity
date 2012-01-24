@@ -1838,7 +1838,7 @@ namespace dtEntityQtWidgets
          static_cast<dtEntity::LayerSystem*>(es)->OnLeaveWorld(m);
       }
 
-      found = es->DeleteComponent(id);
+      found = mEntityManager->DeleteComponent(id, ctype);
 
       if(!found)
       {
