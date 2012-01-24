@@ -34,6 +34,7 @@
 #include <osgDB/ReadFile>
 #include <assert.h>
 #include <sstream>
+#include <osg/ComputeBoundsVisitor>
 
 namespace dtEntity
 {
@@ -360,6 +361,7 @@ namespace dtEntity
       bool mVisited;
    };
 
+
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
 
@@ -598,7 +600,11 @@ namespace dtEntity
       {
           return new Vec4dProperty(osg::Vec4d());
       }
-      osg::BoundingSphere bs = att->getBound();
-      return new Vec4dProperty(osg::Vec4d(bs.center(), bs.radius()));
+
+      osg::ComputeBoundsVisitor v;
+      v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+      att->accept(v);
+
+      return new Vec4dProperty(osg::Vec4d(v.getBoundingBox().center(), v.getBoundingBox().radius()));
    }
 }
