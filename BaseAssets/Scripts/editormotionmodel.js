@@ -92,6 +92,7 @@ function EditorMotionComponent(eid) {
    }
 
    this.mouseButtonDown = function(button, handled, cid) {
+      if(handled) return;
       if(!this.Enabled || cid != this.contextId) return;
       if(button === 1) {
          Screen.lockCursor = true;
@@ -153,6 +154,7 @@ function EditorMotionComponent(eid) {
 
    this.mouseMove = function(x, y, handled, cid) {
 
+      if(handled) return;
       if(camera === null || !this.Enabled || this.contextId != cid) return;
 
       var pos = camera.Position;

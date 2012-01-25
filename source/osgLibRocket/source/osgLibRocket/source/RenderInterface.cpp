@@ -218,6 +218,7 @@ namespace osgLibRocket
 	{
 		texture_handle = _nextTextureId++;
 		osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D();
+		texture->setResizeNonPowerOfTwoHint(false);
 		texture->setImage(image);
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
