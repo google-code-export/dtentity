@@ -25,6 +25,7 @@
 #include <osg/ShapeDrawable>
 #include <dtEntity/nodemasks.h>
 #include <osg/PolygonMode>
+#include <osg/Version>
 
 namespace dtEntitySimulation
 {
@@ -51,9 +52,10 @@ namespace dtEntitySimulation
       addDragger(_translate2DDragger.get());
 
       setParentDragger(getParentDragger());
-#ifdef OSGMANIPULATOR_PATCHED
-      setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
-#endif
+      #if (OSG_VERSION_GREATER_THAN(3,0,1) && OPENSCENEGRAPH_SOVERSION >= 80)
+         setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
+      #endif
+
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    }
 
@@ -262,9 +264,11 @@ namespace dtEntitySimulation
       addDragger(_scaleAllDragger.get());
 
       setParentDragger(getParentDragger());
-#ifdef OSGMANIPULATOR_PATCHED
-      setIntersectMask(dtEntity::NodeMasks::MANIPULATOR);
+
+#if (OSG_VERSION_GREATER_THAN(3,0,1) && OPENSCENEGRAPH_SOVERSION >= 80)
+      setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
 #endif
+
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    }
 
