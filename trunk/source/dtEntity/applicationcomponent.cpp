@@ -94,10 +94,7 @@ namespace dtEntity
 
          double simtime = fs->getSimulationTime();
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
-         
-         double tval = (double)currentTick * osg::Timer::instance()->getSecondsPerTick();         
-         
-         //std::cout << std::fixed << "SimTime Dif: " << (simtime - tval) <<"\n";
+
          double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
          
          double timeScale = mApplicationSystem->GetTimeScale();

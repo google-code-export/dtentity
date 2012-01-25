@@ -264,7 +264,7 @@ namespace dtEntity
          dtEntity::Sound* soundObj = currSoundComp->GetCurrentSound();
          if (soundObj && soundObj->GetMustLoadBuffer())
          {
-            int result = AudioManager::GetInstance().LoadSoundBuffer(*soundObj);
+            AudioManager::GetInstance().LoadSoundBuffer(*soundObj);
             soundObj->SetMustLoadBuffer(false);
          }
 
