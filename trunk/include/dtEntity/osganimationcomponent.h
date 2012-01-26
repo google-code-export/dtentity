@@ -29,6 +29,7 @@
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
 #include <osg/Group>
+#include <osgDB/FileUtils>
 
 namespace dtEntity
 {
@@ -58,6 +59,10 @@ namespace dtEntity
 
       void SetEnabled(bool);
       bool GetEnabled() const;
+
+      bool AddAttachment(const std::string& boneName, osg::Node* node, const osg::Matrix& m);
+      bool RemoveAtachment(const std::string& boneName, osg::Node* node);
+      void RemoveAtachments(const std::string& boneName);
 
    private:
 
@@ -102,7 +107,9 @@ namespace dtEntity
       Property* ScriptGetAnimations(const PropertyArgs& args);
       Property* ScriptGetAnimationLength(const PropertyArgs& args);
       Property* ScriptGetAnimationPlayMode(const PropertyArgs& args);
-      Property* ScriptSetAnimationPlayMode(const PropertyArgs& args);      
+      Property* ScriptSetAnimationPlayMode(const PropertyArgs& args);
+      Property* ScriptAddAttachment(const PropertyArgs& args);
+      Property* ScriptRemoveAttachments(const PropertyArgs& args);
 
       MessageFunctor mMeshChangedFunctor;
       StringProperty mVertexShader;

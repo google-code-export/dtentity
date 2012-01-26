@@ -33,8 +33,9 @@
 #include <osgAnimation/RigTransformHardware>
 #include <osgAnimation/BoneMapVisitor>
 #include <osgAnimation/MorphGeometry>
-#include <osgDB/FileUtils>
+#include <osgDB/ReadFile>
 #include <sstream>
+#include <osg/ShapeDrawable>
 
 namespace dtEntity
 {
@@ -43,7 +44,9 @@ namespace dtEntity
    struct AnimationManagerFinder : public osg::NodeVisitor
    {
        osg::ref_ptr<osgAnimation::BasicAnimationManager> _am;
+
        AnimationManagerFinder() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN) {}
+
        void apply(osg::Node& node) {
            if (_am.valid())
                return;
@@ -52,10 +55,36 @@ namespace dtEntity
                if (b) {
                    _am = new osgAnimation::BasicAnimationManager(*b);
                    node.removeUpdateCallback(_am);
+
                    return;
                }
            }
            traverse(node);
+       }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   struct BoneFinder : public osg::NodeVisitor
+   {
+       std::string mName;
+       osgAnimation::Bone* mBone;
+       osg::Matrix mWorldToLocal;
+
+       BoneFinder(const std::string& name)
+          : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+          , mName(name)
+          , mBone(NULL)
+       {
+       }
+
+       void apply(osg::Transform& node) {
+          osgAnimation::Bone* bone = dynamic_cast<osgAnimation::Bone*>(&node);
+          if(bone != NULL && bone->getName() == mName)
+          {
+             mBone = bone;
+             mWorldToLocal = osg::computeWorldToLocal(getNodePath());
+          }
+          traverse(node);
        }
    };
 
@@ -243,6 +272,98 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   bool OSGAnimationComponent::AddAttachment(const std::string& boneName, osg::Node* node, const osg::Matrix& m)
+   {
+      StaticMeshComponent* smc;
+      if(!mEntity->GetComponent(smc, true))
+      {
+         LOG_ERROR("Cannot attach, no static mesh component found!");
+         return false;
+      }
+      BoneFinder f("Bip01 R Finger1Nub");
+      smc->GetNode()->accept(f);
+      if(f.mBone == NULL)
+      {
+         LOG_ERROR("Cannot attach, bone not found: " + boneName);
+         return false;
+      }
+      else
+      {
+         osg::MatrixTransform* mt = new osg::MatrixTransform();
+         osg::Vec3 scale = f.mWorldToLocal.getScale();
+         osg::Matrix sm; sm.makeScale(scale);
+         mt->setMatrix(m * sm);
+         mt->addChild(node);
+         f.mBone->addChild(mt);
+      }
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool OSGAnimationComponent::RemoveAtachment(const std::string& boneName, osg::Node* node)
+   {
+      StaticMeshComponent* smc;
+      if(!mEntity->GetComponent(smc, true))
+      {
+         LOG_ERROR("Cannot attach, no static mesh component found!");
+         return false;
+      }
+      BoneFinder f("Bip01 R Finger1Nub");
+      smc->GetNode()->accept(f);
+      if(f.mBone == NULL)
+      {
+         LOG_ERROR("Cannot remove, bone not found: " + boneName);
+         return false;
+      }
+      else
+      {
+         for(unsigned int i = 0; i < f.mBone->getNumChildren(); ++i)
+         {
+            osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(f.mBone->getChild(i));
+            if(mt && mt->getNumChildren() > 0 && mt->getChild(0) == node)
+            {
+               f.mBone->removeChild(mt);
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void OSGAnimationComponent::RemoveAtachments(const std::string& boneName)
+   {
+      StaticMeshComponent* smc;
+      if(!mEntity->GetComponent(smc, true))
+      {
+         LOG_ERROR("Cannot attach, no static mesh component found!");
+         return;
+      }
+      BoneFinder f("Bip01 R Finger1Nub");
+      smc->GetNode()->accept(f);
+      if(f.mBone == NULL)
+      {
+         LOG_ERROR("Cannot remove, bone not found: " + boneName);
+      }
+      else
+      {
+         std::list<osg::MatrixTransform*> toRemove;
+         for(unsigned int i = 0; i < f.mBone->getNumChildren(); ++i)
+         {
+            osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(f.mBone->getChild(i));
+            if(mt)
+            {
+               toRemove.push_back(mt);
+            }
+         }
+         for(std::list<osg::MatrixTransform*>::iterator i = toRemove.begin(); i != toRemove.end(); ++i)
+         {
+            f.mBone->removeChild(*i);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationComponent::SetupMesh(osg::Node* node)
    {
       AnimationManagerFinder finder;
@@ -259,6 +380,7 @@ namespace dtEntity
       SetupRigGeometry switcher(sys->GetVertexShader(), sys->GetFragmentShader());
       node->accept(switcher);     
       SetEnabled(mEnabled.Get());
+
    }
 
 
@@ -276,7 +398,7 @@ namespace dtEntity
       if(mAnimationManager)
       {         
          StaticMeshComponent* smc;
-         if(mEntity->GetComponent(smc))
+         if(mEntity->GetComponent(smc, true))
          {
             OSGAnimationSystem* sys;
             mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
@@ -325,6 +447,8 @@ namespace dtEntity
       AddScriptedMethod("getAnimationLength", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationLength));
       AddScriptedMethod("getAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationPlayMode));
       AddScriptedMethod("setAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptSetAnimationPlayMode));
+      AddScriptedMethod("addAttachment", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptAddAttachment));
+      AddScriptedMethod("removeAttachments", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptRemoveAttachments));
    }
 
 
@@ -384,7 +508,7 @@ namespace dtEntity
      if(comp)
      {
        StaticMeshComponent* smc;
-       if(GetEntityManager().GetComponent(id, smc))
+       if(GetEntityManager().GetComponent(id, smc, true))
        {
           comp->SetupMesh(smc->GetNode());
        }
@@ -602,6 +726,80 @@ namespace dtEntity
 
 
       }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Property* OSGAnimationSystem::ScriptAddAttachment(const PropertyArgs& args)
+   {
+
+      if(args.size() < 3)
+      {
+         LOG_ERROR("Usage: addAttachment(entityid, bone name, mesh path, [vec3 trans, quat rot])");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      std::string bonename = args[1]->StringValue();
+      std::string meshpath = args[2]->StringValue();
+      osg::Vec3 trans;
+      osg::Quat rot(0,0,0,1);
+
+      if(args.size() > 3)
+      {
+         trans = args[3]->Vec3Value();
+      }
+
+      if(args.size() > 4)
+      {
+         rot = args[4]->QuatValue();
+      }
+
+      osg::Matrix mat;
+      mat.setTrans(trans);
+      mat.setRotate(rot);
+
+      OSGAnimationComponent* comp = GetComponent(id);
+      if(comp == NULL)
+      {
+         LOG_ERROR("addAttachment: No animation component found!");
+         return NULL;
+      }
+
+      osg::Node* node = osgDB::readNodeFile(meshpath);
+
+      if(node == NULL)
+      {
+         LOG_ERROR("addAttachment: Mesh not found at " << meshpath);
+         return NULL;
+      }
+      bool success = comp->AddAttachment(bonename, node, mat);
+      if(!success)
+      {
+         LOG_ERROR("Can't attach mesh to bone " << bonename);
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Property* OSGAnimationSystem::ScriptRemoveAttachments(const PropertyArgs& args)
+   {
+
+      if(args.size() < 2)
+      {
+         LOG_ERROR("Usage: removeAttachments(entityid, bone name)");
+         return NULL;
+      }
+      EntityId id = args[0]->UIntValue();
+      std::string bonename = args[1]->StringValue();
+
+      OSGAnimationComponent* comp = GetComponent(id);
+      if(comp == NULL)
+      {
+         LOG_ERROR("removeAttachments: No animation component found!");
+      }
+      comp->RemoveAtachments(bonename);
+
       return NULL;
    }
 }

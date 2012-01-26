@@ -28,7 +28,6 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
 #include <osgViewer/View>
-#include <dtEntity/inputhandler.h>
 
 namespace dtEntityWrappers
 {
