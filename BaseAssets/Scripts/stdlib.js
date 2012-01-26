@@ -23,7 +23,7 @@ function setTimeout(callback, delay, arguments) {
   
   var args = [];
   if(typeof arguments != 'undefined') {
-	  for(var i = 2; i < arguments.length; ++i) {
+     for(var i = 0; i < arguments.length; ++i) {
 		args.push(arguments[i]);
 	  }
   }
@@ -60,7 +60,7 @@ var __INTERVALS = {};
 function setInterval(callback, delay, arguments) {
   var args = [];
   if(typeof arguments != 'undefined') {
-	  for(var i = 2; i < arguments.length; ++i) {
+     for(var i = 0; i < arguments.length; ++i) {
 		args.push(arguments[i]);
 	  }
   }
