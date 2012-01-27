@@ -32,8 +32,6 @@ namespace osgLibRocket
 
 	RenderInterface::RenderInterface()
 		: _scissorsEnabled(false)
-		, _nextTextureId(1)
-		, _nextGeometryId(1)		
 		, _fullScreen(false)
 	{
 	}
@@ -63,7 +61,6 @@ namespace osgLibRocket
 
 		osg::Geometry* geometry = new osg::Geometry();
 		geometry->setUseDisplayList(useDisplayList);
-		geometry->setDataVariance(osg::Object::DYNAMIC);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -92,16 +89,14 @@ namespace osgLibRocket
 
 		if(texture != 0)
 		{
+			osg::Texture* tex = reinterpret_cast<osg::Texture*>(texture);
 			geometry->setTexCoordArray(0, texcoords);
-			TextureMap::iterator i = _textureMap.find(texture);
-			assert(i != _textureMap.end());
 			osg::StateSet* ss = geometry->getOrCreateStateSet();
-			ss->setTextureAttributeAndModes(0, i->second, osg::StateAttribute::ON);
+			ss->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 		}
 
 
 		osg::Geode* geode = new osg::Geode();
-		geode->setDataVariance(osg::Object::DYNAMIC);
 		geode->addDrawable(geometry);
 		return geode;
 	}
@@ -123,14 +118,13 @@ namespace osgLibRocket
 		osg::MatrixTransform* trans = new osg::MatrixTransform();
 		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
 		trans->addChild(node);
-		trans->setDataVariance(osg::Object::DYNAMIC);
 
       if(_scissorsEnabled)
       {
          node->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
       }
-		_renderTarget->addChild(trans);
-		_renderTarget->dirtyBound();
+      _renderTarget->addChild(trans);
+      //_renderTarget->dirtyBound();
 
 		_instantGeometryMap.push_back(trans);
 	}
@@ -147,9 +141,8 @@ namespace osgLibRocket
 	Rocket::Core::CompiledGeometryHandle RenderInterface::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture)
 	{
 		osg::Node* node = createGeometry(vertices, num_vertices, indices, num_indices, texture, true);
-
-		_compiledGeometryMap[_nextGeometryId] = node;
-		return _nextGeometryId++;
+		node->ref();
+		return reinterpret_cast<Rocket::Core::CompiledGeometryHandle>(node);
 	}
 
 	/// Called by Rocket when it wants to render application-compiled geometry.
@@ -157,28 +150,27 @@ namespace osgLibRocket
 	/// @param[in] translation The translation to apply to the geometry.
 	void RenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry, const Rocket::Core::Vector2f& translation)
 	{
-		CompiledGeometryMap::iterator i = _compiledGeometryMap.find(geometry);
-		if(i != _compiledGeometryMap.end())
+
+		osg::Node* node = reinterpret_cast<osg::Node*>(geometry);
 		{
 			osg::MatrixTransform* trans = new osg::MatrixTransform();
 			trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
-			trans->addChild(i->second);
+			trans->addChild(node);
 
 			if(_scissorsEnabled)
 			{
-				i->second->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
+				node->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
 			}
 			else
 			{
-				osg::StateSet* ss = i->second->getStateSet();
+				osg::StateSet* ss = node->getStateSet();
 				if(ss)
 				{
-					i->second->getOrCreateStateSet()->removeAttribute(_scissorTest);
+					node->getOrCreateStateSet()->removeAttribute(_scissorTest);
 				}
 			}
 
 			_renderTarget->addChild(trans);
-			_renderTarget->dirtyBound();
 		}
 	}
 
@@ -186,11 +178,12 @@ namespace osgLibRocket
 	/// @param[in] geometry The application-specific compiled geometry to release.
 	void RenderInterface::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry)
 	{
-		CompiledGeometryMap::iterator i = _compiledGeometryMap.find(geometry);
-		if(i != _compiledGeometryMap.end())
+		osg::Node* node = reinterpret_cast<osg::Node*>(geometry);
+		while(node->getNumParents() != 0)
 		{
-			_compiledGeometryMap.erase(i);
+			node->getParent(0)->removeChild(node);
 		}
+		node->unref();
 	}
 
 	/// Called by Rocket when it wants to enable or disable scissoring to clip content.
@@ -216,7 +209,6 @@ namespace osgLibRocket
 
 	void RenderInterface::AddTexture(Rocket::Core::TextureHandle& texture_handle, osg::Image* image)
 	{
-		texture_handle = _nextTextureId++;
 		osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D();
 		texture->setResizeNonPowerOfTwoHint(false);
 		texture->setImage(image);
@@ -232,7 +224,8 @@ namespace osgLibRocket
          texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
 		   texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
       }
-		_textureMap[texture_handle] = texture;
+      texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(texture.get());
+      texture->ref();
 	}
 
 	/// Called by Rocket when a texture is required by the library.
@@ -288,13 +281,10 @@ namespace osgLibRocket
 
 	/// Called by Rocket when a loaded texture is no longer required.
 	/// @param texture The texture handle to release.
-	void RenderInterface::ReleaseTexture(Rocket::Core::TextureHandle texture)
+	void RenderInterface::ReleaseTexture(Rocket::Core::TextureHandle th)
 	{
-			TextureMap::iterator i = _textureMap.find(texture);
-			if(i != _textureMap.end())
-			{
-				_textureMap.erase(i);
-			}
+		osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(th);
+		texture->unref();
 	}
 
 	/// Called when this render interface is released.

@@ -74,17 +74,8 @@ namespace osgLibRocket
 		bool _scissorsEnabled;
 		osg::ref_ptr<osg::Scissor> _scissorTest;
 
-		unsigned int _nextTextureId;
-		unsigned int _nextGeometryId;
-
-		typedef std::map<Rocket::Core::CompiledGeometryHandle, osg::ref_ptr<osg::Node> > CompiledGeometryMap;
-		CompiledGeometryMap _compiledGeometryMap;
-
 		typedef std::list<osg::ref_ptr<osg::Node> > InstantGeometryMap;
 		InstantGeometryMap _instantGeometryMap;
-
-		typedef std::map<Rocket::Core::TextureHandle, osg::ref_ptr<osg::Texture2D> > TextureMap;
-		TextureMap _textureMap;
 
 		int _screenWidth;
 		int _screenHeight;
