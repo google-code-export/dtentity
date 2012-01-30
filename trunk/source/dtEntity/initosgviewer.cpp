@@ -260,7 +260,8 @@ namespace dtEntity
       }
 
       appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
-     // appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
+      appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
+
       //appsystem->InstallUpdateCallback(layersys->GetSceneGraphRoot());
 
       if(addStatsHandler)
