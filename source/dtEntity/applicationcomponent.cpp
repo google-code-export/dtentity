@@ -152,6 +152,9 @@ namespace dtEntity
       : EntitySystem(TYPE, em)
       , mImpl(new ApplicationImpl())
    {
+
+      mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
+
       Register(TimeScaleId, &mTimeScale);
       Register(CmdLineArgsId, &mArgvArray);
 
@@ -364,10 +367,6 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::InstallUpdateCallback(osg::Node* node)
    {
-      if(!mImpl->mUpdateCallback.valid())
-      {
-         mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
-      }
       node->setUpdateCallback(mImpl->mUpdateCallback);
    }
 
