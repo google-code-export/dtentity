@@ -118,61 +118,27 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetFullScreen(Local<String> propname, const AccessorInfo& info)
    {
-      if(!info.This()->Has(String::New("__FULLSCREEN__")))
-      {
-         return Boolean::New(false);
-      }
-      return info.This()->Get(String::New("__FULLSCREEN__"));
+      osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+
+      unsigned int contextId = window->getState()->getContextID();
+      dtEntity::ApplicationSystem* appsys;
+      dtEntity::EntityManager* em = GetEntityManager(info.Holder()->CreationContext());
+      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+      return Boolean::New(appsys->GetWindowManager()->GetFullscreen(contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SCRSetFullScreen(Local<String> propname, Local<Value> value, const AccessorInfo& info)
    {
-      if(info.This()->Has(String::New("__FULLSCREEN__")) &&
-            info.This()->Get(String::New("__FULLSCREEN__"))->BooleanValue() == value->BooleanValue())
-      {
-         return;
-      }
-
-      info.This()->Set(String::New("__FULLSCREEN__"), Boolean::New(value->BooleanValue()));
 
       osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
 
-      int x, y, w, h;
-      window->getWindowRectangle(x, y, w, h);
+      unsigned int contextId = window->getState()->getContextID();
+      dtEntity::ApplicationSystem* appsys;
+      dtEntity::EntityManager* em = GetEntityManager(info.Holder()->CreationContext());
+      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+      appsys->GetWindowManager()->SetFullscreen(contextId, value->BooleanValue());
 
-      osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
-
-      if (wsi == NULL)
-      {
-         LOG_WARNING("Error, no WindowSystemInterface available, cannot toggle window fullscreen.");
-         return;
-      }
-
-      unsigned int screenWidth;
-      unsigned int screenHeight;
-
-      wsi->getScreenResolution(*(window->getTraits()), screenWidth, screenHeight);
-
-      if (!value->BooleanValue())
-      {
-        // int rx = mLastWindowedWidth;
-        // int ry = mLastWindowedHeight;
-         int lastw = info.This()->Get(String::New("__LAST_WINDOW_WIDTH"))->Int32Value();
-         int lasth = info.This()->Get(String::New("__LAST_WINDOW_HEIGHT"))->Int32Value();
-
-
-         window->setWindowDecoration(true);
-         window->setWindowRectangle((screenWidth - lastw) / 2, (screenHeight - lasth) / 2, lastw, lasth);
-      }
-      else
-      {  info.This()->Set(String::New("__LAST_WINDOW_WIDTH"), Integer::New(w));
-         info.This()->Set(String::New("__LAST_WINDOW_HEIGHT"), Integer::New(h));
-         window->setWindowDecoration(false);
-         window->setWindowRectangle(0, 0, screenWidth, screenHeight);
-      }
-
-      window->grabFocusIfPointerInWindow();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
