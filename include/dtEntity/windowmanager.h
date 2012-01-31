@@ -84,6 +84,12 @@ namespace dtEntity
 
       virtual void ProcessQueuedMessages() { mMessagePump.EmitQueuedMessages(FLT_MAX); }
 
+      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) = 0;
+      virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height) = 0;
+
+      virtual void SetFullscreen(unsigned int contextid, bool fullscreen) = 0;
+      virtual bool GetFullscreen(unsigned int contextid) const = 0;
+
    protected:
 
       EntityManager* mEntityManager;
@@ -119,12 +125,31 @@ namespace dtEntity
        */
       osg::Vec3 GetPickRay(const std::string& name, float x, float y, bool usePixels = false);
       
+      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height);
+      virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height);
+
+      virtual void SetFullscreen(unsigned int contextid, bool fullscreen);
+      virtual bool GetFullscreen(unsigned int contextid) const;
+
    protected:
 
       bool OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId);
 
    private:
+
       MessageFunctor mCloseWindowFunctor;
+
+      struct WindowPos
+      {
+         int mX;
+         int mY;
+         int mW;
+         int mH;
+         bool mWindowDeco;
+      };
+
+      typedef std::map<unsigned int, WindowPos> WindowPosMap;
+      WindowPosMap mWindowPositions;
       
    };	
 

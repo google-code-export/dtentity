@@ -87,6 +87,22 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   osgViewer::GraphicsWindow* GetWindowByContextId(unsigned int contextId, osgViewer::ViewerBase* v)
+   {
+      osgViewer::ViewerBase::Windows wins;
+      v->getWindows(wins);
+      for(osgViewer::ViewerBase::Windows::iterator i = wins.begin(); i != wins.end(); ++i)
+      {
+         osgViewer::GraphicsWindow* w = *i;
+         if(w && w->getState()->getContextID() == contextId)
+         {
+            return w;
+         }
+      }
+      return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    OSGWindowManager::OSGWindowManager(EntityManager& em)
       : WindowManager(em)
    {
@@ -265,5 +281,100 @@ namespace dtEntity
       pickray.normalize();
       return pickray;
       
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OSGWindowManager::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height)
+   {
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         return false;
+      }
+      window->getWindowRectangle(x, y, width, height);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OSGWindowManager::SetWindowGeometry(unsigned int contextId, int x, int y, int width, int height)
+   {
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         return false;
+      }
+      window->setWindowRectangle(x, y, width, height);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGWindowManager::SetFullscreen(unsigned int contextId, bool fullscreen)
+   {
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         LOG_ERROR("Cannot set window to fullscreen, no window with that id found! " << contextId);
+         return;
+      }
+
+      int x, y, w, h;
+      window->getWindowRectangle(x, y, w, h);
+
+      osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
+
+      if (wsi == NULL)
+      {
+         LOG_WARNING("Error, no WindowSystemInterface available, cannot toggle window fullscreen.");
+         return;
+      }
+
+      unsigned int screenWidth;
+      unsigned int screenHeight;
+
+      wsi->getScreenResolution(*(window->getTraits()), screenWidth, screenHeight);
+
+      if (!fullscreen)
+      {
+         if(!GetFullscreen(contextId)) return;
+         WindowPosMap::iterator i = mWindowPositions.find(contextId);
+         if(i == mWindowPositions.end())
+         {
+            return;
+         }
+         WindowPos wp = i->second;
+         mWindowPositions.erase(i);
+
+         window->setWindowDecoration(wp.mWindowDeco);
+         window->setWindowRectangle(wp.mX, wp.mY, wp.mW, wp.mH);
+      }
+      else
+      {
+         if(GetFullscreen(contextId)) return;
+         WindowPos wp;
+         wp.mX = x;
+         wp.mY = y;
+         wp.mW = w;
+         wp.mH = h;
+         wp.mWindowDeco = window->getWindowDecoration();
+         mWindowPositions[contextId] = wp;
+
+         window->setWindowDecoration(false);
+         window->setWindowRectangle(0, 0, screenWidth, screenHeight);
+      }
+
+      window->grabFocusIfPointerInWindow();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OSGWindowManager::GetFullscreen(unsigned int contextId) const
+   {
+      WindowPosMap::const_iterator i = mWindowPositions.find(contextId);
+      return (i != mWindowPositions.end());
    }
 }
