@@ -300,6 +300,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool OSGWindowManager::SetWindowGeometry(unsigned int contextId, int x, int y, int width, int height)
    {
+      SetFullscreen(contextId, false);
+
       ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
       osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());

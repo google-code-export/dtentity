@@ -130,7 +130,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void SCRSetFullScreen(Local<String> propname, Local<Value> value, const AccessorInfo& info)
    {
-
       osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
 
       unsigned int contextId = window->getState()->getContextID();
@@ -138,7 +137,6 @@ namespace dtEntityWrappers
       dtEntity::EntityManager* em = GetEntityManager(info.Holder()->CreationContext());
       em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
       appsys->GetWindowManager()->SetFullscreen(contextId, value->BooleanValue());
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +149,6 @@ namespace dtEntityWrappers
       osg::Vec3 pr = appsys->GetWindowManager()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
       return WrapVec3(pr);
    }
-
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRPickEntity(const Arguments& args)
@@ -319,9 +316,7 @@ namespace dtEntityWrappers
       double w = screenXYZ[3];
       osg::Vec3d ret(screenXYZ[0] / w, screenXYZ[1] / w, screenXYZ[2] / w);
       return WrapVec3(ret);
-
    }
-
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCROpenWindow(const Arguments& args)
@@ -372,6 +367,51 @@ namespace dtEntityWrappers
       return Undefined();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRGetWindowGeometry(const Arguments& args)
+   {
+      if(args.Length() == 0)
+      {
+         return ThrowError("Usage: getWindowGeometry(contextId)");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+      int x, y, w, h;
+      dtEntity::EntityManager* entityManager = GetEntityManager(args.Holder()->CreationContext());
+      dtEntity::ApplicationSystem* appsys;
+      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+      appsys->GetWindowManager()->GetWindowGeometry(contextId, x, y, w, h);
+
+      HandleScope scope;
+      Handle<Array> arr = Array::New();
+      arr->Set(Integer::New(0), Integer::New(x));
+      arr->Set(Integer::New(1), Integer::New(y));
+      arr->Set(Integer::New(2), Integer::New(w));
+      arr->Set(Integer::New(3), Integer::New(h));
+      return scope.Close(arr);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRSetWindowGeometry(const Arguments& args)
+   {
+      if(args.Length() != 2)
+      {
+         return ThrowError("Usage: setWindowGeometry(contextId, array[x,y,w,h])");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+      HandleScope scope;
+      Handle<Array> arr = Handle<Array>::Cast(args[1]);
+      int x = arr->Get(0)->Int32Value();
+      int y = arr->Get(1)->Int32Value();
+      int w = arr->Get(2)->Int32Value();
+      int h = arr->Get(3)->Int32Value();
+
+      dtEntity::EntityManager* entityManager = GetEntityManager(args.Holder()->CreationContext());
+      dtEntity::ApplicationSystem* appsys;
+      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+      appsys->GetWindowManager()->SetWindowGeometry(contextId, x, y, w, h);
+
+      return Undefined();
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss, osgViewer::View* v, osgViewer::GraphicsWindow* w)
@@ -393,6 +433,8 @@ namespace dtEntityWrappers
       proto->Set("convertWorldToScreenCoords", FunctionTemplate::New(SCRConvertWorldToScreenCoords));
       proto->Set("openWindow", FunctionTemplate::New(SCROpenWindow));
       proto->Set("closeWindow", FunctionTemplate::New(SCRCloseWindow));
+      proto->Set("getWindowGeometry", FunctionTemplate::New(SCRGetWindowGeometry));
+      proto->Set("setWindowGeometry", FunctionTemplate::New(SCRSetWindowGeometry));
 
       Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
