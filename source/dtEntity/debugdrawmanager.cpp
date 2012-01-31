@@ -138,9 +138,8 @@ namespace dtEntity
    void DebugDrawManager::SetEnabled(bool enabled)
    {
       if(mEnabled == enabled) return;
-      mEnabled = enabled;
 
-      if(mEnabled)
+      if(enabled)
       {
          mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
       }
@@ -149,6 +148,7 @@ namespace dtEntity
          Clear();
          mEntityManager->UnregisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
       }
+      mEnabled = enabled;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

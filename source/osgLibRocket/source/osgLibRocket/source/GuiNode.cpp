@@ -160,8 +160,7 @@ namespace osgLibRocket
                    _context->Update();
 
                    
-                   removeChildren(0, getNumChildren());
-                   _context->Render();                  
+                   _context->Render();
 
                  }
              }
