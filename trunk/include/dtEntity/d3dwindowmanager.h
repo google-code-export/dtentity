@@ -64,10 +64,18 @@ namespace dtEntity
 
       void OnTimeChange(const dtEntity::Message& msg);
 
+      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height);
+      virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height);
+
+      virtual void SetFullscreen(unsigned int contextid, bool fullscreen);
+      virtual bool GetFullscreen(unsigned int contextid) const;
+
    protected:
 
       void OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits);
       osg::ref_ptr<dtABC::Application> mApplication;
       dtEntity::MessageFunctor mTimeChangedFunctor;
+      typedef std::map<unsigned int, WindowPos> WindowPosMap;
+      WindowPosMap mWindowPositions;
    };	
 }
