@@ -1,0 +1,42 @@
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+<map name="MyMap">
+  <spawner name="TestSpawner">
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">models/physics_crate.ive</stringproperty>      
+    </component>
+    <component type="MatrixTransform">
+      <vec3property name="Translation" x="0.0" y="0" z="2" />
+      <arrayproperty name="Children">
+        <componentproperty name="" uniqueid="" componenttype="StaticMesh" />
+      </arrayproperty>
+    </component>
+	<component type="PhysX">
+		<stringproperty name="CollisionType">Mesh</stringproperty>
+		<floatproperty name="Radius" value="1.0" />
+		<boolproperty name="IsKinematic" value="true" />
+	</component>
+   <component type="Layer">
+        <stringproperty name="Layer">default</stringproperty>
+        <componentproperty name="AttachedComponent" uniqueid="" componenttype="MatrixTransform" />
+    </component>    
+	
+  </spawner>
+
+  <entity spawner="TestSpawner">
+  </entity>
+  <entity>
+		<component type="Camera">
+			<stringproperty name="CullingMode">NoAutoNearFarCulling</stringproperty>
+			<vec3property name="EyeDirection" x="0.9698496995" y="-0.2433103193" z="-0.0138437315"/>
+			<boolproperty name="IsMainCamera" value="true"/>
+			<doubleproperty name="NearClip" value="4.0000000000"/>
+			<vec3property name="Position" x="-13.5959175672" y="30.8884023018" z="2.1082273157"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">defaultCam</stringproperty>
+			<stringproperty name="MapName">maps/simple.dtemap</stringproperty>
+			<stringproperty name="UniqueId">defaultCam</stringproperty>
+		</component>
+	</entity>
+
+</map>
