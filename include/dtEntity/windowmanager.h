@@ -35,16 +35,23 @@ namespace osgViewer
    class View;
    class CompositeViewer;
    class Window;
-}
-
-namespace dtCore
-{
-   class View;
-   class DeltaWin;
+   class ViewerBase;
 }
 
 namespace dtEntity
 { 
+
+   struct WindowPos
+   {
+      int mX;
+      int mY;
+      int mW;
+      int mH;
+      bool mWindowDeco;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osgViewer::GraphicsWindow* GetWindowByContextId(unsigned int contextId, osgViewer::ViewerBase* v);
 
    ////////////////////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT WindowManager : public osg::Referenced
@@ -138,15 +145,6 @@ namespace dtEntity
    private:
 
       MessageFunctor mCloseWindowFunctor;
-
-      struct WindowPos
-      {
-         int mX;
-         int mY;
-         int mW;
-         int mH;
-         bool mWindowDeco;
-      };
 
       typedef std::map<unsigned int, WindowPos> WindowPosMap;
       WindowPosMap mWindowPositions;
