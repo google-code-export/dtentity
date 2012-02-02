@@ -204,6 +204,12 @@ function doSelection(context) {
    if (pick === null || typeof(pick) == "undefined") {
      return false;
    }
+   
+   var smc = getEntitySystem("StaticMesh").getComponent(pick, true);
+   if(smc && smc.IsTerrain) {
+     return;
+   }
+   
 
     var undoOp = {
       oldSelection: [],
