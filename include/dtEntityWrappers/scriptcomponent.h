@@ -35,7 +35,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    class DTENTITY_WRAPPERS_EXPORT ScriptSystem
       : public dtEntity::EntitySystem
-      , public dtEntity::ComponentDeletedCallback
+      , public dtEntity::EntityManager::ComponentDeletedCallback
    {
       static const dtEntity::StringId ScriptsId;
       static const dtEntity::StringId DebugPortId;

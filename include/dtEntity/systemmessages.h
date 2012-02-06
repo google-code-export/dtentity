@@ -683,6 +683,23 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
+    * Is sent when entering simulation loop
+    */
+   class DT_ENTITY_EXPORT StopSystemMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+
+      StopSystemMessage();
+
+      virtual Message* Clone() const { return CloneContainer<StopSystemMessage>(); }
+
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
     * Is sent when the EntityManager::ChangeTimeSettings method is called.
     */
    class DT_ENTITY_EXPORT TimeChangedMessage

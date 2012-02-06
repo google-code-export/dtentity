@@ -248,10 +248,10 @@ namespace dtEntity
       float mMouseDeltaX;
       float mMouseDeltaY;
 
+      unsigned int mFrameNumber;
       osgGA::GUIEventAdapter::ScrollingMotion mMouseScroll;
       unsigned int mMouseScrollContext;
-      std::ostringstream mInputString;
-      unsigned int mFrameNumber;
+      std::ostringstream mInputString;      
    };
 
 }

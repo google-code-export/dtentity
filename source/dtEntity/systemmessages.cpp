@@ -48,6 +48,7 @@ namespace dtEntity
       em.RegisterMessageType<SpawnerModifiedMessage>(SpawnerModifiedMessage::TYPE);
       em.RegisterMessageType<SpawnerRemovedMessage>(SpawnerRemovedMessage::TYPE);
       em.RegisterMessageType<StartSystemMessage>(StartSystemMessage::TYPE);
+      em.RegisterMessageType<StopSystemMessage>(StopSystemMessage::TYPE);
       em.RegisterMessageType<TickMessage>(TickMessage::TYPE);
       em.RegisterMessageType<TimeChangedMessage>(TimeChangedMessage::TYPE);
       em.RegisterMessageType<VisibilityChangedMessage>(VisibilityChangedMessage::TYPE);
@@ -305,6 +306,14 @@ namespace dtEntity
    const MessageType StartSystemMessage::TYPE(SID("StartSystemMessage"));
 
    StartSystemMessage::StartSystemMessage()
+      : Message(TYPE)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType StopSystemMessage::TYPE(SID("StopSystemMessage"));
+
+   StopSystemMessage::StopSystemMessage()
       : Message(TYPE)
    {
    }

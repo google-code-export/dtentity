@@ -184,11 +184,11 @@ namespace dtEntity
       DynamicDoubleProperty mAspectRatio;
       DynamicDoubleProperty mNearClip;
       DynamicDoubleProperty mFarClip;
+      DynamicVec4Property mClearColor;
       DynamicFloatProperty mLODScale;
       Vec3dProperty mPosition;
       Vec3dProperty mUp;
       Vec3dProperty mEyeDirection;
-      DynamicVec4Property mClearColor;
       DynamicUIntProperty mCullMask;
       StringIdProperty mProjectionMode;
 

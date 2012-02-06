@@ -80,8 +80,8 @@ namespace dtEntity
        * Get a list of all component associated with this entity
        * @param toFill receives the components
        */
-      void GetComponents(std::list<Component*>& toFill);
-      void GetComponents(std::list<const Component*>& toFill) const;
+      void GetComponents(std::vector<Component*>& toFill);
+      void GetComponents(std::vector<const Component*>& toFill) const;
 
       /**
        * @return true if a component of this type is assigned to entity

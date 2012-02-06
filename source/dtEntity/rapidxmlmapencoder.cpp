@@ -1237,12 +1237,12 @@ namespace dtEntity
          }
       }
 
-      std::list<const Component*> comps;
+      std::vector<const Component*> comps;
       em.GetComponents(eid, comps);
 
       // write components sorted by component type name
       std::map<std::string, const Component*> sorted;
-      std::list<const Component*>::const_iterator i;
+      std::vector<const Component*>::const_iterator i;
       for(i = comps.begin(); i != comps.end(); ++i)
       {
          sorted[GetStringFromSID((*i)->GetType())] = *i;
