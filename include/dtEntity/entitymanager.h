@@ -31,7 +31,6 @@
 #include <assert.h>
 #include <osg/Referenced>
 #include <OpenThreads/ReadWriteMutex>
-#include <dtEntity/component.h>
 
 namespace dtEntity
 {
@@ -113,11 +112,20 @@ namespace dtEntity
       /**
        * Create a new entity with a new unique EntityId
        * All entities are deleted when entity manager is deleted.
+       * This method is thread safe so that entities can be created from
+       * worker threads. Creation and deletion of entities are
+       * thread-safe, all other entity system/component methods are
+       * non-tread safe.
        * @param entity Receives pointer to newly created entity
        * @return true if success
        * @threadsafe
        */
       bool CreateEntity(Entity*& entity);
+
+      /**
+       * returns true while at least one entity exists
+       */
+      bool HasEntities() const;
 
       /**
        * Causes a message EntityAddedToSceneMessage to be fired.
@@ -314,7 +322,7 @@ namespace dtEntity
       typedef std::map<EntityId, osg::ref_ptr<Entity> > EntityMap;
       EntityMap mEntities;
 
-      // controls access to mEntities
+      // controls access to mEntities.
       mutable OpenThreads::ReadWriteMutex mEntityMutex;
 
       // Storage for entity systems
