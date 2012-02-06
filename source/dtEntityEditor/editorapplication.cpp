@@ -68,6 +68,9 @@ namespace dtEntityEditor
       // don't exit on escape
       mViewer->setKeyEventSetsDone(0);
 
+      const char* winvar = "OSG_WINDOW=0 0 800 600";
+      putenv(winvar);
+
       dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
 
       dtEntity::MapSystem* ms;
