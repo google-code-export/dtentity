@@ -171,5 +171,6 @@ int main(int argc, char** argv)
          viewer.renderingTraversals();
       }
    }
+
    return 0;
 }

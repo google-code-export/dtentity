@@ -1405,7 +1405,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      typedef std::list<const dtEntity::Component*> CompList;
+      typedef std::vector<const dtEntity::Component*> CompList;
       CompList components;
       entity->GetComponents(components);
       for(CompList::const_iterator i = components.begin(); i != components.end(); ++i)

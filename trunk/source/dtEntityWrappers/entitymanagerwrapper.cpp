@@ -166,12 +166,12 @@ namespace dtEntityWrappers
 
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
       dtEntity::EntityId id = args[0]->Uint32Value();
-      std::list<dtEntity::Component*> comps;
+      std::vector<dtEntity::Component*> comps;
       em->GetComponents(id, comps);
 
       HandleScope scope;
       Handle<Object> obj = Object::New();
-      std::list<dtEntity::Component*>::iterator i;
+      std::vector<dtEntity::Component*>::iterator i;
       for(i = comps.begin(); i != comps.end(); ++i)
       {
         std::string str = dtEntity::GetStringFromSID((*i)->GetType());

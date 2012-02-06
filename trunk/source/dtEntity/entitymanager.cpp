@@ -41,17 +41,14 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    EntityManager::~EntityManager() 
    {
+      // notify all about shutdown, last chance to deregister
+      StopSystemMessage msg;
+      EmitMessage(msg);
+
       // send and delete all outstanding messages
       EmitQueuedMessages(FLT_MAX);
       delete mMessagePump;
       mMessagePump = NULL;
-
-      // first remove map system so that it can unload plugins
-      EntitySystem* mapsys = GetEntitySystem(MapComponent::TYPE);
-      if(mapsys) 
-      {
-         RemoveEntitySystem(*mapsys);
-      }
 
       for(EntitySystemStore::iterator i = mEntitySystemStore.begin();
          i != mEntitySystemStore.end(); ++i)
@@ -85,50 +82,23 @@ namespace dtEntity
    bool EntityManager::HasEntities() const
    {
       OpenThreads::ScopedReadLock lock(mEntityMutex);
+      return (!mEntities.empty());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::AddToScene(EntityId eid)
    {
-      if(!EntityExists(eid))
-      {
-         LOG_ERROR("Cannot add to scene: Entity with this ID not found!");
-         return false;
-      }
-      EntityAddedToSceneMessage msg;
-      msg.SetUInt(EntityAddedToSceneMessage::AboutEntityId, eid);
-
-      MapComponent* mc;
-      if(GetComponent(eid, mc))
-      {
-         msg.SetMapName(mc->GetMapName());
-         msg.SetEntityName(mc->GetEntityName());
-         msg.SetUniqueId(mc->GetUniqueId());
-      }
-
-      EmitMessage(msg);
-      return true;
+      MapSystem* mapSystem;
+      GetEntitySystem(MapComponent::TYPE, mapSystem);
+      return mapSystem->AddToScene(eid);
    }
    
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::RemoveFromScene(EntityId eid)
    {
-      if(!EntityExists(eid))
-      {
-         LOG_ERROR("Cannot remove from scene: Entity with this ID not found!");
-         return false;
-      }
-      EntityRemovedFromSceneMessage msg;
-      msg.SetUInt(EntityRemovedFromSceneMessage::AboutEntityId, eid);
-      MapComponent* mc;
-      if(GetComponent(eid, mc))
-      {
-         msg.SetMapName(mc->GetMapName());
-         msg.SetEntityName(mc->GetEntityName());
-         msg.SetUniqueId(mc->GetUniqueId());
-      }
-      EmitMessage(msg);
-      return true;
+      MapSystem* mapSystem;
+      GetEntitySystem(MapComponent::TYPE, mapSystem);
+      return mapSystem->RemoveFromScene(eid);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -357,7 +327,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityManager::GetComponents(EntityId eid, std::list<Component*>& toFill)
+   void EntityManager::GetComponents(EntityId eid, std::vector<Component*>& toFill)
    {
       EntitySystemStore::iterator i;
       for(i = mEntitySystemStore.begin(); i != mEntitySystemStore.end(); ++i)
@@ -372,7 +342,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityManager::GetComponents(EntityId eid, std::list<const Component*>& toFill) const
+   void EntityManager::GetComponents(EntityId eid, std::vector<const Component*>& toFill) const
    {
       EntitySystemStore::const_iterator i;
       for(i = mEntitySystemStore.begin(); i != mEntitySystemStore.end(); ++i)
@@ -405,23 +375,21 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::CreateComponent(EntityId eid, ComponentType id, Component*& component)
    {
-      EntitySystem* es;
+      EntitySystem* es = NULL;
       
       if(!GetEntitySystem(id, es))
       {
-         MapSystem* mapSystem;
-         GetEntitySystem(MapComponent::TYPE, mapSystem);
-         if(mapSystem->GetPluginManager().FactoryExists(id))
+         EntitySystemRequestCallbacks::iterator i;
+         for(i = mEntitySystemRequestCallbacks.begin(); i != mEntitySystemRequestCallbacks.end(); ++i)
          {
-            mapSystem->GetPluginManager().StartEntitySystem(id);
-            if(!GetEntitySystem(id, es))
+            if((*i)->CreateEntitySystem(this, id))
             {
-               LOG_ERROR("Factory error: Factory is registered for type but "
-                         "does not create entity system with that type");
-               return false;
+               bool success = GetEntitySystem(id, es);
+               assert(success);
+               break;
             }
          }
-         else
+         if(es == NULL)
          {
             LOG_ERROR("Could not add component: no entity system of type " + GetStringFromSID(id));
             return false;
@@ -485,6 +453,27 @@ namespace dtEntity
          if(*i == cb)
          {
             mDeletedCallbacks.erase(i);
+            return true;
+         }
+      }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EntityManager::AddEntitySystemRequestCallback(EntitySystemRequestCallback* cb)
+   {
+      mEntitySystemRequestCallbacks.push_back(cb);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::RemoveEntitySystemRequestCallback(EntitySystemRequestCallback* cb)
+   {
+      EntitySystemRequestCallbacks::iterator i;
+      for(i = mEntitySystemRequestCallbacks.begin(); i != mEntitySystemRequestCallbacks.end(); ++i)
+      {
+         if(*i == cb)
+         {
+            mEntitySystemRequestCallbacks.erase(i);
             return true;
          }
       }

@@ -225,7 +225,7 @@ namespace dtEntityEditor
          mTimer->deleteLater();
          mTimer = NULL;
       }
-      
+
       // delete entity manager now before EditorApplication object is moved to main thread.
       mEntityManager = NULL;
       QMetaObject::invokeMethod(mMainWindow, "ShutDown", Qt::QueuedConnection);
