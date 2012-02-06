@@ -59,7 +59,7 @@ namespace dtEntity
          i->second->OnRemoveFromEntityManager(*this);
       }
       // delete all entity objects
-      while(!mEntities.empty())
+      while(HasEntities())
       {
          std::pair<EntityId, Entity*> p = *mEntities.begin();
          mEntities.erase(mEntities.begin());
@@ -82,9 +82,15 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::HasEntities() const
+   {
+      OpenThreads::ScopedReadLock lock(mEntityMutex);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::AddToScene(EntityId eid)
    {
-      if(mEntities.find(eid) == mEntities.end())
+      if(!EntityExists(eid))
       {
          LOG_ERROR("Cannot add to scene: Entity with this ID not found!");
          return false;
@@ -107,7 +113,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::RemoveFromScene(EntityId eid)
    {
-      if(mEntities.find(eid) == mEntities.end())
+      if(!EntityExists(eid))
       {
          LOG_ERROR("Cannot remove from scene: Entity with this ID not found!");
          return false;
@@ -194,9 +200,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void EntityManager::KillAllEntities()
    {
-      while(!mEntities.empty())
+      while(HasEntities())
       {
-         EntityId id = mEntities.begin()->first;
+         EntityId id;
+         {
+            OpenThreads::ScopedReadLock lock(mEntityMutex);
+            id = mEntities.begin()->first;
+         }
          RemoveFromScene(id);
          KillEntity(id);
       }
@@ -235,27 +245,28 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::RemoveEntitySystem(EntitySystem& s)
    {
-      if(!HasEntitySystem(s.GetComponentType()))
+      ComponentType componentType = s.GetComponentType();
+      if(!HasEntitySystem(componentType))
       {
          return false;
       }
-
+      ComponentType baseType = s.GetBaseType();
       s.OnRemoveFromEntityManager(*this);
       EntitySystemRemovedMessage msg;
-      msg.SetComponentType(s.GetComponentType());
-      msg.SetComponentTypeString(GetStringFromSID(s.GetComponentType()));
+      msg.SetComponentType(componentType);
+      msg.SetComponentTypeString(GetStringFromSID(componentType));
       EmitMessage(msg);
-      mEntitySystemStore.erase(mEntitySystemStore.find(s.GetComponentType()));
+      mEntitySystemStore.erase(mEntitySystemStore.find(componentType));
 
-      if(s.GetBaseType() != StringId())
+      if(baseType != StringId())
       {
          std::pair<TypeHierarchyMap::iterator, TypeHierarchyMap::iterator> keyRange;
-         keyRange = mTypeHierarchy.equal_range(s.GetBaseType());
+         keyRange = mTypeHierarchy.equal_range(baseType);
 
          TypeHierarchyMap::iterator it = keyRange.first;
          while(it != keyRange.second)
          {
-            if(it->second == s.GetComponentType())
+            if(it->second == componentType)
             {
                mTypeHierarchy.erase(it);
                break;

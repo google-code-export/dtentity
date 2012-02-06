@@ -56,7 +56,7 @@ namespace dtEntity
 
    public:
 
-      osg::Node* GetNode(const std::string& path, CacheMode::e cachemode, bool optimize)
+      osg::ref_ptr<osg::Node> GetNode(const std::string& path, CacheMode::e cachemode, bool optimize)
       {
          switch(cachemode)
          {

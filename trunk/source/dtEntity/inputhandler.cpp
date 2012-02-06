@@ -59,6 +59,7 @@ namespace dtEntity
       , mLockCursor(false)
       , mNumTouches(0)
       , mFrameNumber(0)
+      , mMouseScrollContext(0)
    {
       //setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
 

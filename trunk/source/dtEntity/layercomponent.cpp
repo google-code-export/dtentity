@@ -443,8 +443,8 @@ namespace dtEntity
          return;
       }
 
-      osg::Geometry* geometry = new osg::Geometry();
-      osg::Vec3Array* a = new osg::Vec3Array(24);
+      osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry();
+      osg::ref_ptr<osg::Vec3Array> a = new osg::Vec3Array(24);
       geometry->setVertexArray(a);
 
       float xmax = b.xMax();
@@ -498,7 +498,7 @@ namespace dtEntity
 
       geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 24));
 
-      osg::Geode* geode = new osg::Geode();
+      osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 
       geode->addDrawable(geometry);
       geode->setName("SelectionBounds");
@@ -512,16 +512,16 @@ namespace dtEntity
       transform->GetGroup()->addChild(geode);
 
       // make box wireframe
-      osg::StateSet* stateset = geode->getOrCreateStateSet();
-      osg::LineWidth* lw = new osg::LineWidth();
+      osg::ref_ptr<osg::StateSet> stateset = geode->getOrCreateStateSet();
+      osg::ref_ptr<osg::LineWidth> lw = new osg::LineWidth();
       lw->setWidth(2);
       stateset->setAttributeAndModes(lw, osg::StateAttribute::ON);
 
 
-      osg::PolygonOffset* polyoffset = new osg::PolygonOffset();
+      osg::ref_ptr<osg::PolygonOffset> polyoffset = new osg::PolygonOffset();
       polyoffset->setFactor(-1.0f);
       polyoffset->setUnits(-1.0f);
-      osg::PolygonMode* polymode = new osg::PolygonMode();
+      osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode();
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
       stateset->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       stateset->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
