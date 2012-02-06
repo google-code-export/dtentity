@@ -366,7 +366,11 @@ namespace dtEntityEditor
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
       std::ostringstream os;
-      mapSystem->SaveCurrentScene(false);
+      bool success = mapSystem->SaveCurrentScene(false);
+      if(!success)
+      {
+         ErrorOccurred(tr("Cannot save scene, please check file permissions!"));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +378,11 @@ namespace dtEntityEditor
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      mapSystem->SaveCurrentScene(true);
+      bool success = mapSystem->SaveCurrentScene(true);
+      if(!success)
+      {
+         ErrorOccurred(tr("Cannot save scene or one of the maps, please check file permissions!"));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

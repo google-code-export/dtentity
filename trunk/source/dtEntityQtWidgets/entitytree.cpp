@@ -1324,7 +1324,7 @@ namespace dtEntityQtWidgets
       success = mtsystem->SaveMap(path.toStdString());
       if(!success)
       {
-         emit ShowErrorMessage("Could not save map, unknown reason!");
+         emit ShowErrorMessage("Could not save map, please check permissions!");
       }
    }
 
@@ -1338,7 +1338,7 @@ namespace dtEntityQtWidgets
       success = mtsystem->SaveMapAs(path.toStdString(), copypath.toStdString());
       if(!success)
       {
-         emit ShowErrorMessage("Could not save copy of map, unknown reason!");
+         emit ShowErrorMessage("Could not save copy of map, please check permissions   !");
       }
    }
 
