@@ -445,13 +445,7 @@ namespace dtEntity
    {
       if(propname == IsTerrainId)
       {
-         unsigned int nm = NodeMasks::VISIBLE | NodeMasks::PICKABLE | NodeMasks::CASTS_SHADOWS |
-               NodeMasks::RECEIVES_SHADOWS;
-         if(mIsTerrain.Get())
-         {
-            nm |= NodeMasks::TERRAIN;
-         }
-         SetNodeMask(nm, true);
+         SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
       }
    }
 
@@ -524,7 +518,15 @@ namespace dtEntity
    {
       assert(mEntity != NULL);
 
-      SetNode(node); 
+      unsigned int nm = node->getNodeMask() |
+            NodeMasks::VISIBLE | NodeMasks::PICKABLE |
+             NodeMasks::CASTS_SHADOWS | NodeMasks::RECEIVES_SHADOWS;
+      if(mIsTerrain.Get())
+      {
+         nm |= NodeMasks::TERRAIN;
+      }
+      node->setNodeMask(nm);
+      SetNode(node);
       OnPropertyChanged(IsTerrainId, mIsTerrain);
 
    }
