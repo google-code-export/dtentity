@@ -147,7 +147,7 @@ namespace dtEntitySimulation
 
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
 
-   private:
+   protected:
 
       osg::ref_ptr<osg::Geode> mGeode;
       osg::ref_ptr<osgParticle::ParticleSystem> mParticleSystem;
