@@ -27,7 +27,7 @@
 #include <dtEntity/messagepump.h>
 #include <dtEntity/objectfactory.h>
 #include <map>
-#include <list>
+#include <vector>
 #include <assert.h>
 #include <osg/Referenced>
 #include <OpenThreads/ReadWriteMutex>
@@ -38,18 +38,6 @@ namespace dtEntity
    class Entity;
    class EntitySystem;
    class Message;
-
-   /**
-    * can be used to clean up wrappers for components or
-    * execute other actions
-    */
-   class ComponentDeletedCallback
-   {
-   public:
-      virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
-   };
-
-   typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
 
    /**
     * Entity manager is a container for entity systems. 
@@ -73,6 +61,33 @@ namespace dtEntity
        * systems like OSG components etc
        */
       EntityManager();
+
+
+      /**
+       * can be used to clean up wrappers for components or
+       * execute other actions
+       */
+      class ComponentDeletedCallback
+      {
+      public:
+         virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
+      };
+
+      typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
+
+
+      /**
+       * If user executes CreateComponent and no entity system with given component
+       * type is registered then all EntitySystemRequestCallbacks are executed
+       * until one returns true. Callback can be used to add entity systems lazily.
+       */
+      class EntitySystemRequestCallback
+      {
+      public:
+         virtual bool CreateEntitySystem(EntityManager* em, ComponentType t) = 0;
+      };
+
+      typedef std::vector<EntitySystemRequestCallback*> EntitySystemRequestCallbacks;
 
       /**
        * Get entity object for entity ID.
@@ -128,19 +143,12 @@ namespace dtEntity
       bool HasEntities() const;
 
       /**
-       * Causes a message EntityAddedToSceneMessage to be fired.
-	   * Layer system reacts to this by adding assigned node to
-	   * scene graph
-       * @param eid Id of entity to add to scene
-       * @return true if success
+       * DEPRECATED! Use MapSystem::AddToScene
        */
       bool AddToScene(EntityId eid);
 
       /**
-       * Causes a EntityRemovedFromSceneMessage to be fired.
-	   * Layer system removes attached node from scene graph.
-       * @param eid Id of entity to remove from scene
-       * @return true if success
+       * DEPRECATED! Use MapSystem::RemoveFromScene
        */
       bool RemoveFromScene(EntityId eid);
 
@@ -208,8 +216,8 @@ namespace dtEntity
        * @param eid Get components of this entity
        * @param toFill receives components
        */
-      void GetComponents(EntityId eid, std::list<Component*>& toFill);
-      void GetComponents(EntityId eid, std::list<const Component*>& toFill) const;
+      void GetComponents(EntityId eid, std::vector<Component*>& toFill);
+      void GetComponents(EntityId eid, std::vector<const Component*>& toFill) const;
 
       /**
        * @param eid Check if component exists for this entity
@@ -303,6 +311,9 @@ namespace dtEntity
       void AddDeletedCallback(ComponentDeletedCallback* cb);
       bool RemoveDeletedCallback(ComponentDeletedCallback* cb);
 
+      void AddEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
+      bool RemoveEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
+
    protected:
    
          // Destructor
@@ -337,6 +348,8 @@ namespace dtEntity
       MessagePump* mMessagePump;
 
       ComponentDeletedCallbacks mDeletedCallbacks;
+
+      EntitySystemRequestCallbacks mEntitySystemRequestCallbacks;
 
    };
 
