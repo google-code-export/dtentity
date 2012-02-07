@@ -58,7 +58,6 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
 
       /**
@@ -85,7 +84,7 @@ namespace dtEntity
       /**
        * A unique identifier identifying the entity. May be a random string.
        */
-      std::string GetUniqueId() const { return mUniqueId.Get(); }
+      std::string GetUniqueId() const { return mUniqueIdStr; }
       void SetUniqueId(const std::string& v);
 
       void SetSaveWithMap(bool v) { mSaveWithMap.Set(v); }
@@ -99,7 +98,8 @@ namespace dtEntity
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
       Spawner* mSpawner;
-      StringProperty mUniqueId;
+      DynamicStringProperty mUniqueId;
+      std::string mUniqueIdStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
       Entity* mOwner;
@@ -110,7 +110,6 @@ namespace dtEntity
 
    class DT_ENTITY_EXPORT MapSystem
       : public DefaultEntitySystem<MapComponent>
-      , public EntityManager::EntitySystemRequestCallback
    {
    public:
 
@@ -145,26 +144,6 @@ namespace dtEntity
       // reacts to DeleteEntityMessage
       void OnDeleteEntity(const Message& msg);
 
-      // reacts to StopSystemMessage by removing map system from entity manager
-      void OnStopSystem(const Message& msg);
-
-
-      /**
-       * Causes a message EntityAddedToSceneMessage to be fired.
-       * Layer system reacts to this by adding assigned node to
-       * scene graph
-       * @param eid Id of entity to add to scene
-       * @return true if success
-       */
-      bool AddToScene(EntityId eid);
-
-      /**
-       * Causes a EntityRemovedFromSceneMessage to be fired.
-       * Layer system removes attached node from scene graph.
-       * @param eid Id of entity to remove from scene
-       * @return true if success
-       */
-      bool RemoveFromScene(EntityId eid);
 
       /**
        * Register spawner. EntityManager takes ownership of spawner.
@@ -303,13 +282,9 @@ namespace dtEntity
        *called by component. Don't call, please set the property on 
        * the component instead
        */
-      void OnEntityChangedUniqueId(EntityId id, const std::string& newUniqueid);
+      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueid, const std::string& newUniqueid);
 
       MessageFactory& GetMessageFactory() { return mMessageFactory; }
-
-
-      // implementation of EntityManager::EntitySystemRequestCallback interface
-      virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
 
    private:
 
@@ -325,7 +300,6 @@ namespace dtEntity
       MessageFunctor mSpawnEntityFunctor;
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
-      MessageFunctor mStopSystemFunctor;
 
       MessageFactory mMessageFactory;
 

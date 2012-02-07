@@ -58,6 +58,10 @@ namespace dtEntity
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetSpawnerName),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetSpawnerName)
         )
+      , mUniqueId(
+           DynamicStringProperty::SetValueCB(this, &MapComponent::SetUniqueId),
+           DynamicStringProperty::GetValueCB(this, &MapComponent::GetUniqueId)
+        )
       , mSpawner(NULL)
       , mOwner(NULL)
    {
@@ -79,7 +83,7 @@ namespace dtEntity
 
       if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
       {
-         mUniqueId.Set(reinterpret_cast<const char*>(guidChar) );
+         mUniqueIdStr = reinterpret_cast<const char*>(guidChar);
          if(RpcStringFree(&guidChar) != RPC_S_OK) 
          {
             LOG_ERROR("Could not free memory.");
@@ -101,22 +105,13 @@ namespace dtEntity
    char buffer[37];
    uuid_unparse(uuid, buffer);
 
-   mUniqueId.Set(buffer);
+   mUniqueIdStr = buffer;
 #endif
    }
     
    ////////////////////////////////////////////////////////////////////////////
    MapComponent::~MapComponent()
    {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void MapComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == UniqueIdId)
-      {
-         SetUniqueId(mUniqueId.Get());
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -142,12 +137,16 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    void MapComponent::SetUniqueId(const std::string& v) { 
-      mUniqueId.Set(v);
+
+      std::string olduid = mUniqueIdStr;
+      if(olduid == v) return;
+
+      mUniqueIdStr = v;
       if(mOwner != NULL)
       {
          MapSystem* ms;
          mOwner->GetEntityManager().GetEntitySystem(TYPE, ms);
-         ms->OnEntityChangedUniqueId(mOwner->GetId(), v);
+         ms->OnEntityChangedUniqueId(mOwner->GetId(), olduid, v);
       }
    }
 
@@ -163,9 +162,6 @@ namespace dtEntity
       mDeleteEntityFunctor = MessageFunctor(this, &MapSystem::OnDeleteEntity);
       em.RegisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor, "MapSystem::OnDeleteEntity");
 
-      mStopSystemFunctor = MessageFunctor(this, &MapSystem::OnStopSystem);
-      em.RegisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor, "MapSystem::OnStopSystem");
-
       RegisterCommandMessages(mMessageFactory);
       RegisterSystemMessages(mMessageFactory);
    }
@@ -178,8 +174,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void MapSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
-      em.AddEntitySystemRequestCallback(this);
-
+      //mMapEncoder = new XercesMapEncoder(em);
       mMapEncoder = new RapidXMLMapEncoder(em);
    }
 
@@ -189,12 +184,13 @@ namespace dtEntity
       bool ret = BaseClass::CreateComponent(eid, component);
       if(ret)
       {
-         std::string uid = component->GetString(MapComponent::UniqueIdId);
+         MapComponent* mapcomp = static_cast<MapComponent*>(component);
+         std::string uid = mapcomp->GetUniqueId();
          if(uid != "")
          {
             if(mEntitiesByUniqueId.find(uid) != mEntitiesByUniqueId.end())
             {
-               LOG_ERROR("Entity with this name already exists!");
+               LOG_ERROR("Entity with this unique id already exists!");
                DeleteComponent(eid);
                return false;
             }
@@ -211,24 +207,17 @@ namespace dtEntity
       ComponentStore::iterator i = mComponents.find(eid);
       if(i != mComponents.end())
       {
-         mEntitiesByUniqueId.erase(i->second->GetString(MapComponent::UniqueIdId));
+         mEntitiesByUniqueId.erase(i->second->GetUniqueId());
       }
       return BaseClass::DeleteComponent(eid);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MapSystem::OnEntityChangedUniqueId(EntityId id, const std::string& newUniqueId)
+   void MapSystem::OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueId)
    {
       typedef std::map<std::string, EntityId> UIMap;
-      MapComponent* comp;
-      bool success = GetEntityManager().GetComponent(id, comp);
-      if(!success)
-      {
-         LOG_ERROR("HUCH?");
-         return;
-      }
-
-      std::string oldUniqueId = comp->GetUniqueId();
+      MapComponent* comp = GetComponent(id);
+      assert(comp != NULL);
 
       UIMap::iterator i = mEntitiesByUniqueId.find(oldUniqueId);
       if(i != mEntitiesByUniqueId.end())
@@ -243,7 +232,7 @@ namespace dtEntity
       UIMap::iterator j = mEntitiesByUniqueId.find(newUniqueId);
       if(j != mEntitiesByUniqueId.end())
       {
-         LOG_ERROR("An entity with this unique id already exists!");
+         LOG_ERROR("An entity with unique id " << newUniqueId << " already exists!");
       }  
       else
       {
@@ -793,12 +782,6 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MapSystem::OnStopSystem(const Message& msg)
-   {
-      mPluginManager.UnloadAllPlugins();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void MapSystem::GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids) const
    {
       ComponentStore::const_iterator i;
@@ -809,70 +792,6 @@ namespace dtEntity
          {
             ids.push_back(i->first);
          }
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::AddToScene(EntityId eid)
-   {
-      if(!GetEntityManager().EntityExists(eid))
-      {
-         LOG_ERROR("Cannot add to scene: Entity with this ID not found!");
-         return false;
-      }
-      EntityAddedToSceneMessage msg;
-      msg.SetUInt(EntityAddedToSceneMessage::AboutEntityId, eid);
-
-      MapComponent* mc = GetComponent(eid);
-      if(mc)
-      {
-         msg.SetMapName(mc->GetMapName());
-         msg.SetEntityName(mc->GetEntityName());
-         msg.SetUniqueId(mc->GetUniqueId());
-      }
-
-      GetEntityManager().EmitMessage(msg);
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::RemoveFromScene(EntityId eid)
-   {
-      if(!GetEntityManager().EntityExists(eid))
-      {
-         LOG_ERROR("Cannot remove from scene: Entity with this ID not found!");
-         return false;
-      }
-      EntityRemovedFromSceneMessage msg;
-      msg.SetUInt(EntityRemovedFromSceneMessage::AboutEntityId, eid);
-      MapComponent* mc = GetComponent(eid);
-      if(mc)
-      {
-         msg.SetMapName(mc->GetMapName());
-         msg.SetEntityName(mc->GetEntityName());
-         msg.SetUniqueId(mc->GetUniqueId());
-      }
-      GetEntityManager().EmitMessage(msg);
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::CreateEntitySystem(EntityManager* em, ComponentType t)
-   {
-      if(GetPluginManager().FactoryExists(t))
-      {
-         GetPluginManager().StartEntitySystem(t);
-         if(!em->HasEntitySystem(t))
-         {
-            LOG_ERROR("Factory error: Factory is registered for type but "
-                      "does not create entity system with that type");
-            return false;
-         }
-         return true;
-      }
-      else
-      {
-         return false;
       }
    }
 }
