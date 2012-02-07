@@ -58,7 +58,6 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
 
       /**
@@ -85,7 +84,7 @@ namespace dtEntity
       /**
        * A unique identifier identifying the entity. May be a random string.
        */
-      std::string GetUniqueId() const { return mUniqueId.Get(); }
+      std::string GetUniqueId() const { return mUniqueIdStr; }
       void SetUniqueId(const std::string& v);
 
       void SetSaveWithMap(bool v) { mSaveWithMap.Set(v); }
@@ -99,7 +98,8 @@ namespace dtEntity
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
       Spawner* mSpawner;
-      StringProperty mUniqueId;
+      DynamicStringProperty mUniqueId;
+      std::string mUniqueIdStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
       Entity* mOwner;
@@ -282,7 +282,7 @@ namespace dtEntity
        *called by component. Don't call, please set the property on 
        * the component instead
        */
-      void OnEntityChangedUniqueId(EntityId id, const std::string& newUniqueid);
+      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueid, const std::string& newUniqueid);
 
       MessageFactory& GetMessageFactory() { return mMessageFactory; }
 
