@@ -413,7 +413,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CreateComponent(EntityManager& em, xml_node<>* element, EntityId entityId)
+   void CreateComponent(EntityManager& em, xml_node<>* element, EntityId entityId, const std::string& mapname)
    {
       for(xml_attribute<>* attr = element->first_attribute();
            attr; attr = attr->next_attribute())
@@ -428,7 +428,7 @@ namespace dtEntity
                bool success = StartEntitySystem(em, componentType);
                if(!success)
                {
-                  LOG_WARNING("Cannot add component, no entity system of this type registered: " + GetStringFromSID(componentType));
+                  LOG_WARNING("In Map " << mapname << ": Cannot add component, no entity system of this type registered: " << GetStringFromSID(componentType));
                   return;
                }
                em.CreateComponent(entityId, componentType, component);
@@ -438,7 +438,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SetupComponent(EntityManager& em, xml_node<>* element, EntityId entityId)
+   void SetupComponent(EntityManager& em, xml_node<>* element, EntityId entityId, const std::string& mapname)
    {
       StringId componentType;
       for(xml_attribute<>* attr = element->first_attribute();
@@ -477,7 +477,7 @@ namespace dtEntity
                Property* toset = component->Get(namesid);
                if(toset == NULL)
                {
-                  LOG_WARNING("Property " << GetStringFromSID(namesid) 
+                  LOG_WARNING("In Map " << mapname << ": Property " << GetStringFromSID(namesid) 
 					  << " does not exist in component "
 					  << GetStringFromSID(componentType));
                }
@@ -534,7 +534,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "component") == 0)
             {
-               CreateComponent(em, currentNode, newentity->GetId());
+               CreateComponent(em, currentNode, newentity->GetId(), mapName);
             }
          }
       }
@@ -546,7 +546,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "component") == 0)
             {
-               SetupComponent(em, currentNode, newentity->GetId());
+               SetupComponent(em, currentNode, newentity->GetId(), mapName);
             }
          }
       }
@@ -700,7 +700,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SetupEntitySystem(EntityManager& em, xml_node<>* element)
+   void SetupEntitySystem(EntityManager& em, xml_node<>* element, const std::string& filename)
    {
       StringId componentType;
       for(xml_attribute<>* attr = element->first_attribute();
@@ -717,7 +717,7 @@ namespace dtEntity
          bool success = StartEntitySystem(em, componentType);
          if(!success)
          {
-            LOG_WARNING("Cannot setup entity system. Component type not found: " + GetStringFromSID(componentType));
+            LOG_WARNING("In scene " << filename << ": Cannot setup entity system. Component type not found: " + GetStringFromSID(componentType));
             return;
          }
       }
@@ -809,7 +809,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ParseScene(EntityManager& em, xml_node<>* element, std::list<std::string>& mapsToLoad)
+   void ParseScene(EntityManager& em, xml_node<>* element, std::list<std::string>& mapsToLoad, const std::string& sceneName)
    {
       // first load all libraries
       for(xml_node<>* rootLibNode(element->first_node());
@@ -849,7 +849,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "entitysystem") == 0)
             {
-               SetupEntitySystem(em, currentNode);
+               SetupEntitySystem(em, currentNode, sceneName);
             }
          }
       }
@@ -1369,7 +1369,7 @@ namespace dtEntity
          doc.parse<0>(file.data());
 
 			xml_node<>* scenenode = doc.first_node("scene");
-			ParseScene(*mEntityManager, scenenode, mapsToLoad);
+			ParseScene(*mEntityManager, scenenode, mapsToLoad, path);
 
 		}
 		catch(const std::exception& ex)
