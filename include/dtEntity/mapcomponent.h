@@ -110,6 +110,7 @@ namespace dtEntity
 
    class DT_ENTITY_EXPORT MapSystem
       : public DefaultEntitySystem<MapComponent>
+      , public EntityManager::EntitySystemRequestCallback
    {
    public:
 
@@ -144,6 +145,26 @@ namespace dtEntity
       // reacts to DeleteEntityMessage
       void OnDeleteEntity(const Message& msg);
 
+      // reacts to StopSystemMessage by removing map system from entity manager
+      void OnStopSystem(const Message& msg);
+
+
+      /**
+       * Causes a message EntityAddedToSceneMessage to be fired.
+       * Layer system reacts to this by adding assigned node to
+       * scene graph
+       * @param eid Id of entity to add to scene
+       * @return true if success
+       */
+      bool AddToScene(EntityId eid);
+
+      /**
+       * Causes a EntityRemovedFromSceneMessage to be fired.
+       * Layer system removes attached node from scene graph.
+       * @param eid Id of entity to remove from scene
+       * @return true if success
+       */
+      bool RemoveFromScene(EntityId eid);
 
       /**
        * Register spawner. EntityManager takes ownership of spawner.
@@ -282,9 +303,13 @@ namespace dtEntity
        *called by component. Don't call, please set the property on 
        * the component instead
        */
-      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueid, const std::string& newUniqueid);
+      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
 
       MessageFactory& GetMessageFactory() { return mMessageFactory; }
+
+
+      // implementation of EntityManager::EntitySystemRequestCallback interface
+      virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
 
    private:
 
@@ -300,6 +325,7 @@ namespace dtEntity
       MessageFunctor mSpawnEntityFunctor;
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
+      MessageFunctor mStopSystemFunctor;
 
       MessageFactory mMessageFactory;
 
