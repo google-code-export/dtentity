@@ -213,7 +213,9 @@ namespace dtEntity
 
       dtEntity::LayerAttachPointSystem* layersys;
       em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      layersys->CreateSceneGraphRootEntity(new osg::Group());
+      osg::ref_ptr<osg::Group> sceneGraphRoot = new osg::Group();
+      layersys->CreateSceneGraphRootEntity(sceneGraphRoot);
+      appsystem->InstallUpdateCallback(sceneGraphRoot);
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
       osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);

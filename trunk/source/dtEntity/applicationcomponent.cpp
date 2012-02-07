@@ -493,11 +493,7 @@ namespace dtEntity
 
       LayerAttachPointSystem* lsys;
       GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-      if(camcomp->GetLayerAttachPoint() == LayerAttachPointSystem::RootId)
-      {
-         InstallUpdateCallback(lsys->GetSceneGraphRoot());
-      }
-      else
+      if(camcomp->GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
       {
          LayerAttachPointComponent* lc;
          if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
