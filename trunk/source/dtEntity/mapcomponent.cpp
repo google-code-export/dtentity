@@ -162,6 +162,9 @@ namespace dtEntity
       mDeleteEntityFunctor = MessageFunctor(this, &MapSystem::OnDeleteEntity);
       em.RegisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor, "MapSystem::OnDeleteEntity");
 
+      mStopSystemFunctor = MessageFunctor(this, &MapSystem::OnStopSystem);
+      em.RegisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor, "MapSystem::OnStopSystem");
+
       RegisterCommandMessages(mMessageFactory);
       RegisterSystemMessages(mMessageFactory);
    }
@@ -174,7 +177,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void MapSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
-      //mMapEncoder = new XercesMapEncoder(em);
+      em.AddEntitySystemRequestCallback(this);
+
       mMapEncoder = new RapidXMLMapEncoder(em);
    }
 
@@ -782,6 +786,12 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void MapSystem::OnStopSystem(const Message& msg)
+   {
+      mPluginManager.UnloadAllPlugins();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void MapSystem::GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids) const
    {
       ComponentStore::const_iterator i;
@@ -792,6 +802,70 @@ namespace dtEntity
          {
             ids.push_back(i->first);
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::AddToScene(EntityId eid)
+   {
+      if(!GetEntityManager().EntityExists(eid))
+      {
+         LOG_ERROR("Cannot add to scene: Entity with this ID not found!");
+         return false;
+      }
+      EntityAddedToSceneMessage msg;
+      msg.SetUInt(EntityAddedToSceneMessage::AboutEntityId, eid);
+
+      MapComponent* mc = GetComponent(eid);
+      if(mc)
+      {
+         msg.SetMapName(mc->GetMapName());
+         msg.SetEntityName(mc->GetEntityName());
+         msg.SetUniqueId(mc->GetUniqueId());
+      }
+
+      GetEntityManager().EmitMessage(msg);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::RemoveFromScene(EntityId eid)
+   {
+      if(!GetEntityManager().EntityExists(eid))
+      {
+         LOG_ERROR("Cannot remove from scene: Entity with this ID not found!");
+         return false;
+      }
+      EntityRemovedFromSceneMessage msg;
+      msg.SetUInt(EntityRemovedFromSceneMessage::AboutEntityId, eid);
+      MapComponent* mc = GetComponent(eid);
+      if(mc)
+      {
+         msg.SetMapName(mc->GetMapName());
+         msg.SetEntityName(mc->GetEntityName());
+         msg.SetUniqueId(mc->GetUniqueId());
+      }
+      GetEntityManager().EmitMessage(msg);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::CreateEntitySystem(EntityManager* em, ComponentType t)
+   {
+      if(GetPluginManager().FactoryExists(t))
+      {
+         GetPluginManager().StartEntitySystem(t);
+         if(!em->HasEntitySystem(t))
+         {
+            LOG_ERROR("Factory error: Factory is registered for type but "
+                      "does not create entity system with that type");
+            return false;
+         }
+         return true;
+      }
+      else
+      {
+         return false;
       }
    }
 }
