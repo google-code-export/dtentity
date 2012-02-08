@@ -166,6 +166,7 @@ namespace dtEntity
       : DefaultEntitySystem<LayerAttachPointComponent>(em)
       , mBaseEntityId(0)
    {
+      AddScriptedMethod("getByName", ScriptMethodFunctor(this, &LayerAttachPointSystem::ScriptGetByName));
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -248,5 +249,17 @@ namespace dtEntity
    void LayerAttachPointSystem::RegisterByName(StringId id, LayerAttachPointComponent* c)
    {
       mLayerByNameMap[id] = c;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Property* LayerAttachPointSystem::ScriptGetByName(const PropertyArgs& args)
+   {
+      std::string name = args[0]->StringValue();
+      LayerByNameMap::iterator i = mLayerByNameMap.find(dtEntity::SID(name));
+      if(i == mLayerByNameMap.end())
+      {
+         return new UIntProperty(0);
+      }
+      return new UIntProperty(i->first);
    }
 }
