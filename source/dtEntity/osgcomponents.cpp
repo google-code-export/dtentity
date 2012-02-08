@@ -525,6 +525,10 @@ namespace dtEntity
       {
          nm |= NodeMasks::TERRAIN;
       }
+      else
+      {
+        nm &= ~dtEntity::NodeMasks::TERRAIN;
+      }
       node->setNodeMask(nm);
       SetNode(node);
       OnPropertyChanged(IsTerrainId, mIsTerrain);
