@@ -326,6 +326,14 @@ namespace dtEntity
          , mVisited(false)
       {}
 
+      virtual void apply(osg::Node& node)
+      {
+         if((node.getNodeMask() & dtEntity::NodeMasks::VISIBLE) != 0)
+         {
+            traverse(node);
+         }
+      }
+
       /**
       * Visits the specified geode.
       *
@@ -333,6 +341,10 @@ namespace dtEntity
       */
       virtual void apply(osg::Geode& node)
       {
+         if((node.getNodeMask() & dtEntity::NodeMasks::VISIBLE) == 0)
+         {
+            return;
+         }
          osg::NodePath p = getNodePath();
          osg::NodePath nodePath;
          osg::NodePath::iterator i = p.begin();
@@ -346,9 +358,10 @@ namespace dtEntity
 
          for (unsigned int i = 0; i < node.getNumDrawables(); ++i)
          {
+            osg::Drawable* drawable = node.getDrawable(i);
             for (unsigned int j = 0; j < 8; ++j)
             {
-               mBoundingBox.expandBy(node.getDrawable(i)->getBound().corner(j) * matrix);
+               mBoundingBox.expandBy(drawable->getBound().corner(j) * matrix);
                mVisited = true;
             }
          }
