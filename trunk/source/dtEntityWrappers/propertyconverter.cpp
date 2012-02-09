@@ -158,6 +158,33 @@ namespace dtEntityWrappers
                if(len > 3) w = arr->Get(3)->NumberValue();
                return new QuatProperty(x, y, z, w);
             }
+            else if(h == "MT")
+            {
+               Handle<Array> a0 = Handle<Array>::Cast(arr->Get(0));
+               Handle<Array> a1 = Handle<Array>::Cast(arr->Get(1));
+               Handle<Array> a2 = Handle<Array>::Cast(arr->Get(2));
+               Handle<Array> a3 = Handle<Array>::Cast(arr->Get(3));
+
+               double p1 = a0->Get(0)->NumberValue();
+               double p2 = a0->Get(1)->NumberValue();
+               double p3 = a0->Get(2)->NumberValue();
+               double p4 = a0->Get(3)->NumberValue();
+               double p5 = a1->Get(0)->NumberValue();
+               double p6 = a1->Get(1)->NumberValue();
+               double p7 = a1->Get(2)->NumberValue();
+               double p8 = a1->Get(3)->NumberValue();
+               double p9 = a2->Get(0)->NumberValue();
+               double p10 = a2->Get(1)->NumberValue();
+               double p11 = a2->Get(2)->NumberValue();
+               double p12 = a2->Get(3)->NumberValue();
+               double p13 = a3->Get(0)->NumberValue();
+               double p14 = a3->Get(1)->NumberValue();
+               double p15 = a3->Get(2)->NumberValue();
+               double p16 = a3->Get(3)->NumberValue();
+               osg::Matrix m(p1,p2,p3,p4,p5,p6,p7,p8,
+                             p9,p10,p11,p12,p13,p14,p15,p16);
+               return new MatrixProperty(m);
+            }
          }
          ArrayProperty* prop = new ArrayProperty();
          for(unsigned int i = 0; i < arr->Length(); ++i)
