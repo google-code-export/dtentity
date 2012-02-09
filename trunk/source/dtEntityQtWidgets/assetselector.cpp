@@ -295,9 +295,15 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void AssetSelector::OnDataPathChanged(const QString& path)
    {
+      // see http://developer.qt.nokia.com/forums/viewthread/7265
+      QDir::Filters oriFilters = mModel->filter();
+       
       mRootPath = path;
       QModelIndex idx = mModel->setRootPath(mRootPath);
       mFileTree->setRootIndex(idx);
+
+      mModel->setFilter(oriFilters);
+
       QSettings settings;
       settings.setValue("AssetSelectorCurrentDataPath", path);
    }
