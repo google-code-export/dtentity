@@ -115,8 +115,51 @@ namespace dtEntityWrappers
    {
       if(val->IsArray())
       {
-         ArrayProperty* prop = new ArrayProperty();
+
+         HandleScope scope;
          Handle<Array> arr = Handle<Array>::Cast(val);
+         unsigned int len = arr->Length();
+
+         Handle<Value> hint = arr->Get(String::New("__TYPE_HINT"));
+         if(!hint.IsEmpty())
+         {
+            std::string h = ToStdString(hint);
+            if(h == "V2")
+            {
+               double x = 0, y = 0;
+               if(len > 0) x = arr->Get(0)->NumberValue();
+               if(len > 1) y = arr->Get(1)->NumberValue();
+               return new Vec2dProperty(x, y);
+            }
+            else if(h == "V3")
+            {
+               double x = 0, y = 0, z = 0;
+               if(len > 0) x = arr->Get(0)->NumberValue();
+               if(len > 1) y = arr->Get(1)->NumberValue();
+               if(len > 2) z = arr->Get(2)->NumberValue();
+               return new Vec3dProperty(x, y, z);
+
+            }
+            else if(h == "V4")
+            {
+               double x = 0, y = 0, z = 0, w = 0;
+               if(len > 0) x = arr->Get(0)->NumberValue();
+               if(len > 1) y = arr->Get(1)->NumberValue();
+               if(len > 2) z = arr->Get(2)->NumberValue();
+               if(len > 3) w = arr->Get(3)->NumberValue();
+               return new Vec4dProperty(x, y, z, w);
+            }
+            else if(h == "QT")
+            {
+               double x = 0, y = 0, z = 0, w = 0;
+               if(len > 0) x = arr->Get(0)->NumberValue();
+               if(len > 1) y = arr->Get(1)->NumberValue();
+               if(len > 2) z = arr->Get(2)->NumberValue();
+               if(len > 3) w = arr->Get(3)->NumberValue();
+               return new QuatProperty(x, y, z, w);
+            }
+         }
+         ArrayProperty* prop = new ArrayProperty();
          for(unsigned int i = 0; i < arr->Length(); ++i)
          {
             prop->Add(Convert(arr->Get(Integer::New(i))));
@@ -127,6 +170,7 @@ namespace dtEntityWrappers
       {
          GroupProperty* prp = new GroupProperty();
 
+         HandleScope scope;
          Handle<Object> obj = Handle<Object>::Cast(val);
          Handle<Array> keys = obj->GetPropertyNames();
 

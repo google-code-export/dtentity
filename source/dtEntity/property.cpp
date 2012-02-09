@@ -912,6 +912,12 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   QuatProperty::QuatProperty(double x, double y, double z, double w)
+      : mValue(osg::Quat(x, y, z, w))
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    osg::Quat QuatProperty::QuatValue() const 
    { 
       return Get(); 
@@ -1114,6 +1120,12 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   Vec2Property::Vec2Property(float x, float y)
+      : mValue(osg::Vec2(x, y))
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2 Vec2Property::Vec2Value() const
    { 
       return Get();
@@ -1175,6 +1187,12 @@ namespace dtEntity
    Vec3Property::Vec3Property(const osg::Vec3& v)
       : mValue(v)
    {         
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec3Property::Vec3Property(float x, float y, float z)
+      : mValue(osg::Vec3(x, y, z))
+   {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1241,6 +1259,12 @@ namespace dtEntity
    Vec4Property::Vec4Property(const osg::Vec4& v)
       : mValue(v)
    {         
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec4Property::Vec4Property(float x, float y, float z, float w)
+      : mValue(osg::Vec4(x, y, z, w))
+   {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1311,6 +1335,12 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   Vec2dProperty::Vec2dProperty(double x, double y)
+      : mValue(osg::Vec2d(x, y))
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec2dProperty::Vec2Value() const
    {
       return osg::Vec2f(mValue[0], mValue[1]);
@@ -1371,6 +1401,12 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    Vec3dProperty::Vec3dProperty(const osg::Vec3d& v)
       : mValue(v)
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec3dProperty::Vec3dProperty(double x, double y, double z)
+      : mValue(osg::Vec3d(x, y, z))
    {
    }
 
@@ -1437,6 +1473,12 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    Vec4dProperty::Vec4dProperty(const osg::Vec4d& v)
       : mValue(v)
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec4dProperty::Vec4dProperty(double x, double y, double z, double w)
+      : mValue(osg::Vec4d(x, y, z, w))
    {
    }
 
