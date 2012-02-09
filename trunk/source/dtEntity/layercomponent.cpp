@@ -341,10 +341,6 @@ namespace dtEntity
       */
       virtual void apply(osg::Geode& node)
       {
-         if((node.getNodeMask() & dtEntity::NodeMasks::VISIBLE) == 0)
-         {
-            return;
-         }
          osg::NodePath p = getNodePath();
          osg::NodePath nodePath;
          osg::NodePath::iterator i = p.begin();
@@ -358,10 +354,19 @@ namespace dtEntity
 
          for (unsigned int i = 0; i < node.getNumDrawables(); ++i)
          {
-            osg::Drawable* drawable = node.getDrawable(i);
+            osg::Drawable* dr = node.getDrawable(i);
+            osg::Geometry* geometry = dynamic_cast<osg::Geometry*>(dr);
+            if(geometry && geometry->getVertexArray() == NULL)
+            {
+               continue;
+            }
+            osg::BoundingBox b = dr->getBound();
+
             for (unsigned int j = 0; j < 8; ++j)
             {
-               mBoundingBox.expandBy(drawable->getBound().corner(j) * matrix);
+
+               osg::Vec3 corner = b.corner(j);
+               mBoundingBox.expandBy(corner * matrix);
                mVisited = true;
             }
          }
