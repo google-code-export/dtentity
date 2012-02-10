@@ -133,7 +133,8 @@ namespace dtEntity
 
       ////////////////////////////////////////////////////////////////////////////////
       DefaultEntitySystem(EntityManager& em, ComponentType baseType = StringId())
-         : EntitySystem(T::TYPE, em, baseType)
+         : EntitySystem(em, baseType)
+         , mComponentType(T::TYPE)
       {
       }
 
@@ -141,6 +142,11 @@ namespace dtEntity
       ~DefaultEntitySystem()
       {
          DestroyAll(mComponents);
+      }
+
+      virtual ComponentType GetComponentType() const
+      {
+         return mComponentType;
       }
 
       ////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +291,7 @@ namespace dtEntity
    protected:
 
       ComponentStore mComponents;
+      ComponentType mComponentType;
    };
 }
 

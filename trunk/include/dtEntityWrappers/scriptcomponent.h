@@ -48,6 +48,8 @@ namespace dtEntityWrappers
       ScriptSystem(dtEntity::EntityManager& em);
       ~ScriptSystem();
 
+      dtEntity::ComponentType GetComponentType() const { return TYPE; }
+
       virtual void Finished();
 
       virtual void OnAddedToEntityManager(dtEntity::EntityManager& em);
