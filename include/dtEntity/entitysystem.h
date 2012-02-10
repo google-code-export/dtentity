@@ -38,8 +38,7 @@ namespace dtEntity
     * their components.
     */
    class EntitySystem
-      : public osg::Referenced
-      , public PropertyContainer
+      : public PropertyContainer
    {
    public:
 
@@ -51,9 +50,8 @@ namespace dtEntity
        *                 set the parent component type here. EntityManager::GetComponent will return
        *                 components of this entity system when base type is requested.
        */
-      EntitySystem(ComponentType id, EntityManager& em, ComponentType baseType = StringId())
-         : mComponentType(id)
-         , mBaseType(baseType)
+      EntitySystem(EntityManager& em, ComponentType baseType = StringId())
+         : mBaseType(baseType)
          , mEntityManager(&em)
       {
       }
@@ -65,10 +63,7 @@ namespace dtEntity
       /**
        * @return The type id of the component that this system handles
        */
-      ComponentType GetComponentType() const 
-      {
-         return mComponentType; 
-      }
+      virtual ComponentType GetComponentType() const { return StringId(); }
 
       /**
        * @return If component class is derived from a base component type, give base
@@ -155,7 +150,6 @@ namespace dtEntity
       // no copy ctor
       EntitySystem(EntitySystem&);
 
-      ComponentType mComponentType;
       ComponentType mBaseType;
       EntityManager* mEntityManager;
    };

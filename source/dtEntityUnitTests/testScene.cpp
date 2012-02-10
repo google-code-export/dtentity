@@ -50,7 +50,13 @@ struct SceneFixture
 	  mEntityManager->AddEntitySystem(*mMapSystem);
       mEntityManager->AddEntitySystem(*new dtEntity::ApplicationSystem(*mEntityManager));
    }
-   osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
+
+   ~SceneFixture()
+   {
+      delete mEntityManager;
+   }
+
+   dtEntity::EntityManager* mEntityManager;
    dtEntity::MapSystem* mMapSystem;
 };
 

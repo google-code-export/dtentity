@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::CompositeViewer viewer(arguments);
 
-   osg::ref_ptr<dtEntity::EntityManager> em = new dtEntity::EntityManager();
+   dtEntity::EntityManager* em = new dtEntity::EntityManager();
    
    if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em, true, true))
    {
@@ -172,5 +172,6 @@ int main(int argc, char** argv)
       }
    }
 
+   delete em;
    return 0;
 }

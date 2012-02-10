@@ -97,8 +97,8 @@ namespace dtEntity
       StringProperty mEntityName;
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
-      Spawner* mSpawner;
       DynamicStringProperty mUniqueId;
+      Spawner* mSpawner;
       std::string mUniqueIdStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
