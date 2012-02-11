@@ -53,6 +53,7 @@ namespace dtEntity
       em.RegisterMessageType<TimeChangedMessage>(TimeChangedMessage::TYPE);
       em.RegisterMessageType<VisibilityChangedMessage>(VisibilityChangedMessage::TYPE);
       em.RegisterMessageType<WindowCreatedMessage>(WindowCreatedMessage::TYPE);
+      em.RegisterMessageType<WindowClosedMessage>(WindowClosedMessage::TYPE);      
 
    }
    ////////////////////////////////////////////////////////////////////////////////
@@ -372,6 +373,16 @@ namespace dtEntity
       this->Register(NameId, &mName);
       this->Register(ContextIdId, &mContextId);
       this->Register(CameraEntityIdId, &mCameraEntityId);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   const MessageType WindowClosedMessage::TYPE(dtEntity::SID("WindowClosedMessage"));
+   const StringId WindowClosedMessage::NameId(dtEntity::SID("Name"));
+   
+   WindowClosedMessage::WindowClosedMessage() 
+      : Message(TYPE)
+   {
+      this->Register(NameId, &mName);
    }
 
 }

@@ -185,6 +185,9 @@ namespace dtEntity
       mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
       em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
+      mWindowClosedFunctor = MessageFunctor(this, &SoundSystem::OnWindowClosed);
+      em.RegisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor, "SoundSystem::OnWindowClosed");
+
       dtEntity::AudioManager::GetInstance().Init();
 
    }
@@ -219,6 +222,7 @@ namespace dtEntity
       em.UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
       em.UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
       em.UnregisterForMessages(TickMessage::TYPE, mTickFunctor);
+      em.UnregisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor);
 
    }
 
@@ -244,6 +248,21 @@ namespace dtEntity
       if(GetEntityManager().GetComponent(eid, sc))
       {  
          sc->FreeSound();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void SoundSystem::OnWindowClosed(const Message& m)
+   {
+      dtEntity::ApplicationSystem* appSys;
+      if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appSys) )
+      {
+         const WindowClosedMessage& msg = static_cast<const WindowClosedMessage&>(m);
+         osg::Camera* currCam = appSys->GetPrimaryCamera();
+         if(currCam == NULL || msg.GetName() == currCam->getGraphicsContext()->getName())
+         {
+            mListenerLinkToCamera.Set(false);
+         }
       }
    }
 
