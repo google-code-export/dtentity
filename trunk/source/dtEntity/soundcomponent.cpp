@@ -313,6 +313,11 @@ namespace dtEntity
       if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
       {
          osg::Camera* currCam = pAppSys->GetPrimaryCamera();
+         if(currCam == NULL)
+         {
+            LOG_ERROR("Cannot copy cam transform to audio listener, no primary camera set!");
+            return;
+         }
          osg::Vec3 camPos, camLookAt, camUp;
          currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
          dtEntity::AudioManager::GetListener()->SetPosition(camPos);

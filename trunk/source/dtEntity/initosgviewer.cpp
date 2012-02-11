@@ -63,9 +63,21 @@ namespace dtEntity
       }
    };
 
-   bool InitOSGViewer(int argc, char** argv, osgViewer::ViewerBase* viewer,
-      dtEntity::EntityManager* em, bool checkPathsExist, bool addStatsHandler, bool addConsoleLog)
+
+   bool InitOSGViewer(int argc,  
+                      char** argv, 
+                      osgViewer::ViewerBase* viewer,
+                      dtEntity::EntityManager* em,
+                      bool checkPathsExist, 
+                      bool addStatsHandler, 
+                      bool addConsoleLog,
+                      osg::Group* pSceneNode)
    {
+       if(pSceneNode == NULL)
+       {
+          pSceneNode = new osg::Group();
+       }
+
        if(addConsoleLog)
        {
           LogManager::GetInstance().AddListener(new ConsoleLogHandler());
@@ -190,32 +202,6 @@ namespace dtEntity
       if(!baseassets.empty()) paths.push_back(baseassets);
       osgDB::setDataFilePathList(paths);
 
-      /////////////////////////////////////////////////////////////////////
-
-      // create new entity manager and register with system
-      
-      // this is a required component system, so add it immediately
-      MapSystem* mapSystem = new MapSystem(*em);
-      em->AddEntitySystem(*mapSystem);
-
-      // load and start standard comonent systems
-      RegisterStandardFactories(mapSystem->GetPluginManager());
-
-      dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
-      em->AddEntitySystem(*appsystem);
-
-      for(int i = 0; i < argc; ++i)
-      {
-         appsystem->AddCmdLineArg(argv[i]);
-      }
-      appsystem->SetViewer(viewer);
-
-
-      dtEntity::LayerAttachPointSystem* layersys;
-      em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      osg::ref_ptr<osg::Group> sceneGraphRoot = new osg::Group();
-      layersys->CreateSceneGraphRootEntity(sceneGraphRoot);
-      appsystem->InstallUpdateCallback(sceneGraphRoot);
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
       osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
@@ -233,10 +219,21 @@ namespace dtEntity
          traits->screenNum = screenNum;
       }
 
+      // setup mandatory and default entity systems
+      InitDtEntity(viewer, em, pSceneNode);
+
+      // after dtEntity setup, the app sys is given as granted
+      dtEntity::ApplicationSystem* appsystem;
+      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
+      
+      for(int i = 0; i < argc; ++i)
+      {
+         appsystem->AddCmdLineArg(argv[i]);
+      }
 
       unsigned int contextId = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
 
-      appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
+      appsystem->GetPrimaryView()->setSceneData(pSceneNode);
 
       if(screenNum != -1)
       {
@@ -256,10 +253,36 @@ namespace dtEntity
          }
       }
 
-      //mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
-
       StartSystemMessage msg;
       em->EnqueueMessage(msg);
       return true;
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void DT_ENTITY_EXPORT InitDtEntity( osgViewer::ViewerBase* viewer, EntityManager* em, osg::Group* pSceneNode)
+   {
+      assert(pSceneNode != NULL);
+
+      // this is a required component system, so add it immediately
+      MapSystem* mapSystem = new MapSystem(*em);
+      em->AddEntitySystem(*mapSystem);
+
+      // load and start standard component systems
+      RegisterStandardFactories(mapSystem->GetPluginManager());
+
+      dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
+      em->AddEntitySystem(*appsystem);
+
+
+      appsystem->SetViewer(viewer);
+
+
+      dtEntity::LayerAttachPointSystem* layersys;
+      em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+
+      layersys->CreateSceneGraphRootEntity(pSceneNode);
+
+      appsystem->InstallUpdateCallback(pSceneNode);
    }
 }
