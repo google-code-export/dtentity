@@ -22,18 +22,27 @@
 
 
 #include <dtEntity/export.h>
+#include <cstdio>
+
+namespace osg
+{
+   class Group;
+}
 
 namespace osgViewer
 {
    class ViewerBase;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 namespace dtEntity
 {
    class EntityManager;
 
+   void DT_ENTITY_EXPORT InitDtEntity(osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em, osg::Group* pSceneNode);
+
    bool DT_ENTITY_EXPORT InitOSGViewer(int argc, char** argv, 
       osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em,
-      bool checkPathsExist = true, bool addStatsHandler = true, bool addConsoleLog = true);
+      bool checkPathsExist = true, bool addStatsHandler = true, bool addConsoleLog = true, osg::Group* pSceneNode = NULL);
 }
