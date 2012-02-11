@@ -231,17 +231,17 @@ int main(int argc, char** argv)
 {
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::Viewer viewer(arguments);
-   dtEntity::EntityManager* em = new dtEntity::EntityManager();
+   dtEntity::EntityManager em;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em))
+   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, &em))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
-   em->AddEntitySystem(*new WheelSystem(*em));
+   em.AddEntitySystem(*new WheelSystem(em));
    
    dtEntity::MapSystem* mSystem;
-   em->GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
+   em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
    mSystem->LoadScene("Scenes/wheels.dtescene");
 
    return viewer.run();

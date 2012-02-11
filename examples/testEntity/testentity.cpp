@@ -259,23 +259,23 @@ int main(int argc, char** argv)
 {
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::Viewer viewer(arguments);
-   dtEntity::EntityManager* em = new dtEntity::EntityManager();
+   dtEntity::EntityManager em;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em))
+   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, &em))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
 
    dtEntity::ApplicationSystem* appsys;
-   em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+   em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
    
    // give entity system access to the scene graph
-   em->AddEntitySystem(*new MovementSystem(*em));
-   em->AddEntitySystem(*new SteeringSystem(*em));
+   em.AddEntitySystem(*new MovementSystem(em));
+   em.AddEntitySystem(*new SteeringSystem(em));
 
    dtEntity::MapSystem* mSystem;
-   em->GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
+   em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
    
    std::string path = "Scenes/boids.dtescene";
    bool success = mSystem->LoadScene(path);
@@ -304,26 +304,26 @@ int main(int argc, char** argv)
    for(unsigned int i = 0; i < NUMBER_OF_ENTITIES; ++i)
    {      
       dtEntity::Entity* spawned;
-      em->CreateEntity(spawned);
+      em.CreateEntity(spawned);
       // instantiate entity
       bool success = spawner->Spawn(*spawned);
       assert(success);
       // set a start position
       dtEntity::PositionAttitudeTransformComponent* trans;
-      success = em->GetComponent(spawned->GetId(), trans);
+      success = em.GetComponent(spawned->GetId(), trans);
       assert(success);
       trans->SetPosition(osg::Vec3(i * 3, 0.0f, 0.5f));
       
       // make entity steer towards predecessor
       SteeringComponent* steer;
-      em->CreateComponent(spawned->GetId(), steer);
+      em.CreateComponent(spawned->GetId(), steer);
       steer->SetInt(SteeringComponent::TargetId, lastEntity);
       
       MovementComponent* move;
-      success = em->CreateComponent(spawned->GetId(), move);
+      success = em.CreateComponent(spawned->GetId(), move);
       assert(success);
       // add to scene and scene graph
-      em->AddToScene(spawned->GetId());
+      em.AddToScene(spawned->GetId());
 
       lastEntity = spawned->GetId();      
    }

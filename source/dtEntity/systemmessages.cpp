@@ -79,10 +79,10 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   const MessageType CloseWindowMessage::TYPE(dtEntity::SID("CloseWindowMessage"));
-   const StringId CloseWindowMessage::NameId(dtEntity::SID("Name"));
+   const MessageType InternalCloseWindowMessage::TYPE(dtEntity::SID("InternalCloseWindowMessage"));
+   const StringId InternalCloseWindowMessage::NameId(dtEntity::SID("Name"));
 
-   CloseWindowMessage::CloseWindowMessage()
+   InternalCloseWindowMessage::InternalCloseWindowMessage()
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
