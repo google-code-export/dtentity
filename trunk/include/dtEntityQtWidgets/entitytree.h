@@ -127,6 +127,7 @@ namespace dtEntityQtWidgets
 
       dtEntity::MessagePump& GetMessagePump() { return mMessagePump; }
 
+      dtEntity::MessageFunctor& GetEnqueueFunctor() { return mEnqueueFunctor; }
    public slots:      
      
       void ProcessMessages();
@@ -257,6 +258,8 @@ namespace dtEntityQtWidgets
       
       void SetupSlots(EntityTreeModel* model, EntityTreeView*);
 
+      void EntitySystemAdded(const dtEntity::Message& msg);
+
    public slots:
 
       void Init();
@@ -280,5 +283,7 @@ namespace dtEntityQtWidgets
    private:
 
       dtEntity::EntityManager* mEntityManager;
+      dtEntity::MessageFunctor mEntitySystemCreatedFunctor;
+      EntityTreeModel* mModel;
    };
 }

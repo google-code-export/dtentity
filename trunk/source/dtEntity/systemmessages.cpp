@@ -151,14 +151,12 @@ namespace dtEntity
    const MessageType EntitySystemAddedMessage::TYPE(SID("EntitySystemAddedMessage"));
    const StringId EntitySystemAddedMessage::ComponentTypeId(SID("ComponentType"));
    const StringId EntitySystemAddedMessage::ComponentTypeStringId(SID("ComponentTypeString"));
-   const StringId EntitySystemAddedMessage::SystemPropertiesId(SID("SystemProperties"));
 
    EntitySystemAddedMessage::EntitySystemAddedMessage()
       : Message(TYPE)
    {
       this->Register(ComponentTypeId, &mComponentType);
       this->Register(ComponentTypeStringId, &mComponentTypeString);
-      this->Register(SystemPropertiesId, &mSystemProperties);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

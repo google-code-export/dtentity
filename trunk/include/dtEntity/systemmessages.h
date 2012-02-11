@@ -327,7 +327,6 @@ namespace dtEntity
       static const MessageType TYPE;
       static const StringId ComponentTypeId;
       static const StringId ComponentTypeStringId;
-      static const StringId SystemPropertiesId;
 
       EntitySystemAddedMessage();
 
@@ -339,14 +338,10 @@ namespace dtEntity
       std::string GetComponentTypeString() const { return mComponentTypeString.Get(); }
       void SetComponentTypeString(const std::string& v) { mComponentTypeString.Set(v); }
 
-      void SetSystemProperties(const PropertyMap& p) { mSystemProperties.Set(p); }
-      const PropertyMap GetSystemProperties() const { return mSystemProperties.Get(); }
-
    private:
 
       StringIdProperty mComponentType;
       StringProperty mComponentTypeString;
-      GroupProperty mSystemProperties;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

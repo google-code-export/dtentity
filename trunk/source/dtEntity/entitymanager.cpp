@@ -202,7 +202,6 @@ namespace dtEntity
       EntitySystemAddedMessage msg;
       msg.SetComponentType(s.GetComponentType());
       msg.SetComponentTypeString(GetStringFromSID(s.GetComponentType()));
-      msg.SetSystemProperties(s.GetAllProperties());
       EmitMessage(msg);
       return true;
    }
