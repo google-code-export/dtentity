@@ -107,7 +107,7 @@ namespace dtEntity
       : WindowManager(em)
    {
       mCloseWindowFunctor = MessageFunctor(this, &OSGWindowManager::OnCloseWindow);
-      mMessagePump.RegisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor);
+      mMessagePump.RegisterForMessages(InternalCloseWindowMessage::TYPE, mCloseWindowFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    void OSGWindowManager::OnCloseWindow(const Message& m)
    {
-      const CloseWindowMessage& msg = static_cast<const CloseWindowMessage&>(m);
+      const InternalCloseWindowMessage& msg = static_cast<const InternalCloseWindowMessage&>(m);
 
       osgViewer::GraphicsWindow* window = GetWindowByName(msg.GetName());
 
@@ -228,7 +228,7 @@ namespace dtEntity
    {
       // closing window from an event handler creates a crash.
       // Closing window at time of message processing works OK.
-      CloseWindowMessage msg;
+      InternalCloseWindowMessage msg;
       msg.SetName(name);
       mMessagePump.EnqueueMessage(msg);
    }

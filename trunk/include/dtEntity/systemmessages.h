@@ -146,7 +146,7 @@ namespace dtEntity
      * Is sent when a window is to be closed, triggered by WindowManager::CloseWindow.
      * used internally to asynchronously close window
      */
-   class DT_ENTITY_EXPORT CloseWindowMessage
+   class DT_ENTITY_EXPORT InternalCloseWindowMessage
       : public Message
    {
    public:
@@ -155,10 +155,10 @@ namespace dtEntity
       static const MessageType TYPE;
       static const StringId NameId;
 
-      CloseWindowMessage();
+      InternalCloseWindowMessage();
 
       // Create a copy of this message on the heap
-      virtual dtEntity::Message* Clone() const { return CloneContainer<CloseWindowMessage>(); }
+      virtual dtEntity::Message* Clone() const { return CloneContainer<InternalCloseWindowMessage>(); }
 
       void SetName(const std::string& v) { mName.Set(v); }
       std::string GetName() const { return mName.Get(); }
