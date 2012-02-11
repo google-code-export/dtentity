@@ -62,17 +62,7 @@ namespace dtEntityQtWidgets
       mMessagePump.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnSceneLoaded));
 
       mEnqueueFunctor = dtEntity::MessageFunctor(this, &EntityTreeModel::EnqueueMessage);
-      em.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EntitySelected");
-      em.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EntityDeselected");
-      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::EntitySystemRemovedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::SpawnerAddedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
-      em.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mEnqueueFunctor, "EntityTreeController::EnqueueMessage");
+      
 
       unsigned int size = mRootItem->childCount();
       beginInsertRows(QModelIndex(), size, size);
@@ -86,6 +76,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    EntityTreeModel::~EntityTreeModel()
    {
+      // TODO not thread safe, execute in app thread!
       mEntityManager->UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnqueueFunctor);
       mEntityManager->UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mEnqueueFunctor);
       mEntityManager->UnregisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, mEnqueueFunctor);
@@ -260,25 +251,22 @@ namespace dtEntityQtWidgets
       const dtEntity::EntitySystemAddedMessage& msg = 
          static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
       
-      if(msg.GetSystemProperties().size() != 0)
+      
+      for(int i = 0; i < mRootItem->childCount(); ++i)
       {
-         for(int i = 0; i < mRootItem->childCount(); ++i)
+         EntityTreeItem* item = mRootItem->child(i);
+         if(item->GetItemType() == EntityTreeType::ENTITYSYSTEM)
          {
-            EntityTreeItem* item = mRootItem->child(i);
-            if(item->GetItemType() == EntityTreeType::ENTITYSYSTEM)
-            {
-               QModelIndex idx = createIndex(item->row(), 0, item);
-               unsigned int size = mEntitySystemRootItem->childCount();
-               beginInsertRows(idx, size, size);
+            QModelIndex idx = createIndex(item->row(), 0, item);
+            unsigned int size = mEntitySystemRootItem->childCount();
+            beginInsertRows(idx, size, size);
 
-               EntityTreeItem* esitem = new EntityTreeItem(mEntitySystemRootItem, EntityTreeType::ENTITYSYSTEM);
-               esitem->mName = msg.GetComponentTypeString().c_str();
-               mEntitySystemRootItem->appendChild(esitem);
-               endInsertRows();
-               return;
-            }
+            EntityTreeItem* esitem = new EntityTreeItem(mEntitySystemRootItem, EntityTreeType::ENTITYSYSTEM);
+            esitem->mName = msg.GetComponentTypeString().c_str();
+            mEntitySystemRootItem->appendChild(esitem);
+            endInsertRows();
+            return;
          }
-
       }
    }
 
@@ -1074,11 +1062,31 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    EntityTreeController::~EntityTreeController()
    {
+      mEntityManager->UnregisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, mEntitySystemCreatedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeController::SetupSlots(EntityTreeModel* model, EntityTreeView* view)
    {
+      mModel = model;
+
+      dtEntity::EntityManager& em = *mEntityManager;
+      dtEntity::MessageFunctor& funct = model->GetEnqueueFunctor();
+      em.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, funct, "EntityTreeController::EntitySelected");
+      em.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, funct, "EntityTreeController::EntityDeselected");
+      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      //em.RegisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::EntitySystemRemovedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::SpawnerAddedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::SpawnerRemovedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+
+      mEntitySystemCreatedFunctor = dtEntity::MessageFunctor(this, &EntityTreeController::EntitySystemAdded);
+      em.RegisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, mEntitySystemCreatedFunctor, "EntityTreeController::EnqueueMessage");
+      
       connect(this, SIGNAL(ShowErrorMessage(const QString&)), model, SLOT(OnShowErrorMessage(const QString&)));
 
       connect(view, SIGNAL(DeleteEntity(dtEntity::EntityId)), this, SLOT(OnDeleteEntity(dtEntity::EntityId)));
@@ -1178,6 +1186,17 @@ namespace dtEntityQtWidgets
    void EntityTreeController::Init()
    {
       
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeController::EntitySystemAdded(const dtEntity::Message& m)
+   {
+      const dtEntity::EntitySystemAddedMessage& msg = static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
+      dtEntity::EntitySystem* sys = mEntityManager->GetEntitySystem(msg.GetComponentType());
+      if(sys && !sys->Empty())
+      {
+         mModel->GetEnqueueFunctor()(m);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -90,20 +90,25 @@ namespace EMTest
    TEST(AddEntitySystem)
    {
       // test does not work. Check on windows
-      /*ComponentType ctype = 123456;
-      EntityManager* em = new EntityManager();
+      ComponentType ctype = 123456;
+      
       TMockObject<EntitySystem> mock;
-      mock.Method(&EntitySystem::GetComponentType).Wills(ctype);
+      mock.Method(&EntitySystem::GetComponentType).Will(ctype);
       mock.Method(&EntitySystem::OnAddedToEntityManager);
       mock.Method(&EntitySystem::OnRemoveFromEntityManager);
 
-      EntitySystem* es = (EntitySystem*)&mock;
+      EntitySystem* es = (EntitySystem*)mock;
       unsigned int test = es->GetComponentType();
+      CHECK_EQUAL(ctype, test);
 
+      EntityManager* em = new EntityManager();
+
+      CHECK_EQUAL(0, mock.Method(&EntitySystem::OnAddedToEntityManager).Count());
       em->AddEntitySystem(*es);
+      CHECK_EQUAL(1u, mock.Method(&EntitySystem::OnAddedToEntityManager).Count());
 
       CHECK(em->HasEntitySystem(ctype));
-
+ 
       EntitySystem* es2 = em->GetEntitySystem(ctype);
       CHECK_EQUAL(es2, es);
 
@@ -116,10 +121,10 @@ namespace EMTest
 
       CHECK(!em->HasEntitySystem(ctype));
 
-      CHECK_EQUAL(1u, mock.Method(&EntitySystem::OnAddedToEntityManager).Count());
+      
       CHECK_EQUAL(1u, mock.Method(&EntitySystem::OnRemoveFromEntityManager).Count());
 
-      delete em;*/
+       delete em;
    }
 
    //------------------------------------------------------------------
