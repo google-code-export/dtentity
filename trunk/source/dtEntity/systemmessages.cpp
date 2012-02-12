@@ -234,11 +234,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType MapBeginLoadMessage::TYPE(SID("MapBeginLoadMessage"));
    const StringId MapBeginLoadMessage::MapPathId(SID("MapPath"));
+   const StringId MapBeginLoadMessage::DataPathId(SID("DataPath"));
+   const StringId MapBeginLoadMessage::SaveOrderId(SID("SaveOrder"));
 
    MapBeginLoadMessage::MapBeginLoadMessage()
       : Message(TYPE)
    {
       this->Register(MapPathId, &mMapPath);
+      this->Register(DataPathId, &mDataPath);
+      this->Register(SaveOrderId, &mSaveOrder);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -254,11 +258,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType MapLoadedMessage::TYPE(SID("MapLoadedMessage"));
    const StringId MapLoadedMessage::MapPathId(SID("MapPath"));
+   const StringId MapLoadedMessage::DataPathId(SID("DataPath"));
+   const StringId MapLoadedMessage::SaveOrderId(SID("SaveOrder"));
 
    MapLoadedMessage::MapLoadedMessage()
       : Message(TYPE)
    {
       this->Register(MapPathId, &mMapPath);
+      this->Register(DataPathId, &mDataPath);
+      this->Register(SaveOrderId, &mSaveOrder);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
