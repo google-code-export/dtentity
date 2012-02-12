@@ -55,11 +55,12 @@ namespace dtEntity
 		*return name of spawner
 		*/
 		std::string GetName() const { return mName; }
-
+      
       /**
 	   *return name of map this spawner was loaded from 
 	   */
 		std::string GetMapName() const { return mMapName; }
+      void SetMapName(const std::string& v) { mMapName = v; }
 
 		/**
 		  * Should spawner show up in spawner drag & drop GUI?

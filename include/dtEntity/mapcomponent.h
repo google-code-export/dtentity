@@ -35,6 +35,21 @@
 
 namespace dtEntity
 {
+   struct MapData
+   {
+      std::string mMapPath;
+      std::string mDataPath;
+      unsigned int mSaveOrder;
+
+      MapData(const std::string& mappath, const std::string& datapath, unsigned int order)
+         : mMapPath(mappath)
+         , mDataPath(datapath)
+         , mSaveOrder(order)
+      {
+      }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
   
    /**
     * The map component holds information about the entity and how to
@@ -58,6 +73,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
+      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
 
       /**
@@ -147,7 +163,6 @@ namespace dtEntity
 
       // reacts to StopSystemMessage by removing map system from entity manager
       void OnStopSystem(const Message& msg);
-
 
       /**
        * Causes a message EntityAddedToSceneMessage to be fired.
@@ -260,6 +275,12 @@ namespace dtEntity
       bool UnloadMap(const std::string& path);
 
       /**
+        *Get an index representing the order in which maps should be loaded / saved
+        * Maps with lowest values are loaded first
+        */
+      unsigned int GetMapSaveOrder(const std::string& path);
+
+      /**
        * Delete instances that were created from given map
        */
       bool DeleteEntitiesByMap(const std::string& mapName);
@@ -315,7 +336,7 @@ namespace dtEntity
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
 
-      typedef std::set<std::pair<std::string, std::string> > LoadedMaps;
+      typedef std::vector<MapData> LoadedMaps;
       LoadedMaps mLoadedMaps;
 
       // store spawners in a map

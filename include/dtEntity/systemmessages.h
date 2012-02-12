@@ -384,6 +384,8 @@ namespace dtEntity
 
       static const MessageType TYPE;
       static const StringId MapPathId;
+      static const StringId DataPathId;
+      static const StringId SaveOrderId;
 
       MapBeginLoadMessage();
 
@@ -391,10 +393,18 @@ namespace dtEntity
 
       std::string GetMapPath() const { return mMapPath.Get(); }
       void SetMapPath(const std::string& v){ mMapPath.Set(v); }
+      
+      std::string GetDataPath() const { return mDataPath.Get(); }
+      void SetDataPath(const std::string& v){ mDataPath.Set(v); }
+
+      unsigned int GetSaveOrder() const { return mSaveOrder.Get(); }
+      void SetSaveOrder(unsigned int v){ mSaveOrder.Set(v); }
 
    private:
 
       StringProperty mMapPath;
+      StringProperty mDataPath;
+      UIntProperty mSaveOrder;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -432,6 +442,8 @@ namespace dtEntity
 
       static const MessageType TYPE;
       static const StringId MapPathId;
+      static const StringId DataPathId;
+      static const StringId SaveOrderId;
 
       MapLoadedMessage();
 
@@ -440,9 +452,17 @@ namespace dtEntity
       std::string GetMapPath() const { return mMapPath.Get(); }
       void SetMapPath(const std::string& v){ mMapPath.Set(v); }
 
+      std::string GetDataPath() const { return mDataPath.Get(); }
+      void SetDataPath(const std::string& v){ mDataPath.Set(v); }
+
+      unsigned int GetSaveOrder() const { return mSaveOrder.Get(); }
+      void SetSaveOrder(unsigned int v){ mSaveOrder.Set(v); }
+
    private:
 
       StringProperty mMapPath;
+      StringProperty mDataPath;
+      UIntProperty mSaveOrder;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
