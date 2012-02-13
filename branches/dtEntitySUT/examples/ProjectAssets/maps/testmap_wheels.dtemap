@@ -1,0 +1,59 @@
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+<map>
+  <spawner name="WheeledVehicle">
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/articulation_test.ive</stringproperty>      
+    </component>
+	
+    <component type="Wheel">
+      <arrayproperty name="Wheels">
+        <groupproperty name="0">
+			<stringproperty name="NodeName">dof_wheel_lt_01</stringproperty>
+			<floatproperty name="Radius" value="0.3" />
+		</groupproperty>
+        <groupproperty name="1">
+			<stringproperty name="NodeName">dof_wheel_lt_02</stringproperty>
+			<floatproperty name="Radius" value="0.3" />
+		</groupproperty>
+        <groupproperty name="2">
+			<stringproperty name="NodeName">dof_wheel_rt_01</stringproperty>
+			<floatproperty name="Radius" value="0.3" />
+		</groupproperty>
+        <groupproperty name="3">
+			<stringproperty name="NodeName">dof_wheel_rt_02</stringproperty>
+			<floatproperty name="Radius" value="0.3" />
+		</groupproperty>
+      </arrayproperty>
+	  <floatproperty name="Speed" value="5" />
+    </component>
+   <component type="Layer">
+        <stringproperty name="Layer">default</stringproperty>
+        <stringproperty name="AttachedComponent">StaticMesh</stringproperty>
+    </component>    
+  </spawner>  
+
+  <entity spawner="WheeledVehicle" />
+
+  
+  <entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">Terrain</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+    </component>
+    <component type="PositionAttitudeTransform">
+      <quatproperty name="Attitude" w="1" x="0" y="0" z="0"/>
+      <arrayproperty name="Children">
+        <stringproperty name="">StaticMesh</stringproperty>
+      </arrayproperty>
+      <vec3property name="Position" x="0" y="0" z="-20"/>
+    </component>
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+    </component>
+  </entity>
+</map>

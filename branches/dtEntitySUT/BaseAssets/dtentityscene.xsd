@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="DtEntityMap">
+  <xs:include schemaLocation="properties.xsd"/>
+  
+  <xs:element name="scene">    
+    <xs:complexType>	  
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	    <xs:group ref="sceneelement" />		
+      </xs:sequence>
+    </xs:complexType>	
+  </xs:element>
+  
+  <xs:group name="sceneelement">
+	<xs:choice>
+	  <xs:element ref="entitysystem" />
+	  <xs:element ref="maps" />
+	</xs:choice>
+  </xs:group>
+		
+  <xs:element name="maps">
+    <xs:complexType>	  
+	  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	    <xs:element ref="map" />
+	  </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="map">
+    <xs:complexType>
+	 <xs:attribute name="path" type="xs:string" use="required" />	  
+	</xs:complexType>
+  </xs:element>
+  
+  <xs:element name="entitysystem">
+    <xs:complexType>	  
+	  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	    <xs:group ref="property" />
+	  </xs:sequence>
+	  <xs:attribute name="type" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<scene>
+
+  <entitysystem type="MatrixTransform"/>
+
+  <maps>
+    <map path="maps/testmap_wheels.dtemap"/>
+  </maps>
+
+</scene>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="DelegateFactory">
+
+  <xs:include schemaLocation="properties.xsd"/>
+  
+
+  <xs:group name="input">
+    <xs:choice>
+      <xs:element ref="arrayinput" />
+      <xs:element ref="boolinput" />
+      <xs:element ref="colorinput" />
+      <xs:element ref="componentinput" />
+      <xs:element ref="datetimeinput" />
+      <xs:element ref="enuminput" />
+      <xs:element ref="fileinput" />
+      <xs:element ref="groupinput" />
+      <xs:element ref="quatinput" />
+      <xs:element ref="stringinput" />
+      <xs:element ref="vec2input" />
+      <xs:element ref="vec3input" />
+      <xs:element ref="vec3input" />
+	  <xs:element ref="translations" />
+    </xs:choice>
+  </xs:group>
+  
+  <xs:element name="delegates">    
+    <xs:complexType>	 
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	     <xs:group ref="input" />	
+      </xs:sequence>
+	  <xs:attribute name="allowcreatefromgui" type="xs:string" />
+    </xs:complexType>	
+  </xs:element>
+  
+  <xs:element name="componentinput">
+    <xs:complexType>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+	</xs:complexType>
+  </xs:element>
+
+  <xs:element name="colorinput">
+     <xs:complexType>
+        <xs:attribute name="propertyname" type="xs:string" use="required" />
+     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="datetimeinput">
+    <xs:complexType>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+	</xs:complexType>
+  </xs:element>
+
+  <xs:element name="enuminput">
+    <xs:complexType>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+	  <xs:attribute name="values" type="xs:string" use="required" />
+	</xs:complexType>
+  </xs:element>
+  
+  <xs:element name="fileinput">
+    <xs:complexType>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+	  <xs:attribute name="filters" type="xs:string" />
+	</xs:complexType>
+  </xs:element>
+
+   <xs:element name="groupinput">
+    <xs:complexType>
+	  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	    <xs:group ref="input" />
+	  </xs:sequence>
+     <xs:attribute name="propertyname" type="xs:string" use="required" />	  
+	</xs:complexType>
+  </xs:element>  
+  
+  <xs:element name="boolinput">
+    <xs:complexType>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+	</xs:complexType>
+  </xs:element>
+
+  <xs:element name="quatinput">
+      <xs:complexType>
+           <xs:attribute name="propertyname" type="xs:string" use="required" />
+      </xs:complexType>
+  </xs:element>
+
+  <xs:element name="stringinput">
+    <xs:complexType>
+      <xs:attribute name="propertyname" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="vec2input">
+    <xs:complexType>
+      <xs:attribute name="propertyname" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>  
+
+  <xs:element name="vec3input">
+     <xs:complexType>
+       <xs:attribute name="propertyname" type="xs:string" use="required" />
+     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="vec4input">
+     <xs:complexType>
+        <xs:attribute name="propertyname" type="xs:string" use="required" />
+     </xs:complexType>
+  </xs:element>
+    
+   <xs:element name="inputs">    
+    <xs:complexType>	  
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	     <xs:group ref="input" />	
+      </xs:sequence>
+    </xs:complexType>	
+  </xs:element>
+
+  <xs:element name="prototype">    
+    <xs:complexType>	  
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	     <xs:group ref="property" />	
+      </xs:sequence>
+    </xs:complexType>	
+  </xs:element>  
+  
+  <xs:group name="arrayinputsubelements">
+	<xs:choice>
+      <xs:element ref="inputs" />
+      <xs:element ref="prototype" />
+	 </xs:choice>
+  </xs:group>
+  
+   <xs:element name="arrayinput">
+    <xs:complexType>	
+	  <xs:sequence minOccurs="1" maxOccurs="2">
+	     <xs:group ref="arrayinputsubelements" />	
+      </xs:sequence>
+	  <xs:attribute name="propertyname" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  
+
+  <xs:element name="componentname">
+    <xs:complexType>
+     <xs:simpleContent>
+        <xs:extension base="xs:string">
+         </xs:extension>
+      </xs:simpleContent>    
+   </xs:complexType>
+  </xs:element>
+  
+  
+  <xs:element name="property">
+    <xs:complexType>
+     <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required" />
+        </xs:extension>
+      </xs:simpleContent>    
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="description">
+    <xs:complexType>
+     <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required" />
+        </xs:extension>
+      </xs:simpleContent>    
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:group name="translationelements">
+	<xs:choice>
+      <xs:element ref="componentname" />
+      <xs:element ref="property" />
+	  <xs:element ref="description" />
+	 </xs:choice>
+  </xs:group>
+  
+  <xs:element name="translation">    
+    <xs:complexType>	  
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	     <xs:group ref="translationelements" />	
+      </xs:sequence>
+	  <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>	
+  </xs:element>
+  
+  <xs:element name="translations">
+     <xs:complexType>	
+	  <xs:sequence>
+	     <xs:element ref="translation" />	
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
