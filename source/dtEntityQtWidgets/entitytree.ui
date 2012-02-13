@@ -113,20 +113,8 @@
    </item>
    <item>
     <widget class="QTreeView" name="mTreeView">
-     <property name="acceptDrops">
-      <bool>false</bool>
-     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::AllEditTriggers</set>
-     </property>
-     <property name="dragEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::InternalMove</enum>
-     </property>
-     <property name="defaultDropAction">
-      <enum>Qt::MoveAction</enum>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -147,7 +135,7 @@
       <bool>true</bool>
      </property>
      <property name="sortingEnabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="animated">
       <bool>false</bool>

@@ -146,7 +146,7 @@ namespace dtEntity
      * Is sent when a window is to be closed, triggered by WindowManager::CloseWindow.
      * used internally to asynchronously close window
      */
-   class DT_ENTITY_EXPORT InternalCloseWindowMessage
+   class DT_ENTITY_EXPORT CloseWindowMessage
       : public Message
    {
    public:
@@ -155,10 +155,10 @@ namespace dtEntity
       static const MessageType TYPE;
       static const StringId NameId;
 
-      InternalCloseWindowMessage();
+      CloseWindowMessage();
 
       // Create a copy of this message on the heap
-      virtual dtEntity::Message* Clone() const { return CloneContainer<InternalCloseWindowMessage>(); }
+      virtual dtEntity::Message* Clone() const { return CloneContainer<CloseWindowMessage>(); }
 
       void SetName(const std::string& v) { mName.Set(v); }
       std::string GetName() const { return mName.Get(); }
@@ -327,6 +327,7 @@ namespace dtEntity
       static const MessageType TYPE;
       static const StringId ComponentTypeId;
       static const StringId ComponentTypeStringId;
+      static const StringId SystemPropertiesId;
 
       EntitySystemAddedMessage();
 
@@ -338,10 +339,14 @@ namespace dtEntity
       std::string GetComponentTypeString() const { return mComponentTypeString.Get(); }
       void SetComponentTypeString(const std::string& v) { mComponentTypeString.Set(v); }
 
+      void SetSystemProperties(const PropertyMap& p) { mSystemProperties.Set(p); }
+      const PropertyMap GetSystemProperties() const { return mSystemProperties.Get(); }
+
    private:
 
       StringIdProperty mComponentType;
       StringProperty mComponentTypeString;
+      GroupProperty mSystemProperties;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -384,8 +389,6 @@ namespace dtEntity
 
       static const MessageType TYPE;
       static const StringId MapPathId;
-      static const StringId DataPathId;
-      static const StringId SaveOrderId;
 
       MapBeginLoadMessage();
 
@@ -393,18 +396,10 @@ namespace dtEntity
 
       std::string GetMapPath() const { return mMapPath.Get(); }
       void SetMapPath(const std::string& v){ mMapPath.Set(v); }
-      
-      std::string GetDataPath() const { return mDataPath.Get(); }
-      void SetDataPath(const std::string& v){ mDataPath.Set(v); }
-
-      unsigned int GetSaveOrder() const { return mSaveOrder.Get(); }
-      void SetSaveOrder(unsigned int v){ mSaveOrder.Set(v); }
 
    private:
 
       StringProperty mMapPath;
-      StringProperty mDataPath;
-      UIntProperty mSaveOrder;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -442,8 +437,6 @@ namespace dtEntity
 
       static const MessageType TYPE;
       static const StringId MapPathId;
-      static const StringId DataPathId;
-      static const StringId SaveOrderId;
 
       MapLoadedMessage();
 
@@ -452,17 +445,9 @@ namespace dtEntity
       std::string GetMapPath() const { return mMapPath.Get(); }
       void SetMapPath(const std::string& v){ mMapPath.Set(v); }
 
-      std::string GetDataPath() const { return mDataPath.Get(); }
-      void SetDataPath(const std::string& v){ mDataPath.Set(v); }
-
-      unsigned int GetSaveOrder() const { return mSaveOrder.Get(); }
-      void SetSaveOrder(unsigned int v){ mSaveOrder.Set(v); }
-
    private:
 
       StringProperty mMapPath;
-      StringProperty mDataPath;
-      UIntProperty mSaveOrder;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -810,30 +795,4 @@ namespace dtEntity
       dtEntity::UIntProperty mContextId;
       dtEntity::UIntProperty mCameraEntityId;
    };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   /**
-    * Is sent when a window was closed
-    */
-   class DT_ENTITY_EXPORT WindowClosedMessage
-      : public Message
-   {
-   public:
-
-      // type identifier of this message class
-      static const MessageType TYPE;
-      static const StringId NameId;
-
-      WindowClosedMessage();
-
-      // Create a copy of this message on the heap
-      virtual dtEntity::Message* Clone() const { return CloneContainer<WindowClosedMessage>(); }
-
-      void SetName(const std::string& v) { mName.Set(v); }
-      std::string GetName() const { return mName.Get(); }
-
-   private:
-      dtEntity::StringProperty mName;
-   };
-   
 }

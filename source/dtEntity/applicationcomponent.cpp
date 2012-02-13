@@ -149,7 +149,7 @@ namespace dtEntity
  
    ////////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::ApplicationSystem(EntityManager& em)
-      : EntitySystem(em)
+      : EntitySystem(TYPE, em)
       , mImpl(new ApplicationImpl())
    {
 
@@ -447,24 +447,14 @@ namespace dtEntity
       const ResetSystemMessage& m = static_cast<const ResetSystemMessage&>(msg);
 
       MapSystem* mapsys;
-
-      EntityManager& em = GetEntityManager();
-      em.GetEntitySystem(MapComponent::TYPE, mapsys);
+      GetEntityManager().GetEntitySystem(MapComponent::TYPE, mapsys);
       mapsys->UnloadScene();
-
-      std::vector<EntityId> ids;
-      em.GetEntityIds(ids);
-      for(std::vector<EntityId>::iterator i = ids.begin(); i != ids.end(); ++i)
-      {
-         mapsys->RemoveFromScene(*i);
-         em.KillEntity(*i);
-      }
-
-      em.GetMessagePump().ClearQueue();
+      GetEntityManager().KillAllEntities();
+      GetEntityManager().GetMessagePump().ClearQueue();
       //GetEntityManager().GetMessagePump().UnregisterAll();
 
       std::vector<EntitySystem*> es;
-      em.GetEntitySystems(es);
+      GetEntityManager().GetEntitySystems(es);
       for(std::vector<EntitySystem*>::iterator i = es.begin(); i != es.end(); ++i)
       {
          // TODO this should not be hard coded
@@ -481,7 +471,7 @@ namespace dtEntity
                t != dtEntity::SIDHash("Script") &&
                t != dtEntity::SIDHash("PositionAttitudeTransform"))
          {
-           em.RemoveEntitySystem(**i);
+           GetEntityManager().RemoveEntitySystem(**i);
          }
       }
 

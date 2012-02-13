@@ -67,16 +67,16 @@ int main(int argc, char** argv)
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::CompositeViewer viewer(arguments);
 
-   dtEntity::EntityManager entityManager;
+   osg::ref_ptr<dtEntity::EntityManager> em = new dtEntity::EntityManager();
    
-   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, &entityManager, true, true))
+   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, em, true, true))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
    
    dtEntity::MapSystem* mapSystem;
-   entityManager.GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+   em->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
    mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityV8Plugin", true);
    mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityRocket", true);
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
    
    dtEntity::StringId scriptId = dtEntity::SID("Script");
       
-   if(!entityManager.HasEntitySystem(scriptId))
+   if(!em->HasEntitySystem(scriptId))
    {
       if(!mapSystem->GetPluginManager().FactoryExists(scriptId))
       {
@@ -107,11 +107,11 @@ int main(int argc, char** argv)
    dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));
 
    pathprop->SetString(script); 
-   entityManager.EmitMessage(*msg);
+   em->EmitMessage(*msg);
    delete msg;
 
    dtEntity::ApplicationSystem* appsys;
-   entityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+   em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
    dtEntity::WindowManager* windowManager = appsys->GetWindowManager();
    
    if(profiling_enabled)

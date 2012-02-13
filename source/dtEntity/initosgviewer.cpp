@@ -19,28 +19,27 @@
 */
 
 #include <dtEntity/initosgviewer.h>
-#include <dtEntity/applicationcomponent.h>
-#include <dtEntity/cameracomponent.h>
-#include <dtEntity/componentfactories.h>
-#include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/layercomponent.h>
-#include <dtEntity/logmanager.h>
-#include <dtEntity/mapcomponent.h>
-#include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
-
-#include <osg/Notify>
+#include <iostream>
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
-#include <osgGA/GUIEventAdapter>
 #include <osgViewer/Viewer>
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
+#include <dtEntity/componentfactories.h>
+#include <dtEntity/layercomponent.h>
+#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/logmanager.h>
+#include <dtEntity/mapcomponent.h>
+#include <dtEntity/property.h>
+#include <dtEntity/applicationcomponent.h>
+#include <dtEntity/windowmanager.h>
+#include <dtEntity/systemmessages.h>
+#include <osgGA/GUIEventAdapter>
+#include <osg/Notify>
+#include <stdlib.h>
 
 namespace dtEntity
 {
-   ////////////////////////////////////////////////////////////////////////////////
-   // a simple log handler that forwards log messages to osg log system
    class ConsoleLogHandler
       : public LogListener
    {
@@ -64,66 +63,120 @@ namespace dtEntity
       }
    };
 
-   ////////////////////////////////////////////////////////////////////////////////
-   bool SetupDataPaths(int argc, char** argv, bool checkPaths)
+   bool InitOSGViewer(int argc, char** argv, osgViewer::ViewerBase* viewer,
+      dtEntity::EntityManager* em, bool checkPathsExist, bool addStatsHandler, bool addConsoleLog)
    {
-      std::string projectassets = "";
-      std::string baseassets = "";
+       if(addConsoleLog)
+       {
+          LogManager::GetInstance().AddListener(new ConsoleLogHandler());
+       }
+       std::string projectassets = "";
+       std::string baseassets = "";
 
-      if(osgDB::fileExists("ProjectAssets")) 
-      {
-         projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
-      }
+       if(osgDB::fileExists("ProjectAssets")) 
+       {
+          projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
+       }
 
-      if(osgDB::fileExists("BaseAssets")) 
-      {
-         projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
-      }
+       if(osgDB::fileExists("BaseAssets")) 
+       {
+          projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
+       }
 
-      const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
-      if(env_projectassets != NULL)
-      {
-         projectassets = env_projectassets;
-      }
-      const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
-      if(env_baseassets != NULL)
-      {
-         baseassets = env_baseassets;
-      }
+       const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
+       if(env_projectassets != NULL)
+       {
+          projectassets = env_projectassets;
+       }
+       const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
+       if(env_baseassets != NULL)
+       {
+          baseassets = env_baseassets;
+       }
 
-      int curArg = 1;
+       int curArg = 1;
+       int screenNum = -1;
+       int winx = 100;
+       int winy = 100;
+       int winw = 800;
+       int winh = 600;
 
-      while (curArg < argc)
-      {
-         std::string curArgv = argv[curArg];
-         if (!curArgv.empty())
-         {
-            if (curArgv == "--projectAssets")
-            {
-               ++curArg;
-               if (curArg < argc)
-               {
-                  projectassets = argv[curArg];
-               }
+       while (curArg < argc)
+       {
+          std::string curArgv = argv[curArg];
+          if (!curArgv.empty())
+          {
+             if (curArgv == "--screen")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> screenNum;
+                }
 
-            }
-            else if (curArgv == "--baseAssets")
-            {
-               ++curArg;
-               if (curArg < argc)
-               {
-                  baseassets = argv[curArg];
-               }
-            }
-         }
-         ++curArg;
-      }
+             }
+             else if (curArgv == "--window")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winx;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winy;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winw;
+                }
+                ++curArg;
+                if (curArg < argc)
+                {
+                   std::istringstream iss(argv[curArg]);
+                   iss >> winh;
+                }
+                std::ostringstream os;
+                os << "OSG_WINDOW=" << winx << " " << winy << " " << winw << " " << winh;
 
-      if((projectassets == "" || baseassets == "") && checkPaths)
-      {
-         std::cout << "Please give argument --projectAssets and --baseAssets with path to project assets dir!";
-         return false;
-      }
+                // unix putenv only accepts non-const char. No idea why.
+                char osgwinstr[256];
+                strcpy(osgwinstr, os.str().c_str());
+                putenv(osgwinstr);
+
+             }
+             else if (curArgv == "--projectAssets")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   projectassets = argv[curArg];
+                }
+
+             }
+             else if (curArgv == "--baseAssets")
+             {
+                ++curArg;
+                if (curArg < argc)
+                {
+                   baseassets = argv[curArg];
+                }
+             }
+          }
+          ++curArg;
+       }
+
+       if((projectassets == "" || baseassets == "") && checkPathsExist)
+       {
+           std::cout << "Please give argument --projectAssets and --baseAssets with path to project assets dir!";
+           return false;
+       }
 
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
       if(!projectassets.empty())
@@ -136,120 +189,33 @@ namespace dtEntity
       }
       if(!baseassets.empty()) paths.push_back(baseassets);
       osgDB::setDataFilePathList(paths);
-      return true;
 
-   }
+      /////////////////////////////////////////////////////////////////////
 
-   ////////////////////////////////////////////////////////////////////////////////
-   bool DT_ENTITY_EXPORT InitOSGViewer(int argc,  
-                      char** argv, 
-                      osgViewer::ViewerBase* viewer,
-                      dtEntity::EntityManager* em,
-                      bool addStatsHandler, 
-                      bool checkPaths, 
-                      bool addConsoleLog,
-                      osg::Group* pSceneNode)
-   {
-      if(pSceneNode == NULL)
+      // create new entity manager and register with system
+      
+      // this is a required component system, so add it immediately
+      MapSystem* mapSystem = new MapSystem(*em);
+      em->AddEntitySystem(*mapSystem);
+
+      // load and start standard comonent systems
+      RegisterStandardFactories(mapSystem->GetPluginManager());
+
+      dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
+      em->AddEntitySystem(*appsystem);
+
+      for(int i = 0; i < argc; ++i)
       {
-         pSceneNode = new osg::Group();
+         appsystem->AddCmdLineArg(argv[i]);
       }
+      appsystem->SetViewer(viewer);
 
-      assert(viewer != NULL);
-      assert(em != NULL);
 
-      if(addConsoleLog)
-      {
-         LogManager::GetInstance().AddListener(new ConsoleLogHandler());
-      }
-
-      if(addStatsHandler)
-      {
-         osgViewer::ViewerBase::Views views;
-         viewer->getViews(views);
-         for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
-         {
-            osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
-            stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
-            stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
-            (*i)->addEventHandler(stats);
-         }
-      }
-
-      SetupDataPaths(argc, argv, checkPaths);
-
-      InitDtEntity(argc, argv, viewer, em, pSceneNode);
-     
-      SetupViewer(argc, argv, viewer, em);
-
-      StartSystemMessage msg;
-      em->EnqueueMessage(msg);
-      return true;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void SetupViewer(int argc, char** argv, 
-      osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em)
-   {
-      int curArg = 1;
-      int screenNum = -1;
-      int winx = 100;
-      int winy = 100;
-      int winw = 800;
-      int winh = 600;
-
-      while (curArg < argc)
-      {
-         std::string curArgv = argv[curArg];
-         if (!curArgv.empty())
-         {
-            if (curArgv == "--screen")
-            {
-               ++curArg;
-               if (curArg < argc)
-               {
-                  std::istringstream iss(argv[curArg]);
-                  iss >> screenNum;
-               }
-            }
-            else if (curArgv == "--window")
-            {
-               ++curArg;
-               if (curArg < argc)
-               {
-                  std::istringstream iss(argv[curArg]);
-                  iss >> winx;
-               }
-               ++curArg;
-               if (curArg < argc)
-               {
-                  std::istringstream iss(argv[curArg]);
-                  iss >> winy;
-               }
-               ++curArg;
-               if (curArg < argc)
-               {
-                  std::istringstream iss(argv[curArg]);
-                  iss >> winw;
-               }
-               ++curArg;
-               if (curArg < argc)
-               {
-                  std::istringstream iss(argv[curArg]);
-                  iss >> winh;
-               }
-               std::ostringstream os;
-               os << "OSG_WINDOW=" << winx << " " << winy << " " << winw << " " << winh;
-
-               // unix putenv only accepts non-const char. No idea why.
-               char osgwinstr[256];
-               strcpy(osgwinstr, os.str().c_str());
-               putenv(osgwinstr);
-
-            }
-         }
-         ++curArg;
-      }
+      dtEntity::LayerAttachPointSystem* layersys;
+      em->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      osg::ref_ptr<osg::Group> sceneGraphRoot = new osg::Group();
+      layersys->CreateSceneGraphRootEntity(sceneGraphRoot);
+      appsystem->InstallUpdateCallback(sceneGraphRoot);
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
       osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
@@ -267,51 +233,33 @@ namespace dtEntity
          traits->screenNum = screenNum;
       }
 
-      
-      dtEntity::ApplicationSystem* appsystem;
-      em->GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+
       unsigned int contextId = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
+
+      appsystem->GetPrimaryView()->setSceneData(layersys->GetSceneGraphRoot());
 
       if(screenNum != -1)
       {
          appsystem->GetWindowManager()->SetFullscreen(contextId, true);
       }
-   }
 
-   //////////////////////////////////////////////////////////////////////////
-   void InitDtEntity(int argc, char** argv, osgViewer::ViewerBase* viewer,
-      EntityManager* em, osg::Group* pSceneNode)
-   {
-      assert(pSceneNode != NULL);
-
-      // this is a required component system, so add it immediately
-      MapSystem* mapSystem = new MapSystem(*em);
-      em->AddEntitySystem(*mapSystem);
-
-      em->AddEntitySystem(*new CameraSystem(*em));
-      em->AddEntitySystem(*new LayerSystem(*em));
-      em->AddEntitySystem(*new GroupSystem(*em));
-      em->AddEntitySystem(*new StaticMeshSystem(*em));
-      em->AddEntitySystem(*new TransformSystem(*em));
-      em->AddEntitySystem(*new MatrixTransformSystem(*em));
-      em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
-      
-      LayerAttachPointSystem* layerattachsys = new LayerAttachPointSystem(*em);
-      em->AddEntitySystem(*layerattachsys);
-      layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
-
-      // add factories for aditional entity systems, they will be started lazily
-      RegisterStandardFactories(mapSystem->GetPluginManager());
-
-      dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
-      em->AddEntitySystem(*appsystem);
-     
-      for(int i = 0; i < argc; ++i)
+      if(addStatsHandler)
       {
-         appsystem->AddCmdLineArg(argv[i]);
+         osgViewer::ViewerBase::Views views;
+         viewer->getViews(views);
+         for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
+         {
+            osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
+            stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
+            stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
+            (*i)->addEventHandler(stats);
+         }
       }
 
-      appsystem->SetViewer(viewer);
-      appsystem->InstallUpdateCallback(pSceneNode);
+      //mapSystem->GetPluginManager().LoadPluginsInDir("plugins");
+
+      StartSystemMessage msg;
+      em->EnqueueMessage(msg);
+      return true;
    }
 }

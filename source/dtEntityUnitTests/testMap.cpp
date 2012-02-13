@@ -50,13 +50,7 @@ struct MapFixture
 	  mEntityManager->AddEntitySystem(*mMapSystem);
 
    }
-
-   ~MapFixture()
-   {
-      delete mEntityManager;
-   }
-
-   dtEntity::EntityManager* mEntityManager;
+   osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
    dtEntity::MapSystem* mMapSystem;
 };
 

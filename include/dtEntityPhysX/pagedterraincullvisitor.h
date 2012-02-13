@@ -87,7 +87,7 @@ namespace dtEntityPhysX
 
    private:
       /// we feed the terrain data through here, it loads the physics
-      PhysXPagedTerrainSystem* mTerrainSystem;
+      osg::ref_ptr<PhysXPagedTerrainSystem> mTerrainSystem;
 
       /// this is the top level transform node of the terrain, for knowing when
       /// we are in the terrain

@@ -211,8 +211,14 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    Property* ArrayProperty::Clone() const 
-   {                 
-      return new ArrayProperty(mValue);
+   {          
+      PropertyArray pa;
+      for(PropertyArray::const_iterator i = mValue.begin(); i != mValue.end(); ++i)
+      {
+         const Property* p = *i;
+         pa.push_back(p->Clone());
+      }         
+      return new ArrayProperty(pa);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -597,7 +603,12 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    Property* GroupProperty::Clone() const 
    {
-      return new GroupProperty(mValue);
+      PropertyGroup pg;
+      for(PropertyGroup::const_iterator i = mValue.begin(); i != mValue.end(); ++i)
+      {
+         pg[i->first] = i->second->Clone();
+      }
+      return new GroupProperty(pg); 
    }
 
    /////////////////////////////////////////////////////////////////////////////////

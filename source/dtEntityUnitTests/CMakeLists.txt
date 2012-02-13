@@ -1,13 +1,10 @@
 SET(APP_NAME dtEntityUnitTests)
 
-FIND_PACKAGE(AMop REQUIRED)
-
 INCLUDE_DIRECTORIES( 
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${OSG_INCLUDE_DIRS}
   ${DELTA3D_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/UnitTest++/src
-  ${AMOP_INCLUDE_DIR}
 )
 
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
@@ -16,7 +13,6 @@ SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(LIB_SOURCES
 	 ${SOURCE_PATH}/testComponent.cpp
-	 ${SOURCE_PATH}/testEntityManager.cpp
 	 ${SOURCE_PATH}/testMap.cpp
 	 ${SOURCE_PATH}/testProperties.cpp
 	 ${SOURCE_PATH}/testPropertyContainer.cpp
@@ -33,9 +29,9 @@ ADD_EXECUTABLE(${APP_NAME}
 TARGET_LINK_LIBRARIES(${APP_NAME}     
                ${OSG_LIBRARIES}
                ${OPENTHREADS_LIBRARIES}
-               ${AMOP_LIBRARY}
+               ${DTUTIL_LIBRARIES}
                dtEntity
-               UnitTestPP               
+               UnitTestPP
 )
 
 SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEFINE_SYMBOL DT_ENTITY_UNITTEST_LIBRARY)                     

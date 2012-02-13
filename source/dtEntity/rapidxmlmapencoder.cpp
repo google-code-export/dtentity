@@ -1517,20 +1517,12 @@ namespace dtEntity
       std::vector<std::string> maps = mMapSystem->GetLoadedMaps();
       if(!maps.empty())
       {
-         typedef std::map<unsigned int, std::string> Ordered;
-         Ordered ordered;
-
-         for(std::vector<std::string>::iterator j = maps.begin(); j != maps.end(); ++j)
-         {
-            ordered[mapSystem->GetMapSaveOrder(*j)] = *j;
-         }
-
          xml_node<>* mapselem = doc.allocate_node(node_element, names.mMaps);
          sceneelem->append_node(mapselem);
-         Ordered::iterator k;
-         for(k = ordered.begin(); k != ordered.end(); ++k)
+         std::vector<std::string>::iterator j;
+         for(j = maps.begin(); j != maps.end(); ++j)
          {
-            SerializeMap(doc, names, mapselem, k->second);
+            SerializeMap(doc, names, mapselem, *j);
          }
       }
 

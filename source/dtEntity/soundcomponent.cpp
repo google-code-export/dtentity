@@ -185,9 +185,6 @@ namespace dtEntity
       mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
       em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
-      mWindowClosedFunctor = MessageFunctor(this, &SoundSystem::OnWindowClosed);
-      em.RegisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor, "SoundSystem::OnWindowClosed");
-
       dtEntity::AudioManager::GetInstance().Init();
 
    }
@@ -222,7 +219,6 @@ namespace dtEntity
       em.UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
       em.UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
       em.UnregisterForMessages(TickMessage::TYPE, mTickFunctor);
-      em.UnregisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor);
 
    }
 
@@ -248,21 +244,6 @@ namespace dtEntity
       if(GetEntityManager().GetComponent(eid, sc))
       {  
          sc->FreeSound();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnWindowClosed(const Message& m)
-   {
-      dtEntity::ApplicationSystem* appSys;
-      if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appSys) )
-      {
-         const WindowClosedMessage& msg = static_cast<const WindowClosedMessage&>(m);
-         osg::Camera* currCam = appSys->GetPrimaryCamera();
-         if(currCam == NULL || msg.GetName() == currCam->getGraphicsContext()->getName())
-         {
-            mListenerLinkToCamera.Set(false);
-         }
       }
    }
 
@@ -332,11 +313,6 @@ namespace dtEntity
       if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
       {
          osg::Camera* currCam = pAppSys->GetPrimaryCamera();
-         if(currCam == NULL)
-         {
-            LOG_ERROR("Cannot copy cam transform to audio listener, no primary camera set!");
-            return;
-         }
          osg::Vec3 camPos, camLookAt, camUp;
          currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
          dtEntity::AudioManager::GetListener()->SetPosition(camPos);

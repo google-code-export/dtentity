@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef FASTDELEGATEBIND_H
-#define FASTDELEGATEBIND_H
-
 //						FastDelegateBind.h
 //  Helper file for FastDelegates. Provides bind() function, enabling
 //  FastDelegates to be rapidly compared to programs using boost::function and boost::bind.
@@ -241,5 +238,3 @@ bind(
 #endif //FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
 
 } // namespace fastdelegate
-
-#endif // FASTDELEGATEBIND_H

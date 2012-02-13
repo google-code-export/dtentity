@@ -53,7 +53,6 @@ namespace dtEntity
       em.RegisterMessageType<TimeChangedMessage>(TimeChangedMessage::TYPE);
       em.RegisterMessageType<VisibilityChangedMessage>(VisibilityChangedMessage::TYPE);
       em.RegisterMessageType<WindowCreatedMessage>(WindowCreatedMessage::TYPE);
-      em.RegisterMessageType<WindowClosedMessage>(WindowClosedMessage::TYPE);      
 
    }
    ////////////////////////////////////////////////////////////////////////////////
@@ -79,10 +78,10 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   const MessageType InternalCloseWindowMessage::TYPE(dtEntity::SID("InternalCloseWindowMessage"));
-   const StringId InternalCloseWindowMessage::NameId(dtEntity::SID("Name"));
+   const MessageType CloseWindowMessage::TYPE(dtEntity::SID("CloseWindowMessage"));
+   const StringId CloseWindowMessage::NameId(dtEntity::SID("Name"));
 
-   InternalCloseWindowMessage::InternalCloseWindowMessage()
+   CloseWindowMessage::CloseWindowMessage()
       : Message(TYPE)
    {
       this->Register(NameId, &mName);
@@ -152,12 +151,14 @@ namespace dtEntity
    const MessageType EntitySystemAddedMessage::TYPE(SID("EntitySystemAddedMessage"));
    const StringId EntitySystemAddedMessage::ComponentTypeId(SID("ComponentType"));
    const StringId EntitySystemAddedMessage::ComponentTypeStringId(SID("ComponentTypeString"));
+   const StringId EntitySystemAddedMessage::SystemPropertiesId(SID("SystemProperties"));
 
    EntitySystemAddedMessage::EntitySystemAddedMessage()
       : Message(TYPE)
    {
       this->Register(ComponentTypeId, &mComponentType);
       this->Register(ComponentTypeStringId, &mComponentTypeString);
+      this->Register(SystemPropertiesId, &mSystemProperties);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -234,15 +235,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType MapBeginLoadMessage::TYPE(SID("MapBeginLoadMessage"));
    const StringId MapBeginLoadMessage::MapPathId(SID("MapPath"));
-   const StringId MapBeginLoadMessage::DataPathId(SID("DataPath"));
-   const StringId MapBeginLoadMessage::SaveOrderId(SID("SaveOrder"));
 
    MapBeginLoadMessage::MapBeginLoadMessage()
       : Message(TYPE)
    {
       this->Register(MapPathId, &mMapPath);
-      this->Register(DataPathId, &mDataPath);
-      this->Register(SaveOrderId, &mSaveOrder);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -258,15 +255,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType MapLoadedMessage::TYPE(SID("MapLoadedMessage"));
    const StringId MapLoadedMessage::MapPathId(SID("MapPath"));
-   const StringId MapLoadedMessage::DataPathId(SID("DataPath"));
-   const StringId MapLoadedMessage::SaveOrderId(SID("SaveOrder"));
 
    MapLoadedMessage::MapLoadedMessage()
       : Message(TYPE)
    {
       this->Register(MapPathId, &mMapPath);
-      this->Register(DataPathId, &mDataPath);
-      this->Register(SaveOrderId, &mSaveOrder);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -381,16 +374,6 @@ namespace dtEntity
       this->Register(NameId, &mName);
       this->Register(ContextIdId, &mContextId);
       this->Register(CameraEntityIdId, &mCameraEntityId);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   const MessageType WindowClosedMessage::TYPE(dtEntity::SID("WindowClosedMessage"));
-   const StringId WindowClosedMessage::NameId(dtEntity::SID("Name"));
-   
-   WindowClosedMessage::WindowClosedMessage() 
-      : Message(TYPE)
-   {
-      this->Register(NameId, &mName);
    }
 
 }

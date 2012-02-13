@@ -133,7 +133,7 @@ namespace dtEntityEditor
       void CreateCameraEntityIfNotExists();
       EditorMainWindow* mMainWindow;
       QTimer* mTimer;
-      dtEntity::EntityManager* mEntityManager;
+      osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
       osg::ref_ptr<osgViewer::Viewer> mViewer;
       std::vector<std::string> mPluginPaths;
       osg::Timer_t mStartOfFrameTick;

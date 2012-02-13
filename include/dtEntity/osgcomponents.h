@@ -305,11 +305,9 @@ namespace dtEntity
    {
    public:
       TransformSystem(EntityManager& em)
-         : EntitySystem(em)
+         : EntitySystem(TransformComponent::TYPE, em)
       {
       }
-
-      ComponentType GetComponentType() const { return TransformComponent::TYPE; }
    };
 
    ///////////////////////////////////////////////////////////////////////////

@@ -71,8 +71,6 @@ namespace dtEntityWrappers
       EntitySystemJS(dtEntity::ComponentType id, dtEntity::EntityManager& em, v8::Handle<v8::Object> obj);
      
       ~EntitySystemJS();
-
-      dtEntity::ComponentType GetComponentType() const { return mComponentType; }
       
       virtual bool HasComponent(dtEntity::EntityId eid) const;
       virtual bool GetComponent(dtEntity::EntityId eid, dtEntity::Component*& component);
@@ -92,7 +90,6 @@ namespace dtEntityWrappers
 
    private:
 
-      dtEntity::ComponentType mComponentType;
       v8::Persistent<v8::Object> mSystem;
       v8::Persistent<v8::Function> mHasCompFun;
       v8::Persistent<v8::Function> mGetCompFun;

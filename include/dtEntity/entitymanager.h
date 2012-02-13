@@ -50,6 +50,7 @@ namespace dtEntity
     * posted to a message queue to be emitted at a later time. 
     */
    class DT_ENTITY_EXPORT EntityManager 
+      : public osg::Referenced
    {
    
    public:
@@ -61,8 +62,6 @@ namespace dtEntity
        */
       EntityManager();
 
-      // Destructor
-      ~EntityManager();
 
       /**
        * can be used to clean up wrappers for components or
@@ -72,7 +71,6 @@ namespace dtEntity
       {
       public:
          virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
-         virtual ~ComponentDeletedCallback() {}
       };
 
       typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
@@ -87,8 +85,6 @@ namespace dtEntity
       {
       public:
          virtual bool CreateEntitySystem(EntityManager* em, ComponentType t) = 0;
-
-         virtual ~EntitySystemRequestCallback() {}
       };
 
       typedef std::vector<EntitySystemRequestCallback*> EntitySystemRequestCallbacks;
@@ -120,6 +116,13 @@ namespace dtEntity
        * @threadsafe
        */
       bool KillEntity(EntityId id);
+
+      /**
+       * Remove all components from all entity systems and delete
+	   * all entity objects
+       * @threadsafe
+       */
+      void KillAllEntities();
 
       /**
        * Create a new entity with a new unique EntityId
@@ -158,7 +161,7 @@ namespace dtEntity
       /**
        * @param s Add this entity system to the manager
        */
-      bool AddEntitySystem(EntitySystem& s);
+      void AddEntitySystem(EntitySystem& s);
 
       /**
        * @param s Remove this entity system
@@ -311,13 +314,15 @@ namespace dtEntity
       void AddEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
       bool RemoveEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
 
+   protected:
+   
+         // Destructor
+      ~EntityManager();
 
    private:
 
       // Returns next id and increments internal counter
       EntityId GetNextAvailableID();
-
-      unsigned int mNextAvailableId;
 
       /**
        * Look in type hierarchy map if a component derived from type exists
@@ -332,7 +337,7 @@ namespace dtEntity
       mutable OpenThreads::ReadWriteMutex mEntityMutex;
 
       // Storage for entity systems
-      typedef std::map<ComponentType, EntitySystem*> EntitySystemStore;
+      typedef std::map<ComponentType, osg::ref_ptr<EntitySystem> > EntitySystemStore;
       EntitySystemStore mEntitySystemStore;
 
       // stores inheritance tree for component types

@@ -81,7 +81,6 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::~EditorApplication()
    {
-      delete mEntityManager;
       mEntityManager = NULL;
       if(mTimer)
       {

@@ -39,7 +39,7 @@ TEST(SpawnComponent)
       _CrtSetDbgFlag(0);
    #endif
    
-   EntityManager* em = new EntityManager();
+   osg::ref_ptr<EntityManager> em = new EntityManager();
    em->AddEntitySystem(*new dtEntity::MapSystem(*em));
    em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
 
@@ -63,7 +63,6 @@ TEST(SpawnComponent)
 
    CHECK_EQUAL(prop->Vec3Value()[0], 33.0f);
 
-   delete em;
 }
 
 TEST(SpawnHierarchy)
@@ -79,7 +78,7 @@ TEST(SpawnHierarchy)
    childprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(333,666,999)));
    childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
 
-   EntityManager* em = new EntityManager();
+   osg::ref_ptr<EntityManager> em = new EntityManager();
    em->AddEntitySystem(*new dtEntity::MapSystem(*em));
    em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
 
@@ -99,5 +98,4 @@ TEST(SpawnHierarchy)
 
    CHECK_EQUAL(prop->Vec3Value()[0], 333.0f);
 
-   delete em;
 }

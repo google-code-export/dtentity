@@ -76,7 +76,7 @@ namespace dtEntityWrappers
    const dtEntity::StringId ScriptSystem::DebugEnabledId(dtEntity::SID("DebugEnabled"));
 
    ScriptSystem::ScriptSystem(dtEntity::EntityManager& em)
-      : dtEntity::EntitySystem(em)
+      : dtEntity::EntitySystem(TYPE, em)
       , mDebugPortOpened(false)
    {      
 

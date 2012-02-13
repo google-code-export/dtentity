@@ -34,8 +34,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    EntityManager::EntityManager()
-      : mNextAvailableId(0)
-      , mMessagePump(new MessagePump())
+      : mMessagePump(new MessagePump())
    {     
    }
 
@@ -63,11 +62,8 @@ namespace dtEntity
          mEntities.erase(mEntities.begin());
       }
 
-      for(EntitySystemStore::iterator i = mEntitySystemStore.begin();
-         i != mEntitySystemStore.end(); ++i)
-      {
-         delete i->second;
-      }
+      mEntitySystemStore.clear();
+      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -93,28 +89,23 @@ namespace dtEntity
    bool EntityManager::AddToScene(EntityId eid)
    {
       MapSystem* mapSystem;
-      if(GetEntitySystem(MapComponent::TYPE, mapSystem))
-      {
-         return mapSystem->AddToScene(eid);
-      }
-      return false;
+      GetEntitySystem(MapComponent::TYPE, mapSystem);
+      return mapSystem->AddToScene(eid);
    }
    
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::RemoveFromScene(EntityId eid)
    {
       MapSystem* mapSystem;
-      if(GetEntitySystem(MapComponent::TYPE, mapSystem))
-      {
-         return mapSystem->RemoveFromScene(eid);
-      }
-      return false;
+      GetEntitySystem(MapComponent::TYPE, mapSystem);
+      return mapSystem->RemoveFromScene(eid);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    EntityId EntityManager::GetNextAvailableID() 
    {
-      return ++mNextAvailableId;
+      static EntityId counter = 0;
+      return ++counter;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -177,6 +168,21 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EntityManager::KillAllEntities()
+   {
+      while(HasEntities())
+      {
+         EntityId id;
+         {
+            OpenThreads::ScopedReadLock lock(mEntityMutex);
+            id = mEntities.begin()->first;
+         }
+         RemoveFromScene(id);
+         KillEntity(id);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::HasEntitySystem(ComponentType t) const
    {
       EntitySystemStore::const_iterator i = mEntitySystemStore.find(t);
@@ -184,12 +190,12 @@ namespace dtEntity
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   bool EntityManager::AddEntitySystem(EntitySystem& s)
+   void EntityManager::AddEntitySystem(EntitySystem& s)
    {
       if(HasEntitySystem(s.GetComponentType()))
       {
          LOG_ERROR("Entity system already added! Type: " + GetStringFromSID(s.GetComponentType()));
-         return false;
+         return;
       }
       mEntitySystemStore[s.GetComponentType()] = &s;
 
@@ -202,8 +208,8 @@ namespace dtEntity
       EntitySystemAddedMessage msg;
       msg.SetComponentType(s.GetComponentType());
       msg.SetComponentTypeString(GetStringFromSID(s.GetComponentType()));
-      EmitMessage(msg);
-      return true;
+      msg.SetSystemProperties(s.GetAllProperties());
+      EmitMessage(msg);      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +253,7 @@ namespace dtEntity
       EntitySystemStore::const_iterator i = mEntitySystemStore.find(t);
       if(i == mEntitySystemStore.end())
          return NULL;
-      return i->second;
+      return i->second.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

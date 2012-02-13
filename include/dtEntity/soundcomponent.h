@@ -122,7 +122,6 @@ namespace dtEntity
       void OnEnterWorld(const Message&);
       void OnLeaveWorld(const Message&);
       void OnTick(const Message& msg);
-      void OnWindowClosed(const Message& msg);
 
       /// Override base class behavior to save system properties to file
       virtual bool StorePropertiesToScene() const { return true; }
@@ -137,7 +136,6 @@ namespace dtEntity
       void SetListenerLinkToCamera(const bool val)  { mListenerLinkToCamera.Set(val); }
       bool GetListenerLinkToCamera() const { return mListenerLinkToCamera.Get(); }
 
-      
    private:
 
       /// Internal util that copies current camera position and orientation to listener
@@ -146,7 +144,6 @@ namespace dtEntity
       MessageFunctor mEnterWorldFunctor;
       MessageFunctor mLeaveWorldFunctor;
       MessageFunctor mTickFunctor;
-      MessageFunctor mWindowClosedFunctor;
       FloatProperty mListenerGain;
       BoolProperty mListenerLinkToCamera;
    };

@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef FASTDELEGATE_H
-#define FASTDELEGATE_H
-
 //						FastDelegate.h
 //	Efficient delegates in C++ that generate only two lines of asm code!
 //  Documentation is found at http://www.codeproject.com/cpp/FastDelegate.asp
@@ -2108,4 +2105,3 @@ FastDelegate8<Param1, Param2, Param3, Param4, Param5, Param6, Param7, Param8, FA
 } // namespace fastdelegate
 
 
-#endif // FASTDELEGATE_H

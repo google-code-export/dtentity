@@ -115,15 +115,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MapComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == UniqueIdId)
-      {
-         SetUniqueId(mUniqueId.Get());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    std::string MapComponent::GetSpawnerName() const
    {
       return mSpawner == NULL ? "" : mSpawner->GetName();
@@ -311,7 +302,7 @@ namespace dtEntity
 
       while(!mLoadedMaps.empty())
       {
-         UnloadMap(mLoadedMaps.front().mMapPath);
+         UnloadMap(mLoadedMaps.begin()->second);
       }
       mCurrentScene = "";
       mCurrentSceneDataPath = "";
@@ -335,10 +326,10 @@ namespace dtEntity
       {
          for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
          {
-            bool success = SaveMap(i->mMapPath);
+            bool success = SaveMap(i->second);
             if(!success)
             {
-               LOG_ERROR("Could not save map file " << i->mMapPath);
+               LOG_ERROR("Could not save map file " << i->second);
             }
          }
       }
@@ -381,25 +372,19 @@ namespace dtEntity
             break;
          }
       }
-      unsigned int mapsaveorder = mLoadedMaps.size();
-
       assert(mapdatapath != "");
 
       MapBeginLoadMessage msg;
       msg.SetMapPath(path);
-      msg.SetDataPath(mapdatapath);
-      msg.SetSaveOrder(mapsaveorder);
       GetEntityManager().EmitMessage(msg);
 
       bool success = mMapEncoder->LoadMapFromFile(path);
       if(success)
       {
-         mLoadedMaps.push_back(MapData(path, mapdatapath, mLoadedMaps.size()));
+         mLoadedMaps.insert(std::make_pair(mapdatapath, path));
 
          MapLoadedMessage msg1;
          msg1.SetMapPath(path);
-         msg1.SetDataPath(mapdatapath);
-         msg1.SetSaveOrder(mapsaveorder);
          GetEntityManager().EmitMessage(msg1);
       }
       return success;
@@ -492,7 +477,7 @@ namespace dtEntity
 
       for(LoadedMaps::iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
-         if(i->mMapPath == path)
+         if(i->second == path)
          {
             mLoadedMaps.erase(i);
             break;
@@ -501,19 +486,6 @@ namespace dtEntity
 
       GetEntityManager().EmitMessage(msg1);
       return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   unsigned int MapSystem::GetMapSaveOrder(const std::string& path)
-   {
-      for(LoadedMaps::iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
-      {
-         if(i->mMapPath == path)
-         {
-            return i->mSaveOrder;
-         }
-      }
-      return INT_MAX;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -548,9 +520,9 @@ namespace dtEntity
       std::string datapath = "";
       for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
-         if(i->mMapPath == mappath)
+         if(i->second == mappath)
          {
-            datapath = i->mDataPath;
+            datapath = i->first;
             break;
          }
       }
@@ -589,7 +561,7 @@ namespace dtEntity
       }
       if(osgDB::findDataFile(mapname) != "")
       {
-         mLoadedMaps.push_back(MapData(mapname, dataPath, mLoadedMaps.size()));
+         mLoadedMaps.insert(std::make_pair(dataPath, mapname));
          return false;
       }
 
@@ -603,10 +575,11 @@ namespace dtEntity
          return false;
       }
 
+
       MapBeginLoadMessage msg;
       msg.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg);
-      mLoadedMaps.push_back(MapData(mapname, dataPath, mLoadedMaps.size()));
+      mLoadedMaps.insert(std::make_pair(dataPath, mapname));
       MapLoadedMessage msg2;
       msg2.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg2);
@@ -618,7 +591,7 @@ namespace dtEntity
    {
       for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
-         if(i->mMapPath == path)
+         if(i->second == path)
          {
             return true;
          }
@@ -633,7 +606,7 @@ namespace dtEntity
 
       for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
-         ret.push_back(i->mMapPath);
+         ret.push_back(i->second);
       }
       return ret;
    }

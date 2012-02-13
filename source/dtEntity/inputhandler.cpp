@@ -55,8 +55,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    InputHandler::InputHandler(dtEntity::EntityManager& em)
-      : mEntityManager(&em)
-      , mMultiTouchEnabled(false)
+      : mMultiTouchEnabled(false)
       , mLockCursor(false)
       , mNumTouches(0)
       , mFrameNumber(0)
@@ -383,13 +382,6 @@ namespace dtEntity
                HandleMouseEnterLeave(ea);
             }
             break;
-         }
-         case osgGA::GUIEventAdapter::CLOSE_WINDOW:
-         {
-            const osg::GraphicsContext* gc = ea.getGraphicsContext();
-            WindowClosedMessage msg;
-            msg.SetName(gc->getName());
-            mEntityManager->EmitMessage(msg);
          }
          default: break;
       }
