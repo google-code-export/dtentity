@@ -259,7 +259,7 @@ namespace dtEntityWrappers
          Handle<Value> argv[3] = { 
             Number::New(msg.GetDeltaSimTime()),
             Number::New(msg.GetSimulationTime()),
-            Uint32::New(osg::Timer::instance()->tick() * osg::Timer::instance()->getSecondsPerTick() * 1000)
+            Uint32::New(osg::Timer::instance()->time_m())
          };
          
          Handle<Value> ret = f->Call(f, 3, argv);
