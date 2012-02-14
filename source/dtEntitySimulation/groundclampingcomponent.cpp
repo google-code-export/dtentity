@@ -30,6 +30,7 @@
 #include <dtEntity/stringid.h>
 #include <iostream>
 #include <osg/io_utils>
+#include <osgSim/LineOfSight>
 
 #define MINIMUM_MOVEMENT_DISTANCE 0.2
 
@@ -94,6 +95,7 @@ namespace dtEntitySimulation
 
    const dtEntity::StringId GroundClampingSystem::EnabledId(dtEntity::SID("Enabled"));
    const dtEntity::StringId GroundClampingSystem::IntersectLayerId(dtEntity::SID("IntersectLayer"));
+   const dtEntity::StringId GroundClampingSystem::FetchLODsId(dtEntity::SID("FetchLODs"));
 
    GroundClampingSystem::GroundClampingSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
@@ -104,7 +106,9 @@ namespace dtEntitySimulation
 
       Register(EnabledId, &mEnabled);
       Register(IntersectLayerId, &mIntersectLayer);
+      Register(FetchLODsId, &mFetchLODs);
       mEnabled.Set(true);
+      mFetchLODs.Set(true);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::EndOfFrameMessage::TYPE,
@@ -234,6 +238,7 @@ namespace dtEntitySimulation
          return false;
       }
       mIntersectionVisitor.reset();
+      mIntersectionVisitor.setReadCallback(NULL);
       osgUtil::LineSegmentIntersector* intersector = 
          new osgUtil::LineSegmentIntersector(osg::Vec3d(v[0], v[1], v[2] + voffset),
          osg::Vec3d(v[0], v[1], v[2] - voffset));
@@ -354,6 +359,14 @@ namespace dtEntitySimulation
       }
 
       mIntersectionVisitor.reset();
+      if(mFetchLODs.Get())
+      {
+         mIntersectionVisitor.setReadCallback(new osgSim::DatabaseCacheReadCallback);
+      }
+      else
+      {
+         mIntersectionVisitor.setReadCallback(NULL);
+      }
       mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
       mIntersectionVisitor.setIntersector(mIntersectorGroup.get());
       mRootNode->accept(mIntersectionVisitor);
