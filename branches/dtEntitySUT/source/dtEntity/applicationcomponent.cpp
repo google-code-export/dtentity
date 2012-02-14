@@ -287,7 +287,7 @@ namespace dtEntity
       if(ptm != NULL)
       {
          std::ostringstream os;
-         os << time << "___";
+         /*os << time << "___";
          if(ptm->tm_mday < 10)
          {
             os << "0";
@@ -299,7 +299,7 @@ namespace dtEntity
             os << "0";
          }
          os << (ptm->tm_mon + 1) << "." << (ptm->tm_year + 1900);
-         os << " ";
+         os << " ";*/
          if(ptm->tm_hour < 10)
          {
             os << "0";

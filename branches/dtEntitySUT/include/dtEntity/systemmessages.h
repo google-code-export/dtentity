@@ -79,7 +79,7 @@ namespace dtEntity
       void SetDeltaSimTime(float v) { mDeltaSimTime.Set(v); }
       void SetDeltaRealTime(float v) { mDeltaRealTime.Set(v); }
       void SetSimTimeScale(float v) { mSimTimeScale.Set(v); }
-      void SetSimulationTime(float v) { mSimulationTime.Set(v); }
+      void SetSimulationTime(double v) { mSimulationTime.Set(v); }
 
    private:
 

@@ -295,9 +295,11 @@ function TranslateTool() {
          var id = Selection.ids[k];
          if(getEntitySystem("Transform").getComponent(id, true) !== null) {
             var manipulator = manipulatorSystem.createComponent(id);
-            manipulator.DraggerType = "TerrainTranslateDragger";
-            manipulator.PivotAtBottom = true;
-            manipulator.finished();
+			if(manipulator) {
+				manipulator.DraggerType = "TerrainTranslateDragger";
+				manipulator.PivotAtBottom = true;
+				manipulator.finished();
+			}
          }
       }
   }
