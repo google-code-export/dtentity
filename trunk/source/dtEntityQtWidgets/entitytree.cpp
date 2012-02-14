@@ -1535,7 +1535,7 @@ namespace dtEntityQtWidgets
       success = mtsystem->SaveMap(path.toStdString());
       if(!success)
       {
-         emit ShowErrorMessage("Could not save map, please check permissions!");
+         emit ShowErrorMessage(QString("Could not save map, please check permissions:\n%1").arg(path));
       }
    }
 
@@ -1549,7 +1549,7 @@ namespace dtEntityQtWidgets
       success = mtsystem->SaveMapAs(path.toStdString(), copypath.toStdString());
       if(!success)
       {
-         emit ShowErrorMessage("Could not save copy of map, please check permissions   !");
+         emit ShowErrorMessage(QString("Could not save copy of map, please check permissions:\n%1").arg(copypath));
       }
    }
 

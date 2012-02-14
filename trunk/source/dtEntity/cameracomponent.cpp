@@ -318,7 +318,10 @@ namespace dtEntity
                CameraAddedMessage msg;
                msg.SetAboutEntityId(mEntity->GetId());
                msg.SetContextId(mContextId.Get());
-               mEntity->GetEntityManager().EmitMessage(msg);
+
+               // enqueueing instead of emitting, this way recipients can be sure that
+               // camera entity is fully constructed
+               mEntity->GetEntityManager().EnqueueMessage(msg);
 
                const osg::GraphicsContext::Traits& traits = *newcam->getGraphicsContext()->getTraits();
                
@@ -526,7 +529,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetCullMask(unsigned int mask)
    {
-      GetCamera()->setCullMask(mCullMask.Get());
+      GetCamera()->setCullMask(mask);
    }
 
    ////////////////////////////////////////////////////////////////////////////
