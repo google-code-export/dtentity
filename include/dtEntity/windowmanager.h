@@ -70,10 +70,11 @@ namespace dtEntity
        * @param name Name of osg nodes for window, view and camera to set
        * @param layerName Name of layer attach point to show
        * @param traits OSG GraphicsWindow traits to use
-       * @return context id of newly created context
+       * @contexId will receive context id of newly created context
+       * @return true if success
        */
-      virtual unsigned int OpenWindow(const std::string& name,
-         dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits) = 0;
+      virtual bool OpenWindow(const std::string& name,
+         dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits, unsigned int& contextId) = 0;
 
       virtual void CloseWindow(const std::string& name) = 0;
 
@@ -118,10 +119,11 @@ namespace dtEntity
        * @param name Name of osg nodes for window, view and camera to set
        * @param layerName Name of layer attach point to show
        * @param traits OSG GraphicsWindow traits to use
-       * @return context id of newly created context
+       * @contextId receives context id of newly created context
+       * @return true if success, else false
        */
-      virtual unsigned int OpenWindow(const std::string& name,
-         dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits);
+      virtual bool OpenWindow(const std::string& name,
+         dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits, unsigned int& contextId);
 
       virtual void CloseWindow(const std::string& name);
 

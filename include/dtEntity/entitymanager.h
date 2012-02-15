@@ -267,7 +267,6 @@ namespace dtEntity
 	  /**
 	   * @param p Set this as default message pump for inter-system communication.
 	   * Warning: Old message pump is overwritten, queued messages may get lost.
-	   * @TODO remove?
 	   */
 	  void SetMessagePump(MessagePump& p);
 

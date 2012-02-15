@@ -54,7 +54,6 @@ namespace dtEntity
       static const dtEntity::StringId OffsetId;
       static const dtEntity::StringId CharacterHeightId;
       static const dtEntity::StringId FontId;
-      static const dtEntity::StringId PixelOffsetId;
       static const dtEntity::StringId AlignmentId;
       
       TextLabelComponent();
@@ -105,9 +104,6 @@ namespace dtEntity
       void SetCharacterHeight(unsigned int textid, float);
       float GetCharacterHeight(unsigned int textid) const;
 
-      void SetPixelOffset(unsigned int textid, const osg::Vec2& o);
-      osg::Vec2 GetPixelOffset(unsigned int textid) const;
-
       void SetAlignment(unsigned int textid, const std::string& str);
       std::string GetAlignment(unsigned int textid) const;
 
@@ -150,7 +146,6 @@ namespace dtEntity
       dtEntity::Property* ScriptSetText(const dtEntity::PropertyArgs& args);
       dtEntity::Property* ScriptSetOffset(const dtEntity::PropertyArgs& args);
       dtEntity::Property* ScriptSetAlignment(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetPixelOffset(const dtEntity::PropertyArgs& args);
       dtEntity::Property* ScriptSetColor(const dtEntity::PropertyArgs& args);
       dtEntity::Property* ScriptSetBackdropColor(const dtEntity::PropertyArgs& args);
       dtEntity::Property* ScriptSetHighlighted(const dtEntity::PropertyArgs& args);
