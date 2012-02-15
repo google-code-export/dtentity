@@ -38,6 +38,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
+#include <osg/ShapeDrawable>
 #include <iostream>
 
 #define NUMBER_OF_ENTITIES 200
@@ -261,7 +262,14 @@ int main(int argc, char** argv)
    osgViewer::Viewer viewer(arguments);
    dtEntity::EntityManager em;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, &em))
+   osg::Group* root = new osg::Group();
+
+   osg::Sphere* sphere = new osg::Sphere(osg::Vec3(), 5);
+   osg::ShapeDrawable* drawable = new osg::ShapeDrawable(sphere);
+   osg::Geode* geode = new osg::Geode();
+   geode->addDrawable(drawable);
+   root->addChild(geode);
+   if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

@@ -319,8 +319,6 @@ namespace dtEntity
 
 	void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
-      EntityManager& em = pluginManager.GetEntityManager();
-
       pluginManager.AddFactory(new PickShapeComponentFactory());
       pluginManager.AddFactory(new SkyBoxComponentFactory());
       pluginManager.AddFactory(new ShadowComponentFactory());

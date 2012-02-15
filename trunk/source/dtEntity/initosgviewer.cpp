@@ -125,16 +125,28 @@ namespace dtEntity
          return false;
       }
 
+      projectassets = osgDB::convertFileNameToUnixStyle(projectassets);
+      baseassets = osgDB::convertFileNameToUnixStyle(baseassets);
+
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
+
+      if(!baseassets.empty() && (std::find(paths.begin(), paths.end(), baseassets) == paths.end())) 
+      {
+         paths.push_back(baseassets);
+      }
+
       if(!projectassets.empty())
       {
-         std::vector<std::string> pathsplit = dtEntity::split(projectassets, ':');
+         std::vector<std::string> pathsplit = dtEntity::split(projectassets, ';');
          for(unsigned int i = 0; i < pathsplit.size(); ++i)
          {
-            paths.push_back(pathsplit[i]);
+            if(std::find(paths.begin(), paths.end(), pathsplit[i]) == paths.end())
+            {
+               paths.push_back(pathsplit[i]);
+            }
          }
       }
-      if(!baseassets.empty()) paths.push_back(baseassets);
+      
       osgDB::setDataFilePathList(paths);
       return true;
 
@@ -143,8 +155,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool DT_ENTITY_EXPORT InitOSGViewer(int argc,  
                       char** argv, 
-                      osgViewer::ViewerBase* viewer,
-                      dtEntity::EntityManager* em,
+                      osgViewer::ViewerBase& viewer,
+                      dtEntity::EntityManager& em,
                       bool addStatsHandler, 
                       bool checkPaths, 
                       bool addConsoleLog,
@@ -155,8 +167,8 @@ namespace dtEntity
          pSceneNode = new osg::Group();
       }
 
-      assert(viewer != NULL);
-      assert(em != NULL);
+      assert(&viewer != NULL);
+      assert(&em != NULL);
 
       if(addConsoleLog)
       {
@@ -166,7 +178,7 @@ namespace dtEntity
       if(addStatsHandler)
       {
          osgViewer::ViewerBase::Views views;
-         viewer->getViews(views);
+         viewer.getViews(views);
          for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
          {
             osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
@@ -178,19 +190,27 @@ namespace dtEntity
 
       SetupDataPaths(argc, argv, checkPaths);
 
-      InitDtEntity(argc, argv, viewer, em, pSceneNode);
+      InitDtEntity(argc, argv, em);
      
-      SetupViewer(argc, argv, viewer, em);
+      SetupViewer(argc, argv, viewer, em, pSceneNode);
 
       StartSystemMessage msg;
-      em->EnqueueMessage(msg);
+      em.EnqueueMessage(msg);
       return true;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void SetupViewer(int argc, char** argv, 
-      osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em)
+      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode)
    {
+      assert(pSceneNode != NULL);
+
+      dtEntity::ApplicationSystem* appsystem;
+      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+      
+      appsystem->SetViewer(&viewer);
+      appsystem->InstallUpdateCallback(pSceneNode);
+
       int curArg = 1;
       int screenNum = -1;
       int winx = 100;
@@ -266,52 +286,51 @@ namespace dtEntity
       {
          traits->screenNum = screenNum;
       }
-
       
-      dtEntity::ApplicationSystem* appsystem;
-      em->GetEntitySystem(ApplicationSystem::TYPE, appsystem);
       unsigned int contextId = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
-
+      
       if(screenNum != -1)
       {
          appsystem->GetWindowManager()->SetFullscreen(contextId, true);
       }
+
+      // set scene graph root node as scene data for viewer. This is done again in camera setup,
+      // but to make it accessible immediately we add it here, first
+      appsystem->GetPrimaryView()->setSceneData(pSceneNode);
+      appsystem->GetPrimaryCamera()->setEventCallback(&appsystem->GetWindowManager()->GetInputHandler());
+
+      LayerAttachPointSystem* layerattachsys;
+      bool found = em.GetEntitySystem(LayerAttachPointComponent::TYPE, layerattachsys);
+      assert(found);
+      layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InitDtEntity(int argc, char** argv, osgViewer::ViewerBase* viewer,
-      EntityManager* em, osg::Group* pSceneNode)
+   void InitDtEntity(int argc, char** argv, EntityManager& em)
    {
-      assert(pSceneNode != NULL);
-
-      // this is a required component system, so add it immediately
-      MapSystem* mapSystem = new MapSystem(*em);
-      em->AddEntitySystem(*mapSystem);
-
-      em->AddEntitySystem(*new CameraSystem(*em));
-      em->AddEntitySystem(*new LayerSystem(*em));
-      em->AddEntitySystem(*new GroupSystem(*em));
-      em->AddEntitySystem(*new StaticMeshSystem(*em));
-      em->AddEntitySystem(*new TransformSystem(*em));
-      em->AddEntitySystem(*new MatrixTransformSystem(*em));
-      em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
       
-      LayerAttachPointSystem* layerattachsys = new LayerAttachPointSystem(*em);
-      em->AddEntitySystem(*layerattachsys);
-      layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
+      // this is a required component system, so add it immediately
+      MapSystem* mapSystem = new MapSystem(em);
+      em.AddEntitySystem(*mapSystem);
 
-      // add factories for aditional entity systems, they will be started lazily
-      RegisterStandardFactories(mapSystem->GetPluginManager());
-
-      dtEntity::ApplicationSystem* appsystem = new dtEntity::ApplicationSystem(*em);
-      em->AddEntitySystem(*appsystem);
-     
+      em.AddEntitySystem(*new CameraSystem(em));
+      em.AddEntitySystem(*new LayerSystem(em));
+      em.AddEntitySystem(*new GroupSystem(em));
+      em.AddEntitySystem(*new StaticMeshSystem(em));
+      em.AddEntitySystem(*new TransformSystem(em));
+      em.AddEntitySystem(*new MatrixTransformSystem(em));
+      em.AddEntitySystem(*new PositionAttitudeTransformSystem(em));
+      em.AddEntitySystem(*new LayerAttachPointSystem(em));
+      
+      ApplicationSystem* appsystem = new ApplicationSystem(em);
+      em.AddEntitySystem(*appsystem);
       for(int i = 0; i < argc; ++i)
       {
          appsystem->AddCmdLineArg(argv[i]);
       }
 
-      appsystem->SetViewer(viewer);
-      appsystem->InstallUpdateCallback(pSceneNode);
+      // add factories for aditional entity systems, they will be started lazily
+      RegisterStandardFactories(mapSystem->GetPluginManager());
+
    }
 }

@@ -71,7 +71,7 @@ namespace dtEntityEditor
       static const char* winvar = "OSG_WINDOW=0 0 800 600";
       putenv(const_cast<char*>(winvar));
 
-      dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
+      dtEntity::InitOSGViewer(argc, argv, *mViewer, *mEntityManager, false, false);
 
       dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);

@@ -26,6 +26,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <osgDB/FileUtils>
+#include <dtEntity/initosgviewer.h>
 
 using namespace UnitTest;
 using namespace dtEntity;
@@ -34,29 +35,12 @@ struct SceneFixture
 {
    SceneFixture()
    {
-      std::string baseassets = "BaseAssets";      
-      const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
-      if(env_baseassets != NULL)
-      {
-         baseassets = env_baseassets;
-      }
-
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      if(!baseassets.empty()) paths.push_back(baseassets);
-      osgDB::setDataFilePathList(paths);
-
-      mEntityManager = new dtEntity::EntityManager();
-      mMapSystem = new dtEntity::MapSystem(*mEntityManager);
-	  mEntityManager->AddEntitySystem(*mMapSystem);
-      mEntityManager->AddEntitySystem(*new dtEntity::ApplicationSystem(*mEntityManager));
+      SetupDataPaths(0, NULL, true);
+      InitDtEntity(0, NULL, mEntityManager); 
+      mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
 
-   ~SceneFixture()
-   {
-      delete mEntityManager;
-   }
-
-   dtEntity::EntityManager* mEntityManager;
+   dtEntity::EntityManager mEntityManager;
    dtEntity::MapSystem* mMapSystem;
 };
 
@@ -71,7 +55,7 @@ TEST_FIXTURE(SceneFixture, SceneSetsProps)
 {
    mMapSystem->LoadScene("TestData/testscene.dtescene");
    dtEntity::ApplicationSystem* appsys;
-   mEntityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+   mEntityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
    CHECK_CLOSE(appsys->GetTimeScale(), 3, 0.1);
 }
 

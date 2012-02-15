@@ -128,6 +128,41 @@ namespace EMTest
    }
 
    //------------------------------------------------------------------
+   TEST(GetEntitySystem)
+   {
+      // test does not work. Check on windows
+      ComponentType ctype = 123456;
+      
+      TMockObject<EntitySystem> mock;
+      mock.Method(&EntitySystem::GetComponentType).Will(ctype);
+      mock.Method(&EntitySystem::OnAddedToEntityManager);
+      mock.Method(&EntitySystem::OnRemoveFromEntityManager);
+
+      EntitySystem* es = (EntitySystem*)mock;
+      EntityManager* em = new EntityManager();
+
+      em->AddEntitySystem(*es);
+      
+      EntitySystem* es2 = em->GetEntitySystem(ctype);
+      CHECK_EQUAL(es2, es);
+
+      EntitySystem* es3;
+      bool success = em->GetEntitySystem(ctype, es3);
+      CHECK(success);
+      CHECK_EQUAL(es3, es);
+
+      em->RemoveEntitySystem(*es);
+
+      CHECK(!em->HasEntitySystem(ctype));
+
+      
+      CHECK_EQUAL(1u, mock.Method(&EntitySystem::OnRemoveFromEntityManager).Count());
+
+       delete em;
+   }
+
+
+   //------------------------------------------------------------------
    TEST(CreateMockObject)
    {
        TMockObject<EntityManager::ComponentDeletedCallback> mock;
