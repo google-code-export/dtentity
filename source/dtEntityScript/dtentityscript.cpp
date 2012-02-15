@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
    dtEntity::EntityManager entityManager;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, &viewer, &entityManager, true, true))
+   if(!dtEntity::InitOSGViewer(argc, argv, viewer, entityManager, true, true))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

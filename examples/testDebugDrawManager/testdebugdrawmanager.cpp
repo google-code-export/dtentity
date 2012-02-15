@@ -54,14 +54,14 @@ int main(int argc, char** argv)
 
    osg::ArgumentParser arguments(&argc,argv);   
    osgViewer::Viewer viewer(arguments);
-   dtEntity::EntityManager* em = new dtEntity::EntityManager();
+   dtEntity::EntityManager em;
    
-   dtEntity::InitOSGViewer(argc, argv, &viewer, em, false);   
+   dtEntity::InitOSGViewer(argc, argv, viewer, em, false);   
    
    dtEntity::ApplicationSystem* appsystem;
-   em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
+   em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
 
-   dtEntity::DebugDrawManager* debugDrawManager = new dtEntity::DebugDrawManager(*em);
+   dtEntity::DebugDrawManager* debugDrawManager = new dtEntity::DebugDrawManager(em);
    debugDrawManager->SetEnabled(true);
 
    debugDrawManager->AddLine(osg::Vec3(0, 0, 0), osg::Vec3(0, 0, 1), osg::Vec4(1,0,0,1), 1, 100, true);

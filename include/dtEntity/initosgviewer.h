@@ -50,7 +50,7 @@ namespace dtEntity
     *        the main update callback that drives dtEntity is installed to this node. If this is NULL, a new osg::Group is created
     */
    bool DT_ENTITY_EXPORT InitOSGViewer(int argc, char** argv, 
-      osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em,
+      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em,
       bool addStatsHandler = true, bool checkPaths = true, bool addConsoleLog = true, osg::Group* pSceneNode = 0);
 
    /**
@@ -58,19 +58,19 @@ namespace dtEntity
     * Registers a number of factories for entity systems that should be started lazily.
     * Creates application system, passes it the viewer and installs update callback of app system to scene node.
     * @param argc number of command line args
-    * @param standard c command line args
-    * @param viewer An instance of either osgViewer::Viewer or osgViewer::CompositeViewer
+    * @param standard c command line args    
     * @param em a valid entity manager
-    * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
-    *        the main update callback that drives dtEntity is installed to this node. 
     */
-   void DT_ENTITY_EXPORT InitDtEntity(int argc, char** argv, osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em, osg::Group* pSceneNode);
+   void DT_ENTITY_EXPORT InitDtEntity(int argc, char** argv, dtEntity::EntityManager& em);
 
    /**
     * Analyzes command line args and sets up osgViewer window accordingly
+    * @param viewer An instance of either osgViewer::Viewer or osgViewer::CompositeViewer
+    * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
+    *        the main update callback that drives dtEntity is installed to this node. 
     */
    void DT_ENTITY_EXPORT SetupViewer(int argc, char** argv, 
-      osgViewer::ViewerBase* viewer, dtEntity::EntityManager* em);
+      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
 
    /**
     * sets osg data paths from command line args or environment variables
