@@ -180,6 +180,9 @@ namespace dtEntity
       template <typename T>
       bool GetEntitySystem(ComponentType id, T*& es) const;
 
+      template <typename T>
+      bool GetES(T*& es) const;
+
       /**
        * Fill vector with all entity systems registered with
        * the entity manager
@@ -391,4 +394,22 @@ namespace dtEntity
       
       return true;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template <typename T>
+   bool EntityManager::GetES(T*& es) const
+   {
+      ComponentType ctype = T::TYPE;
+      EntitySystemStore::const_iterator i = mEntitySystemStore.find(ctype);
+      if(i == mEntitySystemStore.end())
+      {
+         es = NULL;
+         return false;
+      }
+      EntitySystem* s = i->second;
+      assert(dynamic_cast<T*>(s) != NULL);
+      es = static_cast<T*>(s);
+      return true;
+   }
+
 }
