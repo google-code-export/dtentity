@@ -175,18 +175,7 @@ namespace dtEntity
          LogManager::GetInstance().AddListener(new ConsoleLogHandler());
       }
 
-      if(addStatsHandler)
-      {
-         osgViewer::ViewerBase::Views views;
-         viewer.getViews(views);
-         for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
-         {
-            osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
-            stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
-            stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
-            (*i)->addEventHandler(stats);
-         }
-      }
+      
 
       SetupDataPaths(argc, argv, checkPaths);
 
@@ -201,6 +190,19 @@ namespace dtEntity
 
       SetupSceneGraph(viewer, em, pSceneNode);
     
+      if(addStatsHandler)
+      {
+         osgViewer::ViewerBase::Views views;
+         viewer.getViews(views);
+         for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
+         {
+            osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
+            stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
+            stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
+            (*i)->addEventHandler(stats);
+         }
+      }
+
       StartSystemMessage msg;
       em.EnqueueMessage(msg);
       return true;
