@@ -192,25 +192,51 @@ namespace dtEntity
 
       InitDtEntity(argc, argv, em);
      
-      SetupViewer(argc, argv, viewer, em, pSceneNode);
+      // give application system access to viewer
+      dtEntity::ApplicationSystem* appsystem;
+      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+      appsystem->SetViewer(&viewer);
 
+      DoScreenSetup(argc, argv, viewer, em);
+
+      SetupViewer(viewer, em, pSceneNode);
+    
       StartSystemMessage msg;
       em.EnqueueMessage(msg);
       return true;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void SetupViewer(int argc, char** argv, 
-      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode)
+   ////////////////////////////////////////////////////////////////////////// 
+   void SetupViewer(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode)
    {
       assert(pSceneNode != NULL);
 
       dtEntity::ApplicationSystem* appsystem;
       em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
       
-      appsystem->SetViewer(&viewer);
+      // install update traversal callback of application system into scene graph
+      // root node. Used for sending tick messages etc.
       appsystem->InstallUpdateCallback(pSceneNode);
 
+      // set scene graph root node as scene data for viewer. This is done again in camera setup,
+      // but to make it accessible immediately we add it here, first
+      appsystem->GetPrimaryView()->setSceneData(pSceneNode);
+
+      // add input handler as callback to primary camera. This is also done again in Camera setup,
+      // but is done here first so everything runs fine without a camera.
+      appsystem->GetPrimaryCamera()->setEventCallback(&appsystem->GetWindowManager()->GetInputHandler());
+
+      // create an entity holding the scene graph root as an attach point
+      LayerAttachPointSystem* layerattachsys;
+      bool found = em.GetEntitySystem(LayerAttachPointComponent::TYPE, layerattachsys);
+      assert(found);
+      layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void DoScreenSetup(int argc, char** argv, 
+      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em)
+   {
       int curArg = 1;
       int screenNum = -1;
       int winx = 100;
@@ -287,6 +313,9 @@ namespace dtEntity
          traits->screenNum = screenNum;
       }
       
+      dtEntity::ApplicationSystem* appsystem;
+      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+
       unsigned int contextId;
       bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits, contextId);
       assert(success);
@@ -294,17 +323,7 @@ namespace dtEntity
       if(screenNum != -1)
       {
          appsystem->GetWindowManager()->SetFullscreen(contextId, true);
-      }
-
-      // set scene graph root node as scene data for viewer. This is done again in camera setup,
-      // but to make it accessible immediately we add it here, first
-      appsystem->GetPrimaryView()->setSceneData(pSceneNode);
-      appsystem->GetPrimaryCamera()->setEventCallback(&appsystem->GetWindowManager()->GetInputHandler());
-
-      LayerAttachPointSystem* layerattachsys;
-      bool found = em.GetEntitySystem(LayerAttachPointComponent::TYPE, layerattachsys);
-      assert(found);
-      layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
+      } 
    }
 
    //////////////////////////////////////////////////////////////////////////
