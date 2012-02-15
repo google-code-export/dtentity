@@ -190,7 +190,7 @@ namespace dtEntity
 
       SetupDataPaths(argc, argv, checkPaths);
 
-      InitDtEntity(argc, argv, em);
+      AddDefaultEntitySystemsAndFactories(argc, argv, em);
      
       // give application system access to viewer
       dtEntity::ApplicationSystem* appsystem;
@@ -199,7 +199,7 @@ namespace dtEntity
 
       DoScreenSetup(argc, argv, viewer, em);
 
-      SetupViewer(viewer, em, pSceneNode);
+      SetupSceneGraph(viewer, em, pSceneNode);
     
       StartSystemMessage msg;
       em.EnqueueMessage(msg);
@@ -207,7 +207,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////// 
-   void SetupViewer(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode)
+   void SetupSceneGraph(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode)
    {
       assert(pSceneNode != NULL);
 
@@ -327,7 +327,7 @@ namespace dtEntity
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InitDtEntity(int argc, char** argv, EntityManager& em)
+   void AddDefaultEntitySystemsAndFactories(int argc, char** argv, EntityManager& em)
    {
       
       // this is a required component system, so add it immediately

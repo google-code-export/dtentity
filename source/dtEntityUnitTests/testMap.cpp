@@ -35,7 +35,7 @@ struct MapFixture
    MapFixture()
    {
       SetupDataPaths(0, NULL, true);
-      InitDtEntity(0, NULL, mEntityManager); 
+      AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
 

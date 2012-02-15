@@ -63,20 +63,23 @@ namespace dtEntity
     * @param standard c command line args    
     * @param em a valid entity manager
     */
-   void DT_ENTITY_EXPORT InitDtEntity(int argc, char** argv, dtEntity::EntityManager& em);
+   void DT_ENTITY_EXPORT AddDefaultEntitySystemsAndFactories(int argc, char** argv, dtEntity::EntityManager& em);
 
    /**
-    * Analyzes command line args and sets up osgViewer window accordingly
+    * Sets scene graph root node and adds callbacks
     * @param viewer An instance of either osgViewer::Viewer or osgViewer::CompositeViewer
     * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
     *        the main update callback that drives dtEntity is installed to this node. 
     */
-   void DT_ENTITY_EXPORT SetupViewer(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
+   void DT_ENTITY_EXPORT SetupSceneGraph(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
 
    /**
     * sets osg data paths from command line args or environment variables
     */
    bool DT_ENTITY_EXPORT SetupDataPaths(int argc, char** argv, bool checkPaths);
 
+   /** 
+     * analyze command line and open OSG window with correct traits
+     */
    void DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
 }
