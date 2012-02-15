@@ -213,6 +213,11 @@ namespace dtEntity
 
       dtEntity::ApplicationSystem* appsystem;
       em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+
+      if(appsystem->GetViewer() == NULL)
+      {
+         appsystem->SetViewer(&viewer);
+      }
       
       // install update traversal callback of application system into scene graph
       // root node. Used for sending tick messages etc.
