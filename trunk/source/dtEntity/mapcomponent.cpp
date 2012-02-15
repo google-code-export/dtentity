@@ -160,6 +160,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+
+   const StringId MapSystem::TYPE(SID("Map"));   
+
    MapSystem::MapSystem(EntityManager& em)
       : DefaultEntitySystem<MapComponent>(em)
       , mPluginManager(em, mMessageFactory)

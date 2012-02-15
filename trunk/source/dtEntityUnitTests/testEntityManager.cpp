@@ -21,7 +21,8 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
-
+#include <dtEntity/applicationcomponent.h>
+#include <dtEntity/mapcomponent.h>
 #include <UnitTest++.h>
 #include <MockObject.h>
 
@@ -130,35 +131,23 @@ namespace EMTest
    //------------------------------------------------------------------
    TEST(GetEntitySystem)
    {
-      // test does not work. Check on windows
-      ComponentType ctype = 123456;
       
-      TMockObject<EntitySystem> mock;
-      mock.Method(&EntitySystem::GetComponentType).Will(ctype);
-      mock.Method(&EntitySystem::OnAddedToEntityManager);
-      mock.Method(&EntitySystem::OnRemoveFromEntityManager);
-
-      EntitySystem* es = (EntitySystem*)mock;
       EntityManager* em = new EntityManager();
+      ApplicationSystem* appsys = new ApplicationSystem(*em);
+      em->AddEntitySystem(*appsys);
 
-      em->AddEntitySystem(*es);
+      MapSystem* mapsys = new MapSystem(*em);
+      em->AddEntitySystem(*mapsys);
       
-      EntitySystem* es2 = em->GetEntitySystem(ctype);
-      CHECK_EQUAL(es2, es);
+      ApplicationSystem* appsys2;
+      CHECK(em->GetES(appsys2));
+      CHECK_EQUAL(appsys, appsys2);
 
-      EntitySystem* es3;
-      bool success = em->GetEntitySystem(ctype, es3);
-      CHECK(success);
-      CHECK_EQUAL(es3, es);
+      MapSystem* mapsys2;
+      CHECK(em->GetES(mapsys2));
+      CHECK_EQUAL(mapsys, mapsys2);
 
-      em->RemoveEntitySystem(*es);
-
-      CHECK(!em->HasEntitySystem(ctype));
-
-      
-      CHECK_EQUAL(1u, mock.Method(&EntitySystem::OnRemoveFromEntityManager).Count());
-
-       delete em;
+      delete em;
    }
 
 

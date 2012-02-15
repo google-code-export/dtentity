@@ -130,6 +130,7 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
       typedef DefaultEntitySystem<MapComponent> BaseClass;
       typedef std::map<std::string, osg::ref_ptr<Spawner> > SpawnerStorage;
 
