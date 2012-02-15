@@ -462,28 +462,8 @@ namespace dtEntity
 
       em.GetMessagePump().ClearQueue();
       //GetEntityManager().GetMessagePump().UnregisterAll();
-
-      std::vector<EntitySystem*> es;
-      em.GetEntitySystems(es);
-      for(std::vector<EntitySystem*>::iterator i = es.begin(); i != es.end(); ++i)
-      {
-         // TODO this should not be hard coded
-         ComponentType t = (*i)->GetComponentType();
-         if(*i != this &&
-               t != dtEntity::SIDHash("Camera") &&
-               t != dtEntity::SIDHash("Application") &&
-               t != dtEntity::SIDHash("Layer") &&
-               t != dtEntity::SIDHash("LayerAttachPoint") &&
-               t != dtEntity::SIDHash("Group") &&
-               t != dtEntity::SIDHash("StaticMesh") &&
-               t != dtEntity::SIDHash("MatrixTransform") &&
-               t != dtEntity::SIDHash("Map") &&
-               t != dtEntity::SIDHash("Script") &&
-               t != dtEntity::SIDHash("PositionAttitudeTransform"))
-         {
-           em.RemoveEntitySystem(**i);
-         }
-      }
+      
+      mapsys->GetPluginManager().UnloadAllPlugins();      
 
       if(m.GetSceneName() != "")
       {

@@ -1456,20 +1456,15 @@ namespace dtEntity
             SerializeEntity(*mEntityManager, doc, names, mapelem, j->second);
          }
       }
-
      
-      // TODO under windows I get a crash in RapidXML if I 
-      // directly stream to the ofstream. Hmmm...
-      std::ostringstream os;
-      os << doc;
       std::ofstream of(p_dest.c_str());
-	  if(of.fail())
-	  {
-		  LOG_ERROR("Cannot open file for writing: " << p_dest);
-		  return false;
-	  }
+	   if(of.fail())
+	   {
+	 	  LOG_ERROR("Cannot open file for writing: " << p_dest);
+ 		  return false;
+      }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
-      of << os.str();
+      of << doc;
       of.close();
       return true;
    }
@@ -1534,11 +1529,6 @@ namespace dtEntity
          }
       }
 
-
-      // TODO under windows I get a crash in RapidXML if I 
-      // directly stream to the ofstream. Hmmm...
-      std::ostringstream os;
-      os << doc;
       std::ofstream of(path.c_str());
 
 		if(of.fail())
@@ -1547,7 +1537,7 @@ namespace dtEntity
 		  return false;
 		}
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
-      of << os.str();
+      of << doc;
       of.close();
 
       return true;

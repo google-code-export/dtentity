@@ -37,8 +37,7 @@ namespace dtEntity
        * Register a message type with the message factory
        * The template parameter holds the message class to instantiate
        * Usage example:
-       * mEntityManager->RegisterMessageType<TickMessage>(TickMessage::TYPE);
-       * @TODO move somewhere else?
+       * mMessageFactory->RegisterMessageType<TickMessage>(TickMessage::TYPE);
        * @param mtype MessageType id of message
        */
       ////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +49,6 @@ namespace dtEntity
 
       /**
        * fill up a vector with the types of all registered messages
-      * @TODO move somewhere else?
        */
       void GetRegisteredMessageTypes(std::vector<MessageType>& toFill);
 
@@ -59,7 +57,6 @@ namespace dtEntity
        * RegisterMessageType before it can be instantiated with CreateMessage.
        * Please note that you can simply create messages with 'new', this is
        * just a factory for generic script- and tool-side access
-      * * @TODO move somewhere else?
        * @param msgType type id of message class
        * @param msg Receives newly created message. Ownership of the message object
        *        is transfered to caller - post your message or delete it!

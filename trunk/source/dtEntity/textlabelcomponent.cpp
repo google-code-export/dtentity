@@ -55,7 +55,6 @@ namespace dtEntity
    const dtEntity::StringId TextLabelComponent::OffsetId(dtEntity::SID("Offset"));
    const dtEntity::StringId TextLabelComponent::CharacterHeightId(dtEntity::SID("CharacterHeight"));
    const dtEntity::StringId TextLabelComponent::FontId(dtEntity::SID("Font"));
-   const dtEntity::StringId TextLabelComponent::PixelOffsetId(dtEntity::SID("PixelOffset"));
    const dtEntity::StringId TextLabelComponent::AlignmentId(dtEntity::SID("Alignment"));
 
 
@@ -129,9 +128,6 @@ namespace dtEntity
 
             std::string font = props[FontId]->StringValue();
             SetFont(count, font);
-
-            osg::Vec2 po = props[PixelOffsetId]->Vec2Value();
-            SetPixelOffset(count, po);
 
             std::string align = props[AlignmentId]->StringValue();
             SetAlignment(count, align);
@@ -227,9 +223,6 @@ namespace dtEntity
          
          dtEntity::StringProperty font("TrueTypeFonts/FreeSans.ttf");
          props[FontId] = &font;
-
-         dtEntity::Vec2Property pixeloffset(osg::Vec2(0, 0));
-         props[PixelOffsetId] = &pixeloffset;
 
          dtEntity::StringProperty alignment("CENTER_CENTER");
          props[AlignmentId] = &alignment;
@@ -436,36 +429,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetPixelOffset(unsigned int textid, const osg::Vec2& o)
-   {
-      if(!mTextEntries[textid].valid())
-      {
-         return;
-      }
-      // TODO: Is there a clean way to shift text along pixels?
-      /*mTextEntries[textid]->SetOffset(o);
-
-      dtEntity::PropertyArray arr = mTexts.Get();
-      assert(arr.size() > textid);
-      dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      props[PixelOffsetId]->SetVec2(o);*/
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 TextLabelComponent::GetPixelOffset(unsigned int textid) const
-   {
-      if(!mTextEntries[textid].valid())
-      {
-         return osg::Vec2();
-      }
-      // TODO re-enable
-      return osg::Vec2();
-      //return mTextEntries[textid]->GetOffset();
-   }
-
-
-
-   ////////////////////////////////////////////////////////////////////////////
    void TextLabelComponent::SetBackdropColor(unsigned int textid, const osg::Vec4& c)
    {
       if(!mTextEntries[textid].valid())
@@ -650,7 +613,6 @@ namespace dtEntity
       AddScriptedMethod("setText", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetText));
       AddScriptedMethod("setOffset", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetOffset));
       AddScriptedMethod("setAlignment", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetAlignment));
-      AddScriptedMethod("setPixelOffset", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetPixelOffset));
       AddScriptedMethod("setColor", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetColor));
       AddScriptedMethod("setBackdropColor", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetBackdropColor));
       AddScriptedMethod("setHighlighted", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetHighlighted));
@@ -737,19 +699,6 @@ namespace dtEntity
       if(c)
       {
          c->SetAlignment(args[1]->UIntValue(), args[2]->StringValue());
-      }
-      
-      return new dtEntity::BoolProperty(true);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   dtEntity::Property* TextLabelSystem::ScriptSetPixelOffset(const dtEntity::PropertyArgs& args)
-   {
-      dtEntity::EntityId id = args[0]->UIntValue();
-      TextLabelComponent* c = GetComponent(id);
-      if(c)
-      {
-         c->SetPixelOffset(args[1]->UIntValue(), args[2]->Vec2Value());
       }
       
       return new dtEntity::BoolProperty(true);

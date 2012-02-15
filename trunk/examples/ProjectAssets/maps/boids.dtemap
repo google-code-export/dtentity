@@ -60,7 +60,6 @@
 	<entity>
 		<component type="Layer">
 			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-			<stringproperty name="Layer">default</stringproperty>
 		</component>
 		<component type="Light">
 			<vec4property name="Position" x="-1.0000000000" y="1.0000000000" z="1.0000000000" w="0.0000000000"/>
@@ -68,6 +67,7 @@
 		<component type="Map">
 			<stringproperty name="EntityName">LightSource</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
@@ -82,7 +82,6 @@
 	<entity>
 		<component type="Layer">
 			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-			<stringproperty name="Layer">default</stringproperty>
 		</component>
 		<component type="Map">
 			<stringproperty name="EntityName">Terrain</stringproperty>
@@ -209,7 +208,7 @@
 				<stringproperty name="0">StaticMesh</stringproperty>
 				<stringproperty name="1">Particle</stringproperty>
 			</arrayproperty>
-			<vec3property name="Position" x="-3.8445142129" y="0.0000000000" z="-5.0817976238"/>
+			<vec3property name="Position" x="-3.8445142129" y="13.4544641271" z="-5.0817972993"/>
 			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
@@ -269,11 +268,16 @@
 	</entity>
 	<entity>
 		<component type="Camera">
+			<doubleproperty name="AspectRatio" value="1.0349288486"/>
 			<vec4property name="ClearColor" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<uintproperty name="CullMask" value="32"/>
 			<vec3property name="EyeDirection" x="-0.9096127976" y="0.3076185968" z="-0.2792406799"/>
+			<doubleproperty name="FarClip" value="100000.0000003805"/>
+			<doubleproperty name="FieldOfView" value="45.0000000000"/>
+			<floatproperty name="LODScale" value="1.0000000000"/>
+			<doubleproperty name="NearClip" value="1.0000000000"/>
 			<vec3property name="Position" x="45.3167616559" y="-11.8623206382" z="9.2307528305"/>
 		</component>
-		<component type="EditorMotion"/>
 		<component type="Map">
 			<stringproperty name="EntityName">cam_0</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>

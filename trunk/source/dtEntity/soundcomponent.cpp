@@ -195,7 +195,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    SoundSystem::~SoundSystem()
    {
-      // TODO - Should we move this to the OnRemoveFromEntitymanager?
       dtEntity::AudioManager::DestroyInstance();
    }
 

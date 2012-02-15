@@ -287,8 +287,10 @@ namespace dtEntity
          traits->screenNum = screenNum;
       }
       
-      unsigned int contextId = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits);
-      
+      unsigned int contextId;
+      bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits, contextId);
+      assert(success);
+
       if(screenNum != -1)
       {
          appsystem->GetWindowManager()->SetFullscreen(contextId, true);

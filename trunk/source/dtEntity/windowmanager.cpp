@@ -116,9 +116,8 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   unsigned int OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   bool OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
    {
-      unsigned int contextId = 0;
       bool success = OpenWindowInternal(name, layername, traits, contextId);
       
       if(success)
@@ -127,10 +126,9 @@ namespace dtEntity
          msg.SetName(name);
          msg.SetContextId(contextId);
          mEntityManager->EmitMessage(msg);
-         return contextId;
+         return true;
       }
-      //TODO return an error code instead
-      return 0;
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
