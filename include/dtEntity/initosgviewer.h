@@ -37,8 +37,10 @@ namespace dtEntity
    class EntityManager;
 
    /**
-    * Convenience setup function for dtEntity
-    * Installs a log handler, calls SetupDataPaths(), calls InitDtEntity(), calls SetupViewer()
+    * Convenience setup function for dtEntity.
+    * If you want to do fancy stuff in your setup then maybe you should not call this, instead write your own!
+    *
+    * Installs a log handler, calls SetupDataPaths(), calls InitDtEntity(), calls SetupViewer(), then calls DoScreenSetup()
     * @param argc number of command line args
     * @param standard c command line args
     * @param viewer An instance of either osgViewer::Viewer or osgViewer::CompositeViewer
@@ -69,11 +71,12 @@ namespace dtEntity
     * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
     *        the main update callback that drives dtEntity is installed to this node. 
     */
-   void DT_ENTITY_EXPORT SetupViewer(int argc, char** argv, 
-      osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
+   void DT_ENTITY_EXPORT SetupViewer(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
 
    /**
     * sets osg data paths from command line args or environment variables
     */
    bool DT_ENTITY_EXPORT SetupDataPaths(int argc, char** argv, bool checkPaths);
+
+   void DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
 }
