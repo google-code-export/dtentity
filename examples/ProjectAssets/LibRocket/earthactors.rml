@@ -1,0 +1,42 @@
+<rml>
+	<head>
+		<title>Demo</title>
+		<link type="text/template" href="window.rml" />
+		<style>
+			body
+			{				
+				position: absolute;
+				width: 200px;
+				height: 400px; 
+				top: 30px; 
+				left: 30px;
+				margin: auto;
+			}
+			
+			div#title_bar div#icon
+			{
+				display: none;
+			}
+			
+			div#content
+			{
+				text-align: left;
+			}
+			
+			div.dragable
+			{
+			   drag:clone;
+			   position: absolute;
+			   top: 30px; 
+			   left: 30px;
+			   z-index: top;
+			}
+		</style>
+	</head>
+	<body>
+	  <div class="dragable" id="thedraggable">
+		<img src="bar.png"  />
+	  </div>
+	</body>
+	
+</rml>
