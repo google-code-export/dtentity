@@ -193,17 +193,26 @@ var actors = context.loadDocument("LibRocket/earthactors.rml");
 //actors.getElementById("title").setInnerRML("dtEntity Earth");
 actors.show();
 
-actors.getElementById("thedraggable").addEventListener("dragend", function() {
-  var pickpos = getMousePickPos();
-  if(pickpos) {
-	createThing(pickpos);
-  }
+actors.getElementById("jet_draggable").addEventListener("dragend", function() {
+   createThing("jet");  
+});
+
+actors.getElementById("chopper_draggable").addEventListener("dragend", function() {
+  createThing("chopper");
+});
+
+actors.getElementById("tank_draggable").addEventListener("dragend", function() {
+  createThing("tank");
 });
 ////////////////////////////////////////////////////////////////////////////////
 // Create entities
 ////////////////////////////////////////////////////////////////////////////////
 
-function createThing(position) {
+function createThing(what) {
+	var position = getMousePickPos();
+	if(!position) {
+	  return;
+    }	  
     //var quat1 = osg.Quat.makeRotate(anglex, 0,0,1);
 	//var quat2 = osg.Quat.makeRotate(anglez, 0,1,0);
 	//var quat = osg.Quat.mult(quat2, quat1);
@@ -233,15 +242,15 @@ function createThing(position) {
 	  },
 	  HUD : {
 		Offset : [0,0,1],
-		PixelOffset : [-15, 15],
+		PixelOffset : [-32, 32],
 		HideWhenNormalPointsAway : true
 	  }
 	});
 	
 	var entitydiv = rocketSystem.instanceElement(null, "*", "div");
-	entitydiv.style ="position: absolute;width:200px;height:64px;";
+	entitydiv.style ="position: absolute;width:64px;height:64px;";
 	entitydiv.setId("HUD_" + entityid);
-	entitydiv.setInnerRML("<img src='bar.png' />");
+	entitydiv.setInnerRML("<img src='" + what + "_sml.png' onmouseover='this.src=\"" + what + "_hil.png\"' onmouseout='this.src=\"" + what + "_sml.png\"'/>");
 	huds.appendChild(entitydiv);
 	var hudcomp = hudSystem.getComponent(entityid);
 	hudcomp.Element = "HUD_" + entityid;
@@ -251,3 +260,10 @@ function createThing(position) {
 
 
 
+function mouseover(self) {
+  self.src = "chopper_big.png";
+  /*println("MouseOver! NAme: " + name + " params: " + params);
+  for(var k in params) {
+    println("name: " + k + " val: " + params[k]);
+  }*/
+}

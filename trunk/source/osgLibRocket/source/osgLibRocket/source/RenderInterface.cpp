@@ -589,6 +589,8 @@ namespace osgLibRocket
 	{
 
 		std::string src = source.CString();
+
+      // Hack: Sometimes libRocket attaches that string to paths, sometimes it doesn't (when cloning elements)
       if(src.substr(0, 10) != "LibRocket/")
       {
          src = "LibRocket/" + src;

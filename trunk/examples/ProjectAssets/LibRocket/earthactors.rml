@@ -25,17 +25,19 @@
 			
 			div.dragable
 			{
-			   drag:clone;
-			   position: absolute;
-			   top: 30px; 
-			   left: 30px;
-			   z-index: top;
+			   drag:clone;			   
 			}
 		</style>
 	</head>
 	<body>
-	  <div class="dragable" id="thedraggable">
-		<img src="bar.png"  />
+	  <div class="dragable" id="jet_draggable">
+		<img src="jet_big.png"  />
+	  </div>
+	  <div class="dragable" id="chopper_draggable">
+		<img src="chopper_big.png"  />
+	  </div>
+	  <div class="dragable" id="tank_draggable">
+		<img src="tank_big.png"  />
 	  </div>
 	</body>
 	
