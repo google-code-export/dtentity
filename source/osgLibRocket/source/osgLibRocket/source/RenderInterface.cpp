@@ -589,6 +589,10 @@ namespace osgLibRocket
 	{
 
 		std::string src = source.CString();
+      if(src.substr(0, 10) != "LibRocket/")
+      {
+         src = "LibRocket/" + src;
+      }
 		std::string path = osgDB::findDataFile(src);
 		if(path.empty())
 		{
