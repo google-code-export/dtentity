@@ -22,6 +22,7 @@
 
 #include "export.h"
 
+#include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/property.h>
@@ -44,6 +45,7 @@ namespace dtEntityRocket
       static const dtEntity::StringId PixelOffsetId;
       static const dtEntity::StringId VisibleId;
       static const dtEntity::StringId AlignToBoundingSphereCenterId;
+      static const dtEntity::StringId HideWhenNormalPointsAwayId;
 
       HUDComponent();
       virtual ~HUDComponent();
@@ -80,6 +82,12 @@ namespace dtEntityRocket
       void SetAlignToBoundingSphereCenter(bool v) { mAlignToBoundingSphereCenter.Set(v); }
       bool GetAlignToBoundingSphereCenter() const { return mAlignToBoundingSphereCenter.Get(); }
 
+      /**
+        * set HUD to hidden when object relative vector [0,0,1] points away from camera
+        */
+      void SetHideWhenNormalPointsAway(bool v) { mHideWhenNormalPointsAway.Set(v); }
+      bool GetHideWhenNormalPointsAway() const { return mHideWhenNormalPointsAway.Get(); }
+
    private:
 
       dtEntity::Entity* mEntity;
@@ -89,6 +97,7 @@ namespace dtEntityRocket
       dtEntity::Vec2Property mPixelOffset;
       dtEntity::BoolProperty mVisible;
       dtEntity::BoolProperty mAlignToBoundingSphereCenter;
+      dtEntity::BoolProperty mHideWhenNormalPointsAway;
       
    };
 
@@ -121,5 +130,6 @@ namespace dtEntityRocket
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mVisibilityChangedFunctor;
       dtEntity::BoolProperty mEnabled;
+      osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDrawManager;
    };
 }

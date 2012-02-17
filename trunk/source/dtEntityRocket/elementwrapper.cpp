@@ -157,6 +157,7 @@ namespace dtEntityRocket
       element->SetId(ToStdString(args[0]).c_str());
       return Undefined();
    }
+   
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetInnerRML(const Arguments& args)
    {  
@@ -164,6 +165,13 @@ namespace dtEntityRocket
       Rocket::Core::String s;
       element->GetInnerRML(s);
       return String::New(s.CString());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELGetParentNode(const Arguments& args)
+   {  
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());  
+      return WrapElement(args.Holder()->CreationContext(), element->GetParentNode());
    }
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -442,6 +450,7 @@ namespace dtEntityRocket
         proto->Set("getElementById", FunctionTemplate::New(ELGetElementById));
         proto->Set("getId", FunctionTemplate::New(ELGetId));
         proto->Set("getInnerRML", FunctionTemplate::New(ELGetInnerRML));
+        proto->Set("getParentNode", FunctionTemplate::New(ELGetParentNode));
 		  proto->Set("getProperty", FunctionTemplate::New(ELGetProperty));
 		  proto->Set("removeChild", FunctionTemplate::New(ELRemoveChild));
 		  proto->Set("removeEventListener", FunctionTemplate::New(ELRemoveEventListener));
