@@ -79,7 +79,7 @@ namespace osgLibRocket
       OSG_FATAL << "Please set libRocket render interface!\n";
     }
 
-    setDataVariance(osg::Object::DYNAMIC);
+    setDataVariance(osg::Object::STATIC);
 
     // if this is not set, osgViewer does not know how to set up initial camera transform:
     setInitialBound(osg::BoundingSphere(osg::Vec3(500, 500, 0), 500));
@@ -111,8 +111,10 @@ namespace osgLibRocket
 
     }
 
-
-    getOrCreateStateSet()->setRenderBinDetails(1000, "TraversalOrderBin");
+    setCullingActive(false);
+    osg::StateSet* ss = getOrCreateStateSet();
+    ss->setRenderBinDetails(1000, "TraversalOrderBin");
+    ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
   }
 
 

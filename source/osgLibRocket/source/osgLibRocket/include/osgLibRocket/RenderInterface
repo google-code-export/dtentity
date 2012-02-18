@@ -66,8 +66,8 @@ namespace osgLibRocket
 
 	private:
 
-		osg::Node* createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useDisplayList);
-
+		osg::Object* createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useDisplayList);
+   
 		osg::Group* _renderTarget;
 		osg::StateSet* _renderTargetStateSet;
 
@@ -80,6 +80,6 @@ namespace osgLibRocket
 		int _screenWidth;
 		int _screenHeight;
       bool _fullScreen;
-
+      osg::ref_ptr<osg::Geode> _geode;
 	};
 }

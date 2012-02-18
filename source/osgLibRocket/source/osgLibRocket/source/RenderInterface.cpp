@@ -34,17 +34,17 @@ namespace osgLibRocket
 {
 	std::string uniformName = "LibRocketPosition";
 
-	RenderInterfaceInstanced::RenderInterfaceInstanced()
+	RenderInterface::RenderInterface()
 		: _scissorsEnabled(false)
 		, _fullScreen(false)
 		, _geode(new osg::Geode())
 		, _renderTarget(NULL)
 	{
-		_geode->setDataVariance(osg::Object::DYNAMIC);
+		_geode->setDataVariance(osg::Object::STATIC);
 	}
 
 
-	void RenderInterfaceInstanced::setRenderTarget(osg::Group* grp, int w, int h, bool fullscreen)
+	void RenderInterface::setRenderTarget(osg::Group* grp, int w, int h, bool fullscreen)
 	{
 		_fullScreen = fullscreen;
 		_screenWidth = w;
@@ -107,29 +107,30 @@ namespace osgLibRocket
 			 _geode->getOrCreateStateSet()->setAttributeAndModes(prg);
 		}
 
-		for(unsigned int i = 0; i < _geode->getNumDrawables(); ++i)
+		/*for(unsigned int i = 0; i < _geode->getNumDrawables(); ++i)
 		{
 			osg::Geometry* geom = static_cast<osg::Geometry*>(_geode->getDrawable(i));
 			assert(geom->getNumPrimitiveSets() == 1);
 			geom->getPrimitiveSet(0)->setNumInstances(0);
 			osg::StateSet* ss = geom->getOrCreateStateSet();
-		}
+		}*/
+      _geode->removeDrawables(0, _geode->getNumDrawables());
 	}
 
 
-	osg::Group* RenderInterfaceInstanced::getRenderTarget() const
+	osg::Group* RenderInterface::getRenderTarget() const
 	{
 		return _renderTarget;
 	}
 
 
-	osg::Geometry* RenderInterfaceInstanced::createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useVBOs)
+	osg::Object* RenderInterface::createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useVBOs)
 	{
 
 		osg::Geometry* geometry = new osg::Geometry();
 		geometry->setUseDisplayList(false);
 		geometry->setUseVertexBufferObjects(useVBOs);
-		geometry->setDataVariance(osg::Object::DYNAMIC);
+      geometry->setDataVariance(osg::Object::STATIC);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -172,10 +173,10 @@ namespace osgLibRocket
 	/// @param[in] num_indices The number of indices passed to the function. This will always be a multiple of three.
 	/// @param[in] texture The texture to be applied to the geometry. This may be NULL, in which case the geometry is untextured.
 	/// @param[in] translation The translation to apply to the geometry.
-	void RenderInterfaceInstanced::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
+	void RenderInterface::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
 	{
 
-		osg::Geometry* geometry = createGeometry(vertices, num_vertices, indices, num_indices, texture, false);
+      osg::Geometry* geometry = static_cast<osg::Geometry*>(createGeometry(vertices, num_vertices, indices, num_indices, texture, false));
 
 		osg::MatrixTransform* trans = new osg::MatrixTransform();
 		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
@@ -203,9 +204,9 @@ namespace osgLibRocket
 	/// @param[in] num_indices The number of indices passed to the function. This will always be a multiple of three.
 	/// @param[in] texture The texture to be applied to the geometry. This may be NULL, in which case the geometry is untextured.
 	/// @return The application-specific compiled geometry. Compiled geometry will be stored and rendered using RenderCompiledGeometry() in future calls, and released with ReleaseCompiledGeometry() when it is no longer needed.
-	Rocket::Core::CompiledGeometryHandle RenderInterfaceInstanced::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture)
+	Rocket::Core::CompiledGeometryHandle RenderInterface::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture)
 	{
-		osg::Geometry* node = createGeometry(vertices, num_vertices, indices, num_indices, texture, true);
+		osg::Geometry* node = static_cast<osg::Geometry*>(createGeometry(vertices, num_vertices, indices, num_indices, texture, true));
 		node->ref();
 		osg::Uniform* posuni = new osg::Uniform(osg::Uniform::FLOAT_VEC2, uniformName);
 		node->getOrCreateStateSet()->addUniform(posuni);
@@ -216,7 +217,7 @@ namespace osgLibRocket
 	/// Called by Rocket when it wants to render application-compiled geometry.
 	/// @param[in] geometry The application-specific compiled geometry to render.
 	/// @param[in] translation The translation to apply to the geometry.
-	void RenderInterfaceInstanced::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geo, const Rocket::Core::Vector2f& translation)
+	void RenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geo, const Rocket::Core::Vector2f& translation)
 	{
 
 		osg::Geometry* geometry = reinterpret_cast<osg::Geometry*>(geo);
@@ -252,7 +253,7 @@ namespace osgLibRocket
 
 	/// Called by Rocket when it wants to release application-compiled geometry.
 	/// @param[in] geometry The application-specific compiled geometry to release.
-	void RenderInterfaceInstanced::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle geo)
+	void RenderInterface::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle geo)
 	{
 		osg::Geometry* geometry = reinterpret_cast<osg::Geometry*>(geo);
 
@@ -268,7 +269,7 @@ namespace osgLibRocket
 
 	/// Called by Rocket when it wants to enable or disable scissoring to clip content.
 	/// @param[in] enable True if scissoring is to enabled, false if it is to be disabled.
-	void RenderInterfaceInstanced::EnableScissorRegion(bool enable)
+	void RenderInterface::EnableScissorRegion(bool enable)
 	{
 		// cannot use scissors when rendering to in-scene geometry
 		if(_fullScreen)
@@ -283,13 +284,13 @@ namespace osgLibRocket
 	/// @param[in] y The top-most pixel to be rendered. All pixels to the top of this should be clipped.
 	/// @param[in] width The width of the scissored region. All pixels to the right of (x + width) should be clipped.
 	/// @param[in] height The height of the scissored region. All pixels to below (y + height) should be clipped.
-	void RenderInterfaceInstanced::SetScissorRegion(int x, int y, int width, int height)
+	void RenderInterface::SetScissorRegion(int x, int y, int width, int height)
 	{
 		_scissorTest = new osg::Scissor(x, _screenHeight - y - height, width, height);
 	}
 
 
-	void RenderInterfaceInstanced::AddTexture(Rocket::Core::TextureHandle& texture_handle, osg::Image* image)
+	void RenderInterface::AddTexture(Rocket::Core::TextureHandle& texture_handle, osg::Image* image)
 	{
 		osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D();
 		texture->setResizeNonPowerOfTwoHint(false);
@@ -316,10 +317,14 @@ namespace osgLibRocket
 	/// @param[out] texture_dimensions The variable to write the dimensions of the loaded texture.
 	/// @param[in] source The application-defined image source, joined with the path of the referencing document.
 	/// @return True if the load attempt succeeded and the handle and dimensions are valid, false if not.
-	bool RenderInterfaceInstanced::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source)
+	bool RenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source)
 	{
+      std::string src = source.CString();
+      if(src.substr(0, 10) != "LibRocket/")
+      {
+         src = "LibRocket/" + src;
+      }
 
-		std::string src = source.CString();
 		std::string path = osgDB::findDataFile(src);
 		if(path.empty())
 		{
@@ -348,7 +353,7 @@ namespace osgLibRocket
 	/// @param[in] source The raw 8-bit texture data. Each pixel is made up of four 8-bit values, indicating red, green, blue and alpha in that order.
 	/// @param[in] source_dimensions The dimensions, in pixels, of the source data.
 	/// @return True if the texture generation succeeded and the handle is valid, false if not.
-	bool RenderInterfaceInstanced::GenerateTexture(Rocket::Core::TextureHandle& texture_handle, const Rocket::Core::byte* source, const Rocket::Core::Vector2i& source_dimensions)
+	bool RenderInterface::GenerateTexture(Rocket::Core::TextureHandle& texture_handle, const Rocket::Core::byte* source, const Rocket::Core::Vector2i& source_dimensions)
 	{
 
 		osg::ref_ptr<osg::Image> img = new osg::Image();
@@ -364,7 +369,7 @@ namespace osgLibRocket
 
 	/// Called by Rocket when a loaded texture is no longer required.
 	/// @param texture The texture handle to release.
-	void RenderInterfaceInstanced::ReleaseTexture(Rocket::Core::TextureHandle th)
+	void RenderInterface::ReleaseTexture(Rocket::Core::TextureHandle th)
 	{
 		osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(th);
 		texture->unref();
@@ -372,7 +377,7 @@ namespace osgLibRocket
 
 
 	/// Called when this render interface is released.
-	void RenderInterfaceInstanced::Release()
+	void RenderInterface::Release()
 	{
 
 	}
@@ -395,7 +400,22 @@ namespace osgLibRocket
       _fullScreen = fullscreen;
 		_screenWidth = w;
 		_screenHeight = h;
-		grp->removeChildren(0, grp->getNumChildren());
+
+      unsigned int i = 0;
+      while(i < grp->getNumChildren())
+      {
+         osg::Node* node = grp->getChild(i);
+         
+         if(node->referenceCount() == 2)
+         {
+		      grp->removeChild(i);
+         }
+         else
+         {
+            node->unref();
+            ++i;
+         }
+      }
 
 		if(_renderTarget != grp)
 		{
@@ -412,11 +432,12 @@ namespace osgLibRocket
 		return _renderTarget;
 	}
 
-	osg::Node* RenderInterface::createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useDisplayList)
+	osg::Object* RenderInterface::createGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, bool useVBO)
 	{
 
 		osg::Geometry* geometry = new osg::Geometry();
-		geometry->setUseDisplayList(useDisplayList);
+		geometry->setUseDisplayList(false);
+      geometry->setUseVertexBufferObjects(useVBO);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -441,16 +462,19 @@ namespace osgLibRocket
 
 		if(texture != 0)
 		{
-			osg::Texture* tex = reinterpret_cast<osg::Texture*>(texture);
+			osg::StateSet* ss = reinterpret_cast<osg::StateSet*>(texture);
 			geometry->setTexCoordArray(0, texcoords);
-			osg::StateSet* ss = geometry->getOrCreateStateSet();
-			ss->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+         geometry->setStateSet(ss);
 		}
 
 
 		osg::Geode* geode = new osg::Geode();
+      geode->setCullingActive(false);
 		geode->addDrawable(geometry);
-		return geode;
+      osg::MatrixTransform* mt = new osg::MatrixTransform();
+      mt->addChild(geode);
+      mt->setCullingActive(false);
+		return mt;
 	}
 
 
@@ -465,15 +489,13 @@ namespace osgLibRocket
 	void RenderInterface::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
 	{
 
-		osg::Node* node = createGeometry(vertices, num_vertices, indices, num_indices, texture, false);
+		osg::MatrixTransform* trans = static_cast<osg::MatrixTransform*>(createGeometry(vertices, num_vertices, indices, num_indices, texture, false));
 
-		osg::MatrixTransform* trans = new osg::MatrixTransform();
 		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
-		trans->addChild(node);
 
       if(_scissorsEnabled)
       {
-         node->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
+         trans->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
       }
       _renderTarget->addChild(trans);
       //_renderTarget->dirtyBound();
@@ -492,7 +514,7 @@ namespace osgLibRocket
 	/// @return The application-specific compiled geometry. Compiled geometry will be stored and rendered using RenderCompiledGeometry() in future calls, and released with ReleaseCompiledGeometry() when it is no longer needed.
 	Rocket::Core::CompiledGeometryHandle RenderInterface::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture)
 	{
-		osg::Node* node = createGeometry(vertices, num_vertices, indices, num_indices, texture, true);
+		osg::Object* node = createGeometry(vertices, num_vertices, indices, num_indices, texture, true);
 		node->ref();
 		return reinterpret_cast<Rocket::Core::CompiledGeometryHandle>(node);
 	}
@@ -503,27 +525,15 @@ namespace osgLibRocket
 	void RenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry, const Rocket::Core::Vector2f& translation)
 	{
 
-		osg::Node* node = reinterpret_cast<osg::Node*>(geometry);
-		{
-			osg::MatrixTransform* trans = new osg::MatrixTransform();
-			trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
-			trans->addChild(node);
-
-			if(_scissorsEnabled)
-			{
-				node->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, osg::StateAttribute::ON);
-			}
-			else
-			{
-				osg::StateSet* ss = node->getStateSet();
-				if(ss)
-				{
-					node->getOrCreateStateSet()->removeAttribute(_scissorTest);
-				}
-			}
-
-			_renderTarget->addChild(trans);
-		}
+		osg::MatrixTransform* trans = reinterpret_cast<osg::MatrixTransform*>(geometry);		
+		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
+		trans->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, _scissorsEnabled ? osg::StateAttribute::ON : osg::StateAttribute::OFF);
+		
+      if(trans->referenceCount() == 1)
+      {
+		   _renderTarget->addChild(trans);
+      }
+      trans->ref();
 	}
 
 	/// Called by Rocket when it wants to release application-compiled geometry.
@@ -576,8 +586,11 @@ namespace osgLibRocket
          texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
 		   texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
       }
-      texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(texture.get());
-      texture->ref();
+      //texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(texture.get());
+      osg::StateSet* ss = new osg::StateSet();
+	   ss->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+      ss->ref();
+      texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(ss);
 	}
 
 	/// Called by Rocket when a texture is required by the library.
