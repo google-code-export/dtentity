@@ -232,14 +232,14 @@ function createThing(what) {
 	  PositionAttitudeTransform: {
 		Position : position,
 		Attitude: rot,
-		Children: ["StaticMesh"],
+		//Children: ["StaticMesh"],
 		Scale : [100,100,100]
 
 	  },
-	  StaticMesh: 
+	  /*StaticMesh: 
 	  {
 	    Mesh:"StaticMeshes/articulation_test.ive"
-	  },
+	  },*/
 	  HUD : {
 		Offset : [0,0,1],
 		PixelOffset : [-32, 32],
