@@ -280,6 +280,7 @@ namespace dtEntity
         * Maps with lowest values are loaded first
         */
       unsigned int GetMapSaveOrder(const std::string& path);
+      void SetMapSaveOrder(const std::string& path, int);
 
       /**
        * Delete instances that were created from given map
