@@ -196,7 +196,7 @@ namespace dtEntityQtWidgets
             {
                QString mapname;
                stream >> mapname;
-               //MoveMapToRow(mapname, row);
+               EmitMoveMapToRow(mapname, row);
                return false;
             }
          }
@@ -242,9 +242,8 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityTreeModel::MoveMapToRow(const QString& mapname, int row)
+   void EntityTreeModel::EmitMoveMapToRow(const QString& mapname, int row)
    {
-      
       unsigned int saveorder = 0;
       
       for(int i = 0; i < mRootItem->childCount(); ++i)
@@ -256,19 +255,19 @@ namespace dtEntityQtWidgets
          EntityTreeItem* item = mRootItem->child(i);
          if(item->GetItemType() == EntityTreeType::MAP)
          {
-            saveorder = item->mSaveOrder;
-            break;
+            emit MoveMapToRow(mapname, saveorder);
+            return;
          }
       }
            
-      dtEntity::MapUnloadedMessage msg;
+      /*dtEntity::MapUnloadedMessage msg;
       msg.SetMapPath(mapname.toStdString());
       OnMapRemoved(msg);
 
       dtEntity::MapBeginLoadMessage msg2;
       msg2.SetMapPath(mapname.toStdString());
       msg2.SetSaveOrder(saveorder);
-      OnMapBeginAdd(msg2);
+      OnMapBeginAdd(msg2);*/
      
    }
 
@@ -1297,7 +1296,7 @@ namespace dtEntityQtWidgets
       connect(model, SIGNAL(EntityWasDeselected(QModelIndex)), view, SLOT(EntityWasDeselected(QModelIndex)));
       connect(model, SIGNAL(MoveEntityToMap(dtEntity::EntityId, QString)), this, SLOT(OnMoveEntityToMap(dtEntity::EntityId, QString)));
       connect(model, SIGNAL(MoveSpawnerToMap(QString, QString, QString)), this, SLOT(OnMoveSpawnerToMap(QString, QString, QString)));
-
+      connect(model, SIGNAL(MoveMapToRow(QString, int)), this, SLOT(OnMoveMapToRow(QString, int)));
       connect(model, SIGNAL(SceneLoaded()), view, SLOT(OnSceneLoaded()));
 
       dtEntity::MapSystem* mtsystem;
@@ -1620,6 +1619,113 @@ namespace dtEntityQtWidgets
          msg.SetMapName(spwnr->GetMapName());
          mEntityManager->EmitMessage(msg);
       }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeController::OnMoveMapToRow(const QString& mapname, int saveorder)
+   {
+      dtEntity::MapSystem* mapsys;
+      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mapsys);
+
+      if(mapsys->GetMapSaveOrder(mapname.toStdString()) == saveorder)
+      {
+         return;
+      }
+
+      std::map<std::string, dtEntity::Spawner*> spawners;
+      mapsys->GetAllSpawners(spawners);
+
+      std::map<std::string, dtEntity::Spawner*>::iterator i;
+      // TODO remove spawners recursively
+      for(i = spawners.begin(); i != spawners.end(); ++i)
+      {
+         dtEntity::Spawner* spwnr = i->second;
+         if(spwnr->GetMapName() == mapname.toStdString())
+         {
+            dtEntity::SpawnerRemovedMessage msg;
+            msg.SetName(spwnr->GetName());
+            msg.SetMapName(spwnr->GetMapName());
+            msg.SetCategory(spwnr->GetGUICategory());
+            mModel->EnqueueMessage(msg);
+         }
+      }
+
+      std::vector<dtEntity::EntityId> entities;
+      mapsys->GetEntitiesInMap(mapname.toStdString(), entities);
+
+      std::vector<dtEntity::EntityId>::iterator j;
+      for(j = entities.begin(); j != entities.end(); ++j)
+      {
+         dtEntity::EntityId eid = *j;
+         dtEntity::MapComponent* mapcomp;
+         if(mEntityManager->GetComponent(eid, mapcomp))
+         {
+            dtEntity::EntityRemovedFromSceneMessage msg;
+            msg.SetAboutEntityId(eid);
+            msg.SetEntityName(mapcomp->GetEntityName());
+            msg.SetUniqueId(mapcomp->GetUniqueId());
+            msg.SetMapName(mapcomp->GetMapName());
+            mModel->EnqueueMessage(msg);
+         }
+      }
+
+      {
+         dtEntity::MapUnloadedMessage msg;
+         msg.SetMapPath(mapname.toStdString());
+         mModel->EnqueueMessage(msg);
+      }
+     
+      std::vector<std::string> maps = mapsys->GetLoadedMaps();
+      for(std::vector<std::string>::iterator k = maps.begin(); k != maps.end(); ++k)
+      {
+         int oldorder = mapsys->GetMapSaveOrder(*k);
+         if(oldorder >= saveorder)
+         {
+            mapsys->SetMapSaveOrder(*k, oldorder + 1);
+         }
+      }
+      mapsys->SetMapSaveOrder(mapname.toStdString(), saveorder);
+      {
+         dtEntity::MapBeginLoadMessage msg;
+         msg.SetMapPath(mapname.toStdString());
+         msg.SetSaveOrder(saveorder);
+         mModel->EnqueueMessage(msg);
+      }
+
+      for(i = spawners.begin(); i != spawners.end(); ++i)
+      {
+         dtEntity::Spawner* spwnr = i->second;
+         if(spwnr->GetMapName() == mapname.toStdString())
+         {
+            dtEntity::SpawnerAddedMessage msg;
+            msg.SetName(spwnr->GetName());
+            msg.SetMapName(spwnr->GetMapName());
+            // TODO add spawners recursively
+            if(spwnr->GetParent() != 0)
+            {
+               msg.SetParentName(spwnr->GetParent()->GetName());
+            }
+            mModel->EnqueueMessage(msg);
+         }
+      }
+
+      for(j = entities.begin(); j != entities.end(); ++j)
+      {
+         dtEntity::EntityId eid = *j;
+         dtEntity::MapComponent* mapcomp;
+         if(mEntityManager->GetComponent(eid, mapcomp))
+         {
+            dtEntity::EntityAddedToSceneMessage msg;
+            msg.SetAboutEntityId(eid);
+            msg.SetEntityName(mapcomp->GetEntityName());
+            msg.SetUniqueId(mapcomp->GetUniqueId());
+            msg.SetMapName(mapcomp->GetMapName());
+            mModel->EnqueueMessage(msg);
+         }
+      }
+
+      
 
    }
 }

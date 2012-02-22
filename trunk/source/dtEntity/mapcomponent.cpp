@@ -520,6 +520,22 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void MapSystem::SetMapSaveOrder(const std::string& path, int order)
+   {
+      for(LoadedMaps::iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
+      {
+         if(i->mMapPath == path)
+         {
+            MapData data = *i;
+            mLoadedMaps.erase(i);
+            data.mSaveOrder = order;
+            mLoadedMaps.push_back(data);
+            return;
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::DeleteEntitiesByMap(const std::string& mapName)
    {
       if(!IsMapLoaded(mapName))
