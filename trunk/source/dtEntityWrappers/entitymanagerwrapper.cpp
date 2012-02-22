@@ -208,7 +208,7 @@ namespace dtEntityWrappers
       {
          Handle<Value> propn = propnames->Get(i);
          std::string propname = ToStdString(propn);
-         dtEntity::Property* prop = msg->Get(dtEntity::SIDHash(propname));
+         dtEntity::Property* prop = msg->Get(dtEntity::SID(propname));
          if(!prop)
          {
             LOG_ERROR("Error setting message values: Message "

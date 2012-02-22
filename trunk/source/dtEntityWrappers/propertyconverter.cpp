@@ -290,7 +290,7 @@ namespace dtEntityWrappers
             {
                return ThrowError("Unknown datatype encountered!");
             }
-            groupprop->Add(dtEntity::SIDHash(kname), newprop);
+            groupprop->Add(dtEntity::SID(kname), newprop);
          }
 
          break;
