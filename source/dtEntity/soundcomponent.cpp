@@ -313,11 +313,13 @@ namespace dtEntity
       if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
       {
          osg::Camera* currCam = pAppSys->GetPrimaryCamera();
-         osg::Vec3 camPos, camLookAt, camUp;
-         currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
-         dtEntity::AudioManager::GetListener()->SetPosition(camPos);
-         dtEntity::AudioManager::GetListener()->SetOrientation(camLookAt - camPos, camUp);
-
+         if(currCam)
+         {
+            osg::Vec3 camPos, camLookAt, camUp;
+            currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
+            dtEntity::AudioManager::GetListener()->SetPosition(camPos);
+            dtEntity::AudioManager::GetListener()->SetOrientation(camLookAt - camPos, camUp);
+         }
          // TODO add velocity to listener
       }
    }
