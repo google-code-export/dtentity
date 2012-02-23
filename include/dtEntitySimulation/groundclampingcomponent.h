@@ -128,7 +128,7 @@ namespace dtEntitySimulation
      
       static const dtEntity::StringId EnabledId;
       static const dtEntity::StringId IntersectLayerId;
-
+      static const dtEntity::StringId FetchLODsId;
 
       GroundClampingSystem(dtEntity::EntityManager& em);
       ~GroundClampingSystem();
@@ -169,6 +169,7 @@ namespace dtEntitySimulation
 
       dtEntity::BoolProperty mEnabled;
       dtEntity::StringIdProperty mIntersectLayer;
+      dtEntity::BoolProperty mFetchLODs;
 
       osgSim::LineOfSight mLos;
       dtEntity::CameraComponent* mCamera;

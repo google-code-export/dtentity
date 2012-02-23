@@ -46,10 +46,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void Spawner::InitFromEntity(const Entity& entity)
    {
-      std::list<const Component*> toFill;
+      std::vector<const Component*> toFill;
       entity.GetComponents(toFill);
 
-      std::list<const Component*>::const_iterator i;
+      std::vector<const Component*>::const_iterator i;
       for(i = toFill.begin(); i != toFill.end(); ++i)
       {
          const Component* component = *i;

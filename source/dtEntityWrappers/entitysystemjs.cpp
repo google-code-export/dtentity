@@ -230,7 +230,8 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    EntitySystemJS::EntitySystemJS(dtEntity::ComponentType id, dtEntity::EntityManager& em, Handle<Object> obj)
-      : BaseClass(id, em)
+      : BaseClass(em)
+      , mComponentType(id)
    {
       HandleScope scope;
       Context::Scope context_scope(obj->CreationContext());

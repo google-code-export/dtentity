@@ -65,7 +65,6 @@ namespace dtEntity
       mTimeChangedFunctor = dtEntity::MessageFunctor(this, &D3DWindowManager::OnTimeChange);
       em.RegisterForMessages(dtEntity::TimeChangedMessage::TYPE, mTimeChangedFunctor, "EphemerisSystem::OnTimeChange");
 
-      app.GetScene()->GetSceneNode()->addEventCallback(&GetInputHandler());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -150,7 +149,6 @@ namespace dtEntity
       cam->SetWindow(window);
       view->SetCamera(cam);
       cam->GetOSGCamera()->setName(name);
-      cam->GetOSGCamera()->addEventCallback(mInputHandler);
       
    }
 
@@ -232,5 +230,102 @@ namespace dtEntity
       pickray.normalize();
       return pickray;
       
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool D3DWindowManager::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height)
+   {
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         return false;
+      }
+      window->getWindowRectangle(x, y, width, height);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool D3DWindowManager::SetWindowGeometry(unsigned int contextId, int x, int y, int width, int height)
+   {
+      SetFullscreen(contextId, false);
+
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         return false;
+      }
+      window->setWindowRectangle(x, y, width, height);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void D3DWindowManager::SetFullscreen(unsigned int contextId, bool fullscreen)
+   {
+      ApplicationSystem* appsys;
+      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      if(!window)
+      {
+         LOG_ERROR("Cannot set window to fullscreen, no window with that id found! " << contextId);
+         return;
+      }
+
+      int x, y, w, h;
+      window->getWindowRectangle(x, y, w, h);
+
+      osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
+
+      if (wsi == NULL)
+      {
+         LOG_WARNING("Error, no WindowSystemInterface available, cannot toggle window fullscreen.");
+         return;
+      }
+
+      unsigned int screenWidth;
+      unsigned int screenHeight;
+
+      wsi->getScreenResolution(*(window->getTraits()), screenWidth, screenHeight);
+
+      if (!fullscreen)
+      {
+         if(!GetFullscreen(contextId)) return;
+         WindowPosMap::iterator i = mWindowPositions.find(contextId);
+         if(i == mWindowPositions.end())
+         {
+            return;
+         }
+         WindowPos wp = i->second;
+         mWindowPositions.erase(i);
+
+         window->setWindowDecoration(wp.mWindowDeco);
+         window->setWindowRectangle(wp.mX, wp.mY, wp.mW, wp.mH);
+      }
+      else
+      {
+         if(GetFullscreen(contextId)) return;
+         WindowPos wp;
+         wp.mX = x;
+         wp.mY = y;
+         wp.mW = w;
+         wp.mH = h;
+         wp.mWindowDeco = window->getWindowDecoration();
+         mWindowPositions[contextId] = wp;
+
+         window->setWindowDecoration(false);
+         window->setWindowRectangle(0, 0, screenWidth, screenHeight);
+      }
+
+      window->grabFocusIfPointerInWindow();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool D3DWindowManager::GetFullscreen(unsigned int contextId) const
+   {
+      WindowPosMap::const_iterator i = mWindowPositions.find(contextId);
+      return (i != mWindowPositions.end());
    }
 }

@@ -333,8 +333,16 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::setWindowRectangleImplementation(int x, int y, int width, int height)
    {
-      QMetaObject::invokeMethod(this, "ApplySetWindowRectangle", Qt::QueuedConnection,
+      if(QCoreApplication::instance()->thread() != QThread::currentThread())
+      {
+         QMetaObject::invokeMethod(this, "ApplySetWindowRectangle", Qt::QueuedConnection,
                                  Q_ARG(int, x), Q_ARG(int, y), Q_ARG(int, width), Q_ARG(int, height));
+      }
+      else
+      {
+         ApplySetWindowRectangle(x, y, width, height);
+      }      
+      
       return true;
    }
 

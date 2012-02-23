@@ -204,6 +204,12 @@ function doSelection(context) {
    if (pick === null || typeof(pick) == "undefined") {
      return false;
    }
+   
+   var smc = getEntitySystem("StaticMesh").getComponent(pick, true);
+   if(smc && smc.IsTerrain) {
+     return;
+   }
+   
 
     var undoOp = {
       oldSelection: [],
@@ -289,9 +295,11 @@ function TranslateTool() {
          var id = Selection.ids[k];
          if(getEntitySystem("Transform").getComponent(id, true) !== null) {
             var manipulator = manipulatorSystem.createComponent(id);
-            manipulator.DraggerType = "TerrainTranslateDragger";
-            manipulator.PivotAtBottom = true;
-            manipulator.finished();
+			if(manipulator) {
+				manipulator.DraggerType = "TerrainTranslateDragger";
+				manipulator.PivotAtBottom = true;
+				manipulator.finished();
+			}
          }
       }
   }

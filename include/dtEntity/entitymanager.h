@@ -27,11 +27,10 @@
 #include <dtEntity/messagepump.h>
 #include <dtEntity/objectfactory.h>
 #include <map>
-#include <list>
+#include <vector>
 #include <assert.h>
 #include <osg/Referenced>
 #include <OpenThreads/ReadWriteMutex>
-#include <dtEntity/component.h>
 
 namespace dtEntity
 {
@@ -39,18 +38,6 @@ namespace dtEntity
    class Entity;
    class EntitySystem;
    class Message;
-
-   /**
-    * can be used to clean up wrappers for components or
-    * execute other actions
-    */
-   class ComponentDeletedCallback
-   {
-   public:
-      virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
-   };
-
-   typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
 
    /**
     * Entity manager is a container for entity systems. 
@@ -63,7 +50,6 @@ namespace dtEntity
     * posted to a message queue to be emitted at a later time. 
     */
    class DT_ENTITY_EXPORT EntityManager 
-      : public osg::Referenced
    {
    
    public:
@@ -74,6 +60,38 @@ namespace dtEntity
        * systems like OSG components etc
        */
       EntityManager();
+
+      // Destructor
+      ~EntityManager();
+
+      /**
+       * can be used to clean up wrappers for components or
+       * execute other actions
+       */
+      class ComponentDeletedCallback
+      {
+      public:
+         virtual void ComponentDeleted(ComponentType t, EntityId id) = 0;
+         virtual ~ComponentDeletedCallback() {}
+      };
+
+      typedef std::vector<ComponentDeletedCallback*> ComponentDeletedCallbacks;
+
+
+      /**
+       * If user executes CreateComponent and no entity system with given component
+       * type is registered then all EntitySystemRequestCallbacks are executed
+       * until one returns true. Callback can be used to add entity systems lazily.
+       */
+      class EntitySystemRequestCallback
+      {
+      public:
+         virtual bool CreateEntitySystem(EntityManager* em, ComponentType t) = 0;
+
+         virtual ~EntitySystemRequestCallback() {}
+      };
+
+      typedef std::vector<EntitySystemRequestCallback*> EntitySystemRequestCallbacks;
 
       /**
        * Get entity object for entity ID.
@@ -104,15 +122,12 @@ namespace dtEntity
       bool KillEntity(EntityId id);
 
       /**
-       * Remove all components from all entity systems and delete
-	   * all entity objects
-       * @threadsafe
-       */
-      void KillAllEntities();
-
-      /**
        * Create a new entity with a new unique EntityId
        * All entities are deleted when entity manager is deleted.
+       * This method is thread safe so that entities can be created from
+       * worker threads. Creation and deletion of entities are
+       * thread-safe, all other entity system/component methods are
+       * non-tread safe.
        * @param entity Receives pointer to newly created entity
        * @return true if success
        * @threadsafe
@@ -120,19 +135,17 @@ namespace dtEntity
       bool CreateEntity(Entity*& entity);
 
       /**
-       * Causes a message EntityAddedToSceneMessage to be fired.
-	   * Layer system reacts to this by adding assigned node to
-	   * scene graph
-       * @param eid Id of entity to add to scene
-       * @return true if success
+       * returns true while at least one entity exists
+       */
+      bool HasEntities() const;
+
+      /**
+       * DEPRECATED! Use MapSystem::AddToScene
        */
       bool AddToScene(EntityId eid);
 
       /**
-       * Causes a EntityRemovedFromSceneMessage to be fired.
-	   * Layer system removes attached node from scene graph.
-       * @param eid Id of entity to remove from scene
-       * @return true if success
+       * DEPRECATED! Use MapSystem::RemoveFromScene
        */
       bool RemoveFromScene(EntityId eid);
 
@@ -145,7 +158,7 @@ namespace dtEntity
       /**
        * @param s Add this entity system to the manager
        */
-      void AddEntitySystem(EntitySystem& s);
+      bool AddEntitySystem(EntitySystem& s);
 
       /**
        * @param s Remove this entity system
@@ -166,6 +179,9 @@ namespace dtEntity
        */
       template <typename T>
       bool GetEntitySystem(ComponentType id, T*& es) const;
+
+      template <typename T>
+      bool GetES(T*& es) const;
 
       /**
        * Fill vector with all entity systems registered with
@@ -200,8 +216,8 @@ namespace dtEntity
        * @param eid Get components of this entity
        * @param toFill receives components
        */
-      void GetComponents(EntityId eid, std::list<Component*>& toFill);
-      void GetComponents(EntityId eid, std::list<const Component*>& toFill) const;
+      void GetComponents(EntityId eid, std::vector<Component*>& toFill);
+      void GetComponents(EntityId eid, std::vector<const Component*>& toFill) const;
 
       /**
        * @param eid Check if component exists for this entity
@@ -251,7 +267,6 @@ namespace dtEntity
 	  /**
 	   * @param p Set this as default message pump for inter-system communication.
 	   * Warning: Old message pump is overwritten, queued messages may get lost.
-	   * @TODO remove?
 	   */
 	  void SetMessagePump(MessagePump& p);
 
@@ -295,15 +310,16 @@ namespace dtEntity
       void AddDeletedCallback(ComponentDeletedCallback* cb);
       bool RemoveDeletedCallback(ComponentDeletedCallback* cb);
 
-   protected:
-   
-         // Destructor
-      ~EntityManager();
+      void AddEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
+      bool RemoveEntitySystemRequestCallback(EntitySystemRequestCallback* cb);
+
 
    private:
 
       // Returns next id and increments internal counter
       EntityId GetNextAvailableID();
+
+      unsigned int mNextAvailableId;
 
       /**
        * Look in type hierarchy map if a component derived from type exists
@@ -314,11 +330,11 @@ namespace dtEntity
       typedef std::map<EntityId, osg::ref_ptr<Entity> > EntityMap;
       EntityMap mEntities;
 
-      // controls access to mEntities
+      // controls access to mEntities.
       mutable OpenThreads::ReadWriteMutex mEntityMutex;
 
       // Storage for entity systems
-      typedef std::map<ComponentType, osg::ref_ptr<EntitySystem> > EntitySystemStore;
+      typedef std::map<ComponentType, EntitySystem*> EntitySystemStore;
       EntitySystemStore mEntitySystemStore;
 
       // stores inheritance tree for component types
@@ -329,6 +345,8 @@ namespace dtEntity
       MessagePump* mMessagePump;
 
       ComponentDeletedCallbacks mDeletedCallbacks;
+
+      EntitySystemRequestCallbacks mEntitySystemRequestCallbacks;
 
    };
 
@@ -375,4 +393,22 @@ namespace dtEntity
       
       return true;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template <typename T>
+   bool EntityManager::GetES(T*& es) const
+   {
+      ComponentType ctype = T::TYPE;
+      EntitySystemStore::const_iterator i = mEntitySystemStore.find(ctype);
+      if(i == mEntitySystemStore.end())
+      {
+         es = NULL;
+         return false;
+      }
+      EntitySystem* s = i->second;
+      assert(dynamic_cast<T*>(s) != NULL);
+      es = static_cast<T*>(s);
+      return true;
+   }
+
 }

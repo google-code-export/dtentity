@@ -353,7 +353,9 @@ namespace dtEntityWrappers
       dtEntity::ApplicationSystem* appsys;
       entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
 
-      unsigned int contextid = appsys->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits);
+      unsigned int contextid;
+      bool success = appsys->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits, contextid);
+      assert(success);
       return Uint32::New(contextid);
    }
 

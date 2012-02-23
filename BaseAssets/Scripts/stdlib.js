@@ -248,3 +248,33 @@ var radToDegFac = 180.0 / Math.PI ;
 function radToDeg(deg) {
    return deg * radToDegFac;
 }
+
+function makeVec2(x,y) {
+   var ret = [x,y];
+   ret.__TYPE_HINT = "V2";
+   return ret;
+}
+
+function makeVec3(x,y,z) {
+   var ret = [x,y,z];
+   ret.__TYPE_HINT = "V3";
+   return ret;
+}
+
+function makeVec4(x,y,z,w) {
+   var ret = [x,y,z,w];
+   ret.__TYPE_HINT = "V4";
+   return ret;
+}
+
+function makeQuat(x,y,z, w) {
+   var ret = [x,y,z,w];
+   ret.__TYPE_HINT = "QT";
+   return ret;
+}
+
+function makeMatrix(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16) {
+   var ret = [[p1,p2,p3,p4],[p5,p6,p7,p8],[p9,p10,p11,p12],[p13,p14,p15,p16]];
+   ret.__TYPE_HINT = "MT";
+   return ret;
+}

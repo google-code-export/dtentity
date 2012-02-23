@@ -73,6 +73,7 @@ namespace dtEntityQtWidgets
          }
          qDeleteAll(mChildItems);
       }
+      void insertChild(int index, EntityTreeItem* child) { mChildItems.insert(index, child); }
       void appendChild(EntityTreeItem* child) { mChildItems.append(child); }
       bool removeChild(EntityTreeItem* child) { return mChildItems.removeOne(child); }
       EntityTreeItem* child(int row) { return mChildItems.value(row); }
@@ -84,6 +85,7 @@ namespace dtEntityQtWidgets
       dtEntity::EntityId mEntityId;
       QString mName;
       QString mMapName;
+      unsigned int mSaveOrder; // for maps
       
    protected:
 
@@ -104,6 +106,12 @@ namespace dtEntityQtWidgets
       EntityTreeModel(dtEntity::EntityManager& em);
       ~EntityTreeModel();
 
+      Qt::DropActions supportedDropActions() const;
+      Qt::ItemFlags flags(const QModelIndex &index) const;
+      QStringList mimeTypes() const;
+      QMimeData* mimeData(const QModelIndexList &indexes) const;
+      bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+
       dtEntity::EntityManager& GetEntityManager() { return *mEntityManager; }
 
       // for changing selection of items
@@ -112,6 +120,7 @@ namespace dtEntityQtWidgets
       QModelIndex GetSpawnerIndex(EntityTreeItem* item, const QString& spawnerName);
 
       void EnqueueMessage(const dtEntity::Message& m);
+      void EmitMoveMapToRow(const QString& mapname, int row);
 
       void OnEntitySelected(const dtEntity::Message& msg);
       void OnEntityDeselected(const dtEntity::Message& msg);
@@ -126,6 +135,8 @@ namespace dtEntityQtWidgets
       void OnSceneLoaded(const dtEntity::Message& m);
 
       dtEntity::MessagePump& GetMessagePump() { return mMessagePump; }
+
+      dtEntity::MessageFunctor& GetEnqueueFunctor() { return mEnqueueFunctor; }
 
    public slots:      
      
@@ -145,9 +156,13 @@ namespace dtEntityQtWidgets
       void SceneLoaded();
       void EntityWasSelected(const QModelIndex&);
       void EntityWasDeselected(const QModelIndex&);
+      void MoveEntityToMap(dtEntity::EntityId, const QString& mapname);
+      void MoveSpawnerToMap(const QString& name, const QString& oldmapname, const QString& newmapname);
+      void MoveMapToRow(const QString& mapname, int saveorder);
 
    private:
       void RemoveEntryFromRoot(const QString& name, EntityTreeType::e t);
+      
       EntityTreeItem* mRootItem;
       dtEntity::MessagePump mMessagePump;
       dtEntity::MessageFunctor mEnqueueFunctor;
@@ -257,6 +272,8 @@ namespace dtEntityQtWidgets
       
       void SetupSlots(EntityTreeModel* model, EntityTreeView*);
 
+      void EntitySystemAdded(const dtEntity::Message& msg);
+
    public slots:
 
       void Init();
@@ -272,6 +289,9 @@ namespace dtEntityQtWidgets
       void OnUnloadMap(const QString& mapname);
       void OnSaveMap(const QString& mapname);
       void OnSaveMapCopy(const QString& mapname, const QString& copyname);
+      void OnMoveEntityToMap(dtEntity::EntityId, const QString& mapname);
+      void OnMoveSpawnerToMap(const QString& spawnername, const QString& oldmapname, const QString& newmapname);
+      void OnMoveMapToRow(const QString& mapname, int saveorder);
 
    signals:
 
@@ -280,5 +300,8 @@ namespace dtEntityQtWidgets
    private:
 
       dtEntity::EntityManager* mEntityManager;
+      dtEntity::MessageFunctor mEntitySystemCreatedFunctor;
+      EntityTreeModel* mModel;
    };
 }
+

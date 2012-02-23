@@ -20,11 +20,11 @@
 
 
 #include <UnitTest++.h>
-
+#include <dtEntity/initosgviewer.h>
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
-#include <dtEntity/entitymanager.h>
+#include <dtEntity/entitymanager.h> 
 #include <osgDB/FileUtils>
 
 using namespace UnitTest;
@@ -34,24 +34,13 @@ struct MapFixture
 {
    MapFixture()
    {
-      std::string baseassets = "BaseAssets";      
-      const char* env_baseassets = getenv("DTENTITY_BASEASSETS");
-      if(env_baseassets != NULL)
-      {
-         baseassets = env_baseassets;
-      }
-
-      osgDB::FilePathList paths;
-      if(!baseassets.empty()) paths.push_back(baseassets);
-      osgDB::setDataFilePathList(paths);
-
-      mEntityManager = new dtEntity::EntityManager();
-	  mMapSystem = new dtEntity::MapSystem(*mEntityManager);
-	  mEntityManager->AddEntitySystem(*mMapSystem);
-
+      SetupDataPaths(0, NULL, true);
+      AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
+      mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
-   osg::ref_ptr<dtEntity::EntityManager> mEntityManager;
-   dtEntity::MapSystem* mMapSystem;
+
+   EntityManager mEntityManager;
+   MapSystem* mMapSystem;
 };
 
 TEST(IsBaseAssetsEnvVariableSet)
@@ -182,8 +171,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
    {
       mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(), mapname);
       dtEntity::Entity* entity;
-      mEntityManager->CreateEntity(entity);
-      mEntityManager->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*mEntityManager));
+      mEntityManager.CreateEntity(entity);
       dtEntity::PositionAttitudeTransformComponent* transcomp;
       entity->CreateComponent(transcomp);
       transcomp->SetPosition(osg::Vec3(1,2,3));
@@ -191,7 +179,9 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       children.push_back(new StringProperty("Child1"));
       children.push_back(new StringProperty("Child2"));
       transcomp->SetChildren(children);
-      transcomp->Finished();
+      
+      // don't execute finished, would create a warning
+      //transcomp->Finished();
 
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);
@@ -199,14 +189,14 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       mapcomp->SetUniqueId("TestEntityId");
       mapcomp->SetEntityName("TestEntityName");
       mapcomp->Finished();
-      mEntityManager->AddToScene(entity->GetId());
+      mMapSystem->AddToScene(entity->GetId());
 
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
       std::string path = paths.front() + std::string("/") + mapname;
       mMapSystem->SaveMapAs(mapname, path);
 
-      mEntityManager->RemoveFromScene(entity->GetId());
-      mEntityManager->KillEntity(entity->GetId());
+      mMapSystem->RemoveFromScene(entity->GetId());
+      mEntityManager.KillEntity(entity->GetId());
 
       mMapSystem->UnloadMap(mapname);
    }

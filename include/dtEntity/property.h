@@ -437,6 +437,7 @@ namespace dtEntity
    {
    public:
       QuatProperty(const osg::Quat& v = osg::Quat(0, 0, 0, 1));
+      QuatProperty(double x, double y, double z, double w);
 
       virtual DataType::e GetType() const { return DataType::QUAT; }
 
@@ -538,6 +539,7 @@ namespace dtEntity
    public:
 
       Vec2Property(const osg::Vec2f& v = osg::Vec2f());
+      Vec2Property(float x, float y);
 
       virtual DataType::e GetType() const { return DataType::VEC2; }
 
@@ -565,6 +567,7 @@ namespace dtEntity
    {
    public:
       Vec3Property(const osg::Vec3f& v = osg::Vec3f());
+      Vec3Property(float x, float y, float z);
 
       virtual DataType::e GetType() const { return DataType::VEC3; }
       
@@ -590,6 +593,7 @@ namespace dtEntity
    {
    public:
       Vec4Property(const osg::Vec4f& v = osg::Vec4f());
+      Vec4Property(float x, float y, float z, float w);
 
       virtual DataType::e GetType() const { return DataType::VEC4; }
 
@@ -616,6 +620,8 @@ namespace dtEntity
    public:
       Vec2dProperty(const osg::Vec2d& v = osg::Vec2d());
 
+      Vec2dProperty(double x, double y);
+
       virtual DataType::e GetType() const { return DataType::VEC2D; }
 
       virtual osg::Vec2f Vec2Value() const;
@@ -641,6 +647,7 @@ namespace dtEntity
    {
    public:
       Vec3dProperty(const osg::Vec3d& v = osg::Vec3d());
+      Vec3dProperty(double x, double y, double z);
 
       virtual DataType::e GetType() const { return DataType::VEC3D; }
 
@@ -666,6 +673,7 @@ namespace dtEntity
    {
    public:
       Vec4dProperty(const osg::Vec4d& v = osg::Vec4d());
+      Vec4dProperty(double x, double y, double z, double w);
 
       virtual DataType::e GetType() const { return DataType::VEC4D; }
 

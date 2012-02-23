@@ -149,7 +149,7 @@ namespace dtEntity
  
    ////////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::ApplicationSystem(EntityManager& em)
-      : EntitySystem(TYPE, em)
+      : EntitySystem(em)
       , mImpl(new ApplicationImpl())
    {
 
@@ -287,7 +287,7 @@ namespace dtEntity
       if(ptm != NULL)
       {
          std::ostringstream os;
-         os << time << "___";
+         /*os << time << "___";
          if(ptm->tm_mday < 10)
          {
             os << "0";
@@ -299,7 +299,7 @@ namespace dtEntity
             os << "0";
          }
          os << (ptm->tm_mon + 1) << "." << (ptm->tm_year + 1900);
-         os << " ";
+         os << " ";*/
          if(ptm->tm_hour < 10)
          {
             os << "0";
@@ -447,33 +447,23 @@ namespace dtEntity
       const ResetSystemMessage& m = static_cast<const ResetSystemMessage&>(msg);
 
       MapSystem* mapsys;
-      GetEntityManager().GetEntitySystem(MapComponent::TYPE, mapsys);
-      mapsys->UnloadScene();
-      GetEntityManager().KillAllEntities();
-      GetEntityManager().GetMessagePump().ClearQueue();
-      //GetEntityManager().GetMessagePump().UnregisterAll();
 
-      std::vector<EntitySystem*> es;
-      GetEntityManager().GetEntitySystems(es);
-      for(std::vector<EntitySystem*>::iterator i = es.begin(); i != es.end(); ++i)
+      EntityManager& em = GetEntityManager();
+      em.GetEntitySystem(MapComponent::TYPE, mapsys);
+      mapsys->UnloadScene();
+
+      std::vector<EntityId> ids;
+      em.GetEntityIds(ids);
+      for(std::vector<EntityId>::iterator i = ids.begin(); i != ids.end(); ++i)
       {
-         // TODO this should not be hard coded
-         ComponentType t = (*i)->GetComponentType();
-         if(*i != this &&
-               t != dtEntity::SIDHash("Camera") &&
-               t != dtEntity::SIDHash("Application") &&
-               t != dtEntity::SIDHash("Layer") &&
-               t != dtEntity::SIDHash("LayerAttachPoint") &&
-               t != dtEntity::SIDHash("Group") &&
-               t != dtEntity::SIDHash("StaticMesh") &&
-               t != dtEntity::SIDHash("MatrixTransform") &&
-               t != dtEntity::SIDHash("Map") &&
-               t != dtEntity::SIDHash("Script") &&
-               t != dtEntity::SIDHash("PositionAttitudeTransform"))
-         {
-           GetEntityManager().RemoveEntitySystem(**i);
-         }
+         mapsys->RemoveFromScene(*i);
+         em.KillEntity(*i);
       }
+
+      em.GetMessagePump().ClearQueue();
+      //GetEntityManager().GetMessagePump().UnregisterAll();
+      
+      mapsys->GetPluginManager().UnloadAllPlugins();      
 
       if(m.GetSceneName() != "")
       {
@@ -493,11 +483,7 @@ namespace dtEntity
 
       LayerAttachPointSystem* lsys;
       GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-      if(camcomp->GetLayerAttachPoint() == LayerAttachPointSystem::RootId)
-      {
-         InstallUpdateCallback(lsys->GetSceneGraphRoot());
-      }
-      else
+      if(camcomp->GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
       {
          LayerAttachPointComponent* lc;
          if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
