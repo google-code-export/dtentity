@@ -548,10 +548,12 @@ namespace osgLibRocket
 		{
 			node->getParent(0)->removeChild(node);
 		}
-      while(node->referenceCount() > 0)
-      {
-		   node->unref();
-      }
+		unsigned int refcount = node->referenceCount();
+		while(refcount > 0)
+		{
+			node->unref();
+			--refcount;
+		}
 	}
 
 	/// Called by Rocket when it wants to enable or disable scissoring to clip content.
