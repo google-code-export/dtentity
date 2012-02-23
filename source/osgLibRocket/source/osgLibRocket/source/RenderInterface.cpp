@@ -40,7 +40,7 @@ namespace osgLibRocket
 		, _geode(new osg::Geode())
 		, _renderTarget(NULL)
 	{
-		_geode->setDataVariance(osg::Object::STATIC);
+		_geode->setDataVariance(osg::Object::DYNAMIC);
 	}
 
 
@@ -130,7 +130,7 @@ namespace osgLibRocket
 		osg::Geometry* geometry = new osg::Geometry();
 		geometry->setUseDisplayList(false);
 		geometry->setUseVertexBufferObjects(useVBOs);
-      geometry->setDataVariance(osg::Object::STATIC);
+		geometry->setDataVariance(osg::Object::DYNAMIC);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -438,6 +438,7 @@ namespace osgLibRocket
 		osg::Geometry* geometry = new osg::Geometry();
 		geometry->setUseDisplayList(false);
       geometry->setUseVertexBufferObjects(useVBO);
+      geometry->setDataVariance(osg::Object::DYNAMIC);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -470,10 +471,12 @@ namespace osgLibRocket
 
 		osg::Geode* geode = new osg::Geode();
       geode->setCullingActive(false);
+      geode->setDataVariance(osg::Object::DYNAMIC);
 		geode->addDrawable(geometry);
       osg::MatrixTransform* mt = new osg::MatrixTransform();
       mt->addChild(geode);
       mt->setCullingActive(false);
+      mt->setDataVariance(osg::Object::DYNAMIC);
 		return mt;
 	}
 
