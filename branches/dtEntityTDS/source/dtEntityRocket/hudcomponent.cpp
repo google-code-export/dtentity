@@ -37,6 +37,7 @@ namespace dtEntityRocket
    const dtEntity::StringId HUDComponent::PixelOffsetId(dtEntity::SID("PixelOffset"));
    const dtEntity::StringId HUDComponent::VisibleId(dtEntity::SID("Visible"));
    const dtEntity::StringId HUDComponent::AlignToBoundingSphereCenterId(dtEntity::SID("AlignToBoundingSphereCenter"));
+   const dtEntity::StringId HUDComponent::HideWhenNormalPointsAwayId(dtEntity::SID("HideWhenNormalPointsAway"));
 
    ////////////////////////////////////////////////////////////////////////////
    HUDComponent::HUDComponent()
@@ -48,6 +49,7 @@ namespace dtEntityRocket
       Register(PixelOffsetId, &mPixelOffset);
       Register(VisibleId, &mVisible);
       Register(AlignToBoundingSphereCenterId, &mAlignToBoundingSphereCenter);
+      Register(HideWhenNormalPointsAwayId, &mHideWhenNormalPointsAway);
 
       mVisible.Set(true);
    }
@@ -140,7 +142,9 @@ namespace dtEntityRocket
 
    HUDSystem::HUDSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
+      , mDebugDrawManager(new dtEntity::DebugDrawManager(em))
    {
+      mDebugDrawManager->SetEnabled(true);
       Register(EnabledId, &mEnabled);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &HUDSystem::Tick);
@@ -244,7 +248,7 @@ namespace dtEntityRocket
       {
          RocketComponent* rocketcomponent = i->second;
          Rocket::Core::Context* context = rocketcomponent->GetRocketContext();
-        // osg::Matrix matrix = rocketcomponent->GetWorldToScreenMatrix();
+        
          ComponentStore::iterator j = mComponents.begin();
          for(; j!= mComponents.end(); ++j)
          {
@@ -270,15 +274,29 @@ namespace dtEntityRocket
                   trans = osg::Vec4(tc->GetTranslation() + comp->GetOffset(), 1);
                }
 
-               trans = trans * matrix;
-               double w = trans[3];
+               osg::Vec4 camtrans = trans * matrix;
+               double w = camtrans[3];
                Rocket::Core::Vector2i dim = context->GetDimensions();
-               float x = trans[0] / w + comp->GetPixelOffset()[0];
-               float y = dim[1] - (trans[1] / w  + comp->GetPixelOffset()[1]);
+               float x = camtrans[0] / w + comp->GetPixelOffset()[0];
+               float y = dim[1] - (camtrans[1] / w  + comp->GetPixelOffset()[1]);
                Rocket::Core::Vector2f sizes = element->GetBox(0).GetSize(Rocket::Core::Box::MARGIN);
-               if(!comp->GetVisible() || w < 0 || x < -sizes.x || x > window_w || y < -sizes.y || y > window_h)
+               
+               bool hideBecauseNormalPointsAway = false;
+               if(comp->GetHideWhenNormalPointsAway())
                {
-                  if(element->GetProperty("visibility")->ToString() == "visible")
+                  osg::Vec3 normal(0, 0, 1);
+                  normal = tc->GetRotation() * normal;
+                  //mDebugDrawManager->AddLine(osg::Vec3(trans[0], trans[1], trans[2]), 
+                  //   osg::Vec3(trans[0], trans[1], trans[2]) + normal * 1000, osg::Vec4(1,0,0,1), 1, 0);
+                  osg::Vec4 camnormal = osg::Vec4(normal, 0) * matrix;
+                  if(camnormal[2] > 0)
+                  {
+                     hideBecauseNormalPointsAway = true;
+                  }
+               }
+               if(hideBecauseNormalPointsAway || !comp->GetVisible() || w < 0 || x < -sizes.x || x > window_w || y < -sizes.y || y > window_h)
+               {
+                  if(element->GetProperty("visibility")->ToString() != "hidden")
                   {
                      element->SetProperty("visibility", "hidden");
                   }
