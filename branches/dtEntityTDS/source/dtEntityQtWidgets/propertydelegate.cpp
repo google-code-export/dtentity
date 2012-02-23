@@ -1207,7 +1207,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void FilePathPropertyDelegate::FinishedEditing(FileSelectorWidget* editor)
    {
-      //TODO this does not cause the data to be submitted to the model. Why?
+      //this does not cause the data to be submitted to the model. Why?
       emit(commitData(editor));
       emit(closeEditor(editor, QAbstractItemDelegate::EditNextItem));
    }
@@ -1306,7 +1306,7 @@ namespace dtEntityQtWidgets
    void ColorPropertyDelegate::FinishedEditing(ColorSelectorWidget* editor)
    {
 
-      //TODO this does not cause the data to be submitted to the model. Why?
+      //this does not cause the data to be submitted to the model. Why?
       emit(commitData(editor));
       emit(closeEditor(editor, QAbstractItemDelegate::SubmitModelCache));
    }

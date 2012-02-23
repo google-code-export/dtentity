@@ -145,7 +145,6 @@ namespace dtEntity
       libName.assign(osgDB::getNameLessAllExtensions(libName));
 #ifdef _DEBUG
       // remove debug postfix from lib name
-      // TODO: need a better way to handle this. Maybe add a Cmake define line the OSG_LIBRARY_POSTFIX in osgDB?
       std::string debugPostfix("d");
       libName = libName.substr(0, libName.size() - debugPostfix.size());
 #endif // _DEBUG
@@ -346,9 +345,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentPluginManager::UnloadAllPlugins()
    {
-      while(!mFactories.empty())
+      for(PluginFactoryMap::iterator i = mFactories.begin(); i != mFactories.end(); ++i)
       {
-         ComponentType ctype = mFactories.begin()->first;
+         ComponentType ctype = i->first;
          if(mEntityManager->HasEntitySystem(ctype))
          {
             dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(ctype);
@@ -357,10 +356,6 @@ namespace dtEntity
                LOG_ERROR("Could not cleanly remove entity system " + GetStringFromSID(ctype));
             }
          }
-
-         mFactories.erase(mFactories.begin());
       }
-      // also clear the list of loaded plugins
-      mLoadedPlugins.clear();
    }
 }

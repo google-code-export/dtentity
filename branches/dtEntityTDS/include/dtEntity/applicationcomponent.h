@@ -68,6 +68,8 @@ namespace dtEntity
       ApplicationSystem(EntityManager& em);
       ~ApplicationSystem();
 
+      ComponentType GetComponentType() const { return TYPE; }
+
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 
       /**

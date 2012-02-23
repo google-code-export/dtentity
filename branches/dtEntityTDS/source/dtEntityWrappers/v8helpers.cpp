@@ -133,6 +133,7 @@ namespace dtEntityWrappers
       Handle<Array> arr = Array::New(2);
       arr->Set(0, Number::New(v[0]));
       arr->Set(1, Number::New(v[1]));
+      arr->Set(String::New("__TYPE_HINT"), String::New("V2"));
       return scope.Close(arr);
    }
 
@@ -144,6 +145,7 @@ namespace dtEntityWrappers
       arr->Set(0, Number::New(v[0]));
       arr->Set(1, Number::New(v[1]));
       arr->Set(2, Number::New(v[2]));
+      arr->Set(String::New("__TYPE_HINT"), String::New("V3"));
       return scope.Close(arr);
    }
 
@@ -156,6 +158,7 @@ namespace dtEntityWrappers
       arr->Set(1, Number::New(v[1]));
       arr->Set(2, Number::New(v[2]));
       arr->Set(3, Number::New(v[3]));
+      arr->Set(String::New("__TYPE_HINT"), String::New("V4"));
       return scope.Close(arr);
    }
 
@@ -168,6 +171,7 @@ namespace dtEntityWrappers
       arr->Set(1, Number::New(v[1]));
       arr->Set(2, Number::New(v[2]));
       arr->Set(3, Number::New(v[3]));
+      arr->Set(String::New("__TYPE_HINT"), String::New("QT"));
       return scope.Close(arr);
    }
 
@@ -185,6 +189,7 @@ namespace dtEntityWrappers
          inner->Set(3, Number::New(v(i, 3)));
          arr->Set(i, inner);
       }
+      arr->Set(String::New("__TYPE_HINT"), String::New("MT"));
       return scope.Close(arr);
    }
 

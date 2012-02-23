@@ -68,7 +68,10 @@ namespace dtEntityEditor
       // don't exit on escape
       mViewer->setKeyEventSetsDone(0);
 
-      dtEntity::InitOSGViewer(argc, argv, mViewer, mEntityManager, false, false);
+      static const char* winvar = "OSG_WINDOW=0 0 800 600";
+      putenv(const_cast<char*>(winvar));
+
+      dtEntity::InitOSGViewer(argc, argv, *mViewer, *mEntityManager, false, false);
 
       dtEntity::MapSystem* ms;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
@@ -78,6 +81,7 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::~EditorApplication()
    {
+      delete mEntityManager;
       mEntityManager = NULL;
       if(mTimer)
       {
@@ -225,7 +229,7 @@ namespace dtEntityEditor
          mTimer->deleteLater();
          mTimer = NULL;
       }
-      
+
       // delete entity manager now before EditorApplication object is moved to main thread.
       mEntityManager = NULL;
       QMetaObject::invokeMethod(mMainWindow, "ShutDown", Qt::QueuedConnection);
@@ -366,7 +370,11 @@ namespace dtEntityEditor
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
       std::ostringstream os;
-      mapSystem->SaveCurrentScene(false);
+      bool success = mapSystem->SaveCurrentScene(false);
+      if(!success)
+      {
+         ErrorOccurred(tr("Cannot save scene, please check file permissions!"));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +382,11 @@ namespace dtEntityEditor
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      mapSystem->SaveCurrentScene(true);
+      bool success = mapSystem->SaveCurrentScene(true);
+      if(!success)
+      {
+         ErrorOccurred(tr("Cannot save scene or one of the maps, please check file permissions!"));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

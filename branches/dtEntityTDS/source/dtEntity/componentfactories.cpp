@@ -319,17 +319,6 @@ namespace dtEntity
 
 	void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
-      EntityManager& em = pluginManager.GetEntityManager();
-
-      em.AddEntitySystem(*new CameraSystem(em));
-      em.AddEntitySystem(*new LayerSystem(em));
-      em.AddEntitySystem(*new LayerAttachPointSystem(em));
-      em.AddEntitySystem(*new GroupSystem(em));
-      em.AddEntitySystem(*new StaticMeshSystem(em));
-      em.AddEntitySystem(*new TransformSystem(em));
-      em.AddEntitySystem(*new MatrixTransformSystem(em));
-      em.AddEntitySystem(*new PositionAttitudeTransformSystem(em));
-
       pluginManager.AddFactory(new PickShapeComponentFactory());
       pluginManager.AddFactory(new SkyBoxComponentFactory());
       pluginManager.AddFactory(new ShadowComponentFactory());

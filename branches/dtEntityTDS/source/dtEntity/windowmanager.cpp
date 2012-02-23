@@ -107,7 +107,7 @@ namespace dtEntity
       : WindowManager(em)
    {
       mCloseWindowFunctor = MessageFunctor(this, &OSGWindowManager::OnCloseWindow);
-      mMessagePump.RegisterForMessages(CloseWindowMessage::TYPE, mCloseWindowFunctor);
+      mMessagePump.RegisterForMessages(InternalCloseWindowMessage::TYPE, mCloseWindowFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -116,9 +116,8 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   unsigned int OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits)
+   bool OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
    {
-      unsigned int contextId = 0;
       bool success = OpenWindowInternal(name, layername, traits, contextId);
       
       if(success)
@@ -127,10 +126,9 @@ namespace dtEntity
          msg.SetName(name);
          msg.SetContextId(contextId);
          mEntityManager->EmitMessage(msg);
-         return contextId;
+         return true;
       }
-      //TODO return an error code instead
-      return 0;
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -143,6 +141,11 @@ namespace dtEntity
 	   if(compviewer == NULL)
       {
          appsys->GetViewer()->realize();
+         if(!appsys->GetViewer()->isRealized())
+         {
+            LOG_ERROR("Could not open window! Check your display traits");
+            return false;
+         }
          osgViewer::ViewerBase::Windows windows;
          appsys->GetViewer()->getWindows(windows);
          windows.front()->setName(name);
@@ -168,6 +171,11 @@ namespace dtEntity
              
              contextId = gw->getState()->getContextID();
              gw->realize();
+             if(!gw->isRealized())
+             {
+                LOG_ERROR("Could not open window! Check your display traits");
+                return false;
+             }
          }
          else
          {
@@ -181,7 +189,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    void OSGWindowManager::OnCloseWindow(const Message& m)
    {
-      const CloseWindowMessage& msg = static_cast<const CloseWindowMessage&>(m);
+      const InternalCloseWindowMessage& msg = static_cast<const InternalCloseWindowMessage&>(m);
 
       osgViewer::GraphicsWindow* window = GetWindowByName(msg.GetName());
 
@@ -228,7 +236,7 @@ namespace dtEntity
    {
       // closing window from an event handler creates a crash.
       // Closing window at time of message processing works OK.
-      CloseWindowMessage msg;
+      InternalCloseWindowMessage msg;
       msg.SetName(name);
       mMessagePump.EnqueueMessage(msg);
    }

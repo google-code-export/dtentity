@@ -1478,7 +1478,9 @@ osg.Quat = {
     },
     makeRotateFromVecs : function(from, to, result) {
     // from and to have to be normalized!
-
+	 if (result === undefined) {
+       result = [];
+     }
      var dotProdPlus1 = 1.0 + osg.Vec3.dot(from, to);
 
      // Check for degenerate case of full u-turn. Use epsilon for detection
@@ -1517,6 +1519,7 @@ osg.Quat = {
          osg.Vec3.mult(result, 1 / (2.0 * s), result);
          result[3] = s;
      }
+	 return result;
    }
-
+   
 };

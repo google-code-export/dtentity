@@ -35,6 +35,21 @@
 
 namespace dtEntity
 {
+   struct MapData
+   {
+      std::string mMapPath;
+      std::string mDataPath;
+      unsigned int mSaveOrder;
+
+      MapData(const std::string& mappath, const std::string& datapath, unsigned int order)
+         : mMapPath(mappath)
+         , mDataPath(datapath)
+         , mSaveOrder(order)
+      {
+      }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
   
    /**
     * The map component holds information about the entity and how to
@@ -58,6 +73,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
+      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
 
       /**
@@ -97,8 +113,8 @@ namespace dtEntity
       StringProperty mEntityName;
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
-      Spawner* mSpawner;
       DynamicStringProperty mUniqueId;
+      Spawner* mSpawner;
       std::string mUniqueIdStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
@@ -110,9 +126,11 @@ namespace dtEntity
 
    class DT_ENTITY_EXPORT MapSystem
       : public DefaultEntitySystem<MapComponent>
+      , public EntityManager::EntitySystemRequestCallback
    {
    public:
 
+      static const ComponentType TYPE;
       typedef DefaultEntitySystem<MapComponent> BaseClass;
       typedef std::map<std::string, osg::ref_ptr<Spawner> > SpawnerStorage;
 
@@ -144,6 +162,25 @@ namespace dtEntity
       // reacts to DeleteEntityMessage
       void OnDeleteEntity(const Message& msg);
 
+      // reacts to StopSystemMessage by removing map system from entity manager
+      void OnStopSystem(const Message& msg);
+
+      /**
+       * Causes a message EntityAddedToSceneMessage to be fired.
+       * Layer system reacts to this by adding assigned node to
+       * scene graph
+       * @param eid Id of entity to add to scene
+       * @return true if success
+       */
+      bool AddToScene(EntityId eid);
+
+      /**
+       * Causes a EntityRemovedFromSceneMessage to be fired.
+       * Layer system removes attached node from scene graph.
+       * @param eid Id of entity to remove from scene
+       * @return true if success
+       */
+      bool RemoveFromScene(EntityId eid);
 
       /**
        * Register spawner. EntityManager takes ownership of spawner.
@@ -239,6 +276,13 @@ namespace dtEntity
       bool UnloadMap(const std::string& path);
 
       /**
+        *Get an index representing the order in which maps should be loaded / saved
+        * Maps with lowest values are loaded first
+        */
+      unsigned int GetMapSaveOrder(const std::string& path);
+      void SetMapSaveOrder(const std::string& path, int);
+
+      /**
        * Delete instances that were created from given map
        */
       bool DeleteEntitiesByMap(const std::string& mapName);
@@ -282,15 +326,19 @@ namespace dtEntity
        *called by component. Don't call, please set the property on 
        * the component instead
        */
-      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueid, const std::string& newUniqueid);
+      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
 
       MessageFactory& GetMessageFactory() { return mMessageFactory; }
+
+
+      // implementation of EntityManager::EntitySystemRequestCallback interface
+      virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
 
    private:
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
 
-      typedef std::set<std::pair<std::string, std::string> > LoadedMaps;
+      typedef std::vector<MapData> LoadedMaps;
       LoadedMaps mLoadedMaps;
 
       // store spawners in a map
@@ -300,6 +348,7 @@ namespace dtEntity
       MessageFunctor mSpawnEntityFunctor;
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
+      MessageFunctor mStopSystemFunctor;
 
       MessageFactory mMessageFactory;
 

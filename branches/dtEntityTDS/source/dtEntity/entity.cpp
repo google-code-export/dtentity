@@ -57,13 +57,13 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void Entity::GetComponents(std::list<Component*>& toFill)
+   void Entity::GetComponents(std::vector<Component*>& toFill)
    {
       GetEntityManager().GetComponents(this->GetId(), toFill);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void Entity::GetComponents(std::list<const Component*>& toFill) const
+   void Entity::GetComponents(std::vector<const Component*>& toFill) const
    {
       GetEntityManager().GetComponents(this->GetId(), toFill);
    }

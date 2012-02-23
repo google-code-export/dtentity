@@ -114,7 +114,7 @@ namespace osgLibRocket
 			geom->getPrimitiveSet(0)->setNumInstances(0);
 			osg::StateSet* ss = geom->getOrCreateStateSet();
 		}*/
-      _geode->removeDrawables(0, _geode->getNumDrawables());
+		_geode->removeDrawables(0, _geode->getNumDrawables());
 	}
 
 
@@ -176,7 +176,7 @@ namespace osgLibRocket
 	void RenderInterface::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
 	{
 
-      osg::Geometry* geometry = static_cast<osg::Geometry*>(createGeometry(vertices, num_vertices, indices, num_indices, texture, false));
+		osg::Geometry* geometry = static_cast<osg::Geometry*>(createGeometry(vertices, num_vertices, indices, num_indices, texture, false));
 
 		osg::MatrixTransform* trans = new osg::MatrixTransform();
 		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
@@ -319,11 +319,11 @@ namespace osgLibRocket
 	/// @return True if the load attempt succeeded and the handle and dimensions are valid, false if not.
 	bool RenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source)
 	{
-      std::string src = source.CString();
-      if(src.substr(0, 10) != "LibRocket/")
-      {
-         src = "LibRocket/" + src;
-      }
+		std::string src = source.CString();
+		if(src.substr(0, 10) != "LibRocket/")
+		{
+			src = "LibRocket/" + src;
+		}
 
 		std::string path = osgDB::findDataFile(src);
 		if(path.empty())
@@ -397,7 +397,7 @@ namespace osgLibRocket
 
 	void RenderInterface::setRenderTarget(osg::Group* grp, int w, int h, bool fullscreen)
 	{
-      _fullScreen = fullscreen;
+		_fullScreen = fullscreen;
 		_screenWidth = w;
 		_screenHeight = h;
 
@@ -405,10 +405,10 @@ namespace osgLibRocket
       while(i < grp->getNumChildren())
       {
          osg::Node* node = grp->getChild(i);
-         
+
          if(node->referenceCount() == 2)
          {
-		      grp->removeChild(i);
+            grp->removeChild(i);
          }
          else
          {
@@ -437,8 +437,8 @@ namespace osgLibRocket
 
 		osg::Geometry* geometry = new osg::Geometry();
 		geometry->setUseDisplayList(false);
-      geometry->setUseVertexBufferObjects(useVBO);
-      geometry->setDataVariance(osg::Object::DYNAMIC);
+		geometry->setUseVertexBufferObjects(useVBO);
+		geometry->setDataVariance(osg::Object::DYNAMIC);
 
 		osg::Vec3Array* vertarray = new osg::Vec3Array(num_vertices);
 		osg::Vec4Array* colorarray = new osg::Vec4Array(num_vertices);
@@ -465,20 +465,20 @@ namespace osgLibRocket
 		{
 			osg::StateSet* ss = reinterpret_cast<osg::StateSet*>(texture);
 			geometry->setTexCoordArray(0, texcoords);
-         geometry->setStateSet(ss);
+			geometry->setStateSet(ss);
 		}
 
 
-		osg::Geode* geode = new osg::Geode();
+      osg::Geode* geode = new osg::Geode();
       geode->setCullingActive(false);
       geode->setDataVariance(osg::Object::DYNAMIC);
-		geode->addDrawable(geometry);
+      geode->addDrawable(geometry);
       osg::MatrixTransform* mt = new osg::MatrixTransform();
       mt->addChild(geode);
       mt->setCullingActive(false);
       mt->setDataVariance(osg::Object::DYNAMIC);
-		return mt;
-	}
+      return mt;
+   }
 
 
 	/// Called by Rocket when it wants to render geometry that the application does not wish to optimise. Note that
@@ -528,16 +528,16 @@ namespace osgLibRocket
 	void RenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry, const Rocket::Core::Vector2f& translation)
 	{
 
-		osg::MatrixTransform* trans = reinterpret_cast<osg::MatrixTransform*>(geometry);		
+		osg::MatrixTransform* trans = reinterpret_cast<osg::MatrixTransform*>(geometry);
 		trans->setMatrix(osg::Matrix::translate(osg::Vec3(translation.x, translation.y, 0)));
 		trans->getOrCreateStateSet()->setAttributeAndModes(_scissorTest, _scissorsEnabled ? osg::StateAttribute::ON : osg::StateAttribute::OFF);
-		
+
       if(trans->referenceCount() == 1)
       {
-		   _renderTarget->addChild(trans);
+         _renderTarget->addChild(trans);
       }
       trans->ref();
-	}
+   }
 
 	/// Called by Rocket when it wants to release application-compiled geometry.
 	/// @param[in] geometry The application-specific compiled geometry to release.
@@ -560,11 +560,11 @@ namespace osgLibRocket
 	/// @param[in] enable True if scissoring is to enabled, false if it is to be disabled.
 	void RenderInterface::EnableScissorRegion(bool enable)
 	{
-      // cannot use scissors when rendering to in-scene geometry
-      if(_fullScreen)
-      {
-		   _scissorsEnabled = enable;
-      }
+		// cannot use scissors when rendering to in-scene geometry
+		if(_fullScreen)
+		{
+			_scissorsEnabled = enable;
+		}
 	}
 
 	/// Called by Rocket when it wants to change the scissor region.
@@ -584,21 +584,21 @@ namespace osgLibRocket
 		texture->setImage(image);
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-      if(_fullScreen) 
-      {
-         texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
-         texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
-      }
-      else
-      {
-         texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
-		   texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-      }
-      //texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(texture.get());
-      osg::StateSet* ss = new osg::StateSet();
-	   ss->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-      ss->ref();
-      texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(ss);
+		if(_fullScreen)
+		{
+			texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
+			texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+		}
+		else
+		{
+			texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
+			texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+		}
+		//texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(texture.get());
+		osg::StateSet* ss = new osg::StateSet();
+		ss->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+		ss->ref();
+		texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(ss);
 	}
 
 	/// Called by Rocket when a texture is required by the library.
@@ -616,19 +616,19 @@ namespace osgLibRocket
       {
          src = "LibRocket/" + src;
       }*/
-		std::string path = osgDB::findDataFile(src);
-		if(path.empty())
-		{
-			return false;
-		}
-		osg::ref_ptr<osg::Image> img = osgDB::readImageFile(path);
-		if(!img.valid())
-		{
-			return false;
-		}
-		img->flipVertical();
+      std::string path = osgDB::findDataFile(src);
+      if(path.empty())
+      {
+         return false;
+      }
+      osg::ref_ptr<osg::Image> img = osgDB::readImageFile(path);
+      if(!img.valid())
+      {
+         return false;
+      }
+      img->flipVertical();
 
-		if(img == NULL) return false;
+      if(img == NULL) return false;
 
 		texture_dimensions.x = img->s();
 		texture_dimensions.y = img->t();

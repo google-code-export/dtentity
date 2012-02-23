@@ -413,7 +413,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CreateComponent(EntityManager& em, xml_node<>* element, EntityId entityId)
+   void CreateComponent(EntityManager& em, xml_node<>* element, EntityId entityId, const std::string& mapname)
    {
       for(xml_attribute<>* attr = element->first_attribute();
            attr; attr = attr->next_attribute())
@@ -428,7 +428,7 @@ namespace dtEntity
                bool success = StartEntitySystem(em, componentType);
                if(!success)
                {
-                  LOG_WARNING("Cannot add component, no entity system of this type registered: " + GetStringFromSID(componentType));
+                  LOG_WARNING("In Map " << mapname << ": Cannot add component, no entity system of this type registered: " << GetStringFromSID(componentType));
                   return;
                }
                em.CreateComponent(entityId, componentType, component);
@@ -438,7 +438,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SetupComponent(EntityManager& em, xml_node<>* element, EntityId entityId)
+   void SetupComponent(EntityManager& em, xml_node<>* element, EntityId entityId, const std::string& mapname)
    {
       StringId componentType;
       for(xml_attribute<>* attr = element->first_attribute();
@@ -477,7 +477,7 @@ namespace dtEntity
                Property* toset = component->Get(namesid);
                if(toset == NULL)
                {
-                  LOG_WARNING("Property " << GetStringFromSID(namesid) 
+                  LOG_WARNING("In Map " << mapname << ": Property " << GetStringFromSID(namesid) 
 					  << " does not exist in component "
 					  << GetStringFromSID(componentType));
                }
@@ -534,7 +534,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "component") == 0)
             {
-               CreateComponent(em, currentNode, newentity->GetId());
+               CreateComponent(em, currentNode, newentity->GetId(), mapName);
             }
          }
       }
@@ -546,7 +546,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "component") == 0)
             {
-               SetupComponent(em, currentNode, newentity->GetId());
+               SetupComponent(em, currentNode, newentity->GetId(), mapName);
             }
          }
       }
@@ -700,7 +700,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SetupEntitySystem(EntityManager& em, xml_node<>* element)
+   void SetupEntitySystem(EntityManager& em, xml_node<>* element, const std::string& filename)
    {
       StringId componentType;
       for(xml_attribute<>* attr = element->first_attribute();
@@ -717,7 +717,7 @@ namespace dtEntity
          bool success = StartEntitySystem(em, componentType);
          if(!success)
          {
-            LOG_WARNING("Cannot setup entity system. Component type not found: " + GetStringFromSID(componentType));
+            LOG_WARNING("In scene " << filename << ": Cannot setup entity system. Component type not found: " + GetStringFromSID(componentType));
             return;
          }
       }
@@ -809,7 +809,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ParseScene(EntityManager& em, xml_node<>* element, std::list<std::string>& mapsToLoad)
+   void ParseScene(EntityManager& em, xml_node<>* element, std::list<std::string>& mapsToLoad, const std::string& sceneName)
    {
       // first load all libraries
       for(xml_node<>* rootLibNode(element->first_node());
@@ -849,7 +849,7 @@ namespace dtEntity
          {
             if(strcmp(currentNode->name(), "entitysystem") == 0)
             {
-               SetupEntitySystem(em, currentNode);
+               SetupEntitySystem(em, currentNode, sceneName);
             }
          }
       }
@@ -1237,12 +1237,12 @@ namespace dtEntity
          }
       }
 
-      std::list<const Component*> comps;
+      std::vector<const Component*> comps;
       em.GetComponents(eid, comps);
 
       // write components sorted by component type name
       std::map<std::string, const Component*> sorted;
-      std::list<const Component*>::const_iterator i;
+      std::vector<const Component*>::const_iterator i;
       for(i = comps.begin(); i != comps.end(); ++i)
       {
          sorted[GetStringFromSID((*i)->GetType())] = *i;
@@ -1369,7 +1369,7 @@ namespace dtEntity
          doc.parse<0>(file.data());
 
 			xml_node<>* scenenode = doc.first_node("scene");
-			ParseScene(*mEntityManager, scenenode, mapsToLoad);
+			ParseScene(*mEntityManager, scenenode, mapsToLoad, path);
 
 		}
 		catch(const std::exception& ex)
@@ -1456,20 +1456,15 @@ namespace dtEntity
             SerializeEntity(*mEntityManager, doc, names, mapelem, j->second);
          }
       }
-
      
-      // TODO under windows I get a crash in RapidXML if I 
-      // directly stream to the ofstream. Hmmm...
-      std::ostringstream os;
-      os << doc;
       std::ofstream of(p_dest.c_str());
-	  if(of.fail())
-	  {
-		  LOG_ERROR("Cannot open file for writing: " << p_dest);
-		  return false;
-	  }
+	   if(of.fail())
+	   {
+	 	  LOG_ERROR("Cannot open file for writing: " << p_dest);
+ 		  return false;
+      }
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
-      of << os.str();
+      of << doc;
       of.close();
       return true;
    }
@@ -1517,20 +1512,23 @@ namespace dtEntity
       std::vector<std::string> maps = mMapSystem->GetLoadedMaps();
       if(!maps.empty())
       {
+         typedef std::map<unsigned int, std::string> Ordered;
+         Ordered ordered;
+
+         for(std::vector<std::string>::iterator j = maps.begin(); j != maps.end(); ++j)
+         {
+            ordered[mapSystem->GetMapSaveOrder(*j)] = *j;
+         }
+
          xml_node<>* mapselem = doc.allocate_node(node_element, names.mMaps);
          sceneelem->append_node(mapselem);
-         std::vector<std::string>::iterator j;
-         for(j = maps.begin(); j != maps.end(); ++j)
+         Ordered::iterator k;
+         for(k = ordered.begin(); k != ordered.end(); ++k)
          {
-            SerializeMap(doc, names, mapselem, *j);
+            SerializeMap(doc, names, mapselem, k->second);
          }
       }
 
-
-      // TODO under windows I get a crash in RapidXML if I 
-      // directly stream to the ofstream. Hmmm...
-      std::ostringstream os;
-      os << doc;
       std::ofstream of(path.c_str());
 
 		if(of.fail())
@@ -1539,7 +1537,7 @@ namespace dtEntity
 		  return false;
 		}
       of << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>\n";
-      of << os.str();
+      of << doc;
       of.close();
 
       return true;

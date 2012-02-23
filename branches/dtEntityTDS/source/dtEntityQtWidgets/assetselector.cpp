@@ -133,9 +133,8 @@ namespace dtEntityQtWidgets
       
       OnDataPathChanged(current);   
       QString lastpath = settings.value("AssetSelectorCurrentSelection", current).toString();
-      QFileSystemModel* model = static_cast<QFileSystemModel*>(mFileTree->model());
       
-      PopulatePathInModel(lastpath, current, mFileTree, model);
+      PopulatePathInModel(lastpath, current, mFileTree, mModel);
 
       connect(mDataPathSelector, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(OnDataPathChanged(const QString&)));
 
@@ -296,9 +295,15 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void AssetSelector::OnDataPathChanged(const QString& path)
    {
+      // see http://developer.qt.nokia.com/forums/viewthread/7265
+      QDir::Filters oriFilters = mModel->filter();
+       
       mRootPath = path;
-      mModel->setRootPath(mRootPath);
-      mFileTree->setRootIndex(mModel->index(mRootPath));
+      QModelIndex idx = mModel->setRootPath(mRootPath);
+      mFileTree->setRootIndex(idx);
+
+      mModel->setFilter(oriFilters);
+
       QSettings settings;
       settings.setValue("AssetSelectorCurrentDataPath", path);
    }

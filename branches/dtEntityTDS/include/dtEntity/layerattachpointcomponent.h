@@ -21,10 +21,11 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
-#include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/component.h>
+#include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/export.h>
+#include <dtEntity/osgcomponents.h>
+#include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
 
@@ -67,6 +68,7 @@ namespace dtEntity
 
    class DT_ENTITY_EXPORT LayerAttachPointSystem
       : public DefaultEntitySystem<LayerAttachPointComponent>
+      , public ScriptAccessor
    {
       friend class LayerAttachPointComponent;
 
@@ -92,6 +94,7 @@ namespace dtEntity
 
       void CreateSceneGraphRootEntity(osg::Group* root);
       
+      Property* ScriptGetByName(const PropertyArgs& args);
       
    private:
 

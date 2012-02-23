@@ -114,7 +114,7 @@ namespace dtEntity
       PluginFactoryMap& GetFactories() { return mFactories; }
 
       // get extension appended to lib name to point to shared library name
-      std::string GetLibExtension();
+      static std::string GetLibExtension();
 
       // get library file name from plugin name, platform dependent
       std::string GetSharedLibNameFromPluginName(const std::string& pluginName);
