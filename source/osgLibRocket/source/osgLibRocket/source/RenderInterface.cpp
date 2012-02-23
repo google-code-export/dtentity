@@ -548,9 +548,11 @@ namespace osgLibRocket
 		{
 			node->getParent(0)->removeChild(node);
 		}
-		while(node->referenceCount() > 0)
+		unsigned int refcount = node->referenceCount();
+		while(refcount > 0)
 		{
 			node->unref();
+			--refcount;
 		}
 	}
 
