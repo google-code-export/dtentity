@@ -27,6 +27,7 @@
 #include "elementwrapper.h"
 #include <sstream>
 #include <iostream>
+#include <Rocket/Core/Element.h>
 
 namespace dtEntityRocket
 {
@@ -154,7 +155,20 @@ namespace dtEntityRocket
       Rocket::Core::Variant* value;
       while (dict->Iterate(index, key, value))
       {
-         params->Set(String::New(key.CString()), RocketVariantToVal(*value));            
+         // HACK: Don't know how to handle void ptrs from libRocket, so
+         // this is basically hard coded. Ugly, but is there a better way?
+         if(value->GetType() == Rocket::Core::Variant::VOIDPTR) {
+            if(key == "drag_element")
+            {
+               void* ptr = value->Get<void*>();
+               Rocket::Core::Element* elem = static_cast<Rocket::Core::Element*>(ptr);
+               params->Set(String::New(key.CString()), WrapElement(mFunc->CreationContext(), elem));   
+            }
+         }
+         else
+         {
+            params->Set(String::New(key.CString()), RocketVariantToVal(*value));            
+         }
       }
 
       Handle<Object> current; 
