@@ -141,6 +141,11 @@ namespace dtEntity
 	   if(compviewer == NULL)
       {
          appsys->GetViewer()->realize();
+         if(!appsys->GetViewer()->isRealized())
+         {
+            LOG_ERROR("OSG viewer could not realize window, check your display traits!");
+            return false;
+         }
          osgViewer::ViewerBase::Windows windows;
          appsys->GetViewer()->getWindows(windows);
          windows.front()->setName(name);
@@ -166,6 +171,11 @@ namespace dtEntity
              
              contextId = gw->getState()->getContextID();
              gw->realize();
+             if(!gw->isRealized())
+             {
+                LOG_ERROR("OSG viewer could not realize window, check your display traits!");
+                return false;
+             }
          }
          else
          {

@@ -80,6 +80,7 @@ namespace dtEntity
 
    /** 
      * analyze command line and open OSG window with correct traits
+     * @return true if success
      */
-   void DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
+   bool DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
 }
