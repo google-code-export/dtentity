@@ -186,7 +186,12 @@ namespace dtEntity
       em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
       appsystem->SetViewer(&viewer);
 
-      DoScreenSetup(argc, argv, viewer, em);
+      bool success = DoScreenSetup(argc, argv, viewer, em);
+      if(!success)
+      {
+         LOG_ERROR("Error setting up screens! exiting");
+         return false;
+      }
 
       SetupSceneGraph(viewer, em, pSceneNode);
     
@@ -241,7 +246,7 @@ namespace dtEntity
    }
    
    ////////////////////////////////////////////////////////////////////////// 
-   void DoScreenSetup(int argc, char** argv, 
+   bool DoScreenSetup(int argc, char** argv,
       osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em)
    {
       int curArg = 1;
@@ -325,12 +330,17 @@ namespace dtEntity
 
       unsigned int contextId;
       bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits, contextId);
-      assert(success);
+      if(!success)
+      {
+         LOG_ERROR("Could not open window, exiting!");
+         return false;
+      }
 
       if(screenNum != -1)
       {
          appsystem->GetWindowManager()->SetFullscreen(contextId, true);
       } 
+      return true;
    }
 
    //////////////////////////////////////////////////////////////////////////
