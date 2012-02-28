@@ -402,8 +402,6 @@ namespace dtEntity
             if(e)
             {
                HandleMouseEnterLeave(ea);
-
-               osg::notify(osg::ALWAYS) << "------------------> MouseEnterLeave event at time " << ea.getTime() << std::endl;
             }
             break;
          }

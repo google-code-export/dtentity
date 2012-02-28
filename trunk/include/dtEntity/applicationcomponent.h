@@ -70,12 +70,12 @@ namespace dtEntity
 
       ComponentType GetComponentType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
+      void EmitTickMessagesAndQueuedMessages();
 
       /**
        * @return The scale of realtime the GameManager is running at.
        */
-      double GetTimeScale() const;
+      float GetTimeScale() const;
 
       /**
        * @return the current simulation time. This is in SECONDs.
@@ -103,7 +103,7 @@ namespace dtEntity
        * @param newTimeScale the new simulation time progression as a factor of real time.
        * @param newClockTime  The new simulation wall-clock time. In MICRO SECONDs (seconds * 1000000LL).
        */
-      void ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime);
+      void ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime);
 
 	  /** Functor reacting to SetComponentPropertiesMessage */
       void OnSetComponentProperties(const Message& msg);
@@ -140,7 +140,7 @@ namespace dtEntity
 
    private:
 
-      DoubleProperty mTimeScale;
+      FloatProperty mTimeScale;
       ArrayProperty mArgvArray;
 
       ApplicationImpl* mImpl;

@@ -244,5 +244,16 @@ int main(int argc, char** argv)
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
    mSystem->LoadScene("Scenes/wheels.dtescene");
 
-   return viewer.run();
+
+   dtEntity::ApplicationSystem* appsys;
+   em.GetES(appsys);
+
+   while (!viewer.done())
+   {
+      viewer.advance(DBL_MAX);
+      viewer.eventTraversal();
+      appsys->EmitTickMessagesAndQueuedMessages();
+      viewer.updateTraversal();
+      viewer.renderingTraversals();
+   }
 }

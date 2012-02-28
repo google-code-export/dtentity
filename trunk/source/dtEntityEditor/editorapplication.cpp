@@ -214,7 +214,15 @@ namespace dtEntityEditor
    {
       if(!mViewer->done())
       {
-         mViewer->frame();
+         mViewer->advance(DBL_MAX);
+         mViewer->eventTraversal();
+
+         dtEntity::ApplicationSystem* appsys;
+         GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+         appsys->EmitTickMessagesAndQueuedMessages();
+
+         mViewer->updateTraversal();
+         mViewer->renderingTraversals();
       }
    }
 

@@ -342,6 +342,13 @@ int main(int argc, char** argv)
    appsys->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
    appsys->GetPrimaryView()->getCameraManipulator()->home(0);
 
-   return viewer.run();
+   while (!viewer.done())
+   {
+      viewer.advance(DBL_MAX);
+      viewer.eventTraversal();
+      appsys->EmitTickMessagesAndQueuedMessages();
+      viewer.updateTraversal();
+      viewer.renderingTraversals();
+   }
 
 }

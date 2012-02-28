@@ -104,10 +104,11 @@ int main(int argc, char** argv)
 
    while (!viewer.done())
    {
-      viewer.frame();
-
-      viewer.advance();
+      viewer.advance(DBL_MAX);
       viewer.eventTraversal();
+
+      appsystem->EmitTickMessagesAndQueuedMessages();
+
       viewer.updateTraversal();
       
       

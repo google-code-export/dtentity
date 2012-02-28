@@ -140,6 +140,7 @@ int main(int argc, char** argv)
          CProfileManager::Stop_Profile();
 
          CProfileManager::Start_Profile(frameUpTrId);
+         appsys->EmitTickMessagesAndQueuedMessages();
          viewer.updateTraversal();
          CProfileManager::Stop_Profile();
 
@@ -167,6 +168,7 @@ int main(int argc, char** argv)
          windowManager->ProcessQueuedMessages();
 
          viewer.eventTraversal();
+         appsys->EmitTickMessagesAndQueuedMessages();
          viewer.updateTraversal();
          viewer.renderingTraversals();
       }
