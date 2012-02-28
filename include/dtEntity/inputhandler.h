@@ -81,7 +81,8 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT InputHandler : public osg::NodeCallback
+   //class DT_ENTITY_EXPORT InputHandler : public osg::NodeCallback
+   class DT_ENTITY_EXPORT InputHandler : public osgGA::GUIEventHandler
    {
    public:
 
@@ -99,7 +100,8 @@ namespace dtEntity
    
       InputHandler(dtEntity::EntityManager& em);
 
-      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
+      //virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
+      virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*) ;
 
       void AddInputCallback(InputCallbackInterface*);
       bool RemoveInputCallback(InputCallbackInterface*);
@@ -195,9 +197,7 @@ namespace dtEntity
       /**
        * React to OSG input events
        */
-      virtual bool handle(const osgGA::GUIEventAdapter& ea, 
-                          osgGA::GUIActionAdapter& aa, 
-                          osg::NodeVisitor *);
+      virtual bool handleInternal(const osgGA::GUIEventAdapter& ea);
 
 
    protected:
@@ -251,7 +251,9 @@ namespace dtEntity
       unsigned int mFrameNumber;
       osgGA::GUIEventAdapter::ScrollingMotion mMouseScroll;
       unsigned int mMouseScrollContext;
-      std::ostringstream mInputString;      
+      std::ostringstream mInputString;
+
+      bool mNeedReset; // internal flag to check when to reset
    };
 
 }

@@ -476,10 +476,15 @@ namespace dtEntity
    {
       const CameraAddedMessage& msg = static_cast<const CameraAddedMessage&>(m);
       CameraComponent* camcomp;
-      if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
+
+      
+      if(!GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
       {
-         camcomp->GetCamera()->setEventCallback(&GetWindowManager()->GetInputHandler());
+         LOG_ERROR("Camera not found!");
+         return;
       }
+      
+      camcomp->GetCamera()->setEventCallback(&GetWindowManager()->GetInputHandler());
 
       LayerAttachPointSystem* lsys;
       GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
