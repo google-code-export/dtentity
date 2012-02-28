@@ -490,7 +490,15 @@ namespace dtEntity
          return;
       }
       
-      camcomp->GetCamera()->setEventCallback(&GetWindowManager()->GetInputHandler());
+      osgViewer::View* view = dynamic_cast<osgViewer::View*>(camcomp->GetCamera()->getView());
+      if(view)
+      {
+         view->getEventHandlers().push_back(&GetWindowManager()->GetInputHandler());
+      }
+      else
+      {
+         LOG_ERROR("Encountered unknown view type!");
+      }
 
       LayerAttachPointSystem* lsys;
       GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);

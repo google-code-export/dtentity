@@ -27,6 +27,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/windowmanager.h>
 #include <iostream>
 #include <osgLibRocket/GuiNode>
 #include <osgViewer/CompositeViewer>
@@ -211,6 +212,7 @@ namespace dtEntityRocket
      {
        dtEntity::ApplicationSystem* appsys;
        mEntity->GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+       appsys->GetPrimaryView()->removeEventHandler(gui->GetGUIEventHandler());
      }
    }
 
@@ -235,6 +237,9 @@ namespace dtEntityRocket
 
      dtEntity::ApplicationSystem* appsys;
      mEntity->GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+
+     appsys->GetPrimaryView()->removeEventHandler(gui->GetGUIEventHandler());
+     appsys->GetPrimaryView()->getEventHandlers().push_front(gui->GetGUIEventHandler());
 
      if(mFullScreen.Get())
      {

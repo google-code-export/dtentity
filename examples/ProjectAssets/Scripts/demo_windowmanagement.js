@@ -22,8 +22,8 @@ function startWindowManagementDemo() {
        FarClip: 100000
      },
      Map: {
-       EntityName : "cam_0",
-       UniqueId : "cam_0"
+       EntityName : "cam_" + contextid,
+       UniqueId : "cam_" + contextid
      },
      EditorMotion : {
        Enabled : true

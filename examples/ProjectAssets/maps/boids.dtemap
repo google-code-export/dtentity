@@ -274,6 +274,7 @@
 			<vec3property name="EyeDirection" x="-0.9096127976" y="0.3076185968" z="-0.2792406799"/>
 			<doubleproperty name="FarClip" value="100000.0000003805"/>
 			<doubleproperty name="FieldOfView" value="45.0000000000"/>
+			<intproperty name="ContextId" value="0"/>
 			<floatproperty name="LODScale" value="1.0000000000"/>
 			<doubleproperty name="NearClip" value="1.0000000000"/>
 			<vec3property name="Position" x="45.3167616559" y="-11.8623206382" z="9.2307528305"/>

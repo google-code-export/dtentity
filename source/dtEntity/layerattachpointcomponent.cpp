@@ -136,7 +136,6 @@ namespace dtEntity
    {
       assert(mEntityManager);
       node->setName("Layer Attach Point: "+ GetStringFromSID(GetName()));
-      node->setDataVariance(osg::Object::DYNAMIC);
       GroupComponent::SetNode(node);      
 
       LayerSystem* ls;
@@ -220,8 +219,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void LayerAttachPointSystem::CreateSceneGraphRootEntity(osg::Group* root)
    {
-      root->setDataVariance(osg::Object::DYNAMIC);
-      mSceneGraphRoot = root;
+     mSceneGraphRoot = root;
       if(mBaseEntityId == 0 || !GetEntityManager().EntityExists(mBaseEntityId))
       {
          Entity* base;
@@ -230,9 +228,7 @@ namespace dtEntity
          LayerAttachPointComponent* layerattach;
          GetEntityManager().CreateComponent(mBaseEntityId, layerattach);
          layerattach->SetName(RootId);
-         osg::Group* grp = new osg::Group();
-         layerattach->SetNode(grp);
-         root->addChild(grp);
+         layerattach->SetNode(root);
          RegisterByName(DefaultLayerId, layerattach);
       }
       else
