@@ -29,6 +29,7 @@
 #include <sstream>
 #include <osg/ShapeDrawable>
 #include <iostream>
+#include <assert.h>
 
 namespace osgLibRocket
 {
@@ -64,11 +65,34 @@ namespace osgLibRocket
       }
    };
 
+   class GUIEventHandler : public osgGA::GUIEventHandler
+   {
+      GuiNode* mGUINode;
+
+   public:
+
+      GUIEventHandler(GuiNode* node)
+         : mGUINode(node)
+      {
+      }
+
+      virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor* nv) 
+      { 
+         
+         osg::NodePath np;
+         osg::NodePathList nodePaths = mGUINode->getParentalNodePaths();
+
+         assert(!nodePaths.empty());
+         
+         return mGUINode->handle(ea, nodePaths.front(), aa); 
+      }
+   };
 
   GuiNode::GuiNode(const std::string& contextname, bool debug)
     : _previousTraversalNumber(osg::UNINITIALIZED_FRAME_NUMBER)
     , _contextEventListener(NULL)
     , _camera(NULL)
+    , mGUIEventHandler(new GUIEventHandler(this))
 
   {
 
@@ -87,7 +111,7 @@ namespace osgLibRocket
     // register for update traversal
     setNumChildrenRequiringUpdateTraversal(getNumChildrenRequiringUpdateTraversal() + 1);
     // register for update traversal
-    setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
+    //setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
 
 
     // create libRocket context for this gui
@@ -166,19 +190,6 @@ namespace osgLibRocket
 
                  }
              }
-         } 
-         break;
-         case osg::NodeVisitor::EVENT_VISITOR: 
-         {
-            osgGA::EventVisitor* ev = static_cast<osgGA::EventVisitor*>(&nv);
-            for(osgGA::EventQueue::Events::iterator itr = ev->getEvents().begin();
-                itr != ev->getEvents().end();
-                ++itr)
-            {
-                osgGA::GUIEventAdapter* ea = itr->get();
-                if (handle(*ea, *ev, *(ev->getActionAdapter()))) ea->setHandled(true);
-            }
-        
          } 
          break;
          default: {}
@@ -431,7 +442,7 @@ namespace osgLibRocket
   }
 
 
-  void GuiNode::mousePosition(osgViewer::View* view, const osgGA::GUIEventAdapter& ea, osgGA::EventVisitor& ev, int& x, int &y)
+  void GuiNode::mousePosition(osgViewer::View* view, const osgGA::GUIEventAdapter& ea, const osg::NodePath& nodePath, int& x, int &y)
   {
 
       if(_camera.valid())
@@ -455,7 +466,7 @@ namespace osgLibRocket
       {
         // in-scene
 
-        osg::NodePath& nodePath = ev.getNodePath();
+        
 
         if (!view->getCamera() || nodePath.empty())
         {
@@ -529,7 +540,7 @@ namespace osgLibRocket
     }
   }
 
-  bool GuiNode::handle(const osgGA::GUIEventAdapter& ea,osgGA::EventVisitor& ev, osgGA::GUIActionAdapter& aa)
+  bool GuiNode::handle(const osgGA::GUIEventAdapter& ea, const osg::NodePath& np, osgGA::GUIActionAdapter& aa)
   {
 
     if(ea.getHandled())
@@ -560,7 +571,7 @@ namespace osgLibRocket
       {
          int x, y;
         osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
-        mousePosition(view,ea, ev, x, y);
+        mousePosition(view,ea, np, x, y);
         _context->ProcessMouseMove(x, y, GetKeyModifiers(ea.getModKeyMask()));
 
         // always pass mouse movements to OSG
@@ -572,7 +583,7 @@ namespace osgLibRocket
         _context->ProcessMouseButtonDown(GetButtonId(ea.getButton()), GetKeyModifiers(ea.getModKeyMask()));
         osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
         int x, y;
-        mousePosition(view,ea, ev, x, y);
+        mousePosition(view,ea, np, x, y);
         return (_camera != NULL &&  _contextEventListener->_mouse_handled);
       }
       case(osgGA::GUIEventAdapter::RELEASE):
