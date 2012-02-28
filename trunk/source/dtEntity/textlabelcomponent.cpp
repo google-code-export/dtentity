@@ -186,7 +186,7 @@ namespace dtEntity
       text->setBackdropColor(osg::Vec4(1,0.2f,0,1));
       text->setPosition(osg::Vec3(0, 0, 0));
       text->setCharacterSize(22);
-      text->setDataVariance( osg::Object::DYNAMIC );
+      text->setDataVariance(osg::Object::DYNAMIC);
       text->setInitialBound(
         osg::BoundingBox(osg::Vec3(-1, -1, -1), osg::Vec3(1, 1, 1))
       );

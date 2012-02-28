@@ -296,7 +296,6 @@ namespace dtEntity
       : BaseClass(new osg::Group())
    {
       GetNode()->setName("GroupComponent");
-      GetNode()->setDataVariance(osg::Object::DYNAMIC);
       Register(ChildrenId, &mChildren);
    }
 

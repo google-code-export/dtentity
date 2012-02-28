@@ -143,6 +143,8 @@ namespace dtEntity
       mOrthoZNear.Set(-10000);
       mOrthoZFar.Set(10000);
 
+      mContextId.Set(-1);
+
       SetCullingMode(NoAutoNearFarCullingId);
       GetCamera()->setAllowEventFocus(true);
    }
@@ -252,7 +254,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::TryAssignContext()
    {
-      if(mEntity == NULL) return;
+      if(mEntity == NULL || mContextId.Get() == -1) return;
 
       ApplicationSystem* appsys;
       bool success = mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
@@ -299,7 +301,7 @@ namespace dtEntity
                osg::ref_ptr<osg::GraphicsContext> ctx = oldcam->getGraphicsContext();
                for(unsigned int j = 0; j < oldcam->getNumChildren(); ++j)
                {
-                  GetCamera()->addChild(oldcam->getChild(j));
+                  newcam->addChild(oldcam->getChild(j));
                }
 
                oldcam->setGraphicsContext(NULL);

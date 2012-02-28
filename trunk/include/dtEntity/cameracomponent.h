@@ -176,7 +176,7 @@ namespace dtEntity
 
 
       
-      UIntProperty mContextId;
+      IntProperty mContextId;
       StringIdProperty mLayerAttachPoint;
 
       StringIdProperty mCullingMode;
