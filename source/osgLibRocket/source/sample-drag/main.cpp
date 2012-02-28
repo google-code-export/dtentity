@@ -139,6 +139,8 @@ int main(int argc, char** argv)
     sceneNode->addChild(cam);
     addWidgets(gui);
 
+    viewer->addEventHandler(gui->GetGUIEventHandler());
+
   }
 
   {
@@ -158,7 +160,7 @@ int main(int argc, char** argv)
     sceneNode->addChild(pat);
     pat->addChild(gui);
     addWidgets(gui);
-
+    viewer->addEventHandler(gui->GetGUIEventHandler());
   }
 
 

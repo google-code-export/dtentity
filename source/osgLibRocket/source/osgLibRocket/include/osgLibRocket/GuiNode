@@ -66,7 +66,7 @@ namespace osgLibRocket
     /**
      * handle osg events.
      */
-    virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::EventVisitor& ev, osgGA::GUIActionAdapter& aa);
+    virtual bool handle(const osgGA::GUIEventAdapter& ea, const osg::NodePath& np, osgGA::GUIActionAdapter& aa);
 
     /**
       * transform osg key to libRocket key
@@ -88,6 +88,8 @@ namespace osgLibRocket
       */
     void setCamera(osg::Camera* cam);
 
+    osgGA::GUIEventHandler* GetGUIEventHandler() const { return mGUIEventHandler; }
+
   private:
 
     /**
@@ -98,7 +100,7 @@ namespace osgLibRocket
     /**
       * Transform osg mouse position into libRocket screen coordinates
       */
-    void mousePosition(osgViewer::View* view, const osgGA::GUIEventAdapter& ea, osgGA::EventVisitor& ev, int& x, int &y);
+    void mousePosition(osgViewer::View* view, const osgGA::GUIEventAdapter& ea, const osg::NodePath& nodePath, int& x, int &y);
 
     // number of last frame so we don't update multiple times per frame
     unsigned int _previousTraversalNumber;
@@ -113,6 +115,8 @@ namespace osgLibRocket
 
     // camera to render to (can be NULL)
     osg::ref_ptr<osg::Camera> _camera;
+
+    osg::ref_ptr<osgGA::GUIEventHandler> mGUIEventHandler;
 
 
   };
