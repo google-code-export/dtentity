@@ -61,6 +61,7 @@ namespace dtEntity
       , mNumTouches(0)
       , mFrameNumber(0)
       , mMouseScrollContext(0)
+      , mNeedReset(false)
    {
       //setNumChildrenRequiringEventTraversal(getNumChildrenRequiringEventTraversal() + 1);
 
@@ -271,8 +272,10 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InputHandler::operator()(osg::Node* node, osg::NodeVisitor* nv)
+   //void InputHandler::operator()(osg::Node* node, osg::NodeVisitor* nv)
+   bool InputHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor* )
    {
+      /*
        // note, callback is responsible for scenegraph traversal so
        // they must call traverse(node,nv) to ensure that the
        // scene graph subtree (and associated callbacks) are traversed.
@@ -291,6 +294,24 @@ namespace dtEntity
              }
           }
        }
+       */
+
+      if (ea.getEventType() == osgGA::GUIEventAdapter::FRAME)
+      {
+         // frame is the latest event received within a single frame
+         //mLastFrameTime = ea.getTime();
+         mNeedReset = true;
+      }
+      else
+      {
+         if (mNeedReset)
+         {
+            Reset();
+            mNeedReset = false;
+         }
+      }
+
+      return handleInternal(ea);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -314,17 +335,17 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool InputHandler::handle(const osgGA::GUIEventAdapter& ea, 
-                             osgGA::GUIActionAdapter& aa, 
-                             osg::NodeVisitor* nv)
+   bool InputHandler::handleInternal(const osgGA::GUIEventAdapter& ea)
    {
 
+      /*
       unsigned int fn = nv->getFrameStamp()->getFrameNumber();
       if(fn != mFrameNumber)
       {
          Reset();
          mFrameNumber = fn;
       }
+      */
 
       switch (ea.getEventType() )
       {
@@ -381,6 +402,8 @@ namespace dtEntity
             if(e)
             {
                HandleMouseEnterLeave(ea);
+
+               osg::notify(osg::ALWAYS) << "------------------> MouseEnterLeave event at time " << ea.getTime() << std::endl;
             }
             break;
          }
