@@ -236,7 +236,7 @@ namespace dtEntity
 
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
-      appsystem->GetPrimaryCamera()->setEventCallback(&appsystem->GetWindowManager()->GetInputHandler());
+      appsystem->GetPrimaryView()->addEventHandler(&appsystem->GetWindowManager()->GetInputHandler());
 
       // create an entity holding the scene graph root as an attach point
       LayerAttachPointSystem* layerattachsys;

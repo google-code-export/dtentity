@@ -493,7 +493,11 @@ namespace dtEntity
       osgViewer::View* view = dynamic_cast<osgViewer::View*>(camcomp->GetCamera()->getView());
       if(view)
       {
-         view->getEventHandlers().push_back(&GetWindowManager()->GetInputHandler());
+         osgViewer::View::EventHandlers& eh = view->getEventHandlers();
+         if(std::find(eh.begin(), eh.end(),&GetWindowManager()->GetInputHandler()) ==  eh.end())
+         {
+            eh.push_back(&GetWindowManager()->GetInputHandler());
+         }
       }
       else
       {
