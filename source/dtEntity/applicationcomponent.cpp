@@ -40,8 +40,6 @@
 
 namespace dtEntity
 {   
-   class DtEntityUpdateCallback;
-
    class ApplicationImpl
    {
    public:
@@ -59,16 +57,24 @@ namespace dtEntity
       ApplicationSystem* mApplicationSystem;
       osg::Timer_t mStartOfFrameTick;
       osg::Timer_t mSimulationClockTime;
-      double mPrevSimTime;
+      
       unsigned int mLastFrameNumber;
 
    public:
+
+      double mSimTime;
+      float mDeltaSimTime;
+      float mDeltaTime;
+      float mTimeScale;
      
       DtEntityUpdateCallback(ApplicationSystem* as)
          : mApplicationSystem(as)
          , mStartOfFrameTick(osg::Timer::instance()->tick())
          , mSimulationClockTime(0)
-         , mPrevSimTime(0)
+         , mSimTime(0)
+         , mTimeScale(0)
+         , mDeltaSimTime(0)
+         , mDeltaTime(0)
          , mLastFrameNumber(0)
       {
          time_t t;
@@ -95,51 +101,20 @@ namespace dtEntity
          double simtime = fs->getSimulationTime();
          osg::Timer_t currentTick = osg::Timer::instance()->tick();
 
-         double deltaTime = osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
+         mDeltaTime = (float)osg::Timer::instance()->delta_s(mStartOfFrameTick, currentTick);
          
-         double timeScale = mApplicationSystem->GetTimeScale();
-         double add = (timeScale * deltaTime) / osg::Timer::instance()->getSecondsPerTick();
+         mTimeScale = mApplicationSystem->GetTimeScale();
+         double add = (mTimeScale * mDeltaTime) / osg::Timer::instance()->getSecondsPerTick();
          mSimulationClockTime += add;
-        // fs->setCalendarTime(mSimulationClockTime);
-         double deltaSimTime = simtime - mPrevSimTime;
-         mPrevSimTime = simtime;
+        
+         mDeltaSimTime = simtime - mSimTime;
+         mSimTime = simtime;
          mStartOfFrameTick = currentTick;
          
-         
-         dtEntity::EntityManager& em = mApplicationSystem->GetEntityManager();
-
-         {
-            dtEntity::PostFrameMessage msg;
-            msg.SetDeltaSimTime(deltaSimTime);
-            msg.SetDeltaRealTime(deltaTime);
-            msg.SetSimTimeScale(timeScale);
-            msg.SetSimulationTime(simtime);
-            em.EmitMessage(msg);
-         }
-
-         {
-            dtEntity::TickMessage msg;
-            msg.SetDeltaSimTime(deltaSimTime);
-            msg.SetDeltaRealTime(deltaTime);
-            msg.SetSimTimeScale(timeScale);
-            msg.SetSimulationTime(simtime);
-            em.EmitMessage(msg);
-         }
-         em.EmitQueuedMessages(simtime);
-         {
-            dtEntity::EndOfFrameMessage msg;
-            msg.SetDeltaSimTime(deltaSimTime);
-            msg.SetDeltaRealTime(deltaTime);
-            msg.SetSimTimeScale(timeScale);
-            msg.SetSimulationTime(simtime);
-            em.EmitMessage(msg);
-         }
-
          mApplicationSystem->mImpl->mLastFrameStamp = fs;
          traverse(node,nv);
-
-         
       }
+
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -190,11 +165,42 @@ namespace dtEntity
       delete mImpl;
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::OnPropertyChanged(StringId propname, Property& prop)
+   //////////////////////////////////////////////////////////////////////////////
+   void ApplicationSystem::EmitTickMessagesAndQueuedMessages()
    {
-   }
+      EntityManager& em = GetEntityManager();
+      
+      {
+         dtEntity::PostFrameMessage msg;
+         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
+         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
+         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
+         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         em.EmitMessage(msg);
+      }
 
+      {
+         dtEntity::TickMessage msg;
+         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
+         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
+         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
+         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         em.EmitMessage(msg);
+      }
+
+      em.EmitQueuedMessages(mImpl->mUpdateCallback->mSimTime);
+
+      {
+         dtEntity::EndOfFrameMessage msg;
+         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
+         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
+         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
+         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         em.EmitMessage(msg);
+      }
+
+   }
+   
    //////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetWindowManager(WindowManager* wm) 
    { 
@@ -248,7 +254,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   double ApplicationSystem::GetTimeScale() const
+   float ApplicationSystem::GetTimeScale() const
    {
       return mTimeScale.Get();
    }
@@ -321,7 +327,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::ChangeTimeSettings(double newTime, double newTimeScale, const osg::Timer_t& newClockTime)
+   void ApplicationSystem::ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime)
    {
       mTimeScale.Set(newTimeScale);
 
@@ -358,7 +364,7 @@ namespace dtEntity
          return NULL;
       }
       double newtime = args[0]->DoubleValue();
-      double newtimescale = args[1]->DoubleValue();
+      float newtimescale = args[1]->FloatValue();
       osg::Timer_t newclocktime = args[2]->DoubleValue();
       ChangeTimeSettings(newtime, newtimescale, newclocktime);
       return NULL;
