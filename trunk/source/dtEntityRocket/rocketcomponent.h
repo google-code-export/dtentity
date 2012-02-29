@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "export.h"
-
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/property.h>
@@ -46,7 +44,7 @@ namespace dtEntityRocket
 
    Rocket::Core::String ToRocketString(const v8::Handle<v8::Value>&);
    
-   class DT_ROCKET_EXPORT RocketComponent : public dtEntity::NodeComponent
+   class RocketComponent : public dtEntity::NodeComponent
    {
       typedef dtEntity::NodeComponent BaseClass;
 
@@ -84,7 +82,7 @@ namespace dtEntityRocket
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ROCKET_EXPORT RocketSystem
+   class RocketSystem
       : public dtEntity::DefaultEntitySystem<RocketComponent>
    {
       typedef dtEntity::DefaultEntitySystem<RocketComponent> BaseClass;

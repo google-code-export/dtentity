@@ -29,6 +29,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/osgcomponents.h>
 #include <dtEntity/windowmanager.h>
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <iostream>
 #include <osgDB/FileUtils>
@@ -36,9 +37,16 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <dtEntity/profile.h>
 
+#ifdef DTENTITY_LIBRARY_STATIC
+
+    // include the plugins we need
+    USE_DTENTITYPLUGIN(dtEntitySimulation)
+    USE_DTENTITYPLUGIN(dtEntityRocket)    
+    USE_DTENTITYPLUGIN(dtEntityV8Plugin)    
+#endif
+
 int main(int argc, char** argv)
 {
-
     std::string script = "Scripts/autostart.js";
     bool profiling_enabled = false;
     int curArg = 1;
@@ -75,24 +83,22 @@ int main(int argc, char** argv)
       return 0;
    }
    
-   dtEntity::MapSystem* mapSystem;
-   entityManager.GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-
-   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityV8Plugin", true);
-   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntityRocket", true);
-   mapSystem->GetPluginManager().AddPlugin("plugins/", "dtEntitySimulation", true);
+   dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
+   pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);
+   pm.AddPlugin("plugins/", "dtEntityRocket", true);
+   pm.AddPlugin("plugins/", "dtEntitySimulation", true);
    
    dtEntity::StringId scriptId = dtEntity::SID("Script");
       
    if(!entityManager.HasEntitySystem(scriptId))
    {
-      if(!mapSystem->GetPluginManager().FactoryExists(scriptId))
+      if(!pm.FactoryExists(scriptId))
       {
          LOG_ERROR("Cannot start scripting, script plugin not loaded!");
          return 1;
       }         
          
-      bool success = mapSystem->GetPluginManager().StartEntitySystem(scriptId);
+      bool success = pm.StartEntitySystem(entityManager, scriptId);
       if(!success)
       {
          LOG_ERROR("Cannot start scripting, script plugin not loaded!");
@@ -101,7 +107,7 @@ int main(int argc, char** argv)
    }
 
    dtEntity::Message* msg;
-   bool success = mapSystem->GetMessageFactory().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
+   bool success = dtEntity::MessageFactory::GetInstance().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
    assert(success);
    msg->Get(dtEntity::SID("IncludeOnce"))->SetBool(true);
    dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));

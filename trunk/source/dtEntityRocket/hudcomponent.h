@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "export.h"
-
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/osgcomponents.h>
@@ -33,7 +31,7 @@
 namespace dtEntityRocket
 {
    
-   class DT_ROCKET_EXPORT HUDComponent : public dtEntity::NodeComponent
+   class HUDComponent : public dtEntity::NodeComponent
    {
 
       typedef dtEntity::NodeComponent BaseClass;
@@ -104,7 +102,7 @@ namespace dtEntityRocket
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ROCKET_EXPORT HUDSystem
+   class HUDSystem
       : public dtEntity::DefaultEntitySystem<HUDComponent>
    {
       typedef dtEntity::DefaultEntitySystem<HUDComponent> BaseClass;

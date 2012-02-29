@@ -20,8 +20,7 @@
 
 #include "export.h"
 #include "testcomponent.h"
-#include <dtEntity/componentplugin.h>
-
+#include <dtEntity/componentpluginmanager.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,12 +37,7 @@ public:
 
    virtual std::string GetName() const
    {
-      return "Test Plugin";
-   }
-
-   virtual dtEntity::ComponentType GetType() const
-   {
-      return TestComponent::TYPE;
+      return "Test";
    }
 
    /** get a description of the plugin */
@@ -53,13 +47,7 @@ public:
    }
 };
 
-////////////////////////////////////////////////////////////////////////////////
-extern "C" TESTENTTITYSYSTEM_EXPORT void RegisterMessages(dtEntity::EntityManager& em)
-{
-}
 
-
-extern "C" TESTENTTITYSYSTEM_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
-{
-   list.push_back(new TestPluginFactory());
-}
+REGISTER_DTENTITYPLUGIN(testEntitySystemPlugin, 1,
+   new TestPluginFactory()
+)

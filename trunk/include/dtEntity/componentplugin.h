@@ -21,10 +21,12 @@
 */
 
 #include <list>
+#include <dtEntity/export.h>
 #include <dtEntity/entityid.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osgDB/DynamicLibrary>
+
 
 namespace dtEntity
 {
@@ -46,7 +48,7 @@ namespace dtEntity
       {
       }
 
-      /** get the name of the plugin */
+      /** get the name of the entity system (the type string) */
       virtual std::string GetName() const = 0;
 
       /**
@@ -58,11 +60,6 @@ namespace dtEntity
       /** delete the entity system */
       virtual void Destroy() {}
       
-      /**
-       * return type of entity system
-       */
-      virtual ComponentType GetType() const = 0;
-
       /**
        * return a textual description of the entity system functionality
        */
@@ -86,5 +83,6 @@ namespace dtEntity
 
       osg::ref_ptr<osgDB::DynamicLibrary> mLibrary;
    };
+
 
 }

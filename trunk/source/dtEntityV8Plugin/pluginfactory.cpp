@@ -22,13 +22,14 @@
 #include <dtEntityWrappers/messages.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntity/componentplugin.h>
+#include <dtEntity/componentpluginmanager.h>
 
 namespace dtEntityWrappers
 {
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_V8_EXPORT ScriptFactory : public dtEntity::ComponentPluginFactory
+   class ScriptFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -42,11 +43,6 @@ namespace dtEntityWrappers
       virtual std::string GetName() const
       {
          return "Script";
-      }
-
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return ScriptSystem::TYPE;
       }
 
       /** get a description of the plugin */
@@ -64,7 +60,11 @@ extern "C" DT_ENTITY_V8_EXPORT void CreatePluginFactories(std::list<dtEntity::Co
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ENTITY_V8_EXPORT void RegisterMessages(dtEntity::MessageFactory& mf)
+extern "C" __declspec(dllexport) void dtEntityMessages_dtEntityV8Plugin(dtEntity::MessageFactory& mf)
 {
    dtEntityWrappers::RegisterMessageTypes(mf);
 }
+
+REGISTER_DTENTITYPLUGIN(dtEntityV8Plugin, 1,
+   new dtEntityWrappers::ScriptFactory()
+)

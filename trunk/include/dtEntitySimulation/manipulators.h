@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntitySimulation/export.h>
 #include <osgManipulator/Dragger>
 #include <osgManipulator/TabBoxDragger>
 #include <osgManipulator/TabBoxTrackballDragger>

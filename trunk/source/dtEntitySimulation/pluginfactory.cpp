@@ -25,13 +25,14 @@
 #include <dtEntitySimulation/particlecomponent.h>
 #include <dtEntitySimulation/pathcomponent.h>
 #include <dtEntity/componentplugin.h>
+#include <dtEntity/componentpluginmanager.h>
 
 namespace dtEntitySimulation
 {
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_SIMULATION_EXPORT GroundClampingFactory : public dtEntity::ComponentPluginFactory
+   class GroundClampingFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -44,12 +45,7 @@ namespace dtEntitySimulation
       /** get the name of the plugin */
       virtual std::string GetName() const
       {
-         return "Ground Clamping";
-      }
-
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return GroundClampingComponent::TYPE;
+         return "GroundClamping";
       }
 
       /** get a description of the plugin */
@@ -60,7 +56,7 @@ namespace dtEntitySimulation
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_SIMULATION_EXPORT ManipulatorFactory : public dtEntity::ComponentPluginFactory
+   class ManipulatorFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -76,11 +72,6 @@ namespace dtEntitySimulation
          return "Manipulator";
       }
 
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return ManipulatorComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -89,7 +80,7 @@ namespace dtEntitySimulation
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_SIMULATION_EXPORT PathFactory : public dtEntity::ComponentPluginFactory
+   class PathFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -106,11 +97,6 @@ namespace dtEntitySimulation
          return "Path";
       }
 
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return PathComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -119,7 +105,7 @@ namespace dtEntitySimulation
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_SIMULATION_EXPORT ParticleFactory : public dtEntity::ComponentPluginFactory
+   class ParticleFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -135,11 +121,6 @@ namespace dtEntitySimulation
          return "Particle";
       }
 
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return dtEntitySimulation::ParticleComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -149,16 +130,15 @@ namespace dtEntitySimulation
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ENTITY_SIMULATION_EXPORT void RegisterMessages(dtEntity::MessageFactory& mf)
+extern "C" __declspec(dllexport) void dtEntityMessages_dtEntitySimulation(dtEntity::MessageFactory& mf)
 {
    dtEntitySimulation::RegisterMessageTypes(mf);
 }
 
+REGISTER_DTENTITYPLUGIN(dtEntitySimulation, 4,
+   new dtEntitySimulation::GroundClampingFactory(),
+   new dtEntitySimulation::ManipulatorFactory(),
+   new dtEntitySimulation::ParticleFactory(),
+   new dtEntitySimulation::PathFactory()
+)
 
-extern "C" DT_ENTITY_SIMULATION_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
-{
-   list.push_back(new dtEntitySimulation::GroundClampingFactory());
-   list.push_back(new dtEntitySimulation::ManipulatorFactory());
-   list.push_back(new dtEntitySimulation::ParticleFactory());
-   list.push_back(new dtEntitySimulation::PathFactory());
-}

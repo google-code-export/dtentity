@@ -20,10 +20,11 @@
 
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
+#include <dtEntity/messagefactory.h>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/stringid.h>
 #include <dtEntityWrappers/componentwrapper.h>
@@ -226,12 +227,11 @@ namespace dtEntityWrappers
    Handle<Value> EMEmitMessage(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
-      dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
       std::string namestr = ToStdString(args[0]);
       dtEntity::StringId pname = dtEntity::SIDHash(namestr);
 
       dtEntity::Message* msg = NULL; 
-      bool success = mf->CreateMessage(pname, msg);
+      bool success = dtEntity::MessageFactory::GetInstance().CreateMessage(pname, msg);
       
       if(!success)
       {
@@ -247,12 +247,11 @@ namespace dtEntityWrappers
    Handle<Value> EMEnqueueMessage(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
-      dtEntity::MessageFactory* mf = UnwrapMessageFactory(args.Holder());
-
+      
       dtEntity::StringId pname = dtEntity::SIDHash(ToStdString(args[0]));
 
       dtEntity::Message* msg = NULL; 
-      bool success = mf->CreateMessage(pname, msg);
+      bool success = dtEntity::MessageFactory::GetInstance().CreateMessage(pname, msg);
       
       if(!success)
       {
@@ -393,14 +392,11 @@ namespace dtEntityWrappers
       }
       else
       {
-        // does a factory for that entity system exist?
-        dtEntity::MapSystem* mapSystem;
-        em->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-        bool success = mapSystem->GetPluginManager().FactoryExists(t);
-        if(success)
-        {
-           return True();
-        }
+         bool success = dtEntity::ComponentPluginManager::GetInstance().FactoryExists(t);
+         if(success)
+         {
+            return True();
+         }
       }
       return False();
    }
@@ -450,9 +446,7 @@ namespace dtEntityWrappers
       if(es == NULL)
       {
          // try to start from factory
-         dtEntity::MapSystem* mapSystem;
-         em->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-         bool success = mapSystem->GetPluginManager().StartEntitySystem(t);
+         bool success = dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(*em, t);
          if(success)
          {
             es = em->GetEntitySystem(t);
@@ -486,7 +480,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapEntityManager(ScriptSystem* ss, dtEntity::EntityManager* v, dtEntity::MessageFactory* mf)
+   v8::Handle<v8::Object> WrapEntityManager(ScriptSystem* ss, dtEntity::EntityManager* v)
    {
 
       v8::HandleScope handle_scope;
@@ -497,7 +491,7 @@ namespace dtEntityWrappers
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_entityManagerTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("EntityManager"));
-        templt->InstanceTemplate()->SetInternalFieldCount(3);
+        templt->InstanceTemplate()->SetInternalFieldCount(2);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
@@ -519,7 +513,6 @@ namespace dtEntityWrappers
       Local<Object> instance = s_entityManagerTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       instance->SetInternalField(1, External::New(new MessageFunctorStorage()));
-      instance->SetInternalField(2, External::New(mf));
 
       return handle_scope.Close(instance);
 
@@ -530,14 +523,6 @@ namespace dtEntityWrappers
    {
       dtEntity::EntityManager* v;
       GetInternal(Handle<Object>::Cast(val), 0, v);
-      return v;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::MessageFactory* UnwrapMessageFactory(v8::Handle<v8::Value> val)
-   {
-      dtEntity::MessageFactory* v;
-      GetInternal(Handle<Object>::Cast(val), 2, v);
       return v;
    }
 

@@ -84,12 +84,12 @@ namespace dtEntity
       MapSystem* mapSystem;
       em.GetEntitySystem(MapComponent::TYPE, mapSystem);
 
-      ComponentPluginManager& pluginManager = mapSystem->GetPluginManager();
+      ComponentPluginManager& pluginManager = ComponentPluginManager::GetInstance();
       if(!pluginManager.FactoryExists(componentType))
       {
          return false;
       }
-      return pluginManager.StartEntitySystem(componentType);
+      return pluginManager.StartEntitySystem(em, componentType);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -819,9 +819,7 @@ namespace dtEntity
          {
             if(strcmp(rootLibNode->name(), "libraries") == 0)
             {
-               MapSystem* mapSystem;
-               em.GetEntitySystem(MapComponent::TYPE, mapSystem);
-               ComponentPluginManager& pluginManager = mapSystem->GetPluginManager();
+               ComponentPluginManager& pluginManager = ComponentPluginManager::GetInstance();
 
                // parse all child element as they contain library names
                for(xml_node<>* currLibNode(rootLibNode->first_node());
@@ -1482,7 +1480,7 @@ namespace dtEntity
       sceneelem->append_node(libsElem);
       MapSystem* mapSystem;
       mEntityManager->GetEntitySystem(MapComponent::TYPE, mapSystem);
-      ComponentPluginManager& pluginManager = mapSystem->GetPluginManager();
+      ComponentPluginManager& pluginManager = ComponentPluginManager::GetInstance();
 
       const std::map<std::string, bool>& pluginList = pluginManager.GetLoadedPlugins();
       std::map<std::string, bool>::const_iterator itr;

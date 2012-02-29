@@ -125,9 +125,7 @@ namespace dtEntity
             // start entity system if necessary
             if(!entity.GetEntityManager().HasEntitySystem(ctype))
             {
-               MapSystem* mapSystem;
-               entity.GetEntityManager().GetEntitySystem(MapComponent::TYPE, mapSystem);
-               bool success = mapSystem->GetPluginManager().StartEntitySystem(ctype);
+               bool success = ComponentPluginManager::GetInstance().StartEntitySystem(entity.GetEntityManager(), ctype);
                if(!success)
                {
                   LOG_ERROR("Cannot spawn component, no entity system for this"

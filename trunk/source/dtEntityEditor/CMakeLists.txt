@@ -47,6 +47,12 @@ ADD_EXECUTABLE(${APP_NAME}
     ${RCC_SOURCES}
 )
 
+IF(DYNAMIC_DTENTITY)
+    ADD_DEFINITIONS(-DDTENTITY_LIBRARY)
+ELSE (DYNAMIC_DTENTITY)
+    ADD_DEFINITIONS(-DDTENTITY_LIBRARY_STATIC)
+    SET(DTENTITY_PLUGINS dtEntitySimulation dtEntityV8Plugin dtEntityRocket)
+ENDIF(DYNAMIC_DTENTITY)
 
 TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${QT_QTCORE_LIBRARIES}
@@ -57,6 +63,7 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${OPENTHREADS_LIBRARIES}
                            dtEntity
 						   dtEntityQtWidgets
+						   ${DTENTITY_PLUGINS}
 )
 
 IF (MSVC)

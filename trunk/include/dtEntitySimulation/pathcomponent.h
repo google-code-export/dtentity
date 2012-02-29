@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntitySimulation/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
@@ -32,7 +30,7 @@
 namespace dtEntitySimulation
 {
 
-   class DT_ENTITY_SIMULATION_EXPORT PathComponent : public dtEntity::NodeComponent
+   class PathComponent : public dtEntity::NodeComponent
    {
       typedef dtEntity::NodeComponent BaseClass;
 
@@ -74,7 +72,7 @@ namespace dtEntitySimulation
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_SIMULATION_EXPORT PathSystem
+   class PathSystem
       : public dtEntity::DefaultEntitySystem<PathComponent>
       , public dtEntity::ScriptAccessor
    {
