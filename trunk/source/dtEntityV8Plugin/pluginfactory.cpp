@@ -60,7 +60,7 @@ extern "C" DT_ENTITY_V8_EXPORT void CreatePluginFactories(std::list<dtEntity::Co
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" __declspec(dllexport) void dtEntityMessages_dtEntityV8Plugin(dtEntity::MessageFactory& mf)
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityV8Plugin(dtEntity::MessageFactory& mf)
 {
    dtEntityWrappers::RegisterMessageTypes(mf);
 }

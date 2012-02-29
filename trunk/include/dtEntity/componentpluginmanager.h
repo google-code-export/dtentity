@@ -139,9 +139,14 @@ namespace dtEntity
       std::map<std::string, bool> mLoadedPlugins;
    };
 
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+  #define DTE_EXPORT_MACRO __declspec(dllexport)
+#else
+   #define DTE_EXPORT_MACRO
+#endif
 
 #define REGISTER_DTENTITYPLUGIN(pluginname, count, ...) \
-   extern "C" __declspec(dllexport) void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>& list) {dtEntity::AddToList(list, count, __VA_ARGS__);} \
+   extern "C" DTE_EXPORT_MACRO void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>& list) {dtEntity::AddToList(list, count, __VA_ARGS__);} \
 
    struct DT_ENTITY_EXPORT PluginFunctionProxy
    {
