@@ -91,7 +91,7 @@ namespace dtEntityRocket
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" __declspec(dllexport) void dtEntityMessages_dtEntityRocket(dtEntity::MessageFactory& mf)
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityRocket(dtEntity::MessageFactory& mf)
 {
    using namespace dtEntityRocket;
    mf.RegisterMessageType<RocketEventMessage>(RocketEventMessage::TYPE);

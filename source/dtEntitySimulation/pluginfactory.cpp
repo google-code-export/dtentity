@@ -130,7 +130,7 @@ namespace dtEntitySimulation
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" __declspec(dllexport) void dtEntityMessages_dtEntitySimulation(dtEntity::MessageFactory& mf)
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntitySimulation(dtEntity::MessageFactory& mf)
 {
    dtEntitySimulation::RegisterMessageTypes(mf);
 }
