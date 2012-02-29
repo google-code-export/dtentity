@@ -18,7 +18,6 @@
 * Martin Scheffler
 */
 
-#include "export.h"
 #include <dtEntityWrappers/messages.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntity/componentplugin.h>
@@ -51,12 +50,6 @@ namespace dtEntityWrappers
          return "System for JavaScript/V8 scripts";
       }
    };
-}
-
-
-extern "C" DT_ENTITY_V8_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
-{
-   list.push_back(new dtEntityWrappers::ScriptFactory());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

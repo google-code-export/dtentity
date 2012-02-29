@@ -18,7 +18,6 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/export.h>
 #include <dtEntitySimulation/groundclampingcomponent.h>
 #include <dtEntitySimulation/messages.h>
 #include <dtEntitySimulation/manipulatorcomponent.h>
