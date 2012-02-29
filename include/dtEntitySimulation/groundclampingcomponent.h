@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntitySimulation/export.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
@@ -42,7 +40,7 @@ namespace dtEntity
 namespace dtEntitySimulation
 {
 
-   class DT_ENTITY_SIMULATION_EXPORT GroundClampingComponent : public dtEntity::Component
+   class GroundClampingComponent : public dtEntity::Component
    {
 
    public:
@@ -118,7 +116,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////////
 
 
-   class DT_ENTITY_SIMULATION_EXPORT GroundClampingSystem
+   class GroundClampingSystem
       : public dtEntity::DefaultEntitySystem<GroundClampingComponent>
       , public dtEntity::ScriptAccessor
    {

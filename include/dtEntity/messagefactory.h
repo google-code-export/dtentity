@@ -23,11 +23,13 @@
 #include <dtEntity/export.h>
 #include <dtEntity/objectfactory.h>
 #include <dtEntity/message.h>
+#include <dtEntity/singleton.h>
 
 namespace dtEntity
 {
    
    class DT_ENTITY_EXPORT MessageFactory
+      : public Singleton<MessageFactory>
    {
    public:
 

@@ -21,7 +21,6 @@
 #pragma once
 
 
-#include "export.h"
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
@@ -34,7 +33,7 @@ namespace dtEntityRocket
     * Tick message gets sent each frame by the system.
     * Register for this message if you want to continually update something.
     */
-   class DT_ROCKET_EXPORT RocketEventMessage
+   class RocketEventMessage
      : public dtEntity::Message
    {
    public:

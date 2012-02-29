@@ -368,7 +368,7 @@ namespace dtEntity
       }
 
       // add factories for aditional entity systems, they will be started lazily
-      RegisterStandardFactories(mapSystem->GetPluginManager());
+      RegisterStandardFactories(ComponentPluginManager::GetInstance());
 
    }
 }

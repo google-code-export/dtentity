@@ -1366,9 +1366,7 @@ namespace dtEntityQtWidgets
          emit(EntitySystemAdded(ctype));         
       }
 
-      dtEntity::MapSystem* ms;
-      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-      dtEntity::ComponentPluginManager::PluginFactoryMap& factories = ms->GetPluginManager().GetFactories();
+      dtEntity::ComponentPluginManager::PluginFactoryMap& factories = dtEntity::ComponentPluginManager::GetInstance().GetFactories();
       dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
       for(j = factories.begin(); j != factories.end(); ++j)
       {
@@ -1685,17 +1683,14 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnAddComponentToSpawner(const QString& spawnerName, const QString& ctypestr)
    {
-      dtEntity::MapSystem* ms;
-      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-
       dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
       dtEntity::EntitySystem* compsys;
       bool found = mEntityManager->GetEntitySystem(ctype, compsys);
       if(!found)
       {
-         if(ms->GetPluginManager().FactoryExists(ctype))
+         if(dtEntity::ComponentPluginManager::GetInstance().FactoryExists(ctype))
          {
-            ms->GetPluginManager().StartEntitySystem(ctype);
+            dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(*mEntityManager, ctype);
             found = mEntityManager->GetEntitySystem(ctype, compsys);
             assert(found);
          }
@@ -1706,6 +1701,8 @@ namespace dtEntityQtWidgets
          }
       }
       
+      dtEntity::MapSystem* ms;
+      mEntityManager->GetES(ms);
       dtEntity::Spawner* spawner;
       found = ms->GetSpawner(spawnerName.toStdString(), spawner);
       if(!found)
@@ -1733,12 +1730,10 @@ namespace dtEntityQtWidgets
       bool found = mEntityManager->GetEntitySystem(ctype, es);
       if(!found)
       {
-         dtEntity::MapSystem* ms;
-         mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-
-         if(ms->GetPluginManager().FactoryExists(ctype))
+         
+         if(dtEntity::ComponentPluginManager::GetInstance().FactoryExists(ctype))
          {
-            ms->GetPluginManager().StartEntitySystem(ctype);
+            dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(*mEntityManager, ctype);
             found = mEntityManager->GetEntitySystem(ctype, es);
             if(!found)
             {

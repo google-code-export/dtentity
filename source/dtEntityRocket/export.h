@@ -19,17 +19,20 @@
 */
 
 #pragma once
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#  ifdef DT_ROCKET_LIBRARY
-#    define DT_ROCKET_EXPORT __declspec(dllexport)
-#  else
-#     define DT_ROCKET_EXPORT __declspec(dllimport)
-#   endif
+#if defined DTENTITY_STATIC_BUILD
+#  define DT_ROCKET_EXPORT
 #else
-#   ifdef DT_ROCKET_LIBRARY
-#      define DT_ROCKET_EXPORT __attribute__ ((visibility("default")))
+#   if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#     ifdef DT_ROCKET_LIBRARY
+#       define DT_ROCKET_EXPORT __declspec(dllexport)
+#     else
+#        define DT_ROCKET_EXPORT __declspec(dllimport)
+#      endif
 #   else
-#      define DT_ROCKET_EXPORT
+#      ifdef DT_ROCKET_LIBRARY
+#         define DT_ROCKET_EXPORT __attribute__ ((visibility("default")))
+#      else
+#         define DT_ROCKET_EXPORT
+#      endif
 #   endif
 #endif
-

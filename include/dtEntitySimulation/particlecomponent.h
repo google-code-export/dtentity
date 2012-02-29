@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntitySimulation/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/debugdrawmanager.h>
@@ -36,7 +34,7 @@
 namespace dtEntitySimulation
 {
 
-   class DT_ENTITY_SIMULATION_EXPORT ParticleComponent
+   class ParticleComponent
          : public dtEntity::NodeComponent
    {
 
@@ -188,7 +186,7 @@ namespace dtEntitySimulation
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_SIMULATION_EXPORT ParticleSystem
+   class ParticleSystem
       : public dtEntity::DefaultEntitySystem<ParticleComponent>
    {
       typedef dtEntity::DefaultEntitySystem<ParticleComponent> BaseClass;

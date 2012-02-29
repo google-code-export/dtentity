@@ -50,6 +50,14 @@
 namespace dtEntityEditor
 {
 
+#ifdef DTENTITY_LIBRARY_STATIC
+
+    // include the plugins we need
+    USE_DTENTITYPLUGIN(dtEntitySimulation)
+    USE_DTENTITYPLUGIN(dtEntityRocket)    
+    USE_DTENTITYPLUGIN(dtEntityV8Plugin)    
+#endif
+ 
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::EditorApplication(int argc, char *argv[])
       : mMainWindow(NULL)
@@ -73,9 +81,7 @@ namespace dtEntityEditor
 
       dtEntity::InitOSGViewer(argc, argv, *mViewer, *mEntityManager, false, false);
 
-      dtEntity::MapSystem* ms;
-      mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, ms);
-      dtEntityQtWidgets::RegisterMessageTypes(ms->GetMessageFactory());
+      dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -152,17 +158,15 @@ namespace dtEntityEditor
          connect(this, SIGNAL(ErrorOccurred(const QString&)),
                  mMainWindow, SLOT(OnDisplayError(const QString&)));
 
-         dtEntity::MapSystem* mapSystem;
-         mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
          for(unsigned int i = 0; i < mPluginPaths.size(); ++i) 
          {
             LOG_DEBUG("Looking for plugins in directory " + mPluginPaths[i]);
             // load and start all entity systems in plugins
-            mapSystem->GetPluginManager().LoadPluginsInDir(mPluginPaths[i]);
+            dtEntity::ComponentPluginManager::GetInstance().LoadPluginsInDir(mPluginPaths[i]);
          }
          // add new factories to list of known ones
          std::set<dtEntity::ComponentType> newTypes;
-         dtEntity::ComponentPluginManager::PluginFactoryMap& factories = mapSystem->GetPluginManager().GetFactories();
+         dtEntity::ComponentPluginManager::PluginFactoryMap& factories = dtEntity::ComponentPluginManager::GetInstance().GetFactories();
          dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
          for(j = factories.begin(); j != factories.end(); ++j)
             newTypes.insert(j->first);
@@ -198,15 +202,13 @@ namespace dtEntityEditor
    void EditorApplication::AddPluginLibrary(std::string fileName)
    {
       // get Map system
-      dtEntity::MapSystem* mapSystem;
-      if (mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem))
-      {
-         // load plugin, set it to be saved to scene file. Also start all entity systems in it
-         std::set<dtEntity::ComponentType> newTypes = 
-            mapSystem->GetPluginManager().AddPlugin(fileName, true);
-         // notify GUI that new types are now available
-         mMainWindow->AddToKnownComponentList(newTypes);
-      }
+      
+      // load plugin, set it to be saved to scene file. Also start all entity systems in it
+      std::set<dtEntity::ComponentType> newTypes = 
+         dtEntity::ComponentPluginManager::GetInstance().AddPlugin(fileName, true);
+      // notify GUI that new types are now available
+      mMainWindow->AddToKnownComponentList(newTypes);
+   
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -403,19 +405,15 @@ namespace dtEntityEditor
 
       dtEntity::StringId scriptId = dtEntity::SID("Script");
 
-      dtEntity::MapSystem* mapSystem;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      
-      
       if(!GetEntityManager().HasEntitySystem(scriptId))
       {
-         if(!mapSystem->GetPluginManager().FactoryExists(scriptId))
+         if(!dtEntity::ComponentPluginManager::GetInstance().FactoryExists(scriptId))
          {
             LOG_ERROR("Cannot start scripting, script plugin not loaded!");
             return;
          }         
             
-         bool success = mapSystem->GetPluginManager().StartEntitySystem(scriptId);
+         bool success = dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(GetEntityManager(), scriptId);
          if(!success)
          {
             LOG_ERROR("Cannot start scripting, script plugin not loaded!");
@@ -424,7 +422,7 @@ namespace dtEntityEditor
       }
 
       dtEntity::Message* msg;
-      bool success = mapSystem->GetMessageFactory().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
+      bool success = dtEntity::MessageFactory::GetInstance().CreateMessage(dtEntity::SID("ExecuteScriptMessage"), msg);
       assert(success);
       msg->Get(dtEntity::SID("IncludeOnce"))->SetBool(true);
       dtEntity::Property* pathprop = msg->Get(dtEntity::SID("Path"));

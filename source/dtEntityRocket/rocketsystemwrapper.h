@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <dtEntityWrappers/export.h>
 #include <v8.h>
 
 namespace dtEntityWrappers

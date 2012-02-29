@@ -21,7 +21,7 @@
 */
 
 #include <dtEntity/export.h>
-
+#include <dtEntity/singleton.h>
 #include <osg/ref_ptr>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/entityid.h>
@@ -30,30 +30,29 @@
 #include <set>
 #include <string>
 
-/**
-   Plugin access function:
-   
-   extern "C" MY_EXPORT_MACRO void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
-   {
-      list.push_back(new MyPluginFactory());
-   }
-
-*/
-
 namespace dtEntity
 {
    class MessageFactory;
+
+   void DT_ENTITY_EXPORT AddToList(std::list<dtEntity::ComponentPluginFactory*>& lst, int count, ...);
+
+   // typedef for function pointer to get message factory from library
+   typedef void (*RegisterMessagesFn)(MessageFactory&);
+
+   // typedef for function pointer to get entity system factory from library
+   typedef void (*CreatePluginFactoriesFn)(std::list<ComponentPluginFactory*>&);
 
    /**
     * The plugin manager is responsible for loading entity system factories from plugins,
     * keep them around until they are needed, and start and stop the entity systems.
     */
    class DT_ENTITY_EXPORT ComponentPluginManager
+      : public Singleton<ComponentPluginManager>
    {
       
    public:
 
-      ComponentPluginManager(EntityManager& em, MessageFactory& mf);
+      ComponentPluginManager();
       ~ComponentPluginManager();
 
       typedef std::map<ComponentType, osg::ref_ptr<ComponentPluginFactory> > PluginFactoryMap;
@@ -74,12 +73,12 @@ namespace dtEntity
        * @param name Name of plugin to start
        * @return true if success
        */
-      bool StartEntitySystem(ComponentType ctype);
+      bool StartEntitySystem(EntityManager&, ComponentType ctype);
 
       /**
        * stop all entity systems loaded from plugins and then unref the plugins
        */
-      void UnloadAllPlugins();
+      void UnloadAllPlugins(EntityManager&);
 
       /**
        * Directly add a factory for starting an entity system (instead of loading
@@ -108,9 +107,6 @@ namespace dtEntity
       /// Retrieves the names of the currently loaded plugins (with no path and no extension)
       const std::map<std::string, bool>& GetLoadedPlugins() const { return mLoadedPlugins; }
 
-      
-      EntityManager& GetEntityManager() const { return *mEntityManager; }
-
       PluginFactoryMap& GetFactories() { return mFactories; }
 
       // get extension appended to lib name to point to shared library name
@@ -127,13 +123,10 @@ namespace dtEntity
       ComponentPluginFactory* GetPluginFactory(ComponentType ctype);
 
       /** load all plugin factories from libraries found in path */
-      void LoadPluginFactories(const std::string& baseLibName, std::list<osg::ref_ptr<ComponentPluginFactory> >& factories);
+      void LoadPluginFactories(const std::string& pluginname, const std::string& path, std::list<osg::ref_ptr<ComponentPluginFactory> >& factories);
 
       /** map from plugin name -> plugin factory */
       PluginFactoryMap mFactories;
-
-      EntityManager* mEntityManager;
-      MessageFactory* mMessageFactory;
 
       /// List of libraries (plugins) currently loaded
       /**
@@ -145,4 +138,21 @@ namespace dtEntity
       */
       std::map<std::string, bool> mLoadedPlugins;
    };
+
+
+#define REGISTER_DTENTITYPLUGIN(pluginname, count, ...) \
+   extern "C" __declspec(dllexport) void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>& list) {dtEntity::AddToList(list, count, __VA_ARGS__);} \
+
+   struct DT_ENTITY_EXPORT PluginFunctionProxy
+   {
+       PluginFunctionProxy(CreatePluginFactoriesFn plgfunction, RegisterMessagesFn msgfunction) ;
+   }; 
+
+#define USE_DTENTITYPLUGIN(pluginname)  \
+      extern "C" void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>&); \
+      extern "C" void dtEntityMessages_##pluginname(dtEntity::MessageFactory& mf); \
+      static dtEntity::PluginFunctionProxy proxy_##pluginname(dtEntity_##pluginname, dtEntityMessages_##pluginname); \
+   \
+
 }
+

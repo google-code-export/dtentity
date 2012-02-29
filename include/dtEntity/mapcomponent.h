@@ -318,17 +318,10 @@ namespace dtEntity
       void GetEntitiesInMap(const std::string& mapname, std::vector<EntityId>& toFill) const;
       
       /**
-       * Plugin manager is responsible for starting entity systems from shared libraries
-       */
-      ComponentPluginManager& GetPluginManager() { return mPluginManager; }
-
-      /**
        *called by component. Don't call, please set the property on 
        * the component instead
        */
       void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
-
-      MessageFactory& GetMessageFactory() { return mMessageFactory; }
 
 
       // implementation of EntityManager::EntitySystemRequestCallback interface
@@ -349,8 +342,6 @@ namespace dtEntity
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
       MessageFunctor mStopSystemFunctor;
-
-      MessageFactory mMessageFactory;
 
       ComponentPluginManager mPluginManager;
 

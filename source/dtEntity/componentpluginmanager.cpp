@@ -20,6 +20,7 @@
 
 #include <dtEntity/componentpluginmanager.h>
 
+#include <dtEntity/messagefactory.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/stringid.h>
@@ -31,27 +32,45 @@
 #include <iostream>
 #include <sstream>
 
+#include <stdarg.h>
 
 namespace dtEntity
 {
 
+   void AddToList(std::list<dtEntity::ComponentPluginFactory*>& lst, int count, ...) 
+   {
+     
+      va_list ap;
+      va_start (ap, count);
+      for (int i = 0; i < count; ++i)
+      {
+         lst.push_back(va_arg(ap, dtEntity::ComponentPluginFactory*));  
+      }
+      va_end (ap);
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
-   ComponentPluginManager::ComponentPluginManager(EntityManager& em, MessageFactory& mf)
-      : mEntityManager(&em)
-      , mMessageFactory(&mf)
+   ComponentPluginManager::ComponentPluginManager()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    ComponentPluginManager::~ComponentPluginManager()
    {
-      UnloadAllPlugins();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentPluginManager::AddFactory(ComponentPluginFactory* factory)
    {
-      mFactories[factory->GetType()] = factory;
+      ComponentType ctype = SID(factory->GetName());
+      if(ctype == 0 || mFactories.find(ctype) != mFactories.end())
+      {
+         LOG_ERROR("Factory already registered with type " << factory->GetName());
+      }
+      else
+      {
+         mFactories[ctype] = factory;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +184,7 @@ namespace dtEntity
       }
       
       std::list<osg::ref_ptr<ComponentPluginFactory> > factories;
-      LoadPluginFactories(abspath, factories);
+      LoadPluginFactories(libName, abspath, factories);
 
       if(factories.empty())
       {
@@ -179,18 +198,10 @@ namespace dtEntity
             osg::ref_ptr<ComponentPluginFactory> factory = *i;
             assert(factory.valid());
 
-            ComponentType ctype = factory->GetType();
+            ComponentType ctype = SID(factory->GetName());
 
             // store this type in output list
             result.insert(ctype);
-
-            // check if a plugin with this name already exists
-            if(mEntityManager->HasEntitySystem(ctype))
-            {
-               LOG_ERROR("Unable to load entity system from path " << abspath <<":"
-                  << " A plugin with type " + GetStringFromSID(ctype) << " was already loaded!");
-               continue;
-            }
 
             LOG_DEBUG("Registered entity system " + dtEntity::GetStringFromSID(ctype));
             // insert factory into factory list
@@ -202,7 +213,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ComponentPluginManager::LoadPluginFactories(const std::string& path, std::list<osg::ref_ptr<ComponentPluginFactory> >& factories)
+   void ComponentPluginManager::LoadPluginFactories(const std::string& pluginName, const std::string& path, std::list<osg::ref_ptr<ComponentPluginFactory> >& factories)
    {
       // use library sharing manager to do the actual library loading
       
@@ -212,30 +223,23 @@ namespace dtEntity
          LOG_WARNING("Could not load library " + path);
          return;
       }
-      osgDB::DynamicLibrary::PROC_ADDRESS messagesaddr = dynlib->getProcAddress("RegisterMessages");
+      osgDB::DynamicLibrary::PROC_ADDRESS messagesaddr = dynlib->getProcAddress(std::string("dtEntityMessages_") + pluginName);
       
       if (messagesaddr)
       {
-         // typedef for function pointer to get factory from library
-         typedef void (*RegisterMessagesFn)(MessageFactory&);
-
-
          RegisterMessagesFn fn = (RegisterMessagesFn) messagesaddr;
 
          // let plugin create its factories
-         fn(*mMessageFactory);
+         fn(MessageFactory::GetInstance());
 
       }
 
-      osgDB::DynamicLibrary::PROC_ADDRESS pluginaddr = dynlib->getProcAddress("CreatePluginFactories");
+      osgDB::DynamicLibrary::PROC_ADDRESS pluginaddr = dynlib->getProcAddress(std::string("dtEntity_") + pluginName);
 
       //Make sure the plugin actually implemented these functions and they
       //have been exported.
       if (pluginaddr)
       {
-         // typedef for function pointer to get factory from library
-         typedef void (*CreatePluginFactoriesFn)(std::list<ComponentPluginFactory*>&);
-
          CreatePluginFactoriesFn fn = (CreatePluginFactoriesFn) pluginaddr;
 
          std::list<ComponentPluginFactory*> faclist;
@@ -278,9 +282,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ComponentPluginManager::StartEntitySystem(ComponentType ctype)
+   bool ComponentPluginManager::StartEntitySystem(EntityManager& em, ComponentType ctype)
    {
-      if(mEntityManager->HasEntitySystem(ctype))
+      if(em.HasEntitySystem(ctype))
       {
          return true;
       }
@@ -303,7 +307,7 @@ namespace dtEntity
          ComponentType dependency = deps.front();
          deps.pop_front();
 
-         if(mEntityManager->HasEntitySystem(dependency))
+         if(em.HasEntitySystem(dependency))
          {
             continue;
          }
@@ -316,23 +320,23 @@ namespace dtEntity
          }
 
          // only start dependency if it is not running now
-         if(!mEntityManager->HasEntitySystem(dependency))
+         if(!em.HasEntitySystem(dependency))
          {
-            StartEntitySystem(dependency);
+            StartEntitySystem(em, dependency);
          }
       }
 
       // use factory to create the plugin
 
       EntitySystem* es;
-      bool success = factory->Create(mEntityManager, es);
+      bool success = factory->Create(&em, es);
 
       if(success)
       {
          // call, although no properties were set yet
          es->Finished();
          LOG_DEBUG("Created entity system of type " + GetStringFromSID(ctype));
-         mEntityManager->AddEntitySystem(*es);
+         em.AddEntitySystem(*es);
          return true;
       }
       else
@@ -343,19 +347,32 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ComponentPluginManager::UnloadAllPlugins()
+   void ComponentPluginManager::UnloadAllPlugins(EntityManager& em)
    {
       for(PluginFactoryMap::iterator i = mFactories.begin(); i != mFactories.end(); ++i)
       {
          ComponentType ctype = i->first;
-         if(mEntityManager->HasEntitySystem(ctype))
+         if(em.HasEntitySystem(ctype))
          {
-            dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(ctype);
-            if(es == NULL || !mEntityManager->RemoveEntitySystem(*es))
+            dtEntity::EntitySystem* es = em.GetEntitySystem(ctype);
+            if(es == NULL || !em.RemoveEntitySystem(*es))
             {
                LOG_ERROR("Could not cleanly remove entity system " + GetStringFromSID(ctype));
             }
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   PluginFunctionProxy::PluginFunctionProxy(CreatePluginFactoriesFn plgfunction, RegisterMessagesFn msgfunction) 
+   { 
+      (msgfunction)(MessageFactory::GetInstance());
+      std::list<dtEntity::ComponentPluginFactory*> l;
+      (plgfunction)(l);
+      std::list<dtEntity::ComponentPluginFactory*>::iterator i;
+      for(i = l.begin(); i != l.end(); ++i)
+      {
+         ComponentPluginManager::GetInstance().AddFactory(*i);
       }
    }
 }

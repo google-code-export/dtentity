@@ -469,7 +469,7 @@ namespace dtEntity
       em.GetMessagePump().ClearQueue();
       //GetEntityManager().GetMessagePump().UnregisterAll();
       
-      mapsys->GetPluginManager().UnloadAllPlugins();      
+      ComponentPluginManager::GetInstance().UnloadAllPlugins(GetEntityManager());      
 
       if(m.GetSceneName() != "")
       {

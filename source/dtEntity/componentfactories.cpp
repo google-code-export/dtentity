@@ -62,11 +62,6 @@ namespace dtEntity
          return "OSGAnimation";
       }
 
-      virtual ComponentType GetType() const
-      {
-         return OSGAnimationComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -97,11 +92,6 @@ namespace dtEntity
          return "Animation";
       }
 
-      virtual ComponentType GetType() const
-      {
-         return AnimationComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -128,11 +118,6 @@ namespace dtEntity
          return "SkyBox";
       }
 
-      virtual ComponentType GetType() const 
-      {
-         return SkyBoxComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const 
       {
@@ -157,11 +142,6 @@ namespace dtEntity
          return "Shadow";
       }
 
-      virtual ComponentType GetType() const
-      {
-         return ShadowComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -184,11 +164,6 @@ namespace dtEntity
       virtual std::string GetName() const
       {
          return "Light";
-      }
-
-      virtual ComponentType GetType() const
-      {
-         return LightComponent::TYPE;
       }
 
       /** get a description of the plugin */
@@ -216,11 +191,6 @@ namespace dtEntity
          return "Sound";
       }
 
-      virtual ComponentType GetType() const 
-      {
-         return SoundComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const 
       {
@@ -244,11 +214,6 @@ namespace dtEntity
       virtual std::string GetName() const
       {
          return "PickShape";
-      }
-
-      virtual ComponentType GetType() const
-      {
-         return PickShapeComponent::TYPE;
       }
 
       /** get a description of the plugin */
@@ -275,11 +240,6 @@ namespace dtEntity
          return "TextLabel";
       }
 
-      virtual ComponentType GetType() const
-      {
-         return TextLabelComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -302,11 +262,6 @@ namespace dtEntity
       virtual std::string GetName() const
       {
          return "TextureLabel";
-      }
-
-      virtual ComponentType GetType() const
-      {
-         return TextureLabelComponent::TYPE;
       }
 
       /** get a description of the plugin */

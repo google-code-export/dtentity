@@ -165,7 +165,6 @@ namespace dtEntity
 
    MapSystem::MapSystem(EntityManager& em)
       : DefaultEntitySystem<MapComponent>(em)
-      , mPluginManager(em, mMessageFactory)
       , mCurrentScene("")
    {
 
@@ -177,8 +176,8 @@ namespace dtEntity
       mStopSystemFunctor = MessageFunctor(this, &MapSystem::OnStopSystem);
       em.RegisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor, "MapSystem::OnStopSystem");
 
-      RegisterCommandMessages(mMessageFactory);
-      RegisterSystemMessages(mMessageFactory);
+      RegisterCommandMessages(MessageFactory::GetInstance());
+      RegisterSystemMessages(MessageFactory::GetInstance());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -834,7 +833,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    void MapSystem::OnStopSystem(const Message& msg)
    {
-      mPluginManager.UnloadAllPlugins();
+      ComponentPluginManager::GetInstance().UnloadAllPlugins(GetEntityManager());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -898,9 +897,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool MapSystem::CreateEntitySystem(EntityManager* em, ComponentType t)
    {
-      if(GetPluginManager().FactoryExists(t))
+      if(ComponentPluginManager::GetInstance().FactoryExists(t))
       {
-         GetPluginManager().StartEntitySystem(t);
+         ComponentPluginManager::GetInstance().StartEntitySystem(GetEntityManager(), t);
          if(!em->HasEntitySystem(t))
          {
             LOG_ERROR("Factory error: Factory is registered for type but "

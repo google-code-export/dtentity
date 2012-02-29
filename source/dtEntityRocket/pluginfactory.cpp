@@ -24,6 +24,7 @@
 #include "rocketcomponent.h"
 #include "rocketsystemwrapper.h"
 #include <dtEntity/componentplugin.h>
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 
@@ -32,7 +33,7 @@ namespace dtEntityRocket
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ROCKET_EXPORT RocketFactory : public dtEntity::ComponentPluginFactory
+   class RocketFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -50,12 +51,7 @@ namespace dtEntityRocket
       /** get the name of the plugin */
       virtual std::string GetName() const
       {
-         return "LibRocket";
-      }
-
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return RocketComponent::TYPE;
+         return "Rocket";
       }
 
       /** get a description of the plugin */
@@ -67,7 +63,7 @@ namespace dtEntityRocket
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ROCKET_EXPORT HUDFactory : public dtEntity::ComponentPluginFactory
+   class HUDFactory : public dtEntity::ComponentPluginFactory
    {
    public:
 
@@ -85,11 +81,6 @@ namespace dtEntityRocket
          return "HUD";
       }
 
-      virtual dtEntity::ComponentType GetType() const
-      {
-         return HUDComponent::TYPE;
-      }
-
       /** get a description of the plugin */
       virtual std::string GetDescription() const
       {
@@ -100,15 +91,15 @@ namespace dtEntityRocket
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ROCKET_EXPORT void RegisterMessages(dtEntity::MessageFactory& mf)
+extern "C" __declspec(dllexport) void dtEntityMessages_dtEntityRocket(dtEntity::MessageFactory& mf)
 {
    using namespace dtEntityRocket;
    mf.RegisterMessageType<RocketEventMessage>(RocketEventMessage::TYPE);
 }
 
 
-extern "C" DT_ROCKET_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
-{
-   list.push_back(new dtEntityRocket::RocketFactory());
-   list.push_back(new dtEntityRocket::HUDFactory());
-}
+
+REGISTER_DTENTITYPLUGIN(dtEntityRocket, 2,
+   new dtEntityRocket::RocketFactory(),
+   new dtEntityRocket::HUDFactory()
+)

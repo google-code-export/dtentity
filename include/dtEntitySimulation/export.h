@@ -30,23 +30,26 @@
  * Also note that DT_ENTITY_LIBRARY should be defined in the compiler
  * preprocessor #defines.
  */
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#  ifdef DT_ENTITY_SIMULATION_LIBRARY
-#    define DT_ENTITY_SIMULATION_EXPORT __declspec(dllexport)
-#  else
-#     define DT_ENTITY_SIMULATION_EXPORT __declspec(dllimport)
-#   endif
+#if defined DTENTITY_STATIC_BUILD
+#  define DT_ENTITY_SIMULATION_EXPORT
 #else
-#   ifdef DT_ENTITY_PHYSX_LIBRARY
-#      define DT_ENTITY_SIMULATION_EXPORT __attribute__ ((visibility("default")))
+#   if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#     ifdef DT_ENTITY_SIMULATION_LIBRARY
+#      define DT_ENTITY_SIMULATION_EXPORT __declspec(dllexport)
+#     else
+#        define DT_ENTITY_SIMULATION_EXPORT __declspec(dllimport)
+#      endif
 #   else
-#      define DT_ENTITY_SIMULATION_EXPORT
+#      ifdef DT_ENTITY_SIMULATION_LIBRARY
+#         define DT_ENTITY_SIMULATION_EXPORT __attribute__ ((visibility("default")))
+#      else
+#         define DT_ENTITY_SIMULATION_EXPORT
+#     endif
+#   endif
+
+#   ifdef _WIN32
+#      pragma warning (disable: 4251)
+#      pragma warning(disable : 4355) // 'this' used in initializer list
 #   endif
 #endif
-
-#ifdef _WIN32
-#   pragma warning (disable: 4251)
-#   pragma warning(disable : 4355) // 'this' used in initializer list
-#endif
-
 

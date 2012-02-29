@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntitySimulation/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
@@ -31,7 +29,7 @@
 namespace dtEntitySimulation
 {
 
-   class DT_ENTITY_SIMULATION_EXPORT ManipulatorComponent
+   class ManipulatorComponent
          : public dtEntity::NodeComponent
    {
 
@@ -118,7 +116,7 @@ namespace dtEntitySimulation
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_SIMULATION_EXPORT ManipulatorSystem
+   class ManipulatorSystem
       : public dtEntity::DefaultEntitySystem<ManipulatorComponent>
    {
       typedef dtEntity::DefaultEntitySystem<ManipulatorComponent> BaseClass;
