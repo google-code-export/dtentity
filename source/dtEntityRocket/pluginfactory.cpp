@@ -18,7 +18,6 @@
 * Martin Scheffler
 */
 
-#include "export.h"
 #include "messages.h"
 #include "hudcomponent.h"
 #include "rocketcomponent.h"
