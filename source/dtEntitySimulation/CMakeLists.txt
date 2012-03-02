@@ -13,7 +13,6 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/export.h
    ${HEADER_PATH}/groundclampingcomponent.h
    ${HEADER_PATH}/messages.h
    ${HEADER_PATH}/manipulatorcomponent.h

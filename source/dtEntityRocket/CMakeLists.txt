@@ -26,7 +26,6 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/eventlistener.h
    ${HEADER_PATH}/eventlistenerinstancer.h
    ${HEADER_PATH}/eventlistenerwrapper.h
-   ${HEADER_PATH}/export.h
    ${HEADER_PATH}/hudcomponent.h
    ${HEADER_PATH}/messages.h
    ${HEADER_PATH}/rocketcomponent.h
