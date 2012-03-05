@@ -63,7 +63,7 @@ namespace dtEntity
       /**
        * return a textual description of the entity system functionality
        */
-      virtual std::string GetDescription() const = 0;
+      virtual std::string GetDescription() const { return ""; }
 
       /** 
        * fill list with types of all entity systems this system depends on.

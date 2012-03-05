@@ -146,18 +146,25 @@ namespace dtEntity
 #endif
 
 #define REGISTER_DTENTITYPLUGIN(pluginname, count, ...) \
-   extern "C" DTE_EXPORT_MACRO void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>& list) {dtEntity::AddToList(list, count, __VA_ARGS__);} \
+   extern "C" DTE_EXPORT_MACRO void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>& list) \
+   {dtEntity::AddToList(list, count, __VA_ARGS__);} \
 
    struct DT_ENTITY_EXPORT PluginFunctionProxy
    {
        PluginFunctionProxy(CreatePluginFactoriesFn plgfunction, RegisterMessagesFn msgfunction) ;
-   }; 
+   };
+}
 
-#define USE_DTENTITYPLUGIN(pluginname)  \
+#ifdef DTENTITY_LIBRARY_STATIC
+
+   #define USE_DTENTITYPLUGIN(pluginname)  \
       extern "C" void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>&); \
       extern "C" void dtEntityMessages_##pluginname(dtEntity::MessageFactory& mf); \
-      static dtEntity::PluginFunctionProxy proxy_##pluginname(dtEntity_##pluginname, dtEntityMessages_##pluginname); \
-   \
+      static dtEntity::PluginFunctionProxy proxy_##pluginname(dtEntity_##pluginname, dtEntityMessages_##pluginname);
 
-}
+#else
+   #define USE_DTENTITYPLUGIN(pluginname)
+
+#endif
+
 
