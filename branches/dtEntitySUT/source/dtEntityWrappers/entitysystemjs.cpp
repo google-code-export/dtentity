@@ -343,6 +343,28 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EntitySystemJS::OnRemovedFromEntityManager(dtEntity::EntityManager& em)
+   {
+      HandleScope scope;
+         
+      Handle<String> s = String::New("onRemovedFromEntityManager");
+      Handle<Value> cb = mSystem->Get(s);
+      if(!cb.IsEmpty() && cb->IsFunction())
+      {
+         Context::Scope context_scope(mSystem->CreationContext());
+         TryCatch try_catch;
+
+         Handle<Function> func = Handle<Function>::Cast(cb);
+         Handle<Value> ret = func->Call(mSystem, 0, NULL);
+
+         if(ret.IsEmpty()) 
+         {
+            ReportException(&try_catch);
+         }
+      }     
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool EntitySystemJS::HasComponent(dtEntity::EntityId eid) const
    {
       
