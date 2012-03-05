@@ -444,7 +444,14 @@ namespace dtEntity
    {
       if(propname == IsTerrainId)
       {
-         SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
+         if(prop.BoolValue())
+         {
+            SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
+         }
+         else
+         {
+            SetNodeMask(GetNode()->getNodeMask() & ~NodeMasks::TERRAIN);
+         }
       }
    }
 
