@@ -168,6 +168,15 @@ namespace dtEntity
       libName = libName.substr(0, libName.size() - debugPostfix.size());
 #endif // _DEBUG
 
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#else
+   // remove "lib" prefix
+   if(libName.length() > 3 && libName.substr(0, 3) == "lib")
+   {
+      libName = libName.substr(3, libName.length());
+   }
+#endif
+
       std::set<ComponentType> result;
 
       // if already loaded

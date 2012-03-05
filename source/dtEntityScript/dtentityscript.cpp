@@ -37,13 +37,11 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <dtEntity/profile.h>
 
-#ifdef DTENTITY_LIBRARY_STATIC
 
-    // include the plugins we need
-    USE_DTENTITYPLUGIN(dtEntitySimulation)
-    USE_DTENTITYPLUGIN(dtEntityRocket)    
-    USE_DTENTITYPLUGIN(dtEntityV8Plugin)    
-#endif
+// include the plugins we need
+USE_DTENTITYPLUGIN(dtEntitySimulation)
+USE_DTENTITYPLUGIN(dtEntityRocket)
+USE_DTENTITYPLUGIN(dtEntityV8Plugin)
 
 int main(int argc, char** argv)
 {

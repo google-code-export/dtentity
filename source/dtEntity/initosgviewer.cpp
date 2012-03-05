@@ -135,9 +135,15 @@ namespace dtEntity
          paths.push_back(baseassets);
       }
 
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+      const char separator = ';';
+#else
+      const char separator = ':';
+#endif
+
       if(!projectassets.empty())
       {
-         std::vector<std::string> pathsplit = dtEntity::split(projectassets, ';');
+         std::vector<std::string> pathsplit = dtEntity::split(projectassets, separator);
          for(unsigned int i = 0; i < pathsplit.size(); ++i)
          {
             if(std::find(paths.begin(), paths.end(), pathsplit[i]) == paths.end())
