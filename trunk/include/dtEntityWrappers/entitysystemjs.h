@@ -74,6 +74,8 @@ namespace dtEntityWrappers
 
       dtEntity::ComponentType GetComponentType() const { return mComponentType; }
       
+      virtual void OnRemovedFromEntityManager(dtEntity::EntityManager& em);
+
       virtual bool HasComponent(dtEntity::EntityId eid) const;
       virtual bool GetComponent(dtEntity::EntityId eid, dtEntity::Component*& component);
       virtual bool GetComponent(dtEntity::EntityId eid, const dtEntity::Component*& component) const;
