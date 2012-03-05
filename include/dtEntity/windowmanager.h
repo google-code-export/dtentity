@@ -119,8 +119,8 @@ namespace dtEntity
        * @param name Name of osg nodes for window, view and camera to set
        * @param layerName Name of layer attach point to show
        * @param traits OSG GraphicsWindow traits to use
-       * @contextId receives context id of newly created context
-       * @return true if success, else false
+       * @param contextId will receive context id of newly created context
+       * @return true if success
        */
       virtual bool OpenWindow(const std::string& name,
          dtEntity::StringId layerName, osg::GraphicsContext::Traits& traits, unsigned int& contextId);
