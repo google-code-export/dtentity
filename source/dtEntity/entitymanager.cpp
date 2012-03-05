@@ -42,12 +42,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    EntityManager::~EntityManager() 
    {
+      // send and delete all outstanding messages
+      EmitQueuedMessages(FLT_MAX);
+	  
       // notify all about shutdown, last chance to deregister
       StopSystemMessage msg;
       EmitMessage(msg);
 
-      // send and delete all outstanding messages
-      EmitQueuedMessages(FLT_MAX);
       delete mMessagePump;
       mMessagePump = NULL;
 
