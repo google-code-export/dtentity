@@ -42,7 +42,11 @@ namespace dtEntityRocket
       static const dtEntity::StringId OffsetId;
       static const dtEntity::StringId PixelOffsetId;
       static const dtEntity::StringId VisibleId;
+      static const dtEntity::StringId AlignmentId;
+      static const dtEntity::StringId AlignToOriginId;
       static const dtEntity::StringId AlignToBoundingSphereCenterId;
+      static const dtEntity::StringId AlignToBoundingSphereTopId;
+      static const dtEntity::StringId AlignToBoundingSphereBottomId;
       static const dtEntity::StringId HideWhenNormalPointsAwayId;
 
       HUDComponent();
@@ -77,8 +81,8 @@ namespace dtEntityRocket
         * if false, set HUD to origin of transform.
         * if true, get bounding sphere of entity and set HUD to center
         */
-      void SetAlignToBoundingSphereCenter(bool v) { mAlignToBoundingSphereCenter.Set(v); }
-      bool GetAlignToBoundingSphereCenter() const { return mAlignToBoundingSphereCenter.Get(); }
+      void SetAlignment(dtEntity::StringId v) { mAlignment.Set(v); }
+      dtEntity::StringId GetAlignment() const { return mAlignment.Get(); }
 
       /**
         * set HUD to hidden when object relative vector [0,0,1] points away from camera
@@ -94,7 +98,7 @@ namespace dtEntityRocket
       dtEntity::Vec3Property mOffset;
       dtEntity::Vec2Property mPixelOffset;
       dtEntity::BoolProperty mVisible;
-      dtEntity::BoolProperty mAlignToBoundingSphereCenter;
+      dtEntity::StringIdProperty mAlignment;
       dtEntity::BoolProperty mHideWhenNormalPointsAway;
       
    };
