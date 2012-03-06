@@ -253,6 +253,13 @@ namespace dtEntity
          return osg::Vec3(0,1,0);
       }
 
+      osg::View* view = GetViewByName(name);
+      if(!view)
+      {
+         LOG_ERROR("Cannot get pickray for view " + name);
+         return osg::Vec3(0,1,0);
+      }
+
       osg::Camera* cam = GetViewByName(name)->getCamera();
       
       int wx, wy, w, h;
