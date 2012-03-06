@@ -36,7 +36,11 @@ namespace dtEntityRocket
    const dtEntity::StringId HUDComponent::OffsetId(dtEntity::SID("Offset"));
    const dtEntity::StringId HUDComponent::PixelOffsetId(dtEntity::SID("PixelOffset"));
    const dtEntity::StringId HUDComponent::VisibleId(dtEntity::SID("Visible"));
+   const dtEntity::StringId HUDComponent::AlignmentId(dtEntity::SID("Alignment"));
+   const dtEntity::StringId HUDComponent::AlignToOriginId(dtEntity::SID("AlignToOrigin"));
    const dtEntity::StringId HUDComponent::AlignToBoundingSphereCenterId(dtEntity::SID("AlignToBoundingSphereCenter"));
+   const dtEntity::StringId HUDComponent::AlignToBoundingSphereTopId(dtEntity::SID("AlignToBoundingSphereTop"));
+   const dtEntity::StringId HUDComponent::AlignToBoundingSphereBottomId(dtEntity::SID("AlignToBoundingSphereBottom"));
    const dtEntity::StringId HUDComponent::HideWhenNormalPointsAwayId(dtEntity::SID("HideWhenNormalPointsAway"));
 
    ////////////////////////////////////////////////////////////////////////////
@@ -48,7 +52,7 @@ namespace dtEntityRocket
       Register(OffsetId, &mOffset);
       Register(PixelOffsetId, &mPixelOffset);
       Register(VisibleId, &mVisible);
-      Register(AlignToBoundingSphereCenterId, &mAlignToBoundingSphereCenter);
+      Register(AlignmentId, &mAlignment);
       Register(HideWhenNormalPointsAwayId, &mHideWhenNormalPointsAway);
 
       mVisible.Set(true);
@@ -264,10 +268,22 @@ namespace dtEntityRocket
             dtEntity::TransformComponent* tc;
             if(GetEntityManager().GetComponent(id, tc, true))
             {
+               osg::BoundingSphere bs = tc->GetNode()->getBound();
                osg::Vec4 trans;
-               if(comp->GetAlignToBoundingSphereCenter())
+               if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereCenterId)
                {
-                  trans = osg::Vec4(tc->GetNode()->getBound().center() + comp->GetOffset(), 1);
+                  trans = osg::Vec4(bs.center() + comp->GetOffset(), 1);
+               }
+               else if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereTopId)
+               {
+
+                  trans = osg::Vec4(bs.center() + comp->GetOffset(), 1);
+                  trans[2] += bs.radius();
+               }
+               else if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereBottomId)
+               {
+                  trans = osg::Vec4(bs.center() - comp->GetOffset(), 1);
+                  trans[2] += bs.radius();
                }
                else
                {
