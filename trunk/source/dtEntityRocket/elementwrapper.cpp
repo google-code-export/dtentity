@@ -193,6 +193,15 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELUpdate(const Arguments& args)
+   {
+
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      element->Update();
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELSetAttribute(const Arguments& args)
    {  
       if(args.Length() < 2)
@@ -452,12 +461,14 @@ namespace dtEntityRocket
         proto->Set("getInnerRML", FunctionTemplate::New(ELGetInnerRML));
         proto->Set("getParentNode", FunctionTemplate::New(ELGetParentNode));
 		  proto->Set("getProperty", FunctionTemplate::New(ELGetProperty));
-		  proto->Set("removeChild", FunctionTemplate::New(ELRemoveChild));
+        proto->Set("update", FunctionTemplate::New(ELUpdate));
+        proto->Set("removeChild", FunctionTemplate::New(ELRemoveChild));
 		  proto->Set("removeEventListener", FunctionTemplate::New(ELRemoveEventListener));
         proto->Set("setAttribute", FunctionTemplate::New(ELSetAttribute));
         proto->Set("setId", FunctionTemplate::New(ELSetId));
         proto->Set("setInnerRML", FunctionTemplate::New(ELSetInnerRML));
 		  proto->Set("setProperty", FunctionTemplate::New(ELSetProperty));
+
         
         templt->InstanceTemplate()->SetNamedPropertyHandler(
            ELNamedPropertyGetter,
