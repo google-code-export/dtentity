@@ -1,52 +1,18 @@
-SET(LIB_NAME dtEntitySimulation)
 
-IF (WIN32)
-ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF (WIN32)
-
-INCLUDE_DIRECTORIES( 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
-  ${OSG_INCLUDE_DIRS}
+SET(TARGET_H ../../include/dtEntitySimulation/groundclampingcomponent.h
+			 ../../include/dtEntitySimulation/manipulatorcomponent.h
+			 ../../include/dtEntitySimulation/manipulators.h
+			 ../../include/dtEntitySimulation/particlecomponent.h
+			 ../../include/dtEntitySimulation/pathcomponent.h
+			 ../../include/dtEntitySimulation/quattools.h
+)			 
+			 
+SET(TARGET_SRC groundclampingcomponent.cpp
+			   manipulatorcomponent.cpp
+			   manipulators.cpp
+			   particlecomponent.cpp
+			   pathcomponent.cpp
+			   pluginfactory.cpp
 )
 
-SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
-SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/groundclampingcomponent.h
-   ${HEADER_PATH}/messages.h
-   ${HEADER_PATH}/manipulatorcomponent.h
-   ${HEADER_PATH}/manipulators.h
-   ${HEADER_PATH}/particlecomponent.h
-   ${HEADER_PATH}/pathcomponent.h
-   ${HEADER_PATH}/quattools.h
-)
-
-SET(LIB_SOURCES
-	 ${SOURCE_PATH}/groundclampingcomponent.cpp
-	 ${SOURCE_PATH}/messages.cpp
-	 ${SOURCE_PATH}/manipulatorcomponent.cpp
-	 ${SOURCE_PATH}/manipulators.cpp
-	 ${SOURCE_PATH}/particlecomponent.cpp
-	 ${SOURCE_PATH}/pathcomponent.cpp
-	 ${SOURCE_PATH}/pluginfactory.cpp
-)
-
-
-ADD_LIBRARY(${LIB_NAME} ${DTENTITY_USER_DEFINED_DYNAMIC_OR_STATIC} ${LIB_SOURCES} ${LIB_PUBLIC_HEADERS})
-	
-TARGET_LINK_LIBRARIES(${LIB_NAME}     
-               ${OSG_LIBRARIES}
-               ${OPENTHREADS_LIBRARIES}
-               dtEntity
-)
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_ENTITY_SIMULATION_LIBRARY)                     
-INCLUDE(ModuleInstall OPTIONAL)
-
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME plugins/${LIB_NAME})
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME plugins/${LIB_NAME})
-ENDIF (MSVC) 
+SETUP_PLUGIN(dtEntitySimulation)

@@ -1,70 +1,38 @@
-SET(LIB_NAME dtEntityRocket)
-
-
 FIND_PACKAGE(V8 REQUIRED)
 
-IF (WIN32)
-ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF (WIN32)
+SET(TARGET_ADDED_LIBRARIES osgLibRocket dtEntityWrappers ${V8_LIBRARIES})
 
 INCLUDE_DIRECTORIES( 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
-  ${CMAKE_CURRENT_SOURCE_DIR}/../osgLibRocket/source/osgLibRocket/include/
-  ${OSG_INCLUDE_DIRS}
   ${LIBROCKET_INCLUDE_DIR}
-  ${V8_INCLUDE_DIR}
+  ../osgLibRocket/source/osgLibRocket/include
 )
 
-SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/contextwrapper.h
-   ${HEADER_PATH}/elementdocumentwrapper.h
-   ${HEADER_PATH}/elementwrapper.h
-   ${HEADER_PATH}/eventinstancer.h
-   ${HEADER_PATH}/eventlistener.h
-   ${HEADER_PATH}/eventlistenerinstancer.h
-   ${HEADER_PATH}/eventlistenerwrapper.h
-   ${HEADER_PATH}/hudcomponent.h
-   ${HEADER_PATH}/messages.h
-   ${HEADER_PATH}/rocketcomponent.h
-   ${HEADER_PATH}/rocketsystemwrapper.h
+SET(TARGET_H
+   contextwrapper.h
+   elementdocumentwrapper.h
+   elementwrapper.h
+   eventinstancer.h
+   eventlistener.h
+   eventlistenerinstancer.h
+   eventlistenerwrapper.h
+   hudcomponent.h
+   messages.h
+   rocketcomponent.h
+   rocketsystemwrapper.h
 )
 
-SET(LIB_SOURCES
-	 ${SOURCE_PATH}/contextwrapper.cpp
-	 ${SOURCE_PATH}/elementdocumentwrapper.cpp
-	 ${SOURCE_PATH}/elementwrapper.cpp
-	 ${SOURCE_PATH}/eventinstancer.cpp
-	 ${SOURCE_PATH}/eventlistener.cpp
-	 ${SOURCE_PATH}/eventlistenerinstancer.cpp
-	 ${SOURCE_PATH}/eventlistenerwrapper.cpp
-	 ${SOURCE_PATH}/hudcomponent.cpp
-	 ${SOURCE_PATH}/messages.cpp
-	 ${SOURCE_PATH}/pluginfactory.cpp
-	 ${SOURCE_PATH}/rocketcomponent.cpp	 
-	 ${SOURCE_PATH}/rocketsystemwrapper.cpp	 
+SET(TARGET_SRC contextwrapper.cpp
+	           elementdocumentwrapper.cpp
+	           elementwrapper.cpp
+	           eventinstancer.cpp
+	           eventlistener.cpp
+			   eventlistenerinstancer.cpp
+			   eventlistenerwrapper.cpp
+			   hudcomponent.cpp
+			   messages.cpp
+			   pluginfactory.cpp
+			   rocketcomponent.cpp	 
+			   rocketsystemwrapper.cpp	 
 )
 
-ADD_LIBRARY(${LIB_NAME} ${DTENTITY_USER_DEFINED_DYNAMIC_OR_STATIC} ${LIB_SOURCES} ${LIB_PUBLIC_HEADERS})
-
-TARGET_LINK_LIBRARIES(${LIB_NAME}     
-               ${OSG_LIBRARIES}
-               ${OPENTHREADS_LIBRARIES}
-               dtEntity
-               dtEntityWrappers
-               osgLibRocket
-               ${V8_LIBRARIES}
-)
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_ROCKET_LIBRARY)                     
-INCLUDE(ModuleInstall OPTIONAL)
-
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME plugins/${LIB_NAME})
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME plugins/${LIB_NAME})
-ENDIF (MSVC) 
+SETUP_PLUGIN(dtEntityRocket)

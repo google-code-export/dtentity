@@ -6,6 +6,17 @@ IF (WIN32)
 SET(CMAKE_DEBUG_POSTFIX  "d")
 ENDIF (WIN32)
 
+IF(CMAKE_SIZEOF_VOID_P MATCHES "8")
+    SET(SYSTEM_ARCHITECTURE "64bits")
+    IF(UNIX AND NOT WIN32 AND NOT APPLE)
+        SET(LIB_POSTFIX "64")
+    ENDIF(UNIX AND NOT WIN32 AND NOT APPLE)
+ELSE(CMAKE_SIZEOF_VOID_P MATCHES "8")
+    SET(SYSTEM_ARCHITECTURE "32bits")
+    SET(LIB_POSTFIX "")
+ENDIF(CMAKE_SIZEOF_VOID_P MATCHES "8")
+MARK_AS_ADVANCED(LIB_POSTFIX)
+
 #to allow usage of hash_map:
 IF(UNIX)
     ADD_DEFINITIONS(-Wno-deprecated)
@@ -13,7 +24,9 @@ ENDIF(UNIX)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/source/osgLibRocket/cmake;${CMAKE_MODULE_PATH}")
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+
+INCLUDE(DTEntityMacroUtils)
 
 # Dynamic vs Static Linking
 OPTION(DYNAMIC_DTENTITY "Set to ON to build dtEntity for dynamic linking.  Use OFF for static." ON)
@@ -28,7 +41,7 @@ ENDIF()
 OPTION(BUILD_WITH_DELTA3D "Build with Delta3D" OFF)
 OPTION(BUILD_TESTS "Build unit tests" OFF)
 OPTION(BUILD_JAVASCRIPT_WRAPPERS "Build wrappers for dtScript" OFF)
-OPTION(BUILD_PHYSX "Build physx component" OFF)
+#OPTION(BUILD_PHYSX "Build physx component" OFF)
 OPTION(BUILD_QT "Build Qt widgets" OFF)
 OPTION(BUILD_LIBROCKET "Build LibRocket bindings" OFF)
 OPTION(BUILD_EXAMPLES "Build examples" OFF)
@@ -60,6 +73,27 @@ IF (BUILD_WITH_DELTA3D)
 	ENDIF (DELTA3D_EXT_DIR)
 ENDIF (BUILD_WITH_DELTA3D)
 
+SET(TARGET_COMMON_LIBRARIES
+    ${OPENTHREADS_LIBRARIES}
+    ${OSG_LIBRARIES}
+    dtEntity
+)
+
+INCLUDE_DIRECTORIES(
+    include
+	${OSG_INCLUDE_DIRS}
+)
+
+if(APPLE) 
+    if(NOT DTENTITY_CONFIG_HAS_BEEN_RUN_BEFORE)
+        if ("${CMAKE_OSX_SYSROOT}" MATCHES ".*/Developer/SDKs/MacOSX10.7.sdk") 
+            MESSAGE(STATUS "MacOSX10.7.sdk")
+            SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX" FORCE)
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.7 -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+        endif()    
+     endif()
+endif()
+
 ADD_SUBDIRECTORY(source/dtEntity)
 ADD_SUBDIRECTORY(source/dtEntitySimulation)
 
@@ -79,27 +113,14 @@ IF(BUILD_JAVASCRIPT_WRAPPERS)
   ADD_SUBDIRECTORY(source/dtEntityV8Plugin)
 ENDIF(BUILD_JAVASCRIPT_WRAPPERS)
 
-IF(BUILD_PHYSX)
-	ADD_SUBDIRECTORY(source/dtEntityPhysX)		
-ENDIF(BUILD_PHYSX)
-
 IF(BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(examples/testDebugDrawManager)
   ADD_SUBDIRECTORY(examples/testEntity)
   ADD_SUBDIRECTORY(examples/testWheels)
   ADD_SUBDIRECTORY(examples/testEntitySystemPlugin)
-
-  IF(BUILD_PHYSX)
-	ADD_SUBDIRECTORY(examples/testPhysX)
-  ENDIF(BUILD_PHYSX)
 ENDIF(BUILD_EXAMPLES)
 
 IF(BUILD_QT)
-   OPTION(BUILD_ENET_INTEGRATION "Build eNet integration" OFF)
-   IF(BUILD_ENET_INTEGRATION)
-	   ADD_SUBDIRECTORY(source/dtEntityENet)	
-	   ADD_SUBDIRECTORY(examples/testNet)	
-   ENDIF(BUILD_ENET_INTEGRATION)
    ADD_SUBDIRECTORY(source/dtEntityQtWidgets)
    IF(BUILD_JAVASCRIPT_WRAPPERS)
 	  ADD_SUBDIRECTORY(source/dtEntityEditor)	  

@@ -22,13 +22,12 @@
 * Martin Scheffler
 */
 
-#include <dtEntityPhysX/export.h>
-#include <dtEntity/componentplugin.h>
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntityPhysX/physxcomponent.h>
 #include <dtEntityPhysX/physxpagedterraincomponent.h>
 #include <dtEntityPhysX/physxgroundclampingcomponent.h>
 
-class DT_ENTITY_PHYSX_EXPORT PhysXFactory : public dtEntity::ComponentPluginFactory
+class PhysXFactory : public dtEntity::ComponentPluginFactory
 {
 public:
 
@@ -69,7 +68,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class DT_ENTITY_PHYSX_EXPORT PagedTerrainFactory : public dtEntity::ComponentPluginFactory
+class PagedTerrainFactory : public dtEntity::ComponentPluginFactory
 {
 public:
 
@@ -109,7 +108,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class DT_ENTITY_PHYSX_EXPORT GroundClampingFactory : public dtEntity::ComponentPluginFactory
+class GroundClampingFactory : public dtEntity::ComponentPluginFactory
 {
 public:
 
@@ -148,9 +147,13 @@ public:
    };
 };
 
-extern "C" DT_ENTITY_PHYSX_EXPORT void CreatePluginFactories(std::list<dtEntity::ComponentPluginFactory*>& list)
+////////////////////////////////////////////////////////////////////////////////
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityPhysX(dtEntity::MessageFactory& mf)
 {
-   list.push_back(new PhysXFactory());
-   list.push_back(new PagedTerrainFactory());
-   list.push_back(new GroundClampingFactory());
 }
+
+REGISTER_DTENTITYPLUGIN(dtEntityPhysX, 3,
+   new PhysXFactory(),
+   new PagedTerrainFactory(),
+   new GroundClampingFactory()
+)
