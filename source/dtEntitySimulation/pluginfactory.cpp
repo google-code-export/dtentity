@@ -19,7 +19,6 @@
 */
 
 #include <dtEntitySimulation/groundclampingcomponent.h>
-#include <dtEntitySimulation/messages.h>
 #include <dtEntitySimulation/manipulatorcomponent.h>
 #include <dtEntitySimulation/particlecomponent.h>
 #include <dtEntitySimulation/pathcomponent.h>
@@ -131,7 +130,6 @@ namespace dtEntitySimulation
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntitySimulation(dtEntity::MessageFactory& mf)
 {
-   dtEntitySimulation::RegisterMessageTypes(mf);
 }
 
 REGISTER_DTENTITYPLUGIN(dtEntitySimulation, 4,

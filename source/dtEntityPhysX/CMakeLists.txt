@@ -1,14 +1,8 @@
-SET(LIB_NAME dtEntityPhysX)
-
-IF (WIN32)
-ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF (WIN32)
-
 FIND_PACKAGE(PhysX REQUIRED)
 
+SET(TARGET_ADDED_LIBRARIES ${PHYSX_LOADER_LIBRARY} ${PHYSX_COOKING_LIBRARY} ${PHYSX_CHARACTER_LIBRARY})
+
 INCLUDE_DIRECTORIES( 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
-  ${OSG_INCLUDE_DIRS}
   ${PHYSX_CHARACTER_INCLUDE_DIR}
   ${PHYSX_COOKING_INCLUDE_DIR}
   ${PHYSX_FOUNDATION_INCLUDE_DIR}
@@ -16,53 +10,24 @@ INCLUDE_DIRECTORIES(
   ${PHYSX_PHYSICS_INCLUDE_DIR}
 )
 
-SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
-SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/errorstream.h
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/pagedterraincullvisitor.h
-   ${HEADER_PATH}/physxcomponent.h
-   ${HEADER_PATH}/physxgroundclampingcomponent.h
-   ${HEADER_PATH}/physxpagedterraincomponent.h
-   ${HEADER_PATH}/stream.h
-   ${HEADER_PATH}/utils.h
+SET(TARGET_H
+   ../../include/dtEntityPhysX/errorstream.h
+   ../../include/dtEntityPhysX/pagedterraincullvisitor.h
+   ../../include/dtEntityPhysX/physxcomponent.h
+   ../../include/dtEntityPhysX/physxgroundclampingcomponent.h
+   ../../include/dtEntityPhysX/physxpagedterraincomponent.h
+   ../../include/dtEntityPhysX/stream.h
+   ../../include/dtEntityPhysX/utils.h
 )
 
-SET(LIB_SOURCES
-	 ${SOURCE_PATH}/pagedterraincullvisitor.cpp
-	 ${SOURCE_PATH}/physxcomponent.cpp
-	 ${SOURCE_PATH}/physxgroundclampingcomponent.cpp
-	 ${SOURCE_PATH}/physxpagedterraincomponent.cpp
-	 ${SOURCE_PATH}/pluginfactory.cpp
-	 ${SOURCE_PATH}/stream.cpp
-	 ${SOURCE_PATH}/utils.cpp
+SET(TARGET_SRC pagedterraincullvisitor.cpp
+	           physxcomponent.cpp
+	           physxgroundclampingcomponent.cpp
+	           physxpagedterraincomponent.cpp
+	           pluginfactory.cpp
+	           stream.cpp
+	           utils.cpp
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
-)
-
-TARGET_LINK_LIBRARIES(${LIB_NAME}     
-					  ${OSG_LIBRARIES}
-                      ${OPENTHREADS_LIBRARY}
-                      ${OPENTHREADS_LIBRARIES}
-					  dtEntity
-					  ${PHYSX_LOADER_LIBRARY}
-					  ${PHYSX_COOKING_LIBRARY}
-					  ${PHYSX_CHARACTER_LIBRARY}
-                      )
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_ENTITY_PHYSX_LIBRARY)                     
-INCLUDE(ModuleInstall OPTIONAL)
-
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME plugins/${LIB_NAME})
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME plugins/${LIB_NAME})
-ENDIF (MSVC) 
+SETUP_PLUGIN(dtEntityPhysX)
 
