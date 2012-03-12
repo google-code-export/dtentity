@@ -1,6 +1,5 @@
 #pragma once
 
-#include "export.h"
 #include <dtEntity/component.h>
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
@@ -8,7 +7,7 @@
 #include <dtEntity/debugdrawmanager.h>
 #include <osg/ref_ptr>
 
-class TESTENTTITYSYSTEM_EXPORT TestComponent : public dtEntity::Component
+class TestComponent : public dtEntity::Component
 {
 
 public:
@@ -115,7 +114,7 @@ private:
    This is a good place to register for messages that
    should influence components.
 */
-class TESTENTTITYSYSTEM_EXPORT TestSystem
+class TestSystem
    : public dtEntity::DefaultEntitySystem<TestComponent>
 {
    // Have to call constructor of base class, so remember base class type
