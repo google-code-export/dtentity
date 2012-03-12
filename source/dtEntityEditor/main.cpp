@@ -25,7 +25,7 @@
 #include <dtEntityEditor/editorapplication.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/qtguiwindowsystemwrapper.h>
- #include <dtEntity/log.h>
+#include <dtEntity/log.h>
 #include <osg/Vec2>
 #include <osg/Vec3>
 #include <osg/Vec4>

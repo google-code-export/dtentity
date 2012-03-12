@@ -18,13 +18,12 @@
 * Martin Scheffler
 */
 
-#include "export.h"
 #include "testcomponent.h"
 #include <dtEntity/componentpluginmanager.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-class TESTENTTITYSYSTEM_EXPORT TestPluginFactory : public dtEntity::ComponentPluginFactory
+class TestPluginFactory : public dtEntity::ComponentPluginFactory
 {
 public:
 

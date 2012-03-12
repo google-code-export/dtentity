@@ -34,9 +34,13 @@
 #endif
 
 #if defined(_MSC_VER) && (_MSC_VER >=1500)
-   #include <unordered_map>
+#   include <unordered_map>
 #else
-   #include <hash_map>
+#   ifdef __APPLE__
+#      include <ext/hash_map>
+#   else
+#      include <hash_map>
+#   endif
 #endif
 
 

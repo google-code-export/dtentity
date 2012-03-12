@@ -79,13 +79,17 @@ namespace dtEntity
       // find out library extension for this system
       // take care of debug/release library stuff on windows
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#if defined (_DEBUG)
+#   if defined (_DEBUG)
       return "d.dll";
-#else
+#   else
       return ".dll";
-#endif
+#   endif
 #else
+#   if defined (_DEBUG)
+      return "d.so";
+#   else
       return ".so";
+#   endif
 #endif
    }
 

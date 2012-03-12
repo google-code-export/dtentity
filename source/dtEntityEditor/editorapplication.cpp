@@ -41,7 +41,6 @@
 #include <osgDB/FileNameUtils>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
-#include <GL/gl.h>
 #include <iostream>
 #include <QtCore/QDir>
 #include <osgDB/FileUtils>
