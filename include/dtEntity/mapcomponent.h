@@ -224,7 +224,7 @@ namespace dtEntity
       */
       bool Spawn(const std::string& name, Entity& spawned) const;
 
-      void GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids) const;
+      void GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids, bool recursive = true) const;
 
       /**
        * Load scene from map file, start and configure entity systems

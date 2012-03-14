@@ -53,7 +53,7 @@
 		</component>
 		<component type="StaticMesh">
 			<stringproperty name="CacheHint">None</stringproperty>
-			<stringproperty name="Mesh">StaticMeshes/puno.ive</stringproperty>
+			<stringproperty name="Mesh"></stringproperty>
 			<boolproperty name="Optimize" value="false"/>
 		</component>
 	</spawner>

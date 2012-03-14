@@ -29,6 +29,7 @@
 #include <dtEntity/lightcomponent.h>
 #include <dtEntity/osganimationcomponent.h>
 #include <dtEntity/pickshapecomponent.h>
+#include <dtEntity/shadercomponent.h>
 #include <dtEntity/shadowcomponent.h>
 #include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/textlabelcomponent.h>
@@ -146,6 +147,30 @@ namespace dtEntity
       virtual std::string GetDescription() const
       {
          return "Shadow component system";
+      }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class ShaderComponentFactory : public dtEntity::ComponentPluginFactory
+   {
+   public:
+
+      virtual bool Create(EntityManager* em, EntitySystem*& es)
+      {
+         es = new ShaderSystem(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return "Shader";
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return "Shader component system";
       }
    };
 
@@ -277,6 +302,7 @@ namespace dtEntity
       pluginManager.AddFactory(new PickShapeComponentFactory());
       pluginManager.AddFactory(new SkyBoxComponentFactory());
       pluginManager.AddFactory(new ShadowComponentFactory());
+      pluginManager.AddFactory(new ShaderComponentFactory());
       pluginManager.AddFactory(new TextLabelFactory());
       pluginManager.AddFactory(new TextureLabelFactory());
       pluginManager.AddFactory(new OSGAnimationComponentFactory());
