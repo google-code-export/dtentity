@@ -19,7 +19,7 @@ function startShaders() {
   fragshdr += "void main(void) { gl_FragColor = MyColor; }";
 
   var shaderSys = getEntitySystem("Shader");
-  shaderSys.addProgram("Face", vertshdr, fragshdr);
+  shaderSys.addProgram(vertshdr, fragshdr, "Face", "Leg");
 
   var entityProto = {
     StaticMesh : {
