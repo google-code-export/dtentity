@@ -98,10 +98,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const StringId ShaderComponent::TYPE(SID("Shader"));
    const StringId ShaderComponent::MaterialNamePrefixId(SID("MaterialNamePrefix"));
+   const StringId ShaderComponent::TopLevelMaterialNameId(SID("TopLevelMaterialName"));
+
    ////////////////////////////////////////////////////////////////////////////
    ShaderComponent::ShaderComponent()
    {
       Register(MaterialNamePrefixId, &mMaterialNamePrefix);
+      Register(TopLevelMaterialNameId, &mTopLevelMaterialName);
 
    }
   
@@ -169,6 +172,14 @@ namespace dtEntity
       StaticMeshComponent* smc;
       if(GetEntityManager().GetComponent(eid, smc, true))
       {
+         if(comp->GetTopLevelMaterialName() != "")
+         {
+            osg::Program* p = GetProgram(comp->GetTopLevelMaterialName());
+            if(p)
+            {
+               smc->GetNode()->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
+            }
+         }
          MaterialVisitor v(this, comp->GetMaterialNamePrefix());
          smc->GetNode()->accept(v);
       }
@@ -177,22 +188,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    Property* ShaderSystem::ScriptAddProgram(const PropertyArgs& args)
    {
-      if(args.size() < 2)
+      if(args.size() < 3)
       {
-         LOG_ERROR("Usage: addProgram(name, vertex_source, fragment_source)");
+         LOG_ERROR("Usage: addProgram(vertex_source, fragment_source, name1, name2, ....)");
          return NULL;
       }
-      std::string name = args[0]->StringValue();
-      std::string vsrc = args[1] == NULL ? "" : args[1]->StringValue();
-      std::string fsrc = (args.size() > 2 && args[2] != NULL) ? args[2]->StringValue() : "";
+      std::string vsrc = args[0] == NULL ? "" : args[0]->StringValue();
+      std::string fsrc =  args[1] == NULL ? "" : args[1]->StringValue();
 
-      if(mPrograms.find("name") != mPrograms.end())
-      {
-         LOG_ERROR("Shader already exists: " << name);
-         return NULL;
-      }
       osg::Program* prg = new osg::Program();
-
 
       if(!vsrc.empty())
       {
@@ -208,14 +212,25 @@ namespace dtEntity
         prg->addShader(shader);
       }
 
-      AddProgram(name, prg);
+      for(unsigned int i = 2; i < args.size(); ++i)
+      {
+         std::string name = args[i]->StringValue();
+
+         if(mPrograms.find("name") != mPrograms.end())
+         {
+            LOG_ERROR("Shader already exists: " << name);
+            continue;
+         }
+
+         AddProgram(name, prg);
+      }
       return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    Property* ShaderSystem::ScriptAddUniform(const PropertyArgs& args)
    {
-      if(args.size() < 3)
+       if(args.size() < 3)
       {
          LOG_ERROR("Usage: addUniform(eid, name, value)");
          return NULL;

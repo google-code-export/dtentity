@@ -42,6 +42,7 @@ namespace dtEntity
       
       static const ComponentType TYPE;
       static const StringId MaterialNamePrefixId;
+      static const StringId TopLevelMaterialNameId;
 
       ShaderComponent();
       virtual ~ShaderComponent();
@@ -55,8 +56,12 @@ namespace dtEntity
       std::string GetMaterialNamePrefix() const { return mMaterialNamePrefix.Get(); }
       void SetMaterialNamePrefix(const std::string& s) { mMaterialNamePrefix.Set(s); }
 
+      std::string GetTopLevelMaterialName() const { return mTopLevelMaterialName.Get(); }
+      void SetTopLevelMaterialName(const std::string& s) { mTopLevelMaterialName.Set(s); }
+
    private:
       StringProperty mMaterialNamePrefix;
+      StringProperty mTopLevelMaterialName;
 
    };
 
