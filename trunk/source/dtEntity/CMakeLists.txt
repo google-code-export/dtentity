@@ -95,6 +95,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/scriptaccessor.h
   ${HEADER_PATH}/singleton.h
   ${HEADER_PATH}/spawner.h
+  ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
   ${HEADER_PATH}/stringid.h
@@ -135,6 +136,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/propertycontainer.cpp
   ${SOURCE_PATH}/rapidxmlmapencoder.cpp
   ${SOURCE_PATH}/scriptaccessor.cpp
+  ${SOURCE_PATH}/shadercomponent.cpp
   ${SOURCE_PATH}/shadowcomponent.cpp
   ${SOURCE_PATH}/spawner.cpp
   ${SOURCE_PATH}/skyboxcomponent.cpp

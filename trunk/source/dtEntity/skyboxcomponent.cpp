@@ -221,7 +221,7 @@ namespace dtEntity
       stateset->setMode(GL_FOG,osg::StateAttribute::OFF);
       stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
 
-      osg::Shader* vShader = new osg::Shader(osg::Shader::VERTEX);
+      /*osg::Shader* vShader = new osg::Shader(osg::Shader::VERTEX);
       osg::Shader* fShader = new osg::Shader(osg::Shader::FRAGMENT);
 
       const char vpstr[] =
@@ -246,7 +246,7 @@ namespace dtEntity
       program->setName("SkyboxShader");
       program->addShader(vShader);
       program->addShader(fShader);
-
+*/
 
       // clear the depth to the far plane.
       osg::Depth* depth = new osg::Depth;

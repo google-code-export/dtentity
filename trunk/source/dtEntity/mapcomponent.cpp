@@ -837,15 +837,36 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MapSystem::GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids) const
+   void MapSystem::GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids, bool recursive) const
    {
       ComponentStore::const_iterator i;
       for(i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          MapComponent* component = i->second;
-         if(component->GetSpawnerName() == spawnername)
+         std::string cspawnername = component->GetSpawnerName();
+         if(cspawnername.empty())
          {
-            ids.push_back(i->first);
+            continue;
+         }
+
+         Spawner* spwn;
+         if(!GetSpawner(cspawnername, spwn))
+         {
+             continue;
+         }
+
+         while(spwn != NULL)
+         {
+            if(spwn->GetName() == spawnername)
+            {
+               ids.push_back(i->first);
+               break;
+            }
+            spwn = spwn->GetParent();
+            if(!recursive)
+            {
+               break;
+            }
          }
       }
    }

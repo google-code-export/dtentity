@@ -4,6 +4,7 @@ SET(TARGET_ADDED_LIBRARIES osgLibRocket dtEntityWrappers ${V8_LIBRARIES})
 
 INCLUDE_DIRECTORIES( 
   ${LIBROCKET_INCLUDE_DIR}
+  ${V8_INCLUDE_DIR}
   ../osgLibRocket/source/osgLibRocket/include
 )
 

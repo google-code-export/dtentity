@@ -243,14 +243,54 @@ namespace dtEntityWrappers
          if(val->IsArray())
          {
             Handle<Array> arr = Handle<Array>::Cast(val);
-            dtEntity::ArrayProperty p;
-            for(unsigned int i = 0; i < arr->Length(); ++i)
+            Handle<Value> hint = arr->Get(String::New("__TYPE_HINT"));
+            if(!hint.IsEmpty())
             {
-               p.Add(Convert(arr->Get(Integer::New(i))));
+               std::string h = ToStdString(hint);
+               if(h == "V2")
+               {
+                  dtEntity::Vec2dProperty p(UnwrapVec2(val));
+                  pargs.push_back(&p);
+                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+               }
+               else if(h == "V3")
+               {
+                  dtEntity::Vec3dProperty p(UnwrapVec3(val));
+                  pargs.push_back(&p);
+                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+
+               }
+               else if(h == "V4")
+               {
+                  dtEntity::Vec4dProperty p(UnwrapVec4(val));
+                  pargs.push_back(&p);
+                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+               }
+               else if(h == "QT")
+               {
+                  dtEntity::QuatProperty p(UnwrapQuat(val));
+                  pargs.push_back(&p);
+                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+               }
+               else if(h == "MT")
+               {
+                  dtEntity::MatrixProperty p(UnwrapMatrix(val));
+                  pargs.push_back(&p);
+                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+               }
             }
-            
-            pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            else
+            {
+               Handle<Array> arr = Handle<Array>::Cast(val);
+               dtEntity::ArrayProperty p;
+               for(unsigned int i = 0; i < arr->Length(); ++i)
+               {
+                  p.Add(Convert(arr->Get(Integer::New(i))));
+               }
+
+               pargs.push_back(&p);
+               return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            }
             
          }
          else if(val->IsBoolean())
