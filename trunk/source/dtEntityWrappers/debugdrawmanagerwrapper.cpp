@@ -60,6 +60,10 @@ namespace dtEntityWrappers
    Handle<Value> DebugDrawManagerAddLine(const Arguments& args)
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
 
       if(args.Length() < 2 || !IsVec3(args[0]) || !IsVec3(args[1]))
       {
@@ -106,6 +110,11 @@ namespace dtEntityWrappers
    Handle<Value> DebugDrawManagerAddLines(const Arguments& args)
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
 
       if(args.Length() < 1 || !args[0]->IsArray())
       {
@@ -159,6 +168,11 @@ namespace dtEntityWrappers
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
 
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
+
       if(args.Length() < 2 || !IsVec3(args[0]) || !IsVec3(args[1]))
       {
          return ThrowError("usage: addAABB(Vec3 min, Vec3 max, [Vec4 color, Int lineWidth, Number duration, bool useDepthTest])");
@@ -204,6 +218,11 @@ namespace dtEntityWrappers
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
 
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
+
       if(args.Length() < 2 || !IsVec3(args[0]) || !IsVec4(args[1]))
       {
          return ThrowError("usage: addCross(Vec3 position, Vec4 color, [int linewidth, Number duration, bool useDepthTest])");
@@ -240,6 +259,11 @@ namespace dtEntityWrappers
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
 
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
+
       if(args.Length() < 3 || !IsVec3(args[0]) || !IsVec3(args[1]))
       {
          return ThrowError("usage: addCircle(Vec3 position, Vec3 normal, number radius, Vec4 color, [Number duration, bool useDepthTest])");
@@ -274,6 +298,11 @@ namespace dtEntityWrappers
    Handle<Value> DebugDrawManagerAddSphere(const Arguments& args)
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
 
       if(args.Length() < 2 || !IsVec3(args[0]))
       {
@@ -310,6 +339,11 @@ namespace dtEntityWrappers
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
 
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
+
       if(args.Length() < 2 || !IsVec3(args[0]))
       {
          return ThrowError("usage: addString(Vec3 position, text, Vec4 color, Number duration, bool useDepthTest])");
@@ -344,6 +378,11 @@ namespace dtEntityWrappers
    Handle<Value> DebugDrawManagerAddTriangle(const Arguments& args)
    {
       dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+
+      if(!ddm->IsEnabled() )
+      {
+         return Undefined();
+      }
 
       if(args.Length() < 4 || !IsVec3(args[0]) || !IsVec3(args[1]) || !IsVec3(args[2])||
          !IsVec4(args[3]))

@@ -142,10 +142,14 @@ namespace dtEntity
       if(enabled)
       {
          mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
+         mGroupDepthTest->setNodeMask(0xFFFFFFFF);
+         mGroupNoDepthTest->setNodeMask(0xFFFFFFFF);
       }
       else
       {      
          Clear();
+         mGroupDepthTest->setNodeMask(0);
+         mGroupNoDepthTest->setNodeMask(0);
          mEntityManager->UnregisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
       }
       mEnabled = enabled;

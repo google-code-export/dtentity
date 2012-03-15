@@ -146,9 +146,8 @@ namespace dtEntityRocket
 
    HUDSystem::HUDSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
-      , mDebugDrawManager(new dtEntity::DebugDrawManager(em))
    {
-      mDebugDrawManager->SetEnabled(true);
+
       Register(EnabledId, &mEnabled);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &HUDSystem::Tick);
@@ -302,8 +301,7 @@ namespace dtEntityRocket
                {
                   osg::Vec3 normal(0, 0, 1);
                   normal = tc->GetRotation() * normal;
-                  //mDebugDrawManager->AddLine(osg::Vec3(trans[0], trans[1], trans[2]), 
-                  //   osg::Vec3(trans[0], trans[1], trans[2]) + normal * 1000, osg::Vec4(1,0,0,1), 1, 0);
+
                   osg::Vec4 camnormal = osg::Vec4(normal, 0) * matrix;
                   if(camnormal[2] > 0)
                   {
