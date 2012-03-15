@@ -132,6 +132,6 @@ namespace dtEntityRocket
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mVisibilityChangedFunctor;
       dtEntity::BoolProperty mEnabled;
-      osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDrawManager;
+
    };
 }
