@@ -137,7 +137,7 @@ namespace osgLibRocket
 
     setCullingActive(false);
     osg::StateSet* ss = getOrCreateStateSet();
-    ss->setRenderBinDetails(1000, "TraversalOrderBin");
+    ss->setRenderBinDetails(20000, "TraversalOrderBin");
     ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
   }
 

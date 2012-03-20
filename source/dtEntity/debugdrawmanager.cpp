@@ -64,7 +64,7 @@ namespace dtEntity
 	   {
 			osg::ref_ptr<osg::StateSet> ss = mGroupDepthTest->getOrCreateStateSet();
 		   ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);    
-		   ss->setRenderBinDetails(80, "RenderBin"); 
+         ss->setRenderBinDetails(240000, "RenderBin");
 			osg::ref_ptr<osg::LineWidth> lw = new osg::LineWidth();
 		   lw->setWidth(1); 
 		   ss->setAttributeAndModes(lw, osg::StateAttribute::ON); 
@@ -82,7 +82,7 @@ namespace dtEntity
 	   {
 			osg::ref_ptr<osg::StateSet> ss = mGroupNoDepthTest->getOrCreateStateSet();
 		   ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);    
-		   ss->setRenderBinDetails(80, "RenderBin"); 
+         ss->setRenderBinDetails(240001, "RenderBin");
 			osg::ref_ptr<osg::LineWidth> lw = new osg::LineWidth();
 		   lw->setWidth(1); 
 		   ss->setAttributeAndModes(lw, osg::StateAttribute::ON); 
