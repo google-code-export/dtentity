@@ -74,39 +74,8 @@ namespace dtEntity
       mSaveWithMap.Set(true);
       mVisibleInEntityList.Set(true);
 
-#ifdef WIN32
-   GUID guid;
-   
-   if( UuidCreate( &guid ) == RPC_S_OK )
-   {
-      unsigned char* guidChar;
+      mUniqueIdStr = MapSystem::CreateUniqueIdString();
 
-      if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
-      {
-         mUniqueIdStr = reinterpret_cast<const char*>(guidChar);
-         if(RpcStringFree(&guidChar) != RPC_S_OK) 
-         {
-            LOG_ERROR("Could not free memory.");
-         }
-      }
-      else
-      {
-         LOG_WARNING("Could not convert UniqueId to std::string." );
-      }
-   }
-   else
-   {
-      LOG_WARNING("Could not generate UniqueId." );
-   }
-#else
-   uuid_t uuid;
-   uuid_generate( uuid );
-
-   char buffer[37];
-   uuid_unparse(uuid, buffer);
-
-   mUniqueIdStr = buffer;
-#endif
    }
     
    ////////////////////////////////////////////////////////////////////////////
@@ -933,5 +902,46 @@ namespace dtEntity
       {
          return false;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   std::string MapSystem::CreateUniqueIdString()
+   {
+#ifdef WIN32
+   GUID guid;
+
+   if( UuidCreate( &guid ) == RPC_S_OK )
+   {
+      unsigned char* guidChar;
+
+      if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
+      {
+         std::string str = reinterpret_cast<const char*>(guidChar);
+         if(RpcStringFree(&guidChar) != RPC_S_OK)
+         {
+            LOG_ERROR("Could not free memory.");
+         }
+         return str;
+      }
+      else
+      {
+         LOG_WARNING("Could not convert UniqueId to std::string." );
+         return "ERROR";
+      }
+   }
+   else
+   {
+      LOG_WARNING("Could not generate UniqueId." );
+      return "ERROR";
+   }
+#else
+   uuid_t uuid;
+   uuid_generate( uuid );
+
+   char buffer[37];
+   uuid_unparse(uuid, buffer);
+
+   return buffer;
+#endif
    }
 }
