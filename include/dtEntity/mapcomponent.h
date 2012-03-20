@@ -327,6 +327,8 @@ namespace dtEntity
       // implementation of EntityManager::EntitySystemRequestCallback interface
       virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
 
+      static std::string CreateUniqueIdString();
+
    private:
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
