@@ -252,7 +252,7 @@ namespace dtEntity
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
-         if(abspath.compare(0, datapath.size(), datapath) == 0)
+         if(osgDB::equalCaseInsensitive(datapath, abspath.substr(0, datapath.length())))
          {
             scenedatapath = *i;
             break;
@@ -346,7 +346,7 @@ namespace dtEntity
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
-         if(abspath.compare(0, datapath.size(), datapath) == 0)
+         if(osgDB::equalCaseInsensitive(datapath, abspath.substr(0, datapath.length())))
          {
             mapdatapath = *i;
             break;
