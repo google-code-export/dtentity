@@ -48,7 +48,6 @@ namespace dtEntitySimulation
       dtEntity::SID("SetHeightAndRotationToTerrain"));
    const dtEntity::StringId GroundClampingComponent::VerticalOffsetId(dtEntity::SID("VerticalOffset"));
    const dtEntity::StringId GroundClampingComponent::MinDistToCameraId(dtEntity::SID("MinDistToCamera"));
-   const dtEntity::StringId GroundClampingComponent::KeepLastClampedHeightId(dtEntity::SID("KeepLastClampedHeight"));
 
    ////////////////////////////////////////////////////////////////////////////
    GroundClampingComponent::GroundClampingComponent()
@@ -60,10 +59,8 @@ namespace dtEntitySimulation
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
       Register(MinDistToCameraId, &mMinDistToCamera);
-      Register(KeepLastClampedHeightId, &mKeepLastClampedHeight);
 
       mMinDistToCamera.Set(500);
-      mKeepLastClampedHeight.Set(true);
       
    }
     
@@ -328,20 +325,33 @@ namespace dtEntitySimulation
 
          osg::Vec3d lastpos = component->GetLastClampedPosition();
         
-         double distMovedX = fabs(translation[0] - lastpos[0]);
-         double distMovedY = fabs(translation[1] - lastpos[1]);
+         double distMovedX = translation[0] - lastpos[0];
+         double distMovedY = translation[1] - lastpos[1];
 
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
          if(!component->GetDirty() &&
-            distMovedX < MINIMUM_MOVEMENT_DISTANCE &&
-            distMovedY < MINIMUM_MOVEMENT_DISTANCE
+            fabs(distMovedX) < MINIMUM_MOVEMENT_DISTANCE &&
+            fabs(distMovedY) < MINIMUM_MOVEMENT_DISTANCE
             )
          {
-            if(component->GetKeepLastClampedHeight())
+            osg::Vec3 norml = component->GetLastClampedNormal();
+            if(norml[2] != 0)
             {
-               transformcomp->SetTranslation(osg::Vec3d(translation[0], translation[1], lastpos[2]));
+               double slopeX = norml[0] / norml[2] * -1;
+               double slopeY = norml[1] / norml[2] * -1;
+
+               double deltah =  slopeX * distMovedX + slopeY * distMovedY;
+               double newh = lastpos[2] + deltah;
+               if((component->GetClampingMode() == GroundClampingComponent::ClampingMode_KeepAboveTerrainId && newh > translation[2]) ||
+                     newh != translation[2])
+               {
+                  translation[2] = newh;
+                  transformcomp->SetTranslation(translation);
+               }
+
             }
+
             if(component->GetClampingMode() == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
             {
                transformcomp->SetRotation(component->GetLastClampedAttitude());
@@ -388,8 +398,6 @@ namespace dtEntitySimulation
    {
       osg::Vec3d isectpos = intersection.getWorldIntersectPoint();         
 
-      //mDebugDraw->AddLine(isectpos, isectpos + intersection.getWorldIntersectNormal() * 20, osg::Vec4(1,0,0,1), 5);
-
       dtEntity::StringId mode = component->GetClampingMode();
 
       dtEntity::TransformComponent* transformcomp = component->GetTransformComponent();
@@ -402,6 +410,11 @@ namespace dtEntitySimulation
       {
          translation[2] = isectpos[2] + voffset;
          transformcomp->SetTranslation(translation);
+         component->SetLastClampedNormal(intersection.getWorldIntersectNormal());
+      }
+      else
+      {
+         component->SetLastClampedNormal(osg::Vec3());
       }
 
       if(mode == GroundClampingComponent::ClampingMode_SetHeightAndRotationToTerrainId)
@@ -421,7 +434,11 @@ namespace dtEntitySimulation
          component->SetLastClampedAttitude(newrot);
       }               
 
-      component->SetLastClampedPosition(transformcomp->GetTranslation());
+      double dist = component->GetLastClampedPosition()[2] - translation[2];
+      std::cout << "Dist: "<< dist <<"\n";
+
+      component->SetLastClampedPosition(translation);
+
       component->SetDirty(false);
    }
 }
