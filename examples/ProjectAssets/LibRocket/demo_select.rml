@@ -43,6 +43,12 @@
 		</select>
 	</form>
 </span>
-
+<br />
+<span id="calanimationbox" style="visibility:hidden;">
+  <form>
+    <select id="CalAnimationChooser" onchange="changeCalAnimation(parameters.value);">
+    </select>
+  </form>
+</span>
 </body>
 </rml>
