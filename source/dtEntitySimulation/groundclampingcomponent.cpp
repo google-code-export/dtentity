@@ -434,9 +434,6 @@ namespace dtEntitySimulation
          component->SetLastClampedAttitude(newrot);
       }               
 
-      double dist = component->GetLastClampedPosition()[2] - translation[2];
-      std::cout << "Dist: "<< dist <<"\n";
-
       component->SetLastClampedPosition(translation);
 
       component->SetDirty(false);
