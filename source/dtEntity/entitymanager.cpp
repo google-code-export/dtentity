@@ -37,6 +37,8 @@ namespace dtEntity
       : mNextAvailableId(0)
       , mMessagePump(new MessagePump())
    {     
+      // generate a unique ID
+      mEntityManagerInfo.mUniqueID = MapSystem::CreateUniqueIdString();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
