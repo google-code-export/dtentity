@@ -128,6 +128,9 @@ namespace dtEntity
       , mImpl(new ApplicationImpl())
    {
 
+      // generate a unique ID
+      mApplicationSystemInfo.mUniqueID = MapSystem::CreateUniqueIdString();
+
       mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
 
       Register(TimeScaleId, &mTimeScale);
