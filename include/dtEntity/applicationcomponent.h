@@ -50,7 +50,7 @@ namespace dtEntity
 
 
 	/**
-    * An entity system for holding the Delta3D application
+    * An entity system for holding the dtEntity application
     * and providing some time management methods
 	 */
    class DT_ENTITY_EXPORT ApplicationSystem
@@ -71,6 +71,11 @@ namespace dtEntity
       ComponentType GetComponentType() const { return TYPE; }
 
       void EmitTickMessagesAndQueuedMessages();
+
+
+      /// Returns the UniqueID of this ApplicationSystem
+      std::string GetUniqueID() { return mApplicationSystemInfo.mUniqueID; }
+
 
       /**
        * @return The scale of realtime the GameManager is running at.
@@ -139,6 +144,20 @@ namespace dtEntity
       std::string GetCmdLineArg(int i) { return mArgvArray.Get()[i]->StringValue(); }
 
    private:
+
+      /// Holds basic information about the ApplicationSystem instance
+      /**
+      *  For now we just include a UniqueID (string); later on this might
+      *  include additional fields like a name, the network address, ...
+      *  The single members are accessed through specific public methods
+      *  like GetUniqueID().
+      */
+      struct ApplicationSystemInfo
+      {
+         std::string mUniqueID;
+      };
+
+      ApplicationSystemInfo mApplicationSystemInfo;
 
       FloatProperty mTimeScale;
       ArrayProperty mArgvArray;

@@ -93,9 +93,6 @@ namespace dtEntity
 
       typedef std::vector<EntitySystemRequestCallback*> EntitySystemRequestCallbacks;
 
-      /// Returns the UniqueID of this EntityManager
-      std::string GetUniqueID() { return mEntityManagerInfo.mUniqueID; }
-
       /**
        * Get entity object for entity ID.
        * @param id Unique id of the entity to retrieve
@@ -318,20 +315,6 @@ namespace dtEntity
 
 
    private:
-
-      /// Holds basic information about the EntityManager instance
-      /**
-      *  For now we just include a UniqueID (string); later on this might
-      *  include additional fields like a name, the network address, ...
-      *  The single members are accessed through specific public methods
-      *  like GetUniqueID().
-      */
-      struct EntityManagerInfo
-      {
-         std::string mUniqueID;
-      };
-
-      EntityManagerInfo mEntityManagerInfo;
 
       // Returns next id and increments internal counter
       EntityId GetNextAvailableID();
