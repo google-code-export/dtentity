@@ -1197,6 +1197,18 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2f Vec3Property::Vec2Value() const
+   {
+      return osg::Vec2f(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2d Vec3Property::Vec2dValue() const
+      {
+      return osg::Vec2d(mValue[0], mValue[1]);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////////
    const std::string Vec3Property::StringValue() const 
    { 
       std::ostringstream os;
@@ -1266,6 +1278,30 @@ namespace dtEntity
    osg::Vec4d Vec4Property::Vec4dValue() const
    {
       return osg::Vec4d(mValue[0], mValue[1], mValue[2], mValue[3]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2f Vec4Property::Vec2Value() const
+   {
+      return osg::Vec2f(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2d Vec4Property::Vec2dValue() const
+   {
+      return osg::Vec2d(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3f Vec4Property::Vec3Value() const
+   {
+      return osg::Vec3f(mValue[0], mValue[1], mValue[2]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3d Vec4Property::Vec3dValue() const
+   {
+      return osg::Vec3d(mValue[0], mValue[1], mValue[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1412,6 +1448,18 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2f Vec3dProperty::Vec2Value() const
+   {
+      return osg::Vec2f(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2d Vec3dProperty::Vec2dValue() const
+   {
+      return osg::Vec2d(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    const std::string Vec3dProperty::StringValue() const
    {
       std::ostringstream os;
@@ -1481,6 +1529,30 @@ namespace dtEntity
    osg::Vec4d Vec4dProperty::Vec4dValue() const
    {
       return Get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2f Vec4dProperty::Vec2Value() const
+   {
+      return osg::Vec2f(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2d Vec4dProperty::Vec2dValue() const
+   {
+      return osg::Vec2d(mValue[0], mValue[1]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3f Vec4dProperty::Vec3Value() const
+   {
+      return osg::Vec3f(mValue[0], mValue[1], mValue[2]);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3d Vec4dProperty::Vec3dValue() const
+   {
+      return osg::Vec3d(mValue[0], mValue[1], mValue[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
