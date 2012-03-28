@@ -196,6 +196,7 @@ namespace dtEntity
       virtual osg::Vec3d Vec3dValue() const;
       virtual osg::Vec4d Vec4dValue() const;
       virtual osg::Quat QuatValue() const;
+      virtual osg::Matrix MatrixValue() const;
       
    
       PropertyArray Get() const { return mValue; }

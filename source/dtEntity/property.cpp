@@ -197,10 +197,40 @@ namespace dtEntity
       if(mValue.size() < 4)
       {
          LOG_ERROR("Not enough entries in array for QuatValue!");
-         return osg::Quat();
+         return osg::Quat(0,0,0,1);
       }
       return osg::Quat(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(),
          mValue[2]->DoubleValue(), mValue[3]->DoubleValue());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Matrix ArrayProperty::MatrixValue() const
+   {
+      if(mValue.size() < 16)
+      {
+         LOG_ERROR("Not enough entries in array for MatrixValue!");
+         osg::Matrix m;
+         m.makeIdentity();
+         return m;
+      }
+      return osg::Matrix(
+               mValue[ 0]->DoubleValue(),
+               mValue[ 1]->DoubleValue(),
+               mValue[ 2]->DoubleValue(),
+               mValue[ 3]->DoubleValue(),
+               mValue[ 4]->DoubleValue(),
+               mValue[ 5]->DoubleValue(),
+               mValue[ 6]->DoubleValue(),
+               mValue[ 7]->DoubleValue(),
+               mValue[ 8]->DoubleValue(),
+               mValue[ 9]->DoubleValue(),
+               mValue[10]->DoubleValue(),
+               mValue[11]->DoubleValue(),
+               mValue[12]->DoubleValue(),
+               mValue[13]->DoubleValue(),
+               mValue[14]->DoubleValue(),
+               mValue[15]->DoubleValue()
+               );
    }
 
    ////////////////////////////////////////////////////////////////////////////////

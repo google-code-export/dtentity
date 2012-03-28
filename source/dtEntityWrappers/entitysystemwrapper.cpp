@@ -243,9 +243,11 @@ namespace dtEntityWrappers
          if(val->IsArray())
          {
             Handle<Array> arr = Handle<Array>::Cast(val);
-            Handle<Value> hint = arr->Get(String::New("__TYPE_HINT"));
-            if(!hint.IsEmpty())
+
+            Handle<String> hintstr = String::New("__TYPE_HINT");
+            if(arr->Has(hintstr))
             {
+               Handle<Value> hint = arr->Get(hintstr);
                std::string h = ToStdString(hint);
                if(h == "V2")
                {

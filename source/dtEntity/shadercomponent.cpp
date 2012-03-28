@@ -20,11 +20,12 @@
 
 #include <dtEntity/shadercomponent.h>
 
-#include <dtEntity/entitymanager.h>
-#include <dtEntity/systemmessages.h>
-#include <dtEntity/nodemasks.h>
 #include <dtEntity/entity.h>
+#include <dtEntity/entitymanager.h>
+#include <dtEntity/layercomponent.h>
+#include <dtEntity/nodemasks.h>
 #include <dtEntity/osgcomponents.h>
+#include <dtEntity/systemmessages.h>
 #include <assert.h>
 #include <osg/Geode>
 #include <osg/Material>
@@ -237,12 +238,12 @@ namespace dtEntity
       }
       EntityId eid = args[0]->UIntValue();
       const char* name = args[1]->StringValue().c_str();
-      StaticMeshComponent* smc;
-      if(!GetEntityManager().GetComponent(eid, smc, true))
+      LayerComponent* lc;
+      if(!GetEntityManager().GetComponent(eid, lc) || lc->GetAttachedComponentNode() == NULL)
       {
          return NULL;
       }
-      osg::StateSet* ss = smc->GetNode()->getOrCreateStateSet();
+      osg::StateSet* ss = lc->GetAttachedComponentNode()->getOrCreateStateSet();
 
       {
          osg::Uniform* old = ss->getUniform(name);
@@ -251,7 +252,7 @@ namespace dtEntity
             ss->removeUniform(old);
          }
       }
-#
+
       osg::ref_ptr<osg::Uniform> uniform = NULL;
       const dtEntity::Property* prop = args[2];
       switch(prop->GetType())
