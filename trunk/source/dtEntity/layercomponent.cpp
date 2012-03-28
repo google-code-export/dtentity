@@ -434,14 +434,8 @@ namespace dtEntity
 
       LayerComponent* lc = mComponents[id];
 
-      dtEntity::TransformComponent* transform;
-      if(!GetEntityManager().GetComponent(id, transform, true))
-      {
-         return;
-      }
-
       osg::Node* node = lc->GetAttachedComponentNode();
-      if(node == NULL)
+      if(node == NULL || node->asTransform() == NULL)
       {
          return;
       }
@@ -527,7 +521,7 @@ namespace dtEntity
       GetEntityManager().GetEntity(id, entity);
 
       geode->setUserData(entity);
-      transform->GetGroup()->addChild(geode);
+      node->asGroup()->addChild(geode);
 
       // make box wireframe
       osg::ref_ptr<osg::StateSet> stateset = geode->getOrCreateStateSet();
