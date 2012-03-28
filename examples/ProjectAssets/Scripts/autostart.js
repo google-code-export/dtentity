@@ -28,7 +28,7 @@ var editorMotionComp = getEntitySystem("EditorMotion").getComponent(camid);
 
 if(demolist_initialized) {
 
-	include("Scripts/demo_anim.js");
+  include("Scripts/demo_anim.js");
 	include("Scripts/demo_fps.js");
 	include("Scripts/demo_layersystem.js");
 	//include("Scripts/demo_particles.js");
@@ -40,5 +40,8 @@ if(demolist_initialized) {
 	include("Scripts/demo_objectmotionmodel.js");
 	include("Scripts/demo_particlesystem.js");
   include("Scripts/demo_shaders.js");
+  if(getEntitySystem("Cal3d")) {
+    include("Scripts/demo_cal3d.js");
+  }
 
 }

@@ -20,6 +20,7 @@
 
 #include <dtEntitySimulation/particlecomponent.h>
 
+#include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <osgParticle/MultiSegmentPlacer>
 #include <osgParticle/BoxPlacer>
@@ -43,6 +44,7 @@ namespace dtEntitySimulation
    const dtEntity::StringId ParticleComponent::CounterId(dtEntity::SID("Counter"));
    const dtEntity::StringId ParticleComponent::DebugOnId(dtEntity::SID("DebugOn"));
    const dtEntity::StringId ParticleComponent::EmissiveParticlesId(dtEntity::SID("EmissiveParticles"));
+   const dtEntity::StringId ParticleComponent::EnabledId(dtEntity::SID("Enabled"));
    const dtEntity::StringId ParticleComponent::LifeTimeId(dtEntity::SID("LifeTime"));
    const dtEntity::StringId ParticleComponent::LightingId(dtEntity::SID("Lighting"));
    const dtEntity::StringId ParticleComponent::MassId(dtEntity::SID("Mass"));
@@ -118,6 +120,7 @@ namespace dtEntitySimulation
       Register(CounterId, &mCounter);
       Register(DebugOnId, &mDebugOn);
       Register(EmissiveParticlesId, &mEmissiveParticles);
+      Register(EnabledId, &mEnabled);
       Register(LifeTimeId, &mLifeTime);
       Register(LightingId, &mLighting);
       Register(MassId, &mMass);
@@ -134,6 +137,7 @@ namespace dtEntitySimulation
       Register(ShooterInitialRotationalSpeedMaxId, &mShooterInitialRotationalSpeedMax);
       Register(OperatorsId, &mOperators);
 
+      mEnabled.Set(true);
       mTextureFile.Set("Textures/smoke.rgb");
       mLifeTime.Set(4);
       mMass.Set(0.01f);
@@ -157,7 +161,6 @@ namespace dtEntitySimulation
       shooter->setInitialSpeedRange(0,0);
       mModularEmitter->setShooter(shooter);
 
-
       using namespace dtEntity;
       GroupProperty* boxplacer = new GroupProperty;
       boxplacer->Add(XRangeId, new Vec2Property(osg::Vec2(-1, 1)));
@@ -171,8 +174,6 @@ namespace dtEntitySimulation
       mPlacer.Add(BoxId, boxplacer);
       mPlacer.Add(PointId, pointplacer);
 
-
-      //RandomRateCounter|ConstantRateCounter|VariableRateCounter
       GroupProperty* randomratecounter = new GroupProperty;
       randomratecounter->Add(RateRangeId, new Vec2Property(osg::Vec2(1, 1)));
 
@@ -223,7 +224,22 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ParticleComponent::Finished()
    {
-
+      if(mEnabled.Get())
+      {
+         mModularEmitter->setNodeMask(dtEntity::NodeMasks::VISIBLE);
+         mParticleSystem->setFrozen(false);
+      }
+      else
+      {
+         mModularEmitter->setNodeMask(0);
+         mParticleSystem->setFrozen(true);
+         for(unsigned int i = 0; i < mParticleSystem->numParticles(); ++i)
+         {
+            mParticleSystem->destroyParticle(i);
+         }
+         osg::NodeVisitor nv;
+         mParticleSystem->update(1, nv);
+      }
       mParticleSystem->setDefaultAttributes(mTextureFile.Get(),  
          mEmissiveParticles.Get(), mLighting.Get(), mTextureUnit.Get());
 
