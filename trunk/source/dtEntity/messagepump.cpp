@@ -47,7 +47,7 @@ namespace dtEntity
       MsgRegistryEntry e;
       e.mOptions = options;
       e.mFunctor = ftr;
-      e.mFuncName = SID(funcname);
+      e.mFuncName = funcname.empty() ? msgtype : SID(funcname);
      
       unsigned int priority = options & 3;
      
