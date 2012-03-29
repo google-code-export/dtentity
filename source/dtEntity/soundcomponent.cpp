@@ -268,6 +268,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnTick(const Message& msg)
    {
+      // shortcut
+      if(mComponents.empty())
+      {
+         return;
+      }
+
+      // 2 - update sound component (set position, flush commands)
+      const dtEntity::TickMessage& tm = static_cast<const dtEntity::TickMessage&>(msg);
+
       if (mListenerLinkToCamera.Get())
       {
 	      // copy current camera position to listener...
@@ -286,9 +295,7 @@ namespace dtEntity
             soundObj->SetMustLoadBuffer(false);
          }
 
-         // 2 - update sound component (set position, flush commands)
-         float dt = msg.GetFloat(dtEntity::TickMessage::DeltaSimTimeId);
-         currSoundComp->Update(dt);
+         currSoundComp->Update(tm.GetDeltaSimTime());
       }
 
    }

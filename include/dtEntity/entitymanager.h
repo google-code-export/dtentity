@@ -271,7 +271,7 @@ namespace dtEntity
 	  void SetMessagePump(MessagePump& p);
 
       // See messagepump.h for documentation
-      inline void RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, unsigned int options = FilterOptions::DEFAULT, const std::string& funcname = "unnamed")
+      inline void RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, unsigned int options = FilterOptions::DEFAULT, const std::string& funcname = "")
       {
          if(mMessagePump) mMessagePump->RegisterForMessages(msgtype, ftr, options, funcname);
       }
