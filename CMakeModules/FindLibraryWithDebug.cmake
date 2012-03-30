@@ -3,11 +3,11 @@
 MACRO(FIND_LIBRARY_WITH_DEBUG find_var libname paths)
 
   IF( "${paths}" STREQUAL "" )
-    FIND_LIBRARY(${find_var}_RELEASE NAMES ${libname})
-    FIND_LIBRARY(${find_var}_DEBUG NAMES ${libname}d ${libname}_d)
+    FIND_LIBRARY(${find_var}_RELEASE NAMES ${libname} PATHS ${CMAKE_LIBRARY_PATH})
+    FIND_LIBRARY(${find_var}_DEBUG NAMES ${libname}d ${libname}_d PATHS ${CMAKE_LIBRARY_PATH})
   ELSE( "${paths}" STREQUAL "" )
-    FIND_LIBRARY(${find_var}_RELEASE NAMES ${libname} PATHS ${paths})
-    FIND_LIBRARY(${find_var}_DEBUG NAMES ${libname}d ${libname}_d PATHS ${paths})
+    FIND_LIBRARY(${find_var}_RELEASE NAMES ${libname} PATHS ${paths} ${CMAKE_LIBRARY_PATH})
+    FIND_LIBRARY(${find_var}_DEBUG NAMES ${libname}d ${libname}_d PATHS ${paths} ${CMAKE_LIBRARY_PATH})
   ENDIF( "${paths}" STREQUAL "" )
 
   # release and debug found
