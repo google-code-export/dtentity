@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
  
 PROJECT(dtEntity)
 
+
 IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX  "d")
 ENDIF (WIN32)
@@ -29,6 +30,11 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 INCLUDE(DTEntityMacroUtils)
+
+#on windows, try to use provided dtEntity external dependency folder
+IF(WIN32)
+  FIND_PACKAGE(DTENTITY_EXT_DEP REQUIRED)
+ENDIF(WIN32)
 
 # Dynamic vs Static Linking
 OPTION(DYNAMIC_DTENTITY "Set to ON to build dtEntity for dynamic linking.  Use OFF for static." ON)

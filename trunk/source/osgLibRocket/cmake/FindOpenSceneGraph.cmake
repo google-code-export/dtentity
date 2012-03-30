@@ -34,14 +34,11 @@ SET(OSG_ROOT_DIR $ENV{OSG_DIR} CACHE PATH "Root directory of OSG source tree")
 SET(OSG_BUILD_DIR ${OSG_ROOT_DIR} CACHE PATH "Root directory for OSG build to use")
 
 FIND_PATH(OSG_INCLUDE_DIRS osg/Program PATHS
-   $ENV{VIEWER_EXT_DEP}/include
    ${OSG_ROOT_DIR}/include
    $ENV{OSG_DIR}
    $ENV{OSG_DIR}/include
-	$ENV{OSG_INC}
-	
-	$ENV{DELTA3D_EXT}
-	$ENV{DELTA3D_EXT}/lib
+   $ENV{OSG_INC}
+   ${CMAKE_INCLUDE_PATH}	
 )
 
 # Also add the build-specific includes
@@ -63,7 +60,7 @@ SET(OSG_AVAILABLE_LIBS
     Viewer
 )
 
-SET(libpath $ENV{VIEWER_EXT_DEP}/lib $ENV{DELTA3D_EXT}/lib ${OSG_BUILD_DIR}/lib)
+SET(libpath ${CMAKE_LIBRARY_PATH} $ENV{DELTA3D_EXT}/lib ${OSG_BUILD_DIR}/lib)
 IF(NOT "${libpath}" STREQUAL "")
   FILE(TO_CMAKE_PATH "${libpath}" libpath)
 ENDIF(NOT "${libpath}" STREQUAL "")
