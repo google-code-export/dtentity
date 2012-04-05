@@ -109,16 +109,24 @@ namespace dtEntity
    /** load all dlls in dir and check for plugin factories */
    void ComponentPluginManager::LoadPluginsInDir(const std::string& path)
    {
-      
-      if(!osgDB::fileExists(path) || osgDB::fileType(path) != osgDB::DIRECTORY)
+      std::string cleanedPath(path);
+      if (path[path.size() - 1] == osgDB::getNativePathSeparator())
       {
+         // remove the trailing path separator as this causes issues...
+         cleanedPath = path.substr(0, path.size() - 1);
+      }
+      
+      if(!osgDB::fileExists(cleanedPath) || osgDB::fileType(cleanedPath) != osgDB::DIRECTORY)
+      {
+         LOG_ALWAYS("Plugin folder not found! Path: " + cleanedPath);
          return;
       }
 
       std::string libExtension = GetLibExtension();
+      LOG_DEBUG("Looking for plugins with extension: " + libExtension);
 
       // get libs from directory
-      osgDB::DirectoryContents files = osgDB::getDirectoryContents(path);
+      osgDB::DirectoryContents files = osgDB::getDirectoryContents(cleanedPath);
 
       // for each library in dir
       osgDB::DirectoryContents::const_iterator i;
@@ -126,7 +134,8 @@ namespace dtEntity
       {
          std::string fileName = *i;
          
-         if(fileName.size() <= libExtension.size()) continue;
+         if(fileName.size() <= libExtension.size()) 
+            continue;
 
          std::string ending = fileName.substr(fileName.size() - libExtension.size(), fileName.size());
          if(ending.compare(libExtension) != 0)
@@ -135,8 +144,9 @@ namespace dtEntity
          }
        
          std::ostringstream libpath;
-         libpath << path << "/" << fileName;
+         libpath << cleanedPath << osgDB::getNativePathSeparator() << fileName;
          AddPlugin(libpath.str());
+         LOG_DEBUG("Loaded plugin: " + libpath.str());
       }
    }
 
