@@ -39,6 +39,7 @@
 #include <iostream>
 #include <QtGui/QtGui>
 #include <QtOpenGL/QGLWidget>
+#include <osgDB/FileNameUtils>
 
 namespace dtEntityEditor
 {
@@ -582,6 +583,37 @@ namespace dtEntityEditor
       QTimer::singleShot(10, mApplication, SLOT(InitializeScripting()));
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void RecursiveSearch(QDir dir, QStringList& entries, const QString& extension, const QString relDir = "")
+   {
+      dir.setSorting( QDir::Name );
+      dir.setFilter( QDir::Files | QDir::Dirs );
+      QFileInfoList  qsl = dir.entryInfoList();
+      foreach (QFileInfo finfo, qsl)
+      {
+         if(finfo.isSymLink())
+         {
+            return;
+         }
+         if(finfo.isDir())
+         {
+            QString dirname = finfo.fileName();
+            if(dirname == "." || dirname == "..")
+            {
+               continue;
+            }
+            QDir sd(finfo.filePath());
+            QString rd = relDir.isEmpty() ? sd.dirName() : relDir + "/" + sd.dirName();
+            RecursiveSearch(sd, entries, extension, rd);
+          }
+         else if(finfo.suffix() == extension)
+         {
+            entries.push_back(relDir + "/" + finfo.fileName());
+         }
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnChooseScene()
    {
@@ -591,11 +623,8 @@ namespace dtEntityEditor
       QStringList entries;
       for(QStringList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
-         QDir dir(*i + "/Scenes");
-         if(dir.exists())
-         {
-            entries += dir.entryList(QStringList("*.dtescene"), QDir::Files);
-         }
+         QDir dir(*i);
+         RecursiveSearch(dir, entries, "dtescene");
       }
       if(entries.empty())
       {
@@ -611,7 +640,7 @@ namespace dtEntityEditor
          QStringList sel = dialog->GetSelectedItems();
          if(sel.size() != 0)
          {
-            mCurrentScene = QString("Scenes/%1").arg(sel.front());
+            mCurrentScene = sel.front();
             emit LoadScene(mCurrentScene);
          }
       }
