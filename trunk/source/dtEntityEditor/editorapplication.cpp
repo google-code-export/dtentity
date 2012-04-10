@@ -67,7 +67,7 @@ namespace dtEntityEditor
    {
 
       // default plugin dir
-      mPluginPaths.push_back("dteplugins");
+      mPluginPaths.push_back("plugins");
 
       osg::ArgumentParser arguments(&argc,argv);
       mViewer = new osgViewer::Viewer(arguments);
