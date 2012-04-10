@@ -21,10 +21,10 @@
 
 #include <UnitTest++.h>
 #include <dtEntity/initosgviewer.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/entitymanager.h> 
+#include <dtEntity/positionattitudetransformcomponent.h>
 #include <osgDB/FileUtils>
 
 using namespace UnitTest;
