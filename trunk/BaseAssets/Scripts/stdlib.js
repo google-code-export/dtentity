@@ -17,6 +17,8 @@ var __TIMEOUTS = {};
 var __TIMEOUTS_REGISTERED = false;
 var __TIMEOUT_NOW = 0;
 var FRAME_DELTA_TIME = 0;
+var FRAME_TIME = 0;
+var CLOCK_TIME = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 function setTimeout(callback, delay, arguments) {
@@ -92,6 +94,8 @@ function __triggerIntervalCBs() {
 function __executeTimeOuts(dt, time, clocktime) 
 {
    FRAME_DELTA_TIME = dt;
+   FRAME_TIME = time;
+   CLOCK_TIME = clocktime;
   __TIMEOUT_NOW = clocktime;
   __triggerTimeoutCBs();
   __triggerIntervalCBs();
