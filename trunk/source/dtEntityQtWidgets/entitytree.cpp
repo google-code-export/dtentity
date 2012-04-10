@@ -1301,74 +1301,76 @@ namespace dtEntityQtWidgets
 
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
-      assert(success);
-
-      // add existing maps to model
-      {      
-         std::vector<std::string> mapnames = mtsystem->GetLoadedMaps();
-         std::vector<std::string>::iterator i;
-         for(i = mapnames.begin(); i != mapnames.end(); ++i)
-         {            
-            dtEntity::MapLoadedMessage m;
-            m.SetMapPath(*i);
-            model->EnqueueMessage(m);
-         }
-      }
-
-      // add existing entities to model
+      if(success)
       {
-         std::vector<dtEntity::EntityId> eids;
-         mEntityManager->GetEntityIds(eids);
-
-         std::vector<dtEntity::EntityId>::iterator i;
-         for(i = eids.begin(); i != eids.end(); ++i)
          {
-            dtEntity::EntityAddedToSceneMessage m;
-            m.SetAboutEntityId(*i);
-            dtEntity::MapComponent* mc;
-            if(mEntityManager->GetComponent(*i, mc))
-            {
-               m.SetEntityName(mc->GetEntityName());
-               m.SetUniqueId(mc->GetUniqueId());
-               m.SetMapName(mc->GetMapName());
-            }
-            model->EnqueueMessage(m);
-         }
-      }    
+            // add existing maps to model
 
-      // add existing entity systems to model
-      {
-         std::vector<const dtEntity::EntitySystem*> esystems;
-         mEntityManager->GetEntitySystems(esystems);
-         std::vector<const dtEntity::EntitySystem*>::iterator i;
-         for(i = esystems.begin(); i != esystems.end(); ++i)
-         {
-            if((*i)->GetAllProperties().size() != 0)
+            std::vector<std::string> mapnames = mtsystem->GetLoadedMaps();
+            std::vector<std::string>::iterator i;
+            for(i = mapnames.begin(); i != mapnames.end(); ++i)
             {
-               dtEntity::EntitySystemAddedMessage m;
-               m.SetComponentType((*i)->GetComponentType());
-               m.SetComponentTypeString(dtEntity::GetStringFromSID((*i)->GetComponentType()));
+               dtEntity::MapLoadedMessage m;
+               m.SetMapPath(*i);
                model->EnqueueMessage(m);
             }
          }
-      }
 
-      // add existing spawners to model
-      {
-         std::map<std::string, dtEntity::Spawner*> spawners;
-         mtsystem->GetAllSpawners(spawners);
-         std::map<std::string, dtEntity::Spawner*>::const_iterator i;
-         for(i = spawners.begin(); i != spawners.end(); ++i)
+         // add existing entities to model
          {
-            dtEntity::Spawner* spawner = i->second;
-            dtEntity::SpawnerAddedMessage msg;
-            msg.SetName(spawner->GetName());
-            msg.SetMapName(spawner->GetMapName());
-            if(spawner->GetParent())
+            std::vector<dtEntity::EntityId> eids;
+            mEntityManager->GetEntityIds(eids);
+
+            std::vector<dtEntity::EntityId>::iterator i;
+            for(i = eids.begin(); i != eids.end(); ++i)
             {
-               msg.SetParentName(spawner->GetParent()->GetName());
+               dtEntity::EntityAddedToSceneMessage m;
+               m.SetAboutEntityId(*i);
+               dtEntity::MapComponent* mc;
+               if(mEntityManager->GetComponent(*i, mc))
+               {
+                  m.SetEntityName(mc->GetEntityName());
+                  m.SetUniqueId(mc->GetUniqueId());
+                  m.SetMapName(mc->GetMapName());
+               }
+               model->EnqueueMessage(m);
             }
-            model->EnqueueMessage(msg);
+         }
+
+         // add existing entity systems to model
+         {
+            std::vector<const dtEntity::EntitySystem*> esystems;
+            mEntityManager->GetEntitySystems(esystems);
+            std::vector<const dtEntity::EntitySystem*>::iterator i;
+            for(i = esystems.begin(); i != esystems.end(); ++i)
+            {
+               if((*i)->GetAllProperties().size() != 0)
+               {
+                  dtEntity::EntitySystemAddedMessage m;
+                  m.SetComponentType((*i)->GetComponentType());
+                  m.SetComponentTypeString(dtEntity::GetStringFromSID((*i)->GetComponentType()));
+                  model->EnqueueMessage(m);
+               }
+            }
+         }
+
+         // add existing spawners to model
+         {
+            std::map<std::string, dtEntity::Spawner*> spawners;
+            mtsystem->GetAllSpawners(spawners);
+            std::map<std::string, dtEntity::Spawner*>::const_iterator i;
+            for(i = spawners.begin(); i != spawners.end(); ++i)
+            {
+               dtEntity::Spawner* spawner = i->second;
+               dtEntity::SpawnerAddedMessage msg;
+               msg.SetName(spawner->GetName());
+               msg.SetMapName(spawner->GetMapName());
+               if(spawner->GetParent())
+               {
+                  msg.SetParentName(spawner->GetParent()->GetName());
+               }
+               model->EnqueueMessage(msg);
+            }
          }
       }
    }

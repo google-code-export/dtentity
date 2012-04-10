@@ -30,6 +30,7 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/windowmanager.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
@@ -78,9 +79,7 @@ namespace dtEntityEditor
       static const char* winvar = "OSG_WINDOW=0 0 800 600";
       putenv(const_cast<char*>(winvar));
 
-      dtEntity::InitOSGViewer(argc, argv, *mViewer, *mEntityManager, false, false);
 
-      dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +125,10 @@ namespace dtEntityEditor
    void EditorApplication::StartGame(const QString& sceneToLoad)
    {
       assert(mMainWindow != NULL);
+
+      dtEntity::InitOSGViewer(0, NULL, *mViewer, *mEntityManager, false, false);
+
+      dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
       
       osgViewer::ViewerBase::Windows wins;
       mViewer->getWindows(wins);
@@ -215,11 +218,16 @@ namespace dtEntityEditor
    {
       if(!mViewer->done())
       {
+         dtEntity::ApplicationSystem* appsys;
+         GetEntityManager().GetES(appsys);
+
          mViewer->advance(DBL_MAX);
+
+         // check if a window should be closed
+         appsys->GetWindowManager()->ProcessQueuedMessages();
+
          mViewer->eventTraversal();
 
-         dtEntity::ApplicationSystem* appsys;
-         GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
          appsys->EmitTickMessagesAndQueuedMessages();
 
          mViewer->updateTraversal();
