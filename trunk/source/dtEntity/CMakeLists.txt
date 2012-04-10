@@ -13,8 +13,8 @@ ENDIF (BUILD_WITH_DELTA3D)
 IF(BUILD_WITH_DELTA3D)
   OPTION(BUILD_CAL3D_WRAPPER "Make Cal3D accessible from JavaScript" OFF)
   IF(BUILD_CAL3D_WRAPPER)
-  	FIND_PACKAGE(CAL3D REQUIRED)
-  	ADD_DEFINITIONS(-DBUILD_CAL3D_WRAPPER)
+    FIND_PACKAGE(CAL3D REQUIRED)
+    ADD_DEFINITIONS(-DBUILD_CAL3D_WRAPPER)
   ENDIF(BUILD_CAL3D_WRAPPER)
 ENDIF(BUILD_WITH_DELTA3D)
 
@@ -32,11 +32,11 @@ ENDIF(BUILD_CEGUI_WRAPPER)
 
 OPTION(USE_BOOST_POOL "Use boost pool to store components" OFF)
 IF(USE_BOOST_POOL)
-	FIND_PACKAGE(Boost)
-	ADD_DEFINITIONS(-DUSE_BOOST_POOL)
+  FIND_PACKAGE(Boost)
+  ADD_DEFINITIONS(-DUSE_BOOST_POOL)
 ENDIF(USE_BOOST_POOL)
 
-INCLUDE_DIRECTORIES( 
+INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/include
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/RapidXML
@@ -63,8 +63,8 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/debugdrawmanager.h
   ${HEADER_PATH}/defaultentitysystem.h
   ${HEADER_PATH}/dynamicproperty.h
-  ${HEADER_PATH}/entity.h 
-  ${HEADER_PATH}/entityid.h 
+  ${HEADER_PATH}/entity.h
+  ${HEADER_PATH}/entityid.h
   ${HEADER_PATH}/entitymanager.h
   ${HEADER_PATH}/entitysystem.h
   ${HEADER_PATH}/export.h
@@ -79,7 +79,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/logmanager.h
   ${HEADER_PATH}/mapcomponent.h
   ${HEADER_PATH}/mapencoder.h
-  ${HEADER_PATH}/message.h    
+  ${HEADER_PATH}/message.h
   ${HEADER_PATH}/messagefactory.h
   ${HEADER_PATH}/messagepump.h
   ${HEADER_PATH}/nodemasks.h
@@ -103,13 +103,13 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/textlabelcomponent.h
   ${HEADER_PATH}/texturelabelcomponent.h
-  ${HEADER_PATH}/threadsafequeue.h    
-  ${HEADER_PATH}/windowmanager.h    
+  ${HEADER_PATH}/threadsafequeue.h
+  ${HEADER_PATH}/windowmanager.h
 
 )
 
 SET(LIB_SOURCES
-	
+
 
   ${SOURCE_PATH}/applicationcomponent.cpp
   ${SOURCE_PATH}/cameracomponent.cpp
@@ -126,9 +126,9 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/layercomponent.cpp
   ${SOURCE_PATH}/lightcomponent.cpp
   ${SOURCE_PATH}/logmanager.cpp
-  ${SOURCE_PATH}/mapcomponent.cpp	
+  ${SOURCE_PATH}/mapcomponent.cpp
   ${SOURCE_PATH}/messagefactory.cpp
-  ${SOURCE_PATH}/messagepump.cpp	
+  ${SOURCE_PATH}/messagepump.cpp
   ${SOURCE_PATH}/osganimationcomponent.cpp
   ${SOURCE_PATH}/osgcomponents.cpp
   ${SOURCE_PATH}/pickshapecomponent.cpp
@@ -150,20 +150,20 @@ SET(LIB_SOURCES
 )
 
 SET(DTENTITYLIBS      ${OSG_LIBRARIES}
-                      ${OPENTHREADS_LIBRARIES}         
+                      ${OPENTHREADS_LIBRARIES}
 )
 
 IF(BUILD_WITH_DELTA3D)
-	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/d3dwindowmanager.h )
-	LIST(APPEND LIB_SOURCES		    ${SOURCE_PATH}/d3dwindowmanager.cpp)
-	LIST(APPEND DTENTITYLIBS        ${DTABC_LIBRARIES} ${DTCORE_LIBRARIES} ${DTUTIL_LIBRARIES})
+  LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/d3dwindowmanager.h )
+  LIST(APPEND LIB_SOURCES		    ${SOURCE_PATH}/d3dwindowmanager.cpp)
+  LIST(APPEND DTENTITYLIBS        ${DTABC_LIBRARIES} ${DTCORE_LIBRARIES} ${DTUTIL_LIBRARIES})
 ENDIF(BUILD_WITH_DELTA3D)
 
 IF(BUILD_CAL3D_WRAPPER)
 
-	LIST(APPEND DTENTITYLIBS       ${DTANIM_LIBRARIES} ${CAL3D_LIBRARIES})
-	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationcomponent.h)
-	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationcomponent.cpp)
+  LIST(APPEND DTENTITYLIBS       ${DTANIM_LIBRARIES} ${CAL3D_LIBRARIES})
+  LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationcomponent.h)
+  LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationcomponent.cpp)
 ENDIF(BUILD_CAL3D_WRAPPER)
 
 IF(BUILD_OPENAL)
@@ -175,7 +175,11 @@ IF(BUILD_OPENAL)
    LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/listener.cpp)
    LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/sound.cpp)
    LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/soundcomponent.cpp)
-   LIST(APPEND DTENTITYLIBS       ${OPENAL_LIBRARIES} ${OPENAL_UTIL_LIBRARIES})
+   LIST(APPEND DTENTITYLIBS   ${OPENAL_LIBRARIES})
+   LIST(APPEND DTENTITYLIBS   ${OPENAL_UTIL_LIBRARIES})
+
+   # add OpenAL include dir
+   INCLUDE_DIRECTORIES( ${OPENAL_INCLUDE_DIR})
 ENDIF(BUILD_OPENAL)
 
 IF(BUILD_CEGUI_WRAPPER)
@@ -207,13 +211,13 @@ IF (NOT WIN32 AND NOT APPLE)
 ENDIF (NOT WIN32 AND NOT APPLE)
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} ${DTENTITYLIBS})
-                      
+
 IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} Rpcrt4)
 ENDIF(WIN32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_ENTITY_LIBRARY)                     
+                     PROPERTIES DEFINE_SYMBOL DT_ENTITY_LIBRARY)
 INCLUDE(ModuleInstall OPTIONAL)
 
 SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
