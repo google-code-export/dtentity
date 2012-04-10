@@ -26,6 +26,9 @@
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/logmanager.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/matrixtransformcomponent.h>
+#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/windowmanager.h>
 

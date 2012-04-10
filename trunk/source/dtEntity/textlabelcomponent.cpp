@@ -21,7 +21,6 @@
 #include <dtEntity/textlabelcomponent.h>
 
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/stringid.h>
 #include <iostream>
 #include <osg/BlendFunc>

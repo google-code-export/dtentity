@@ -24,6 +24,7 @@
 #include <osg/MatrixTransform>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/transformcomponent.h>
 #include <osgManipulator/TabBoxDragger>
 #include <osgManipulator/TabBoxTrackballDragger>
 #include <osgManipulator/TabPlaneDragger>

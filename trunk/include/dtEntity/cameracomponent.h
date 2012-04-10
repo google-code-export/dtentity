@@ -22,8 +22,7 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/osgcomponents.h>
-#include <dtEntity/component.h>
+#include <dtEntity/transformcomponent.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
 #include <osg/ref_ptr>

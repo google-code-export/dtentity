@@ -70,6 +70,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/FastDelegate.h
   ${HEADER_PATH}/FastDelegateBind.h
+  ${HEADER_PATH}/groupcomponent.h
   ${HEADER_PATH}/initosgviewer.h
   ${HEADER_PATH}/inputhandler.h
   ${HEADER_PATH}/layerattachpointcomponent.h
@@ -79,15 +80,17 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/logmanager.h
   ${HEADER_PATH}/mapcomponent.h
   ${HEADER_PATH}/mapencoder.h
+  ${HEADER_PATH}/matrixtransformcomponent.h
   ${HEADER_PATH}/message.h
   ${HEADER_PATH}/messagefactory.h
   ${HEADER_PATH}/messagepump.h
+  ${HEADER_PATH}/nodecomponent.h
   ${HEADER_PATH}/nodemasks.h
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
-  ${HEADER_PATH}/osganimationcomponent.h
-  ${HEADER_PATH}/osgcomponents.h
+  ${HEADER_PATH}/osganimationcomponent.h  
   ${HEADER_PATH}/policycomponent.h
+  ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
   ${HEADER_PATH}/property.h
@@ -99,11 +102,13 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
+  ${HEADER_PATH}/staticmeshcomponent.h
   ${HEADER_PATH}/stringid.h
   ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/textlabelcomponent.h
   ${HEADER_PATH}/texturelabelcomponent.h
   ${HEADER_PATH}/threadsafequeue.h
+  ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/windowmanager.h
 
 )
@@ -120,6 +125,7 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/debugdrawmanager.cpp
   ${SOURCE_PATH}/entity.cpp
   ${SOURCE_PATH}/entitymanager.cpp
+  ${SOURCE_PATH}/groupcomponent.cpp
   ${SOURCE_PATH}/initosgviewer.cpp
   ${SOURCE_PATH}/inputhandler.cpp
   ${SOURCE_PATH}/layerattachpointcomponent.cpp
@@ -127,11 +133,13 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/lightcomponent.cpp
   ${SOURCE_PATH}/logmanager.cpp
   ${SOURCE_PATH}/mapcomponent.cpp
+  ${SOURCE_PATH}/matrixtransformcomponent.cpp
   ${SOURCE_PATH}/messagefactory.cpp
   ${SOURCE_PATH}/messagepump.cpp
+  ${SOURCE_PATH}/nodecomponent.cpp
   ${SOURCE_PATH}/osganimationcomponent.cpp
-  ${SOURCE_PATH}/osgcomponents.cpp
   ${SOURCE_PATH}/pickshapecomponent.cpp
+  ${SOURCE_PATH}/positionattitudetransformcomponent.cpp
   ${SOURCE_PATH}/profile.cpp
   ${SOURCE_PATH}/property.cpp
   ${SOURCE_PATH}/propertycontainer.cpp
@@ -140,11 +148,13 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/shadercomponent.cpp
   ${SOURCE_PATH}/shadowcomponent.cpp
   ${SOURCE_PATH}/spawner.cpp
+  ${SOURCE_PATH}/staticmeshcomponent.cpp
   ${SOURCE_PATH}/skyboxcomponent.cpp
   ${SOURCE_PATH}/stringid.cpp
   ${SOURCE_PATH}/systemmessages.cpp
   ${SOURCE_PATH}/textlabelcomponent.cpp
   ${SOURCE_PATH}/texturelabelcomponent.cpp
+  ${SOURCE_PATH}/transformcomponent.cpp
   ${SOURCE_PATH}/windowmanager.cpp
 
 )

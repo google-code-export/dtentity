@@ -28,6 +28,7 @@
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/nodemaskvisitor.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/staticmeshcomponent.h>
 #include <osg/Geode>
 #include <osgAnimation/RigGeometry>
 #include <osgAnimation/RigTransformHardware>

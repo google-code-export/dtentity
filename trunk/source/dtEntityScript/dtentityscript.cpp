@@ -27,7 +27,6 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>

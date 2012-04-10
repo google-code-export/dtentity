@@ -22,7 +22,7 @@
 
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <Rocket/Core/Element.h>
 #include <v8.h>

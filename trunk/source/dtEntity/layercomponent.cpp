@@ -25,6 +25,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/transformcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <osg/LineWidth>
 #include <osg/PolygonMode>

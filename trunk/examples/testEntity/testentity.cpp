@@ -31,10 +31,10 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/osgcomponents.h>
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>

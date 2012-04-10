@@ -24,7 +24,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 #include <dtEntity/scriptaccessor.h>
 
 namespace dtEntitySimulation

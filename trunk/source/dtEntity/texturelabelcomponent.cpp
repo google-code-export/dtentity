@@ -23,7 +23,6 @@
 
 #include <dtEntity/basemessages.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/stringid.h>
 #include <osg/BlendFunc>
 #include <osg/Geode>

@@ -23,7 +23,7 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 #include <osgManipulator/Dragger>
 
 namespace dtEntitySimulation

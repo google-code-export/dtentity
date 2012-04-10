@@ -23,7 +23,7 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/ShapeDrawable>
