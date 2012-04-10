@@ -57,7 +57,6 @@ namespace dtEntity
       ApplicationSystem* mApplicationSystem;
       osg::Timer_t mStartOfFrameTick;
       osg::Timer_t mSimulationClockTime;
-      
       unsigned int mLastFrameNumber;
 
    public:
@@ -71,11 +70,11 @@ namespace dtEntity
          : mApplicationSystem(as)
          , mStartOfFrameTick(osg::Timer::instance()->tick())
          , mSimulationClockTime(0)
+         , mLastFrameNumber(0)
          , mSimTime(0)
-         , mTimeScale(0)
          , mDeltaSimTime(0)
          , mDeltaTime(0)
-         , mLastFrameNumber(0)
+         , mTimeScale(0)
       {
          time_t t;
          time(&t);

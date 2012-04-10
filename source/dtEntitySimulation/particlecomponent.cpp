@@ -233,7 +233,7 @@ namespace dtEntitySimulation
       {
          mModularEmitter->setNodeMask(0);
          mParticleSystem->setFrozen(true);
-         for(unsigned int i = 0; i < mParticleSystem->numParticles(); ++i)
+         for(int i = 0; i < mParticleSystem->numParticles(); ++i)
          {
             mParticleSystem->destroyParticle(i);
          }

@@ -280,6 +280,11 @@ namespace dtEntityWrappers
                   pargs.push_back(&p);
                   return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
                }
+               else
+               {
+                  assert(false && "Unknown vector type encountered");
+                  return Undefined();
+               }
             }
             else
             {

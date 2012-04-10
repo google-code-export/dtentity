@@ -61,7 +61,6 @@ namespace dtEntity
       // delete all entity objects
       while(HasEntities())
       {
-         std::pair<EntityId, Entity*> p = *mEntities.begin();
          mEntities.erase(mEntities.begin());
       }
 

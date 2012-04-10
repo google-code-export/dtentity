@@ -164,6 +164,7 @@ namespace dtEntityQtWidgets
                stream << QString("%1").arg(item->mName);
                stream << QString("%1").arg(item->mMapName);
                break;
+            default:;
             }            
          }
       }
@@ -1625,7 +1626,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityTreeController::OnMoveMapToRow(const QString& mapname, int saveorder)
+   void EntityTreeController::OnMoveMapToRow(const QString& mapname, unsigned int saveorder)
    {
       dtEntity::MapSystem* mapsys;
       mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mapsys);
@@ -1681,7 +1682,7 @@ namespace dtEntityQtWidgets
       std::vector<std::string> maps = mapsys->GetLoadedMaps();
       for(std::vector<std::string>::iterator k = maps.begin(); k != maps.end(); ++k)
       {
-         int oldorder = mapsys->GetMapSaveOrder(*k);
+         unsigned int oldorder = mapsys->GetMapSaveOrder(*k);
          if(oldorder >= saveorder)
          {
             mapsys->SetMapSaveOrder(*k, oldorder + 1);
