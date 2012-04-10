@@ -196,7 +196,7 @@ namespace dtEntityWrappers
       {
          std::string script = (*i)->StringValue();
          v8::HandleScope scope;
-         v8::Handle<v8::Value> val = ExecuteFile(script);
+         ExecuteFile(script);
       }
    }
 

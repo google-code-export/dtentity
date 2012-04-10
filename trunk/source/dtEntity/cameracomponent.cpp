@@ -263,7 +263,7 @@ namespace dtEntity
       osgViewer::View* view;
             
       if(GetCamera()->getGraphicsContext() &&
-         GetCamera()->getGraphicsContext()->getState()->getContextID() == mContextId.Get())
+         GetCamera()->getGraphicsContext()->getState()->getContextID() == (unsigned int)mContextId.Get())
       {
          view = static_cast<osgViewer::View*>(GetCamera()->getView());
       }
@@ -293,7 +293,7 @@ namespace dtEntity
                }
             }
             unsigned int cid = oldcam->getGraphicsContext()->getState()->getContextID();
-            if(cid == mContextId.Get())
+            if(cid == (unsigned int)mContextId.Get())
             {               
                
                appsys->GetViewer()->stopThreading();

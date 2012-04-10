@@ -291,7 +291,7 @@ namespace dtEntityQtWidgets
       void OnSaveMapCopy(const QString& mapname, const QString& copyname);
       void OnMoveEntityToMap(dtEntity::EntityId, const QString& mapname);
       void OnMoveSpawnerToMap(const QString& spawnername, const QString& oldmapname, const QString& newmapname);
-      void OnMoveMapToRow(const QString& mapname, int saveorder);
+      void OnMoveMapToRow(const QString& mapname, unsigned int saveorder);
 
    signals:
 
