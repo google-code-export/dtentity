@@ -347,17 +347,18 @@ namespace dtEntityQtWidgets
 
       dtEntity::MapSystem* mtsystem;
       bool success = mEntityManager->GetEntitySystem(dtEntity::MapComponent::TYPE, mtsystem);
-      assert(success);
-
-      std::map<std::string, dtEntity::Spawner*> spawners;
-      mtsystem->GetAllSpawners(spawners);
-      std::map<std::string, dtEntity::Spawner*>::const_iterator i;
-      for(i = spawners.begin(); i != spawners.end(); ++i)
+      if(success)
       {
-         if(i->second->GetAddToSpawnerStore())
+         std::map<std::string, dtEntity::Spawner*> spawners;
+         mtsystem->GetAllSpawners(spawners);
+         std::map<std::string, dtEntity::Spawner*>::const_iterator i;
+         for(i = spawners.begin(); i != spawners.end(); ++i)
          {
-            emit AddSpawner(i->second->GetName().c_str(), i->second->GetGUICategory().c_str(),
-                            i->second->GetIconPath().c_str());
+            if(i->second->GetAddToSpawnerStore())
+            {
+               emit AddSpawner(i->second->GetName().c_str(), i->second->GetGUICategory().c_str(),
+                               i->second->GetIconPath().c_str());
+            }
          }
       }
    }
