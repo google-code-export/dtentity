@@ -21,10 +21,10 @@
 
 #include <UnitTest++.h>
 
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/spawner.h>
 #include <UnitTest++.h>
 
