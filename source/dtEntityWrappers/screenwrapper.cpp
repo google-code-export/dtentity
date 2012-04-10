@@ -26,7 +26,6 @@
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/scriptcomponent.h>

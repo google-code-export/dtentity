@@ -24,7 +24,7 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
 #include <osg/Geode>

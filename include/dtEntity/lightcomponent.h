@@ -26,7 +26,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 
 
 namespace osg

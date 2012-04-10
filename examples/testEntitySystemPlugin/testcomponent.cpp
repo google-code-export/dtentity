@@ -4,8 +4,8 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/debugdrawmanager.h>
+#include <dtEntity/positionattitudetransformcomponent.h>
 #include <sstream>
 
 

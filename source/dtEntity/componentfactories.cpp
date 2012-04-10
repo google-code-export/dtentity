@@ -23,7 +23,6 @@
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/lightcomponent.h>

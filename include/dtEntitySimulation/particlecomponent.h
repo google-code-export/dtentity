@@ -24,7 +24,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/property.h>
-#include <dtEntity/osgcomponents.h>
+#include <dtEntity/nodecomponent.h>
 #include <osgManipulator/Dragger>
 #include <osgParticle/ParticleSystem>
 #include <osgParticle/ModularEmitter>

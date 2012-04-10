@@ -24,7 +24,6 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/entitysystem.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/component.h>
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/scriptaccessor.h>

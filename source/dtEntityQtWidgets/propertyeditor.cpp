@@ -30,7 +30,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/spawner.h>
 #include <iostream>
 #include <sstream>

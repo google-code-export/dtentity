@@ -20,13 +20,12 @@
 
 #include <dtEntity/lightcomponent.h>
 
-
 #include <dtEntity/basemessages.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/osgcomponents.h>
 #include <dtEntity/stringid.h>
 #include <osg/Light>
 #include <osg/LightSource>
+
 namespace dtEntity
 {
    const dtEntity::StringId LightComponent::TYPE(dtEntity::SID("Light"));

@@ -26,6 +26,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/transformcomponent.h>
 #include <osg/Camera>
 #include <assert.h>
 #include <iostream>
