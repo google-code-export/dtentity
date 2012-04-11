@@ -115,8 +115,8 @@ namespace dtEntity
          // remove the trailing path separator as this causes issues...
          cleanedPath = path.substr(0, path.size() - 1);
       }
-      
-      if(!osgDB::fileExists(cleanedPath) || osgDB::fileType(cleanedPath) != osgDB::DIRECTORY)
+
+      if(!osgDB::fileExists(cleanedPath))
       {
          LOG_ALWAYS("Plugin folder not found! Path: " + cleanedPath);
          return;
