@@ -323,7 +323,7 @@ namespace dtEntity
    public:
 
       LocalBoundingBoxVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
          , mVisited(false)
       {}
 
