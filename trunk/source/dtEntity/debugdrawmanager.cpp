@@ -141,7 +141,7 @@ namespace dtEntity
 
       if(enabled)
       {
-         mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
+         mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor, "DebugDrawManager::Update");
          mGroupDepthTest->setNodeMask(0xFFFFFFFF);
          mGroupNoDepthTest->setNodeMask(0xFFFFFFFF);
       }
