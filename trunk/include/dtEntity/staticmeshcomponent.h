@@ -104,6 +104,8 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
+
       StaticMeshSystem(EntityManager& em);
 
       void ClearCache();

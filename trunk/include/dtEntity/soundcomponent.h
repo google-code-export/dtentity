@@ -111,6 +111,8 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
+
       SoundSystem(EntityManager& em);
       ~SoundSystem();
 

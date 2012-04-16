@@ -101,6 +101,7 @@ namespace dtEntity
       typedef dtEntity::DefaultEntitySystem<LightComponent> BaseClass;
       
    public:
+      static const dtEntity::ComponentType TYPE;
 
       LightSystem(dtEntity::EntityManager& em);     
 

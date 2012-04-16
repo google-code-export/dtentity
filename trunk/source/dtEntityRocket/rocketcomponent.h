@@ -89,6 +89,8 @@ namespace dtEntityRocket
       
    public:
      
+      static const dtEntity::ComponentType TYPE;
+
       RocketSystem(dtEntity::EntityManager& em);
       ~RocketSystem();
 

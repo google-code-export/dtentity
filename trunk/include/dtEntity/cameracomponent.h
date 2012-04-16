@@ -207,6 +207,8 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
+
       CameraSystem(EntityManager& em);
 
       EntityId GetCameraEntityByContextId(unsigned int id);

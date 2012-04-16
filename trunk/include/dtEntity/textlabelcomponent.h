@@ -131,6 +131,8 @@ namespace dtEntity
       
    public:
 
+      static const dtEntity::ComponentType TYPE;
+
       TextLabelSystem(dtEntity::EntityManager& em);
 
       void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);

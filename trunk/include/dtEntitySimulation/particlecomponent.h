@@ -195,6 +195,8 @@ namespace dtEntitySimulation
       
    public:
 
+      static const dtEntity::ComponentType TYPE;
+
       ParticleSystem(dtEntity::EntityManager& em);
       ~ParticleSystem();
 

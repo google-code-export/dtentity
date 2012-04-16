@@ -76,6 +76,7 @@ namespace dtEntity
       : public DefaultEntitySystem<SkyBoxComponent>
    {
    public:
+      static const ComponentType TYPE;
       SkyBoxSystem(EntityManager& em);
    };
 

@@ -81,6 +81,7 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
       static const StringId VertexShaderId;
       static const StringId FragmentShaderId;
       static const StringId EnabledId;

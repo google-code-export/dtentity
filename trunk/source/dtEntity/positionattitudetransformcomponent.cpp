@@ -26,7 +26,6 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-
    const StringId PositionAttitudeTransformComponent::TYPE(SID("PositionAttitudeTransform"));
    const StringId PositionAttitudeTransformComponent::PositionId(SID("Position"));
    const StringId PositionAttitudeTransformComponent::AttitudeId(SID("Attitude"));

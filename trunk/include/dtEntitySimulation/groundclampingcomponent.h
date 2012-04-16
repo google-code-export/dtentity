@@ -123,6 +123,7 @@ namespace dtEntitySimulation
       
    public:
      
+      static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId EnabledId;
       static const dtEntity::StringId IntersectLayerId;
       static const dtEntity::StringId FetchLODsId;

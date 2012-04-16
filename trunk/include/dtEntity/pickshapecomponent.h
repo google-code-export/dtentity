@@ -86,6 +86,8 @@ namespace dtEntity
    {
    public:
 
+      static const ComponentType TYPE;
+
       PickShapeSystem(EntityManager& em);
       ~PickShapeSystem();
       virtual void OnPropertyChanged(StringId propname, Property& prop);
