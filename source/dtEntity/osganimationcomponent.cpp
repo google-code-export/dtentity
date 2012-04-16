@@ -25,9 +25,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/nodemasks.h>
-#include <dtEntity/nodemaskvisitor.h>
-#include <dtEntity/nodemasks.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <osg/Geode>
 #include <osgAnimation/RigGeometry>
@@ -424,6 +421,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   const StringId OSGAnimationSystem::TYPE(SID("OSGAnimation"));
    const StringId OSGAnimationSystem::VertexShaderId(SID("VertexShader"));
    const StringId OSGAnimationSystem::FragmentShaderId(SID("FragmentShader"));
    const StringId OSGAnimationSystem::EnabledId(SID("Enabled"));

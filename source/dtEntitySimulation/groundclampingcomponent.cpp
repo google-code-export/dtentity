@@ -89,11 +89,12 @@ namespace dtEntitySimulation
   
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-
+   const dtEntity::StringId GroundClampingSystem::TYPE(dtEntity::SID("GroundClamping"));
    const dtEntity::StringId GroundClampingSystem::EnabledId(dtEntity::SID("Enabled"));
    const dtEntity::StringId GroundClampingSystem::IntersectLayerId(dtEntity::SID("IntersectLayer"));
    const dtEntity::StringId GroundClampingSystem::FetchLODsId(dtEntity::SID("FetchLODs"));
 
+   ////////////////////////////////////////////////////////////////////////////
    GroundClampingSystem::GroundClampingSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
       , mRootNode(NULL)

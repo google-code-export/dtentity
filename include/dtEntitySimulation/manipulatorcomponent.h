@@ -122,7 +122,7 @@ namespace dtEntitySimulation
       typedef dtEntity::DefaultEntitySystem<ManipulatorComponent> BaseClass;
       
    public:
-
+      static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId UseLocalCoordsId;
       static const dtEntity::StringId UseGroundClampingId;
 

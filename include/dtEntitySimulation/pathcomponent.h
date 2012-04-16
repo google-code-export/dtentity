@@ -80,6 +80,8 @@ namespace dtEntitySimulation
 
    public:
 
+      static const dtEntity::ComponentType TYPE;
+
       PathSystem(dtEntity::EntityManager& em);
       ~PathSystem();
 

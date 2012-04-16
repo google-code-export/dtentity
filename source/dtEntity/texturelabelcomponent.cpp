@@ -195,6 +195,7 @@ namespace dtEntity
   
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
+   const dtEntity::StringId TextureLabelSystem::TYPE(dtEntity::SID("TextureLabel"));
    const dtEntity::StringId TextureLabelSystem::EnabledId(dtEntity::SID("Enabled"));
 
    TextureLabelSystem::TextureLabelSystem(dtEntity::EntityManager& em)

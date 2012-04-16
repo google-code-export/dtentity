@@ -156,6 +156,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
+   const StringId LayerAttachPointSystem::TYPE(SID("LayerAttachPoint"));
    const StringId LayerAttachPointSystem::DefaultLayerId(SID("default"));
    const StringId LayerAttachPointSystem::RootId(SID("root"));
 

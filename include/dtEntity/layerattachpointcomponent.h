@@ -73,8 +73,10 @@ namespace dtEntity
       friend class LayerAttachPointComponent;
 
       typedef DefaultEntitySystem<LayerAttachPointComponent> BaseClass;
+
    public:
     
+      static const ComponentType TYPE;
       static const StringId DefaultLayerId;
       static const StringId RootId;
 

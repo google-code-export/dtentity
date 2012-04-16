@@ -507,10 +507,11 @@ namespace dtEntitySimulation
   
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-
+   const dtEntity::StringId ManipulatorSystem::TYPE(dtEntity::SID("Manipulator"));
    const dtEntity::StringId ManipulatorSystem::UseLocalCoordsId(dtEntity::SID("UseLocalCoords"));
    const dtEntity::StringId ManipulatorSystem::UseGroundClampingId(dtEntity::SID("UseGroundClamping"));
 
+   ////////////////////////////////////////////////////////////////////////////
    ManipulatorSystem::ManipulatorSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
    {

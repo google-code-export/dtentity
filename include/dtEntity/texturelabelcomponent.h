@@ -130,6 +130,8 @@ namespace dtEntity
       
    public:
 
+      static const dtEntity::ComponentType TYPE;
+
       TextureLabelSystem(dtEntity::EntityManager& em);
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
       

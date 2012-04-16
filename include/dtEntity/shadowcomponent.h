@@ -95,6 +95,7 @@ namespace dtEntity
       : public DefaultEntitySystem<ShadowComponent>
    {
    public:
+      static const ComponentType TYPE;
       static const StringId EnabledId;
 
       ShadowSystem(EntityManager& em);

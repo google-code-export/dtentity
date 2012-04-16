@@ -123,7 +123,8 @@ namespace dtEntity
    {
    public:
       
-     
+      static const ComponentType TYPE;
+
       LayerSystem(EntityManager& em);
 
       void OnEnterWorld(const Message&);
