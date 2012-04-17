@@ -206,7 +206,7 @@ ENDIF(BUILD_CEGUI)
 # generate configuration header file
 configure_file (
   "${SOURCE_PATH}/dtentity_config.h.in"
-  "${PROJECT_BINARY_DIR}/dtEntity/dtentity_config.h"
+  "${PROJECT_BINARY_DIR}/include/dtEntity/dtentity_config.h"
 )
 
 
