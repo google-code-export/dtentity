@@ -18,8 +18,6 @@
 * Martin Scheffler
 */
 
-//#define USE_XERCES
-
 #include <dtEntityQtWidgets/delegatefactory.h>
 #include <dtEntityQtWidgets/propertydelegate.h>
 
@@ -51,11 +49,7 @@ namespace dtEntityQtWidgets
       std::ostringstream os; os << i; return os.str(); 
    }
 
-#ifdef USE_XERCES
-   using namespace xercesc;
-#else
    using namespace rapidxml;
-#endif
 
    ////////////////////////////////////////////////////////////////////////////////
    DelegateFactory::DelegateFactory()

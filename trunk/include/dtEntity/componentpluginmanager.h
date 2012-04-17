@@ -24,6 +24,7 @@
 #include <dtEntity/singleton.h>
 #include <osg/ref_ptr>
 #include <dtEntity/componentplugin.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entityid.h>
 #include <list>
 #include <map>
@@ -155,7 +156,7 @@ namespace dtEntity
    };
 }
 
-#ifdef DTENTITY_LIBRARY_STATIC
+#if DTENTITY_LIBRARY_STATIC
 
    #define USE_DTENTITYPLUGIN(pluginname)  \
       extern "C" void dtEntity_##pluginname(std::list<dtEntity::ComponentPluginFactory*>&); \
@@ -164,7 +165,6 @@ namespace dtEntity
 
 #else
    #define USE_DTENTITYPLUGIN(pluginname)
-
 #endif
 
 

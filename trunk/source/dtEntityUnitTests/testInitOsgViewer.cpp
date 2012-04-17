@@ -52,7 +52,16 @@ TEST(InitOsgViewer)
    ApplicationSystem* appsys;
    CHECK(em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys));
 
+   CHECK(em.HasEntitySystem(dtEntity::SID("Layer")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("Group")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("StaticMesh")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("Transform")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("MatrixTransform")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("LayerAttachPoint")));
+   CHECK(em.HasEntitySystem(dtEntity::SID("Layer")));
+
    // check if passed root node is actually used as root node
    CHECK(appsys->GetPrimaryView()->getSceneData() == root);
+
 
 }

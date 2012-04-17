@@ -274,7 +274,7 @@ namespace dtEntityWrappers
    {
       dtEntity::GUI* gui = UnwrapGui(v);
       gui->unref();
-      Handle<Object> obj = Handle<Object>::Cast(v);
+      //Handle<Object> obj = Handle<Object>::Cast(v);
       v.Dispose();
    }
 
