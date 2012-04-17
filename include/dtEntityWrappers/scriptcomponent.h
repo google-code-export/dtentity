@@ -102,6 +102,7 @@ namespace dtEntityWrappers
 
    private:
       void SetupContext();
+      void FetchGlobalTickFunction();
       
       dtEntity::MessageFunctor mSceneLoadedFunctor;
       dtEntity::MessageFunctor mResetSystemFunctor;
@@ -114,6 +115,7 @@ namespace dtEntityWrappers
       dtEntity::UIntProperty mDebugPort;
 
       v8::Persistent<v8::Context> mGlobalContext;
+      v8::Persistent<v8::Function> mGlobalTickFunction;
       std::set<std::string> mIncludedFiles;
 
       typedef std::map<std::pair<dtEntity::ComponentType, dtEntity::EntityId>, v8::Persistent<v8::Object> > ComponentMap;
