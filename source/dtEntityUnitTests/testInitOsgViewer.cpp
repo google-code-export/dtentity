@@ -55,6 +55,4 @@ TEST(InitOsgViewer)
    // check if passed root node is actually used as root node
    CHECK(appsys->GetPrimaryView()->getSceneData() == root);
 
-   // check if input handler was installed to camera
-   CHECK(appsys->GetPrimaryCamera()->getEventCallback() == &appsys->GetWindowManager()->GetInputHandler());
 }

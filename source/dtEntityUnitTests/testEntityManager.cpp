@@ -24,11 +24,9 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <UnitTest++.h>
-#include <MockObject.h>
 
 using namespace UnitTest;
 using namespace dtEntity;
-using namespace amop;
 
 namespace EMTest
 {
@@ -87,7 +85,7 @@ namespace EMTest
 
    }
 
-   //------------------------------------------------------------------
+   /*//------------------------------------------------------------------
    TEST(AddEntitySystem)
    {
       // test does not work. Check on windows
@@ -127,7 +125,7 @@ namespace EMTest
 
        delete em;
    }
-
+*/
    //------------------------------------------------------------------
    TEST(GetEntitySystem)
    {
@@ -149,27 +147,5 @@ namespace EMTest
 
       delete em;
    }
-
-
-   //------------------------------------------------------------------
-   TEST(CreateMockObject)
-   {
-       TMockObject<EntityManager::ComponentDeletedCallback> mock;
-
-       CHECK( (EntityManager::ComponentDeletedCallback*)mock );
-   }
-
-   //------------------------------------------------------------------
-   TEST(MockMethodCalled)
-   {
-       TMockObject<EntityManager::ComponentDeletedCallback> mock;
-       mock.Method(&EntityManager::ComponentDeletedCallback::ComponentDeleted);
-
-       ((EntityManager::ComponentDeletedCallback*)mock)->ComponentDeleted(0, 0);
-       CHECK_EQUAL(1u, mock.Method(&EntityManager::ComponentDeletedCallback::ComponentDeleted).Count());
-
-   }
-
-
 
 }

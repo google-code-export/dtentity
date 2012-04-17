@@ -169,6 +169,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
    std::string mapname = "TestData/testmap_generated.dtemap";
 
    {
+      assert(!osgDB::getDataFilePathList().empty());
       mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(), mapname);
       dtEntity::Entity* entity;
       mEntityManager.CreateEntity(entity);
