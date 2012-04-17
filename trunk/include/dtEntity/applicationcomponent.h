@@ -68,6 +68,8 @@ namespace dtEntity
       ApplicationSystem(EntityManager& em);
       ~ApplicationSystem();
 
+      void OnPropertyChanged(StringId propname, Property &prop);
+
       ComponentType GetComponentType() const { return TYPE; }
 
       void EmitTickMessagesAndQueuedMessages();
@@ -81,16 +83,12 @@ namespace dtEntity
        * @return The scale of realtime the GameManager is running at.
        */
       float GetTimeScale() const;
+      void SetTimeScale(float v);
 
       /**
        * @return the current simulation time. This is in SECONDs.
        */
       double GetSimulationTime() const;
-
-      /**
-       * @return the current simulation time. This is in SECONDS.
-       */
-      double GetSimTimeSinceStartup() const;
 
       /**
        * @return the current simulation wall-clock time. This is in MICRO SECONDS (seconds * 1000000LL).
@@ -174,11 +172,6 @@ namespace dtEntity
          return new DoubleProperty(GetSimulationTime());
       }
 
-      Property* ScriptGetSimTimeSinceStartup(const PropertyArgs& args)
-      {
-         return new DoubleProperty(GetSimTimeSinceStartup());
-      }
-
       Property* ScriptGetSimulationClockTime(const PropertyArgs& args)
       {
          return new DoubleProperty(GetSimulationClockTime());
@@ -192,7 +185,6 @@ namespace dtEntity
       }   
 
       Property* ScriptChangeTimeSettings(const PropertyArgs& args);
-
 
       
       // string holding country code
