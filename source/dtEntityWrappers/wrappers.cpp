@@ -34,21 +34,21 @@
 #include <dtEntityWrappers/mapsystemwrapper.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
-
+#include <dtEntity/dtentity_config.h>
 #include <v8.h>
 
-#if BUILD_CAL3D_WRAPPER
+#if BUILD_CAL3D
   #include <dtEntityWrappers/animationsystemwrapper.h>
 #endif
 
-#if BUILD_CEGUI_WRAPPER
+#if BUILD_CEGUI
   #include <dtEntity/gui.h>
   #include <dtEntityWrappers/guiwrapper.h>
   #include <osgViewer/View>
 #endif
 
 
-#if BUILD_OPENAL_WRAPPER
+#if BUILD_OPENAL
   #include <dtEntityWrappers/soundsystemwrapper.h>
 #endif
 
@@ -106,7 +106,7 @@ namespace dtEntityWrappers
       Handle<Context> context = scriptsystem->GetGlobalContext();      
       Context::Scope context_scope(context);
       
-#if BUILD_CEGUI_WRAPPER
+#if BUILD_CEGUI
       
       as->GetViewer()->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
       // make main view gl context current before creating gui
@@ -128,11 +128,11 @@ namespace dtEntityWrappers
 
       InitMapSystemWrapper(scriptsystem);
       
-#if BUILD_OPENAL_WRAPPER
+#if BUILD_OPENAL
       InitSoundSystemWrapper(scriptsystem);
 #endif
 
-#if BUILD_CAL3D_WRAPPER
+#if BUILD_CAL3D
       InitAnimationSystemWrapper(scriptsystem);
 #endif
    }

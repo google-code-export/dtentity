@@ -243,7 +243,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityTreeModel::EmitMoveMapToRow(const QString& mapname, int row)
+   void EntityTreeModel::EmitMoveMapToRow(const QString& mapname, unsigned int row)
    {
       unsigned int saveorder = 0;
       
@@ -1297,7 +1297,7 @@ namespace dtEntityQtWidgets
       connect(model, SIGNAL(EntityWasDeselected(QModelIndex)), view, SLOT(EntityWasDeselected(QModelIndex)));
       connect(model, SIGNAL(MoveEntityToMap(dtEntity::EntityId, QString)), this, SLOT(OnMoveEntityToMap(dtEntity::EntityId, QString)));
       connect(model, SIGNAL(MoveSpawnerToMap(QString, QString, QString)), this, SLOT(OnMoveSpawnerToMap(QString, QString, QString)));
-      connect(model, SIGNAL(MoveMapToRow(QString, int)), this, SLOT(OnMoveMapToRow(QString, int)));
+      connect(model, SIGNAL(MoveMapToRow(QString, unsigned int)), this, SLOT(OnMoveMapToRow(QString, unsigned int)));
       connect(model, SIGNAL(SceneLoaded()), view, SLOT(OnSceneLoaded()));
 
       dtEntity::MapSystem* mtsystem;

@@ -23,12 +23,13 @@
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
+#include <dtEntity/dtentity_config.h>
 
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/log.h>
 #include <assert.h>
 
-#ifdef USE_BOOST_POOL
+#if USE_BOOST_POOL
 #include <boost/pool/object_pool.hpp>
 #include <boost/pool/pool.hpp>
 #endif
@@ -94,7 +95,7 @@ namespace dtEntity
    };
 
 
-#ifdef USE_BOOST_POOL
+#if USE_BOOST_POOL
    template<class T>
    struct MemAllocPolicyBoostPool
    {

@@ -20,6 +20,7 @@
 
 #include <dtEntity/componentfactories.h>
 
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
@@ -35,11 +36,11 @@
 #include <dtEntity/texturelabelcomponent.h>
 
 
-#ifdef BUILD_OPENAL
+#if BUILD_OPENAL
   #include <dtEntity/soundcomponent.h>
 #endif
 
-#ifdef BUILD_CAL3D_WRAPPER
+#if BUILD_CAL3D
   #include <dtEntity/animationcomponent.h>
 #endif
 
@@ -74,7 +75,7 @@ namespace dtEntity
       They are responsible for constructing and starting the entity systems that
       come with dtEntity.
    */
-#ifdef BUILD_CAL3D_WRAPPER
+#if BUILD_CAL3D
    ////////////////////////////////////////////////////////////////////////////////
    class AnimationComponentFactory : public dtEntity::ComponentPluginFactory
    {
@@ -197,7 +198,7 @@ namespace dtEntity
       }
    };
 
-#ifdef BUILD_OPENAL
+#if BUILD_OPENAL
    ////////////////////////////////////////////////////////////////////////////////
    class SoundComponentFactory : public dtEntity::ComponentPluginFactory
    {
@@ -306,11 +307,11 @@ namespace dtEntity
       pluginManager.AddFactory(new TextureLabelFactory());
       pluginManager.AddFactory(new OSGAnimationComponentFactory());
       pluginManager.AddFactory(new LightComponentFactory());
-#ifdef BUILD_CAL3D_WRAPPER
+#if BUILD_CAL3D
        pluginManager.AddFactory(new AnimationComponentFactory());
 #endif
 
-#ifdef BUILD_OPENAL
+#if BUILD_OPENAL
        pluginManager.AddFactory(new SoundComponentFactory());
 #endif
 

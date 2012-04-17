@@ -120,7 +120,7 @@ namespace dtEntityQtWidgets
       QModelIndex GetSpawnerIndex(EntityTreeItem* item, const QString& spawnerName);
 
       void EnqueueMessage(const dtEntity::Message& m);
-      void EmitMoveMapToRow(const QString& mapname, int row);
+      void EmitMoveMapToRow(const QString& mapname, unsigned int row);
 
       void OnEntitySelected(const dtEntity::Message& msg);
       void OnEntityDeselected(const dtEntity::Message& msg);
@@ -158,7 +158,7 @@ namespace dtEntityQtWidgets
       void EntityWasDeselected(const QModelIndex&);
       void MoveEntityToMap(dtEntity::EntityId, const QString& mapname);
       void MoveSpawnerToMap(const QString& name, const QString& oldmapname, const QString& newmapname);
-      void MoveMapToRow(const QString& mapname, int saveorder);
+      void MoveMapToRow(const QString& mapname, unsigned int saveorder);
 
    private:
       void RemoveEntryFromRoot(const QString& name, EntityTreeType::e t);
