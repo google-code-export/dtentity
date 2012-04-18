@@ -1,0 +1,4 @@
+ADD_SUBDIRECTORY(testDebugDrawManager)
+ADD_SUBDIRECTORY(testEntity)
+ADD_SUBDIRECTORY(testWheels)
+ADD_SUBDIRECTORY(testEntitySystemPlugin)
