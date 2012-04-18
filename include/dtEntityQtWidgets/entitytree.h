@@ -77,7 +77,7 @@ namespace dtEntityQtWidgets
       void appendChild(EntityTreeItem* child) { mChildItems.append(child); }
       bool removeChild(EntityTreeItem* child) { return mChildItems.removeOne(child); }
       EntityTreeItem* child(int row) { return mChildItems.value(row); }
-      int childCount() const { return mChildItems.count(); }
+      unsigned int childCount() const { return mChildItems.count(); }
       EntityTreeItem* parent() { return mParentItem; }
       int row() const { return mParentItem ? mParentItem->mChildItems.indexOf(const_cast<EntityTreeItem*>(this)) : 0; }
       EntityTreeType::e GetItemType() const { return mItemType; }

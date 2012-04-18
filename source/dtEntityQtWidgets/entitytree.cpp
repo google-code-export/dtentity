@@ -247,7 +247,7 @@ namespace dtEntityQtWidgets
    {
       unsigned int saveorder = 0;
       
-      for(int i = 0; i < mRootItem->childCount(); ++i)
+      for(unsigned int i = 0; i < mRootItem->childCount(); ++i)
       {
          if(i > row)
          {
@@ -366,7 +366,7 @@ namespace dtEntityQtWidgets
       if(parent.isValid())
       {
 
-         int i = 0;
+         unsigned int i = 0;
          bool found = false;
          EntityTreeItem* parentItem = GetInternal(parent);
          for(; i < parentItem->childCount(); ++i)
@@ -405,7 +405,7 @@ namespace dtEntityQtWidgets
       
       unsigned int row = mRootItem->childCount();
       
-      for(int i = 0; i < mRootItem->childCount(); ++i)
+      for(unsigned int i = 0; i < mRootItem->childCount(); ++i)
       {
          EntityTreeItem* item = mRootItem->child(i);
          if(item->GetItemType() == EntityTreeType::MAP && item->mSaveOrder >= msg.GetSaveOrder())
@@ -441,7 +441,7 @@ namespace dtEntityQtWidgets
          static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
       
       
-      for(int i = 0; i < mRootItem->childCount(); ++i)
+      for(unsigned int i = 0; i < mRootItem->childCount(); ++i)
       {
          EntityTreeItem* item = mRootItem->child(i);
          if(item->GetItemType() == EntityTreeType::ENTITYSYSTEM)
@@ -537,7 +537,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    QModelIndex EntityTreeModel::GetMapIndex(const QString& mapName)
    {
-      for(int i = 0; i < mRootItem->childCount(); ++i)
+      for(unsigned int i = 0; i < mRootItem->childCount(); ++i)
       {
          EntityTreeItem* item = mRootItem->child(i);
          if(item->GetItemType() == EntityTreeType::MAP && item->mName == mapName)
@@ -551,12 +551,12 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    QModelIndex EntityTreeModel::GetEntityIndex(dtEntity::EntityId id)
    {
-      for(int i = 0; i < mRootItem->childCount(); ++i)
+      for(unsigned int i = 0; i < mRootItem->childCount(); ++i)
       {
          EntityTreeItem* mapitem = mRootItem->child(i);
          if(mapitem->GetItemType() == EntityTreeType::MAP)
          {
-            for(int j = 0; j < mapitem->childCount(); ++j)
+            for(unsigned int j = 0; j < mapitem->childCount(); ++j)
             {
                EntityTreeItem* entityitem = mapitem->child(j);
                if(entityitem->GetItemType() == EntityTreeType::ENTITY && entityitem->mEntityId == id)
@@ -577,7 +577,7 @@ namespace dtEntityQtWidgets
          return QModelIndex();
       }
 
-      for(int i = 0; i < item->childCount(); ++i)
+      for(unsigned int i = 0; i < item->childCount(); ++i)
       {
          EntityTreeItem* child = item->child(i);
          if(child->GetItemType() != EntityTreeType::MAP &&
@@ -603,7 +603,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeModel::RemoveEntryFromRoot(const QString& name, EntityTreeType::e t)
    {
-      int i = 0;
+      unsigned int i = 0;
       bool found = false;
       for(; i < mRootItem->childCount(); ++i)
       {
