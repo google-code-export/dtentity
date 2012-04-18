@@ -28,6 +28,6 @@ ADD_EXECUTABLE( ${APP_NAME}
 
 
 TARGET_LINK_LIBRARIES(${APP_NAME} 
-				${OSG_LIBRARIES}
+        ${OPENSCENEGRAPH_LIBRARIES}
                 osgLibRocket
 )

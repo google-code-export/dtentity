@@ -55,7 +55,7 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${QT_QTCORE_LIBRARIES}
                            ${QT_QTGUI_LIBRARIES}
                            ${QT_QTOPENGL_LIBRARIES}
-                           ${OSG_LIBRARIES}
+                           ${OPENSCENEGRAPH_LIBRARIES}
                            ${ADDITIONAL_LIBS}
                            ${OPENTHREADS_LIBRARIES}
                            dtEntity

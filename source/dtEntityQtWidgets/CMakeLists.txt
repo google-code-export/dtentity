@@ -100,7 +100,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}   ${QT_QTCORE_LIBRARIES}
 				                    ${QT_QTGUI_LIBRARIES}
 				                    ${QT_QTSVG_LIBRARIES}
 				                    ${QT_QTOPENGL_LIBRARIES}
-				                    ${OSG_LIBRARIES}				                   
+                            ${OPENSCENEGRAPH_LIBRARIES}
 				                    dtEntity
 				                    ${DTCORE_LIBRARIES}    
 				                    ${DTABC_LIBRARIES}    
