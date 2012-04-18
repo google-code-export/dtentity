@@ -44,6 +44,13 @@ INCLUDE_DIRECTORIES(
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+# generate configuration header file
+SET(DTENTITY_CONFIG_HEADER "${PROJECT_BINARY_DIR}/include/dtEntity/dtentity_config.h")
+configure_file (
+  "${SOURCE_PATH}/dtentity_config.h.in"
+  ${DTENTITY_CONFIG_HEADER}
+)
+
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/applicationcomponent.h
   ${HEADER_PATH}/basemessages.h
@@ -104,6 +111,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/threadsafequeue.h
   ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/windowmanager.h
+  ${DTENTITY_CONFIG_HEADER}
 
 )
 
@@ -202,13 +210,6 @@ IF(BUILD_CEGUI)
 )
 
 ENDIF(BUILD_CEGUI)
-
-# generate configuration header file
-configure_file (
-  "${SOURCE_PATH}/dtentity_config.h.in"
-  "${PROJECT_BINARY_DIR}/include/dtEntity/dtentity_config.h"
-)
-
 
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
