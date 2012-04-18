@@ -20,7 +20,7 @@ ADD_EXECUTABLE(${APP_NAME}
 
 TARGET_LINK_LIBRARIES(${APP_NAME}     
 					  dtEntity                   
-                      ${OSG_LIBRARIES}        
+                      ${OPENSCENEGRAPH_LIBRARIES}
                       ${DTUTIL_LIBRARIES}
 					  ${DTCORE_LIBRARIES}            
 					  ${DTABC_LIBRARIES}

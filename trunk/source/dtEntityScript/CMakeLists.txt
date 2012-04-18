@@ -24,7 +24,7 @@ ENDIF(DTENTITY_LIBRARY_STATIC)
 
 TARGET_LINK_LIBRARIES(${APP_NAME}  
 					  dtEntity       
-					  ${OSG_LIBRARIES}     
+            ${OPENSCENEGRAPH_LIBRARIES}
 					  ${DTENTITY_PLUGINS}
 )
                      

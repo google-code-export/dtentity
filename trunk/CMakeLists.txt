@@ -47,19 +47,8 @@ ELSE ()
     SET(DTENTITY_LIBS_DYNAMIC_OR_STATIC "SHARED")
 ENDIF()
 
-#select OSG libraries to link against
-SET(USE_OSG_ANIMATION   1)
-SET(USE_OSG_DB          1)
-SET(USE_OSG_GA          1)
-SET(USE_OSG_PARTICLE    1)
-SET(USE_OSG_SHADOW      1)
-SET(USE_OSG_SIM         1)
-SET(USE_OSG_TEXT        1)
-SET(USE_OSG_TERRAIN     0)
-SET(USE_OSG_UTIL        1)
-SET(USE_OSG_VIEWER      1)
-SET(USE_OSG_MANIPULATOR 1)
-FIND_PACKAGE(OpenSceneGraph REQUIRED)
+FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
+FIND_PACKAGE(OpenThreads)
 
 # link against delta3d libs?
 OPTION(BUILD_WITH_DELTA3D "Build with Delta3D" OFF)
@@ -74,7 +63,7 @@ ENDIF (BUILD_WITH_DELTA3D)
 # all plugins link against these libraries
 SET(TARGET_COMMON_LIBRARIES
     ${OPENTHREADS_LIBRARIES}
-    ${OSG_LIBRARIES}
+    ${OPENSCENEGRAPH_LIBRARIES}
     dtEntity
 )
 

@@ -70,7 +70,7 @@ SET(LIB_SOURCES
 
 SET(WRAPLIBRARIES dtEntity
                   ${V8_LIBRARIES}
-                  ${OSG_LIBRARIES}
+                  ${OPENSCENEGRAPH_LIBRARIES}
                   ${OPENTHREADS_LIBRARIES}
 )
 

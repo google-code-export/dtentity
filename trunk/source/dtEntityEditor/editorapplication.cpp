@@ -57,7 +57,6 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::EditorApplication(int argc, char *argv[])
       : mMainWindow(NULL)
-      , mTimer(NULL)
       , mEntityManager(new dtEntity::EntityManager())
       , mStartOfFrameTick(osg::Timer::instance()->tick())
       , mTimeScale(1)
@@ -83,11 +82,6 @@ namespace dtEntityEditor
    {
       delete mEntityManager;
       mEntityManager = NULL;
-      if(mTimer)
-      {
-         mTimer->stop();
-         mTimer->deleteLater();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -147,12 +141,6 @@ namespace dtEntityEditor
       try
       { 
 
-         mTimer = new QTimer(this);
-         mTimer->setInterval(10);
-         connect(mTimer, SIGNAL(timeout()), this, SLOT(StepGame()), Qt::QueuedConnection);
-
-         mTimer->start();
-
          connect(this, SIGNAL(ErrorOccurred(const QString&)),
                  mMainWindow, SLOT(OnDisplayError(const QString&)));
 
@@ -193,6 +181,8 @@ namespace dtEntityEditor
       dtEntity::StartSystemMessage msg;
       mEntityManager->EmitMessage(msg);
 
+      StepGame();
+
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -212,11 +202,13 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::StepGame()
    {
-      if(!mViewer->done())
-      {
-         dtEntity::ApplicationSystem* appsys;
-         GetEntityManager().GetES(appsys);
+      dtEntity::ApplicationSystem* appsys;
+      GetEntityManager().GetES(appsys);
 
+      while(!mViewer->done())
+      {
+
+         LOG_ALWAYS("STEP!" << appsys->GetSimulationTime());
          mViewer->advance(DBL_MAX);
 
          // check if a window should be closed
@@ -228,6 +220,8 @@ namespace dtEntityEditor
 
          mViewer->updateTraversal();
          mViewer->renderingTraversals();
+
+         QCoreApplication::processEvents();
       }
    }
 
@@ -235,13 +229,6 @@ namespace dtEntityEditor
    void EditorApplication::ShutDownGame(bool)
    {
       mViewer->setDone(true);
-      
-      if(mTimer)
-      {
-         mTimer->stop();
-         mTimer->deleteLater();
-         mTimer = NULL;
-      }
 
       // delete entity manager now before EditorApplication object is moved to main thread.
       mEntityManager = NULL;

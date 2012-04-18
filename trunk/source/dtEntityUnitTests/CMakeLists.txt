@@ -29,7 +29,7 @@ ADD_EXECUTABLE(${APP_NAME}
 
 
 TARGET_LINK_LIBRARIES(${APP_NAME}     
-               ${OSG_LIBRARIES}
+               ${OPENSCENEGRAPH_LIBRARIES}
                ${OPENTHREADS_LIBRARIES}
                dtEntity
                UnitTestPP               
