@@ -150,13 +150,13 @@ TEST_FIXTURE(MapFixture, SpawnerPropertyValuesCorrect)
 
    const Property* arrayprop = GetProp(compprops, "ArrayProperty");
    dtEntity::PropertyArray arr = arrayprop->ArrayValue();
-   CHECK_EQUAL(2, arr.size());
+   CHECK_EQUAL((unsigned int)2, arr.size());
    CHECK_EQUAL(arr[0]->StringValue(), "ArrayValOne");
    CHECK_EQUAL(arr[1]->StringValue(), "ArrayValTwo");
 
    const Property* grpprop = GetProp(compprops, "GroupProperty");
    dtEntity::PropertyGroup grp = grpprop->GroupValue();
-   CHECK_EQUAL(2, grp.size());
+   CHECK_EQUAL((unsigned int)2, grp.size());
    CHECK(grp.find(dtEntity::SID("GroupNameOne")) != grp.end());
    CHECK(grp.find(dtEntity::SID("GroupNameTwo")) != grp.end());
    CHECK_EQUAL(grp[dtEntity::SID("GroupNameOne")]->StringValue(), "GroupValOne");
