@@ -215,7 +215,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       CHECK_CLOSE(pos[0], 1, 0.1);
       CHECK_CLOSE(pos[1], 2, 0.1);
       CHECK_CLOSE(pos[2], 3, 0.1);
-      CHECK_EQUAL(2, transcomp->GetChildren().size());
+      CHECK_EQUAL((unsigned int)2, transcomp->GetChildren().size());
       dtEntity::Property* p1 = transcomp->GetChildren()[0];
       dtEntity::Property* p2 = transcomp->GetChildren()[1];
 
@@ -262,7 +262,7 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
       CHECK_EQUAL("TestGuiCategory", spawner1->GetGUICategory());
       CHECK_EQUAL("TestIconPath", spawner1->GetIconPath());
       DynamicPropertyContainer props = spawner1->GetComponentValues(dtEntity::SID("TestComponent"));
-      CHECK_EQUAL(2, props.GetAllProperties().size());
+      CHECK_EQUAL((unsigned int)2, props.GetAllProperties().size());
       CHECK_EQUAL("StringPropValue1", props.Get(dtEntity::SID("StringProp1"))->StringValue());
       CHECK_EQUAL("StringPropValue2", props.Get(dtEntity::SID("StringProp2"))->StringValue());
    }

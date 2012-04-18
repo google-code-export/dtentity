@@ -170,7 +170,9 @@ namespace dtEntityWrappers{
 			std::string result = "[Buffer ";
 			char * tmp = (char *) malloc(tmpSize);
 			if (tmp) {
+#ifdef _WIN32
             #pragma warning (disable : 4996)
+#endif
 				size_t size = snprintf(tmp, tmpSize, "%lu", (unsigned long) bs->getLength());
 				if (size < tmpSize) { result += tmp; }
 				free(tmp);

@@ -179,7 +179,9 @@ namespace dtEntityWrappers
                   size_t tmpSize = 100;
                   char * tmp = (char *) malloc(tmpSize);
                   if (tmp) {
+#ifdef _WIN32
                      #pragma warning (disable : 4996)
+#endif
                      size_t result = snprintf(tmp, tmpSize, "%lu", (unsigned long) (inBuf-(char *)this->data));
                      if (result < tmpSize) { error += tmp; }
                      free(tmp);

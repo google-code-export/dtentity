@@ -299,10 +299,14 @@ namespace dtEntityWrappers
       void * data = mmap(0, *size, PROT_READ, MAP_SHARED, f, 0);
       close(f);
    #else
+#ifdef _WIN32
       #	pragma warning(push)
       #pragma warning (disable : 4996)
+#endif
       FILE * f = fopen(name, "rb");
+#ifdef _WIN32
       #	pragma warning(pop)
+#endif
       if (f == NULL) { return NULL; }
       fseek(f, 0, SEEK_END);
       size_t s = ftell(f);
@@ -346,10 +350,15 @@ namespace dtEntityWrappers
       close(f);
 
    #else
+#ifdef _WIN32
       #	pragma warning(push)
       #pragma warning (disable : 4996)
+#endif
       FILE * f = fopen(name, "wb");
+
+#ifdef _WIN32
       #	pragma warning(pop)
+#endif
       if (f == NULL) { return -1; }
       fwrite(data, size, 1,f);
       fclose(f);
