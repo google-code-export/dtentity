@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/source/dtEntity/include
   ${CMAKE_SOURCE_DIR}/source/dtEntityQtWidgets/include
   ${QT_INCLUDE_DIR}
-  ${OSG_INCLUDE_DIRS}
+  ${OSG_INCLUDE_DIR}
   ${OPENTHREADS_INCLUDE_DIR}
 )
 

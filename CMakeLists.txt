@@ -68,7 +68,7 @@ SET(TARGET_COMMON_LIBRARIES
 )
 
 #PROJECT_BINARY_DIR for generated config header file
-INCLUDE_DIRECTORIES(include ${OSG_INCLUDE_DIRS} ${PROJECT_BINARY_DIR}/include)
+INCLUDE_DIRECTORIES(include ${OSG_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/include)
 
 #to allow usage of hash_map without warnings:
 IF(CMAKE_COMPILER_IS_GNUCXX)

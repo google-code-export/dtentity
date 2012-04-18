@@ -67,7 +67,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
   ${CMAKE_SOURCE_DIR}/source/dtEntity/include
   ${QT_INCLUDE_DIR}
-  ${OSG_INCLUDE_DIRS}
+  ${OSG_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/RapidXML
 )
 
