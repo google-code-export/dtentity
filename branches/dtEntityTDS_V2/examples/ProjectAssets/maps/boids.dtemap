@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
+<map>
+	<spawner name="Boids" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/physics_crate.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
+		</component>
+	</spawner>
+	<spawner name="Earth" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/earth.png">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+			<boolproperty name="Visible" value="true"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="0.0010000000" y="0.0010000000" z="0.0010000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="CacheHint">CacheAll</stringproperty>
+			<boolproperty name="IsTerrain" value="false"/>
+			<stringproperty name="Mesh">StaticMeshes/earth.osg</stringproperty>
+			<boolproperty name="Optimize" value="false"/>
+		</component>
+	</spawner>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+		</component>
+		<component type="Light">
+			<vec4property name="Position" x="-1.0000000000" y="1.0000000000" z="1.0000000000" w="0.0000000000"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">LightSource</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">Light</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">Terrain</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+				<stringproperty name="1">All</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<boolproperty name="IsTerrain" value="true"/>
+			<stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">MyEntity</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">MyEntity</stringproperty>
+		</component>
+		<component type="Particle">
+			<groupproperty name="Counter">
+				<groupproperty name="ConstantRateCounter">
+					<intproperty name="MinimumNumberOfParticlesToCreate" value="0"/>
+					<doubleproperty name="NumberOfParticlesPerSecondToCreate" value="0.0000000000"/>
+				</groupproperty>
+				<groupproperty name="RandomRateCounter">
+					<vec2property name="RateRange" x="50.0000000000" y="60.0000000000"/>
+				</groupproperty>
+				<stringproperty name="__SELECTED__">RandomRateCounter</stringproperty>
+			</groupproperty>
+			<boolproperty name="DebugOn" value="true"/>
+			<arrayproperty name="Operators">
+				<groupproperty name="0">
+					<groupproperty name="BounceOperator">
+						<floatproperty name="Cutoff" value="1.0000000000"/>
+						<arrayproperty name="Domains">
+							<groupproperty name="0">
+								<groupproperty name="PlaneDomain">
+									<floatproperty name="Dist" value="8.0000000000"/>
+									<vec3property name="Normal" x="0.0000000000" y="0.0000000000" z="1.0000000000"/>
+								</groupproperty>
+								<groupproperty name="SphereDomain">
+									<vec3property name="Center" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+									<floatproperty name="Radius" value="0.0000000000"/>
+								</groupproperty>
+								<stringproperty name="__SELECTED__">PlaneDomain</stringproperty>
+							</groupproperty>
+						</arrayproperty>
+						<floatproperty name="Friction" value="1.0000000000"/>
+						<floatproperty name="Resilience" value="1.0000000000"/>
+					</groupproperty>
+					<groupproperty name="ForceOperator">
+						<vec3property name="Force" x="0.0000000000" y="0.0000000000" z="-0.1000000000"/>
+					</groupproperty>
+					<stringproperty name="__SELECTED__">ForceOperator</stringproperty>
+				</groupproperty>
+				<groupproperty name="1">
+					<groupproperty name="BounceOperator">
+						<floatproperty name="Cutoff" value="1.0000000000"/>
+						<arrayproperty name="Domains">
+							<groupproperty name="0">
+								<groupproperty name="PlaneDomain">
+									<floatproperty name="Dist" value="10.0000000000"/>
+									<vec3property name="Normal" x="0.0000000000" y="1.0000000000" z="1.0000000000"/>
+								</groupproperty>
+								<groupproperty name="SphereDomain">
+									<vec3property name="Center" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+									<floatproperty name="Radius" value="0.0000000000"/>
+								</groupproperty>
+								<stringproperty name="__SELECTED__">PlaneDomain</stringproperty>
+							</groupproperty>
+						</arrayproperty>
+						<floatproperty name="Friction" value="1.0000000000"/>
+						<floatproperty name="Resilience" value="1.0000000000"/>
+					</groupproperty>
+					<groupproperty name="ForceOperator">
+						<vec3property name="Force" x="0.0000000000" y="0.0000000000" z="-9.8000000000"/>
+					</groupproperty>
+					<stringproperty name="__SELECTED__">BounceOperator</stringproperty>
+				</groupproperty>
+			</arrayproperty>
+			<groupproperty name="Placer">
+				<groupproperty name="Box">
+					<vec2property name="XRange" x="-1.0000000000" y="1.0000000000"/>
+					<vec2property name="YRange" x="-1.0000000000" y="1.0000000000"/>
+					<vec2property name="ZRange" x="-1.0000000000" y="1.0000000000"/>
+				</groupproperty>
+				<groupproperty name="Point">
+					<vec3property name="Center" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+				</groupproperty>
+				<stringproperty name="__SELECTED__">Box</stringproperty>
+			</groupproperty>
+			<vec2property name="ShooterInitialSpeedRange" x="3.0000000000" y="14.0000000000"/>
+			<vec2property name="ShooterThetaRange" x="0.0000000000" y="1.0000000000"/>
+			<vec2property name="SizeRange" x="1.0000000000" y="2.0000000000"/>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+				<stringproperty name="1">Particle</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="-3.8445142129" y="13.4544641271" z="-5.0817972993"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">SkyBox</stringproperty>
+			<stringproperty name="Layer">root</stringproperty>
+		</component>
+		<component type="LayerAttachPoint">
+			<stringproperty name="Name">default</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">SkyBox</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">SkyBox</stringproperty>
+		</component>
+		<component type="Shadow">
+			<arrayproperty name="Children">
+				<stringproperty name="0">LayerAttachPoint</stringproperty>
+			</arrayproperty>
+			<groupproperty name="ShadowType">
+				<groupproperty name="LISP">
+					<uintproperty name="BaseTexCoordIndex" value="0"/>
+					<uintproperty name="BaseTexUnit" value="0"/>
+					<floatproperty name="MaxFarPlane" value="0.0000000000"/>
+					<floatproperty name="MinLightMargin" value="10.0000000000"/>
+					<uintproperty name="ShadowTexCoordIndex" value="1"/>
+					<uintproperty name="ShadowTexUnit" value="0"/>
+					<uintproperty name="TexSize" value="1024"/>
+				</groupproperty>
+				<groupproperty name="PSSM">
+					<boolproperty name="DebugColorOn" value="false"/>
+					<uintproperty name="MapCount" value="3"/>
+					<uintproperty name="MapRes" value="512"/>
+					<uintproperty name="MaxFarDist" value="200"/>
+					<uintproperty name="MinNearSplit" value="2"/>
+					<floatproperty name="MoveVCamFactor" value="0.1000000015"/>
+					<floatproperty name="PolyOffsetFactor" value="0.1000000015"/>
+					<floatproperty name="PolyOffsetUnit" value="0.1000000015"/>
+				</groupproperty>
+				<stringproperty name="__SELECTED__">PSSM</stringproperty>
+			</groupproperty>
+		</component>
+		<component type="SkyBox">
+			<arrayproperty name="Children">
+				<stringproperty name="0">Shadow</stringproperty>
+			</arrayproperty>
+			<stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+			<stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+			<stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+			<stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+			<stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Camera">
+			<doubleproperty name="AspectRatio" value="0.8112449799"/>
+			<vec4property name="ClearColor" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<intproperty name="ContextId" value="0"/>
+			<uintproperty name="CullMask" value="32"/>
+			<vec3property name="EyeDirection" x="0.9740355268" y="0.0129514988" z="-0.2260244481"/>
+			<doubleproperty name="FarClip" value="100000.0000003804"/>
+			<doubleproperty name="FieldOfView" value="45.0000000000"/>
+			<floatproperty name="LODScale" value="1.0000000000"/>
+			<doubleproperty name="NearClip" value="1.0000000000"/>
+			<vec3property name="Position" x="-79.8191609224" y="-42.7166744491" z="-5.9261016235"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">cam_0</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">cam_0</stringproperty>
+		</component>
+	</entity>
+	<entity spawner="MySpawner">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="EntityName">MySpawner</stringproperty>
+			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName">MySpawner</stringproperty>
+			<stringproperty name="UniqueId">f2fa32e2-3fc6-44e5-a7d0-633681fbc17d</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="-49.1098594666" y="-41.2684669495" z="-9.8724651742"/>
+			<vec3property name="Scale" x="0.0010000000" y="0.0010000000" z="0.0010000000"/>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+</map>
+
