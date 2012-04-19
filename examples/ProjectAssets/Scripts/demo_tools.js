@@ -29,6 +29,9 @@ function startToolsDemo() {
   cameraComponent.FarClip = 100;
   cameraComponent.Up = [0, 0, 1];
   cameraComponent.finished();
+
+  var motionSystem = getEntitySystem("Motion");
+  if(motionSystem !== null) motionSystem.ShowSelection = true;
   
 
   // pure data object that will act as prototype for our entity
