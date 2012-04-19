@@ -207,7 +207,7 @@ namespace dtEntityWrappers
                   Handle<Value> compkey = compkeys->Get(Integer::New(j));
                   std::string compkeystr = ToStdString(compkey);
                   Handle<Value> compval = compobj->Get(compkey);
-                  dtEntity::Property* prop = Convert(compval);
+                  dtEntity::Property* prop = ConvertValueToProperty(compval);
                   props.AddProperty(dtEntity::SIDHash(compkeystr), *prop);
                   delete prop;
                }
@@ -257,7 +257,7 @@ namespace dtEntityWrappers
          {
             std::string propname = dtEntity::GetStringFromSID(j->first);
             const dtEntity::Property* prop = j->second;
-            jscomp->Set(ToJSString(propname), PropToVal(args.Holder()->CreationContext(), prop));
+            jscomp->Set(ToJSString(propname), ConvertPropertyToValue(args.Holder()->CreationContext(), prop));
          }
          
          obj->Set(ToJSString(compname), jscomp);

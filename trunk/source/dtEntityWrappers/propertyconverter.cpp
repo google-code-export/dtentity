@@ -29,33 +29,9 @@ using namespace v8;
 
 namespace dtEntityWrappers
 {
-   dtEntity::Property* CreatePropFromType(dtEntity::DataType::e t)
-   {
-      switch(t)
-      {
-      case DataType::ARRAY:       return new ArrayProperty();
-      case DataType::BOOL:        return new BoolProperty();
-      case DataType::CHAR:        return new CharProperty();
-      case DataType::DOUBLE:      return new DoubleProperty(); 
-      case DataType::FLOAT:       return new FloatProperty(); 
-      case DataType::GROUP:       return new GroupProperty(); 
-      case DataType::INT:         return new IntProperty(); 
-      case DataType::MATRIX:      return new MatrixProperty(); 
-      case DataType::QUAT:        return new QuatProperty(); 
-      case DataType::STRING:      return new StringProperty(); 
-      case DataType::STRINGID:    return new StringIdProperty(); 
-      case DataType::UINT:        return new UIntProperty();
-      case DataType::VEC2:        return new Vec2Property(); 
-      case DataType::VEC3:        return new Vec3Property(); 
-      case DataType::VEC4:        return new Vec4Property(); 
-      case DataType::VEC2D:       return new Vec2dProperty();
-      case DataType::VEC3D:       return new Vec3dProperty();
-      case DataType::VEC4D:       return new Vec4dProperty();
-      default: return NULL;
-      }      
-   }
 
-   v8::Handle<v8::Value> PropToVal(v8::Handle<v8::Context> context, const dtEntity::Property* prop)
+   ////////////////////////////////////////////////////////////////////////////////
+   v8::Handle<v8::Value> ConvertPropertyToValue(v8::Handle<v8::Context> context, const dtEntity::Property* prop)
    {
       using namespace v8;
 
@@ -71,7 +47,7 @@ namespace dtEntityWrappers
 
          for(unsigned int i = 0; i < arr.size(); ++i)
          {
-            out->Set(Integer::New(i), PropToVal(context, arr[i]));
+            out->Set(Integer::New(i), ConvertPropertyToValue(context, arr[i]));
          }
          
          return scope.Close(out);
@@ -89,7 +65,7 @@ namespace dtEntityWrappers
 
          for(dtEntity::PropertyGroup::iterator i = grp.begin(); i != grp.end(); ++i)
          {
-            out->Set(ToJSString(dtEntity::GetStringFromSID(i->first)), PropToVal(context, i->second));
+            out->Set(ToJSString(dtEntity::GetStringFromSID(i->first)), ConvertPropertyToValue(context, i->second));
          }
          
          return scope.Close(out);
@@ -111,7 +87,8 @@ namespace dtEntityWrappers
       }
    }
 
-   dtEntity::Property* Convert(v8::Handle<v8::Value> val)
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::Property* ConvertValueToProperty(v8::Handle<v8::Value> val)
    {
       if(val->IsArray())
       {
@@ -189,7 +166,7 @@ namespace dtEntityWrappers
          ArrayProperty* prop = new ArrayProperty();
          for(unsigned int i = 0; i < arr->Length(); ++i)
          {
-            prop->Add(Convert(arr->Get(Integer::New(i))));
+            prop->Add(ConvertValueToProperty(arr->Get(Integer::New(i))));
          }
          return prop;
       }
@@ -206,7 +183,7 @@ namespace dtEntityWrappers
             Handle<Value> key = keys->Get(Integer::New(i));
             std::string keyname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
-            prp->Add(dtEntity::SIDHash(keyname), Convert(val));
+            prp->Add(dtEntity::SIDHash(keyname), ConvertValueToProperty(val));
          }
          return prp;
       }
@@ -235,7 +212,8 @@ namespace dtEntityWrappers
       return NULL;
    }
 
-   v8::Handle<v8::Value> ValToProp(v8::Handle<v8::Value> val, dtEntity::Property*& prop)
+   ////////////////////////////////////////////////////////////////////////////////
+   v8::Handle<v8::Value> SetPropertyFromValue(v8::Handle<v8::Value> val, dtEntity::Property*& prop)
    {
       using namespace v8;
 
@@ -243,18 +221,19 @@ namespace dtEntityWrappers
       {
       case dtEntity::DataType::ARRAY:
       {
-         if(!val->IsArray()) 
-         {
-            return ThrowError("array property expects an array!");
-         }
+
          dtEntity::ArrayProperty* arrayprop = static_cast<dtEntity::ArrayProperty*>(prop);
          arrayprop->Clear();
          dtEntity::PropertyArray vals;
          Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("array property expects an array!");
+         }
          for(unsigned int i = 0; i < arr->Length(); ++i)
          {
             Handle<Value> val = arr->Get(Integer::New(i));
-            dtEntity::Property* newprop = Convert(val);
+            dtEntity::Property* newprop = ConvertValueToProperty(val);
             if(newprop == NULL)
             {
                return ThrowError("Unknown array datatype encountered!");
@@ -271,13 +250,14 @@ namespace dtEntityWrappers
          prop->SetFloat(val->NumberValue()); break;
       case dtEntity::DataType::GROUP:
       {
-         if(!val->IsObject()) 
-         {
-            return ThrowError("group property expects an object!");
-         }
+
          dtEntity::GroupProperty* groupprop = static_cast<dtEntity::GroupProperty*>(prop);
          groupprop->Clear();
          Handle<Object> obj = Handle<Object>::Cast(val);
+         if(obj.IsEmpty())
+         {
+            return ThrowError("group property expects an object!");
+         }
          Handle<Array> propnames = obj->GetPropertyNames();
          
          for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -285,7 +265,7 @@ namespace dtEntityWrappers
             Handle<Value> key = propnames->Get(Integer::New(i));
             std::string kname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
-            dtEntity::Property* newprop = Convert(val);
+            dtEntity::Property* newprop = ConvertValueToProperty(val);
             if(newprop == NULL)
             {
                return ThrowError("Unknown datatype encountered!");
@@ -310,10 +290,10 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::QUAT:
       {
-        if(!IsQuat(val))
-        {
-           return ThrowError("Property only accepts quat values!");
-        }
+         if(!IsQuat(val))
+         {
+            return ThrowError("Property only accepts quat values!");
+         }
          osg::Quat q = UnwrapQuat(val);
          prop->SetQuat(q); break;
       }
@@ -323,10 +303,10 @@ namespace dtEntityWrappers
          prop->SetStringId(dtEntity::SID(ToStdString(val))); break;
       case dtEntity::DataType::VEC2:
       {
-        if(!IsVec2(val))
-        {
-           return ThrowError("Property only accepts vec2 values!");
-        }
+         if(!IsVec2(val))
+         {
+            return ThrowError("Property only accepts vec2 values!");
+         }
          osg::Vec2d vec = UnwrapVec2(val);
          prop->SetVec2(vec); break;
       }
@@ -378,6 +358,186 @@ namespace dtEntityWrappers
 
       default:
          return ThrowError("Type not yet wrapped!");
+      }
+
+      return True();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   v8::Handle<v8::Value> SetValueFromProperty(dtEntity::Property*& prop, v8::Handle<v8::Value> val)
+   {
+      using namespace v8;
+
+      switch(prop->GetType())
+      {
+      case dtEntity::DataType::ARRAY:
+      {
+         dtEntity::ArrayProperty* arrayprop = static_cast<dtEntity::ArrayProperty*>(prop);
+
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("array property expects an array!");
+         }
+
+         while(arr->Length() > arrayprop->Size())
+         {
+            arr->Delete(arr->Length() - 1);
+         }
+
+         for(unsigned int i = 0; i < arrayprop->Size(); ++i)
+         {
+            const Property* prp = arrayprop->Get(i);
+            arr->Set(i, ConvertPropertyToValue(arr->CreationContext(), prp));
+         }
+         break;
+      }
+      case dtEntity::DataType::GROUP:
+      {
+
+
+         dtEntity::GroupProperty* groupprop = static_cast<dtEntity::GroupProperty*>(prop);
+
+         Handle<Object> obj = Handle<Object>::Cast(val);
+         if(obj.IsEmpty())
+         {
+            return ThrowError("group property expects an object!");
+         }
+
+         while(obj->Has(0))
+         {
+            obj->Delete(0);
+         }
+
+         dtEntity::PropertyGroup vals = groupprop->Get();
+         for(dtEntity::PropertyGroup::const_iterator i = vals.begin(); i != vals.end(); ++i)
+         {
+            obj->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), ConvertPropertyToValue(obj->CreationContext(), i->second));
+         }
+         break;
+      }
+      case dtEntity::DataType::MATRIX:
+      {
+         osg::Matrix mat = prop->MatrixValue();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts matrix values!");
+         }
+         arr->Set( 0, Number::New(mat(0,0)));
+         arr->Set( 1, Number::New(mat(0,1)));
+         arr->Set( 2, Number::New(mat(0,2)));
+         arr->Set( 3, Number::New(mat(0,3)));
+         arr->Set( 4, Number::New(mat(1,0)));
+         arr->Set( 5, Number::New(mat(1,1)));
+         arr->Set( 6, Number::New(mat(1,2)));
+         arr->Set( 7, Number::New(mat(1,3)));
+         arr->Set( 8, Number::New(mat(2,0)));
+         arr->Set( 9, Number::New(mat(2,1)));
+         arr->Set(10, Number::New(mat(2,2)));
+         arr->Set(11, Number::New(mat(2,3)));
+         arr->Set(12, Number::New(mat(3,0)));
+         arr->Set(13, Number::New(mat(3,1)));
+         arr->Set(14, Number::New(mat(3,2)));
+         arr->Set(15, Number::New(mat(3,3)));
+         break;
+      }
+      case dtEntity::DataType::QUAT:
+      {
+         osg::Quat v = prop->QuatValue();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts quat values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 2, Number::New(v[2]));
+         arr->Set( 3, Number::New(v[3]));
+         break;
+      }
+      case dtEntity::DataType::VEC2:
+      {
+         osg::Vec2 v = prop->Vec2Value();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec2 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         break;
+      }
+      case dtEntity::DataType::VEC3:
+      {
+         osg::Vec3 v = prop->Vec3Value();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec3 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 2, Number::New(v[2]));
+         break;
+      }
+      case dtEntity::DataType::VEC4:
+      {
+         osg::Vec4 v = prop->Vec4Value();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec3 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 2, Number::New(v[2]));
+         arr->Set( 3, Number::New(v[3]));
+         break;
+      }
+      case dtEntity::DataType::VEC2D:
+      {
+         osg::Vec2d v = prop->Vec2dValue();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec2 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         break;
+      }
+      case dtEntity::DataType::VEC3D:
+      {
+         osg::Vec3d v = prop->Vec3dValue();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec3 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 2, Number::New(v[2]));
+         break;
+      }
+      case dtEntity::DataType::VEC4D:
+      {
+         osg::Vec4d v = prop->Vec4dValue();
+         Handle<Array> arr = Handle<Array>::Cast(val);
+         if(arr.IsEmpty())
+         {
+            return ThrowError("Property only accepts Vec3 values!");
+         }
+         arr->Set( 0, Number::New(v[0]));
+         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 2, Number::New(v[2]));
+         arr->Set( 3, Number::New(v[3]));
+         break;
+      }
+
+      default:
+         assert(false && "Cannot set non-aray js values from property!");
+         return ThrowError("Cannot set non-aray js values from property!");
       }
 
       return True();

@@ -49,9 +49,41 @@ namespace dtEntityWrappers
       }
 
       HandleScope scope;
+
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
-      return scope.Close(PropToVal(info.Holder()->CreationContext(), prop));
+
+      switch(prop->GetType())
+      {
+      case dtEntity::DataType::ARRAY:
+      case dtEntity::DataType::VEC2:
+      case dtEntity::DataType::VEC2D:
+      case dtEntity::DataType::VEC3:
+      case dtEntity::DataType::VEC3D:
+      case dtEntity::DataType::VEC4:
+      case dtEntity::DataType::VEC4D:
+      case dtEntity::DataType::GROUP:
+      case dtEntity::DataType::MATRIX:
+      case dtEntity::DataType::QUAT:
+      {
+         Handle<Value> v = info.Holder()->GetHiddenValue(propname);
+         if(v.IsEmpty())
+         {
+            v = ConvertPropertyToValue(info.Holder()->CreationContext(), prop);
+            info.Holder()->SetHiddenValue(propname, v);
+         }
+         else
+         {
+            Handle<Value> ret = SetValueFromProperty(prop, v);
+            if(ret->BooleanValue() == false) {
+               return ThrowError("Internal error: Did property change type on the fly?");
+            }
+         }
+         return scope.Close(v);
+      }
+      default:
+         return scope.Close(ConvertPropertyToValue(info.Holder()->CreationContext(), prop));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +104,7 @@ namespace dtEntityWrappers
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
       assert(prop);
-      ValToProp(value, prop);      
+      SetPropertyFromValue(value, prop);
       component->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
    }
 
@@ -112,7 +144,7 @@ namespace dtEntityWrappers
       {
          std::string propname = dtEntity::GetStringFromSID(i->first);
          const dtEntity::Property* prop = i->second;
-         obj->Set(ToJSString(propname), PropToVal(args.Holder()->CreationContext(), prop));
+         obj->Set(ToJSString(propname), ConvertPropertyToValue(args.Holder()->CreationContext(), prop));
       }
 
       return scope.Close(obj);
@@ -130,7 +162,7 @@ namespace dtEntityWrappers
       component->Finished();
       return Undefined();
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ConstructCO(const v8::Arguments& args)
    {  
