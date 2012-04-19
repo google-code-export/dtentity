@@ -292,7 +292,7 @@ namespace dtEntityWrappers
                dtEntity::ArrayProperty p;
                for(unsigned int i = 0; i < arr->Length(); ++i)
                {
-                  p.Add(Convert(arr->Get(Integer::New(i))));
+                  p.Add(ConvertValueToProperty(arr->Get(Integer::New(i))));
                }
 
                pargs.push_back(&p);
@@ -348,7 +348,7 @@ namespace dtEntityWrappers
          Handle<Value> r = Null();
          if(ret != NULL)
          {
-            r = PropToVal(args.Holder()->CreationContext(), ret);
+            r = ConvertPropertyToValue(args.Holder()->CreationContext(), ret);
             delete ret;
          }
          return scope.Close(r);
@@ -368,7 +368,38 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
-      return scope.Close(PropToVal(info.Holder()->CreationContext(), prop));
+
+      switch(prop->GetType())
+      {
+      case dtEntity::DataType::ARRAY:
+      case dtEntity::DataType::VEC2:
+      case dtEntity::DataType::VEC2D:
+      case dtEntity::DataType::VEC3:
+      case dtEntity::DataType::VEC3D:
+      case dtEntity::DataType::VEC4:
+      case dtEntity::DataType::VEC4D:
+      case dtEntity::DataType::GROUP:
+      case dtEntity::DataType::MATRIX:
+      case dtEntity::DataType::QUAT:
+      {
+         Handle<Value> v = info.Holder()->GetHiddenValue(propname);
+         if(v.IsEmpty())
+         {
+            v = ConvertPropertyToValue(info.Holder()->CreationContext(), prop);
+            info.Holder()->SetHiddenValue(propname, v);
+         }
+         else
+         {
+            Handle<Value> ret = SetPropertyFromValue(v, prop);
+            if(ret->BooleanValue() == false) {
+               return ThrowError("Internal error: Did property change type on the fly?");
+            }
+         }
+         return scope.Close(v);
+      }
+      default:
+         return scope.Close(ConvertPropertyToValue(info.Holder()->CreationContext(), prop));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -382,7 +413,7 @@ namespace dtEntityWrappers
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
       if(prop)
       {
-         ValToProp(value, prop);
+         SetPropertyFromValue(value, prop);
       }
 
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(info.Holder());

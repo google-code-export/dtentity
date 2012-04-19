@@ -227,7 +227,13 @@ namespace dtEntity
        * Insert into array at given index. Ownership is taken by ArrayProperty -
        * property is deleted in destructor
        */
-      void Insert(Property* prop, unsigned int index);
+      void Insert(unsigned int index, Property* prop);
+
+      /**
+       * @return property at given index
+       */
+      Property* Get(unsigned int index);
+      const Property* Get(unsigned int index) const;
 
       /**
        * Remove from array and delete prop

@@ -41,7 +41,7 @@ namespace dtEntityWrappers
       {
          return Undefined();
       }
-      return PropToVal(info.Holder()->CreationContext(), prop);
+      return ConvertPropertyToValue(info.Holder()->CreationContext(), prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ namespace dtEntityWrappers
       dtEntity::Property* prop = comp->Get(propnamesid);
       if(prop)
       {
-         ValToProp(value, prop);
+         SetValueFromProperty(value, prop);
       }
    }
 
@@ -88,7 +88,7 @@ namespace dtEntityWrappers
          // don't convert functions to component properties
          if(!val->IsFunction())
          {
-            dtEntity::Property* prop = Convert(val);
+            dtEntity::Property* prop = ConvertValueToProperty(val);
             if(prop)
             {
                PropertyMap::iterator j = mProperties.find(propname_sid);
@@ -266,7 +266,7 @@ namespace dtEntityWrappers
          //don't convert functions to entity system properties, only primitive values
          if(!val->IsFunction())
          {
-            dtEntity::Property* prop = Convert(val);
+            dtEntity::Property* prop = ConvertValueToProperty(val);
             if(prop)
             {
                PropertyMap::iterator j = mProperties.find(propname_sid);
@@ -287,7 +287,7 @@ namespace dtEntityWrappers
       std::string propname = dtEntity::GetStringFromSID(propnamesid);
       HandleScope scope;
          
-      Handle<Value> newval = PropToVal(mSystem->CreationContext(), &prop);
+      Handle<Value> newval = ConvertPropertyToValue(mSystem->CreationContext(), &prop);
       Handle<String> propnamestr = ToJSString(propname);
       mSystem->Set(propnamestr, newval);
 
@@ -543,7 +543,7 @@ namespace dtEntityWrappers
          }
          dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = mSystem->Get(propname);
-         dtEntity::Property* prop = Convert(val);
+         dtEntity::Property* prop = ConvertValueToProperty(val);
          if(prop)
          {
             PropertyMap::iterator j = mProperties.find(propname_sid);
@@ -575,7 +575,7 @@ namespace dtEntityWrappers
          }
          dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
          Handle<Value> val = mSystem->Get(propname);
-         dtEntity::Property* prop = Convert(val);
+         dtEntity::Property* prop = ConvertValueToProperty(val);
          if(prop)
          {
             PropertyMap::const_iterator j = mProperties.find(propname_sid);

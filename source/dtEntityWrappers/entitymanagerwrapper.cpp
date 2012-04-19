@@ -89,7 +89,7 @@ namespace dtEntityWrappers
       {
          dtEntity::StringId n = i->first;
          const dtEntity::Property* p = i->second;
-         Handle<Value> v = PropToVal(context, p);
+         Handle<Value> v = ConvertPropertyToValue(context, p);
          Handle<String> str = GetString(n);
          o->Set(str, v);
       }
@@ -218,7 +218,7 @@ namespace dtEntityWrappers
          }
          else
          {
-            ValToProp(o->Get(propn), prop);
+            SetPropertyFromValue(o->Get(propn), prop);
          }
       }
    }

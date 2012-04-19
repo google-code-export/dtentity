@@ -190,7 +190,7 @@ namespace dtEntitySimulation
 
      dtEntity::Property* prop = pathcomp->Get(PathComponent::VertsId);
      dtEntity::ArrayProperty* aprop = static_cast<dtEntity::ArrayProperty*>(prop);
-     aprop->Insert(new dtEntity::Vec3Property(vert), targetidx);
+     aprop->Insert(targetidx, new dtEntity::Vec3Property(vert));
      return NULL;
    }
 
