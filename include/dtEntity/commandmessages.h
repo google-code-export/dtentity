@@ -93,9 +93,9 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
-    * Cause camera to be moved to entity and change attachment mode
+    * Cause camera to be moved to entity
     */
-   class DT_ENTITY_EXPORT MovementJumpToMessage
+   class DT_ENTITY_EXPORT MoveCameraToEntityMessage
       : public Message
    {
    public:
@@ -106,9 +106,9 @@ namespace dtEntity
       static const StringId KeepCameraDirectionId;
       static const StringId ContextIdId;
 
-      MovementJumpToMessage();
+      MoveCameraToEntityMessage();
 
-      virtual Message* Clone() const { return CloneContainer<MovementJumpToMessage>(); }
+      virtual Message* Clone() const { return CloneContainer<MoveCameraToEntityMessage>(); }
 
       EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
       void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }
@@ -133,6 +133,46 @@ namespace dtEntity
       UIntProperty mAboutEntityId;
       DoubleProperty mDistance;
       BoolProperty mKeepCameraDirection;
+      IntProperty mContextId;
+   };
+
+   /**
+    * Cause camera to be moved to a specific position
+    */
+   class DT_ENTITY_EXPORT MoveCameraToPositionMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId PositionId;
+      static const StringId LookAtId;
+      static const StringId UpId;
+      static const StringId ContextIdId;
+
+      MoveCameraToPositionMessage();
+
+      virtual Message* Clone() const { return CloneContainer<MoveCameraToPositionMessage>(); }
+
+      osg::Vec3d GetPosition() const { return mPosition.Get(); }
+      void SetPosition(const osg::Vec3d& v) { mPosition.Set(v); }
+
+      // if same as position: Look in direction of movement from last position
+      osg::Vec3d GetLookAt() const { return mLookAt.Get(); }
+      void SetLookAt(const osg::Vec3d& v) { mLookAt.Set(v); }
+
+      osg::Vec3 GetUp() const { return mUp.Get(); }
+      void SetUp(const osg::Vec3& v) { mUp.Set(v); }
+
+      // camera context
+      int GetContextId() const { return mContextId.Get(); }
+      void SetContextId(int v) { mContextId.Set(v); }
+
+   private:
+
+      Vec3dProperty mPosition;
+      Vec3dProperty mLookAt;
+      Vec3Property mUp;
       IntProperty mContextId;
    };
 

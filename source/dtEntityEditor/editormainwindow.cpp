@@ -689,13 +689,14 @@ namespace dtEntityEditor
       QStringList l = text.split(" ");
       if(l.size() == 3)
       {
-         /*float x = l[0].toFloat();
+         float x = l[0].toFloat();
          float y = l[1].toFloat();
          float z = l[2].toFloat();
-         JumpToPositionMessage msg;
+         dtEntity::MoveCameraToPositionMessage msg;
          msg.SetPosition(osg::Vec3(x, y, z));
-         mApplication->GetEntityManager()->EnqueueMessage(msg);
-         */
+         msg.SetLookAt(osg::Vec3(x, y, z));
+         mApplication->GetEntityManager().EnqueueMessage(msg);
+
          return;
       }
 
