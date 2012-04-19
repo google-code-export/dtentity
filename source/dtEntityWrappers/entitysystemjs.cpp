@@ -55,7 +55,7 @@ namespace dtEntityWrappers
       dtEntity::Property* prop = comp->Get(propnamesid);
       if(prop)
       {
-         SetValueFromProperty(value, prop);
+         SetPropertyFromValue(value, prop);
       }
    }
 
