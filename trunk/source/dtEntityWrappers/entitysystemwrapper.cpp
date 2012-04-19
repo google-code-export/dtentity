@@ -80,7 +80,7 @@ namespace dtEntityWrappers
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
       if(!args[0]->IsUint32())
       {
-         return ThrowError("Usage: getComponent(int)");
+         return ThrowError("Usage: getComponent(int entityid, [bool getDerived])");
       }
 
       dtEntity::EntityId eid = args[0]->Uint32Value();
