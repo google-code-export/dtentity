@@ -846,7 +846,7 @@ namespace dtEntityQtWidgets
    void EntityTreeView::OnDoubleClick(const QModelIndex& idx)
    {
       EntityTreeItem* item = GetInternal(idx);
-      dtEntity::MovementJumpToMessage msg;
+      dtEntity::MoveCameraToEntityMessage msg;
       msg.SetAboutEntityId(item->mEntityId);
       msg.SetDistance(50);
       msg.SetKeepCameraDirection(true);
@@ -1148,7 +1148,7 @@ namespace dtEntityQtWidgets
       {
          EntityTreeItem* item = GetInternal(mContextMenuSelectedIndex);
 
-         dtEntity::MovementJumpToMessage msg;
+         dtEntity::MoveCameraToEntityMessage msg;
          msg.SetAboutEntityId(item->mEntityId);
          msg.SetDistance(50);
          msg.SetKeepCameraDirection(true);

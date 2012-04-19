@@ -29,7 +29,8 @@ namespace dtEntity
    {
       em.RegisterMessageType<DeleteEntityMessage>(DeleteEntityMessage::TYPE);
       em.RegisterMessageType<EnableDebugDrawingMessage>(EnableDebugDrawingMessage::TYPE);
-      em.RegisterMessageType<MovementJumpToMessage>(MovementJumpToMessage::TYPE);
+      em.RegisterMessageType<MoveCameraToEntityMessage>(MoveCameraToEntityMessage::TYPE);
+      em.RegisterMessageType<MoveCameraToPositionMessage>(MoveCameraToPositionMessage::TYPE);
       em.RegisterMessageType<PlayAnimationMessage>(PlayAnimationMessage::TYPE);
       em.RegisterMessageType<RequestEntityDeselectMessage>(RequestEntityDeselectMessage::TYPE);
       em.RegisterMessageType<RequestEntitySelectMessage>(RequestEntitySelectMessage::TYPE);
@@ -64,13 +65,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType MovementJumpToMessage::TYPE(SID("MovementJumpToMessage"));
-   const StringId MovementJumpToMessage::AboutEntityId(SID("AboutEntity"));
-   const StringId MovementJumpToMessage::KeepCameraDirectionId(SID("KeepCameraDirection"));
-   const StringId MovementJumpToMessage::DistanceId(SID("Distance"));
-   const StringId MovementJumpToMessage::ContextIdId(SID("ContextId"));
+   const MessageType MoveCameraToEntityMessage::TYPE(SID("MoveCameraToEntityMessage"));
+   const StringId MoveCameraToEntityMessage::AboutEntityId(SID("AboutEntity"));
+   const StringId MoveCameraToEntityMessage::KeepCameraDirectionId(SID("KeepCameraDirection"));
+   const StringId MoveCameraToEntityMessage::DistanceId(SID("Distance"));
+   const StringId MoveCameraToEntityMessage::ContextIdId(SID("ContextId"));
 
-   MovementJumpToMessage::MovementJumpToMessage()
+   MoveCameraToEntityMessage::MoveCameraToEntityMessage()
       : Message(TYPE)
    {
       this->Register(AboutEntityId, &mAboutEntityId);
@@ -79,6 +80,24 @@ namespace dtEntity
       this->Register(ContextIdId, &mContextId);
       mDistance.Set(10);
       mKeepCameraDirection.Set(true);
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType MoveCameraToPositionMessage::TYPE(SID("MoveCameraToPositionMessage"));
+   const StringId MoveCameraToPositionMessage::PositionId(SID("Position"));
+   const StringId MoveCameraToPositionMessage::LookAtId(SID("LookAt"));
+   const StringId MoveCameraToPositionMessage::UpId(SID("Up"));
+   const StringId MoveCameraToPositionMessage::ContextIdId(SID("ContextId"));
+
+   MoveCameraToPositionMessage::MoveCameraToPositionMessage()
+      : Message(TYPE)
+      , mUp(0,0,1)
+   {
+      this->Register(PositionId, &mPosition);
+      this->Register(LookAtId, &mLookAt);
+      this->Register(UpId, &mUp);
+      this->Register(ContextIdId, &mContextId);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
