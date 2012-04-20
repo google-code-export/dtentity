@@ -111,7 +111,7 @@ function createEntity(proto) {
   for(var k in proto) {
   
     var properties = proto[k];
-    var entitySystem = EntityManager.getEntitySystem(k);
+    var entitySystem = getEntitySystem(k);
     
     if(!entitySystem) {
       Log.error("Cannot create component: entity system not found: " + k);
@@ -141,7 +141,7 @@ function getEntitySystem(name) {
   }
   var es = EntityManager.getEntitySystem(name);
 
-  __ENTITYSYSTEMS[name = es];
+  __ENTITYSYSTEMS[name] = es;
   return es;
 }
 

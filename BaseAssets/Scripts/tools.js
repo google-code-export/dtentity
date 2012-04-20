@@ -36,11 +36,11 @@ function closestPointOnZAxis(starta, dira) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Prototype for tools ////////////////////////////
 
-var camid = EntityManager.getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
-var cameraSystem = EntityManager.getEntitySystem("Camera");
+var camid = getEntitySystem("Map").getEntityIdByUniqueId("cam_0");
+var cameraSystem = getEntitySystem("Camera");
 var mainCamera = null;
 if(camid !== null) {
-  mainCamera = EntityManager.getEntitySystem("Camera").getComponent(camid);
+  mainCamera = getEntitySystem("Camera").getComponent(camid);
 }
 
 // create camera motion system when camera is created
@@ -297,7 +297,7 @@ function SelectTool() {
 
       var usemulti = (Input.getKey("Control_L"));
       RequestEntitySelect("", {
-        AboutEntity: pick.Id,
+        AboutEntity: pick,
         UseMultiSelect: usemulti
       });
 
@@ -404,6 +404,7 @@ function TranslateTool() {
     if(this.undoOp !== null) {
        for (var k in Selection.ids) {
          var eid = Selection.ids[k];
+
          var transcomp = positionAttitudeTransformSystem.getComponent(eid, true);
          if(transcomp !== null) {
            this.undoOp.endTranslations.push([eid, transcomp.Position]);
