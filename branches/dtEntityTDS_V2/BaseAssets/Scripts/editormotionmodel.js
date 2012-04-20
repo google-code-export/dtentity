@@ -324,6 +324,29 @@ function EditorMotionComponent(eid) {
       camera.finished();
     }
   }
+
+  this.jumpToPosition = function(position, lookat, up) {
+
+    if(lookat[0] === position[0] && lookat[1] === position[1] && lookat[2] === position[2]) {
+      var diff = osg.Vec3.sub(position, camera.Position);
+      if(diff[0] !== 0 || diff[1] !== 0 || diff[2] !== 0) {
+        camera.EyeDirection = osg.Vec3.normalize(diff);
+      }
+    } else {
+      camera.EyeDirection = osg.Vec3.normalize(osg.Vec3.sub(lookat, position));
+    }
+
+    camera.Position = position;
+    if(camera.EyeDirection[2] === 1 && up[2] === 1) {
+      up = [0,1,0];
+    }
+
+    camera.Up = up;
+    camera.finished();
+
+    println("Pos: " + camera.Position + " up: " + camera.Up + " dir: " + camera.EyeDirection);
+
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -406,14 +429,25 @@ function EditorMotionSystem() {
   this.storePropertiesToScene = function() { return false; }
 
   // -----------------------------------------
-  function doJump(name, params) {
+  function doJumpToEntity(name, params) {
     var context = params.ContextId;
     var component = self.getComponentByContextId(context);
     if(component !== null) {
       component.jumpToEntity(params.AboutEntity, params.Distance, params.KeepCameraDirection);
     }
   }
-  EntityManager.registerForMessages("MovementJumpToMessage", doJump);
+  EntityManager.registerForMessages("MoveCameraToEntityMessage", doJumpToEntity);
+
+  // -----------------------------------------
+  function doJumpToPosition(name, params) {
+    var context = params.ContextId;
+    var component = self.getComponentByContextId(context);
+    if(component !== null) {
+      component.jumpToPosition(params.Position, params.LookAt, params.Up);
+    }
+  }
+  EntityManager.registerForMessages("MoveCameraToPositionMessage", doJumpToPosition);
+
 };
 
 EntityManager.addEntitySystem(new EditorMotionSystem());

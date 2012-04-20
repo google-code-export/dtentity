@@ -14,8 +14,7 @@ var Selection = {
     }
     
     this.ids.push(id);
-
-	var motionSystem = getEntitySystem("Motion");
+    var motionSystem = getEntitySystem("Motion");
     if(motionSystem === null || motionSystem.ShowSelection) {
       layerSystem.addVisibleBoundingBox(id);
     }
@@ -62,7 +61,7 @@ var Selection = {
     for (var k in this.ids) {
       var eid = this.ids[k];
 
-      var transcomp = positionAttitudeTransformSystem.getComponent(eid, true);
+      var transcomp = getEntitySystem("PositionAttitudeTransform").getComponent(eid, true);
       if(transcomp !== null) {
         osg.Vec3.add(center, transcomp.Position, center);
         ++count;
@@ -89,7 +88,6 @@ function RequestEntitySelect(msgname, params) {
   if (!params.UseMultiSelect) {
     Selection.deselectAllExcept(id);
   }
-
   if (!Selection.isEntitySelected(id)) {
     Selection.select(id);
   }
