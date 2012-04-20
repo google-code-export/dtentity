@@ -50,16 +50,6 @@ ENDIF()
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
 FIND_PACKAGE(OpenThreads)
 
-# link against delta3d libs?
-OPTION(BUILD_WITH_DELTA3D "Build with Delta3D" OFF)
-IF (BUILD_WITH_DELTA3D)
-  FIND_PACKAGE(Delta3D REQUIRED)
-  LINK_DIRECTORIES( ${DELTA3D_LIB_DIR} )
-  IF (DELTA3D_EXT_DIR)
-    LINK_DIRECTORIES( ${DELTA3D_EXT_DIR}/lib )
-  ENDIF (DELTA3D_EXT_DIR)
-ENDIF (BUILD_WITH_DELTA3D)
-
 # all plugins link against these libraries
 SET(TARGET_COMMON_LIBRARIES
     ${OPENTHREADS_LIBRARIES}
