@@ -200,7 +200,7 @@ function doSelection(context) {
    var mouseY = Input.getAxis(Axis.MouseYRaw);
    
    var pick = Screen.pickEntity(mouseX, mouseY, NodeMasks.PICKABLE, context);
-
+  println("Pick: " + pick);
    if (pick === null || typeof(pick) == "undefined") {
      return false;
    }
@@ -378,7 +378,7 @@ function TranslateTool() {
 
 
             if(patcomp !== null) {
-               this.undoOp.beforePos.push([id, osg.Vec3.clone(patcomp.Position)]);
+               this.undoOp.beforePos.push([id, osg.Vec3.copy(patcomp.Position)]);
             }
          }
 
@@ -392,7 +392,7 @@ function TranslateTool() {
            var id = Selection.ids[k];
            var patcomp = patSystem.getComponent(id);
            if(patcomp !== null) {
-              this.undoOp.afterPos.push([id, osg.Vec3.clone(patcomp.Position)]);
+              this.undoOp.afterPos.push([id, osg.Vec3.copy(patcomp.Position)]);
            }
            UndoStack.pushOperation(this.undoOp);
         }
@@ -524,7 +524,7 @@ function RotateTool() {
 
              var patcomp = patSystem.getComponent(id);
              if(patcomp !== null) {
-                this.undoOp.beforeRot.push([id, osg.Quat.clone(patcomp.Attitude), osg.Vec3.clone(patcomp.Position)]);
+                this.undoOp.beforeRot.push([id, osg.Quat.copy(patcomp.Attitude), osg.Vec3.copy(patcomp.Position)]);
              }
           }
 
@@ -539,7 +539,7 @@ function RotateTool() {
            var id = Selection.ids[k];
            var patcomp = patSystem.getComponent(id);
            if(patcomp !== null) {
-              this.undoOp.afterRot.push([id, osg.Quat.clone(patcomp.Attitude), osg.Vec3.clone(patcomp.Position)]);
+              this.undoOp.afterRot.push([id, osg.Quat.copy(patcomp.Attitude), osg.Vec3.copy(patcomp.Position)]);
            }
            UndoStack.pushOperation(this.undoOp);
         }
@@ -578,10 +578,10 @@ function RotateTool() {
             var id = Selection.ids[k];
             var patcomp = patSystem.getComponent(id);
             if(patcomp !== null) {
-               this.undoOp.beforeRot.push([id, osg.Quat.clone(patcomp.Attitude), osg.Vec3.clone(patcomp.Position)]);
+               this.undoOp.beforeRot.push([id, osg.Quat.copy(patcomp.Attitude), osg.Vec3.copy(patcomp.Position)]);
                patcomp.Attitude = [0, 0, 0, 1];
                patcomp.finished();
-               this.undoOp.afterRot.push([id, osg.Quat.clone(patcomp.Attitude), osg.Vec3.clone(patcomp.Position)]);
+               this.undoOp.afterRot.push([id, osg.Quat.copy(patcomp.Attitude), osg.Vec3.copy(patcomp.Position)]);
             }
          }
          UndoStack.pushOperation(this.undoOp);
@@ -706,7 +706,7 @@ function ScaleTool() {
 
              var patcomp = patSystem.getComponent(id);
              if(patcomp !== null) {
-                this.undoOp.beforeScale.push([id, osg.Vec3.clone(patcomp.Scale), osg.Vec3.clone(patcomp.Position)]);
+                this.undoOp.beforeScale.push([id, osg.Vec3.copy(patcomp.Scale), osg.Vec3.copy(patcomp.Position)]);
              }
           }
        }
@@ -718,7 +718,7 @@ function ScaleTool() {
            var id = Selection.ids[k];
            var patcomp = patSystem.getComponent(id);
            if(patcomp !== null) {
-              this.undoOp.afterScale.push([id, osg.Vec3.clone(patcomp.Scale), osg.Vec3.clone(patcomp.Position)]);
+              this.undoOp.afterScale.push([id, osg.Vec3.copy(patcomp.Scale), osg.Vec3.copy(patcomp.Position)]);
            }
            UndoStack.pushOperation(this.undoOp);
         }
@@ -756,10 +756,10 @@ function ScaleTool() {
             var id = Selection.ids[k];
             var patcomp = patSystem.getComponent(id);
             if(patcomp !== null) {
-               this.undoOp.beforeScale.push([id, osg.Vec3.clone(patcomp.Scale), osg.Vec3.clone(patcomp.Position)]);
+               this.undoOp.beforeScale.push([id, osg.Vec3.copy(patcomp.Scale), osg.Vec3.copy(patcomp.Position)]);
                patcomp.Scale = [1, 1, 1];
                patcomp.finished();
-               this.undoOp.afterScale.push([id, osg.Vec3.clone(patcomp.Scale), osg.Vec3.clone(patcomp.Position)]);
+               this.undoOp.afterScale.push([id, osg.Vec3.copy(patcomp.Scale), osg.Vec3.copy(patcomp.Position)]);
             }
          }
          return true;

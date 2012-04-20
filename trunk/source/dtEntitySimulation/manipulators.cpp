@@ -52,8 +52,8 @@ namespace dtEntitySimulation
       addDragger(_translate2DDragger.get());
 
       setParentDragger(getParentDragger());
-      #if (OSG_VERSION_GREATER_OR_EQUAL(3,1,0) && OPENSCENEGRAPH_SOVERSION >= 90)
-//         setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
+      #if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 90)
+         setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
       #endif
 
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
@@ -265,8 +265,8 @@ namespace dtEntitySimulation
 
       setParentDragger(getParentDragger());
 
-#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,0) && OPENSCENEGRAPH_SOVERSION >= 90)
-//      setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
+#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 90)
+      setIntersectionMask(dtEntity::NodeMasks::MANIPULATOR);
 #endif
 
       getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
