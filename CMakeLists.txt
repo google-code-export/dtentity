@@ -31,6 +31,9 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 INCLUDE(DTEntityMacroUtils)
 
+FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
+FIND_PACKAGE(OpenThreads)
+
 #on windows, try to use provided dtEntity external dependency folder
 IF(WIN32)
   FIND_PACKAGE(DTENTITY_EXT_DEP REQUIRED)
@@ -47,9 +50,6 @@ ELSE ()
     SET(DTENTITY_LIBS_DYNAMIC_OR_STATIC "SHARED")
 ENDIF()
 
-FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
-FIND_PACKAGE(OpenThreads)
-
 # all plugins link against these libraries
 SET(TARGET_COMMON_LIBRARIES
     ${OPENTHREADS_LIBRARIES}
@@ -58,7 +58,8 @@ SET(TARGET_COMMON_LIBRARIES
 )
 
 #PROJECT_BINARY_DIR for generated config header file
-INCLUDE_DIRECTORIES(include ${OSG_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/include)
+MESSAGE ("osg dir: $ENV{OSG_DIR}")
+INCLUDE_DIRECTORIES(include ${OSG_INCLUDE_DIR} $ENV{OSG_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
 #to allow usage of hash_map without warnings:
 IF(CMAKE_COMPILER_IS_GNUCXX)
