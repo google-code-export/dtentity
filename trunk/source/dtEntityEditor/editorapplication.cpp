@@ -208,7 +208,7 @@ namespace dtEntityEditor
       while(!mViewer->done())
       {
 
-         LOG_ALWAYS("STEP!" << appsys->GetSimulationTime());
+         //LOG_ALWAYS("STEP!" << appsys->GetSimulationTime());
          mViewer->advance(DBL_MAX);
 
          // check if a window should be closed
