@@ -94,6 +94,13 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ELGetAddress(const Arguments& args)
+   {
+      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      return String::New(element->GetAddress(args[0]->BooleanValue()).CString());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELRemoveChild(const Arguments& args)
    {
       Rocket::Core::Element* element = UnwrapElement(args.Holder());
@@ -455,6 +462,7 @@ namespace dtEntityRocket
         proto->Set("toString", FunctionTemplate::New(ELToString));
         proto->Set("addEventListener", FunctionTemplate::New(ELAddEventListener));
         proto->Set("appendChild", FunctionTemplate::New(ELAppendChild));
+        proto->Set("getAddress", FunctionTemplate::New(ELGetAddress));
         proto->Set("getAttribute", FunctionTemplate::New(ELGetAttribute));
         proto->Set("getElementById", FunctionTemplate::New(ELGetElementById));
         proto->Set("getId", FunctionTemplate::New(ELGetId));

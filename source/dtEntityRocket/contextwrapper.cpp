@@ -48,7 +48,8 @@ namespace dtEntityRocket
          std::string path = ToStdString(args[0]);
 
          Rocket::Core::Context* rs = UnwrapContext(args.Holder());
-         rs->LoadMouseCursor(path.c_str());
+         Rocket::Core::ElementDocument* doc = rs->LoadMouseCursor(path.c_str());
+         return WrapElementDocument(args.Holder()->CreationContext(), doc);
       }
       return Undefined();      
    }

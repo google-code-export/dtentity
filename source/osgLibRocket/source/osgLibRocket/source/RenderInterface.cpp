@@ -327,6 +327,7 @@ namespace osgLibRocket
 	/// @return True if the load attempt succeeded and the handle and dimensions are valid, false if not.
 	bool RenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source)
 	{
+
 		std::string src = source.CString();
 		if(src.substr(0, 10) != "LibRocket/")
 		{

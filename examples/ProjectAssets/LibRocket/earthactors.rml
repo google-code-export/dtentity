@@ -22,22 +22,22 @@
 			{
 				text-align: left;
 			}
-			
-			div.dragable
-			{
-			   drag:clone;			   
-			}
+
+      div.dragable
+      {
+         drag:drag;
+      }
 		</style>
 	</head>
 	<body>
 	  <div class="dragable" id="jet_draggable">
-		<img src="jet_big.png"  />
+    <img src="jet_big.png"  />
 	  </div>
 	  <div class="dragable" id="chopper_draggable">
-		<img src="chopper_big.png"  />
+    <img src="chopper_big.png"  />
 	  </div>
 	  <div class="dragable" id="tank_draggable">
-		<img src="tank_big.png"  />
+    <img src="tank_big.png"  />
 	  </div>
 	</body>
 	

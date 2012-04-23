@@ -20,3 +20,14 @@
 //
 
 #include <osgLibRocket/SystemInterface>
+#include <iostream>
+
+namespace osgLibRocket
+{
+
+   float SystemInterface::GetElapsedTime()
+   {
+      return (float)osg::Timer::instance()->delta_s(osg::Timer::instance()->tick(), _timer);
+   }
+
+}
