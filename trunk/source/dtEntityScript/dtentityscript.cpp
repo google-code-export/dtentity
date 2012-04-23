@@ -81,10 +81,8 @@ int main(int argc, char** argv)
    }
    
    dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
-  /* pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);
-   pm.AddPlugin("plugins/", "dtEntityRocket", true);
-   pm.AddPlugin("plugins/", "dtEntitySimulation", true);*/
-   pm.LoadPluginsInDir("plugins/");
+   pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);
+   pm.AddPlugin("plugins/", "dtEntitySimulation", true);   
    
    dtEntity::StringId scriptId = dtEntity::SID("Script");
       
