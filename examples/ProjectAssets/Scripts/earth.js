@@ -1,6 +1,8 @@
 include_once("Scripts/osgveclib.js");
 include_once("Scripts/stdlib.js");
 
+EntityManager.addPlugin("plugins", "dtEntityRocket");
+
 var ddm = new DebugDrawManager();
 ddm.setEnabled(true);
 

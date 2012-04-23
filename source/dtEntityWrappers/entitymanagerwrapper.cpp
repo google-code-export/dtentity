@@ -273,6 +273,25 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EMAddPlugin(const v8::Arguments& args)
+   {  
+      std::string path = ToStdString(args[0]);
+      std::string name = ToStdString(args[1]);
+
+      dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
+      std::set<dtEntity::ComponentType> handled = pm.AddPlugin(path, name, false);
+      HandleScope scope;
+      Handle<Array> arr = Array::New();
+
+      int idx = 0;
+      for(std::set<dtEntity::ComponentType>::iterator i = handled.begin(); i != handled.end(); ++i)
+      {
+         arr->Set(Integer::New(idx++), String::New(dtEntity::GetStringFromSID(*i).c_str()));
+      }
+      return arr;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMAddToScene(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
@@ -505,6 +524,7 @@ namespace dtEntityWrappers
         proto->Set("getEntitySystem", FunctionTemplate::New(EMGetEntitySystem));
         proto->Set("hasEntitySystem", FunctionTemplate::New(EMHasEntitySystem));
         proto->Set("killEntity", FunctionTemplate::New(EMKillEntity));
+        proto->Set("addPlugin", FunctionTemplate::New(EMAddPlugin));
         proto->Set("registerForMessages", FunctionTemplate::New(EMRegisterForMessages));
         proto->Set("unregisterForMessages", FunctionTemplate::New(EMUnregisterForMessages));
         proto->Set("removeFromScene", FunctionTemplate::New(EMRemoveFromScene));
