@@ -1,18 +1,9 @@
 <!-- Cursor document, used by the Ogre3D sample. -->
 <rml>
-	<head>
-		<style>
-			body
-			{
-				width: 12px;
-				height: 19px;
-				
-				<!-- Add a simple image decorator onto the body element. -->
-				cursor-decorator: image;
-				cursor-image: shine.tga 170px 5px 182px 24px;
-			}
-		</style>
-	</head>
-	<body>
+  <head>
+
+  </head>
+  <body>
+  <img id="cursorimage" style="position:relative;top:-32px; left:-32px;" src="clear.png" />
 	</body>
 </rml>

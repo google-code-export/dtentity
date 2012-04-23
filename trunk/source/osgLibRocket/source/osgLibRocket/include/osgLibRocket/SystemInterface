@@ -3,6 +3,7 @@
 #include <osgLibRocket/export.h>
 #include <Rocket/Core/Core.h>
 #include <osg/Notify>
+#include <osg/Timer>
 
 namespace osgLibRocket
 {
@@ -10,10 +11,13 @@ namespace osgLibRocket
    {
    public:
 
-	   virtual float GetElapsedTime()
-	   {
-		   return 0;
-	   }
+      SystemInterface()
+         : _timer(osg::Timer::instance()->tick())
+      {
+
+      }
+
+      virtual float GetElapsedTime();
 
 	   /// Translate the input string into the translated string.
 	   /// @param[out] translated Translated string ready for display.
@@ -51,6 +55,9 @@ namespace osgLibRocket
 	   {
 
 	   }
+
+   private:
+      osg::Timer_t _timer;
    };
 
 }
