@@ -31,13 +31,13 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 INCLUDE(DTEntityMacroUtils)
 
-FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
-FIND_PACKAGE(OpenThreads)
-
 #on windows, try to use provided dtEntity external dependency folder
 IF(WIN32)
   FIND_PACKAGE(DTENTITY_EXT_DEP REQUIRED)
 ENDIF(WIN32)
+
+FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
+FIND_PACKAGE(OpenThreads)
 
 # Dynamic vs Static Linking
 OPTION(DTENTITY_LIBRARY_STATIC "Set to OFF to build dtEntity for dynamic linking.  Use ON for static." OFF)
