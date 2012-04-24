@@ -255,8 +255,8 @@ namespace dtEntity
       LayerByNameMap::iterator i = mLayerByNameMap.find(dtEntity::SID(name));
       if(i == mLayerByNameMap.end())
       {
-         return new UIntProperty(0);
+         return new StringIdProperty(0);
       }
-      return new UIntProperty(i->first);
+      return new StringIdProperty(i->first);
    }
 }
