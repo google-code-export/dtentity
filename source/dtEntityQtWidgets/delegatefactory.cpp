@@ -198,6 +198,20 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
+   TextAreaDelegateFactory::TextAreaDelegateFactory()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   PropertySubDelegate* TextAreaDelegateFactory::Create(TreeItem* parent,
+      const QString& propname,
+      const dtEntity::Property* prop) const
+   {
+      return new TextAreaPropertyDelegate();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    ComponentDelegateFactory::ComponentDelegateFactory()
    {
    }
@@ -318,6 +332,23 @@ namespace dtEntityQtWidgets
          }
 
          DelegateFactory* factory = new ColorSelectorDelegateFactory();
+         delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
+      }
+
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////
+      void ParseTextAreaInput(xml_node<>* element, DelegateFactory* delegateFactory)
+      {
+         std::string propertyName;
+         for(xml_attribute<>* attr = element->first_attribute();
+              attr; attr = attr->next_attribute())
+         {
+            if(strcmp(attr->name(), "propertyname") == 0)
+            {
+               propertyName = attr->value();
+            }
+         }
+
+         DelegateFactory* factory = new TextAreaDelegateFactory();
          delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
       }
 
@@ -554,6 +585,10 @@ namespace dtEntityQtWidgets
                else if(strcmp("colorinput", tagname) == 0)
                {
                   ParseColorInput(currentNode, delegateFactory);
+               }
+               else if(strcmp("textareainput", tagname) == 0)
+               {
+                  ParseTextAreaInput(currentNode, delegateFactory);
                }
                else if(strcmp("componentinput", tagname) == 0)
                {

@@ -22,6 +22,7 @@ set(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/propertydelegate.h
    ${HEADER_PATH}/propertyeditor.h
    ${HEADER_PATH}/qtguiwindowsystemwrapper.h
+   ${HEADER_PATH}/scripteditordialog.h
    ${HEADER_PATH}/spawnerstore.h
 )
 
@@ -43,6 +44,7 @@ SET(LIB_SOURCES
    ${SOURCE_PATH}/propertyeditor.cpp
    ${SOURCE_PATH}/qtguiwindowsystemwrapper.cpp
    ${SOURCE_PATH}/resources.qrc
+   ${SOURCE_PATH}/scripteditordialog.cpp
    ${SOURCE_PATH}/spawnerstore.cpp
    ${SOURCE_PATH}/spawnerstore.ui
 )
@@ -59,6 +61,7 @@ set(MOC_INPUT
    ${HEADER_PATH}/osggraphicswindowqt.h
    ${HEADER_PATH}/propertydelegate.h
    ${HEADER_PATH}/propertyeditor.h
+   ${HEADER_PATH}/scripteditordialog.h
    ${HEADER_PATH}/spawnerstore.h
 )
 
@@ -86,6 +89,7 @@ QT4_WRAP_UI(LIB_SOURCES
 	listdialog.ui
 	propertyeditor.ui
 	spawnerstore.ui
+  scripteditordialog.ui
 )
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
