@@ -63,7 +63,7 @@ namespace dtEntity
    void ComponentPluginManager::AddFactory(ComponentPluginFactory* factory)
    {
       ComponentType ctype = SID(factory->GetName());
-      if(ctype == 0 || mFactories.find(ctype) != mFactories.end())
+      if(ctype == StringId() || mFactories.find(ctype) != mFactories.end())
       {
          LOG_ERROR("Factory already registered with type " << factory->GetName());
       }

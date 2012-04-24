@@ -30,7 +30,7 @@ namespace dtEntity
 
    /**
     * Get a unique StringId for given string. 
-    * If DTENTITY_USE_STRINGS_AS_STRINGIDS macro is set
+    * If DTENTITY_USE_STRINGS_AS_STRINGIDS macri is set to ON
     * this returns the string itself. Else a CRC32 hash
     * is returned. 
     * In any case, the crc32 value is added to a reverse lookup table
@@ -52,7 +52,6 @@ namespace dtEntity
     * get string id crc32 hash of string, don't add to reverse lookup
     */
    StringId DT_ENTITY_EXPORT SIDHash(const std::string& str);
-   StringId DT_ENTITY_EXPORT SIDHash(StringId str);
 
    /**
    * get string id crc32 hash of string, add to reverse lookup

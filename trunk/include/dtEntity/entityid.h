@@ -20,13 +20,11 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntity/dtentity_config.h>
 
-// comment this out to make debug and release mode behave the same:
-// strings are stored as integers instead of std::strings.
-//#define DTENTITY_USE_STRINGS_AS_STRINGIDS
-
-#include <string>
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+  #include <string>
+#endif
 
 namespace dtEntity
 {
@@ -35,7 +33,7 @@ namespace dtEntity
 
    // serial ID for strings
 
-#if defined(DTENTITY_USE_STRINGS_AS_STRINGIDS)
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
    typedef std::string StringId;
 #else
    typedef unsigned int StringId;

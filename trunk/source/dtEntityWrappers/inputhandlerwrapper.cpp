@@ -19,6 +19,7 @@
 */
 
 #include <dtEntity/inputhandler.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntity/basemessages.h>
@@ -310,7 +311,11 @@ namespace dtEntityWrappers
    Handle<Value> IHGetAxis(const Arguments& args)
    {
       dtEntity::InputHandler* input = UnwrapInputHandler(args.Holder());
-      return Number::New(input->GetAxis(args[0]->Uint32Value()));
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+      return Number::New(input->GetAxis(ToStdString(args[0])));
+#else
+      return Number::New(input->GetAxis((dtEntity::StringId)args[0]->Uint32Value()));
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -506,6 +511,16 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Object> obj = Object::New();
       
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+      obj->Set(String::New("MouseX"), String::New(dtEntity::InputHandler::MouseXId.c_str()));
+      obj->Set(String::New("MouseY"), String::New(dtEntity::InputHandler::MouseYId.c_str()));
+      obj->Set(String::New("MouseXRaw"), String::New(dtEntity::InputHandler::MouseXRawId.c_str()));
+      obj->Set(String::New("MouseYRaw"), String::New(dtEntity::InputHandler::MouseYRawId.c_str()));
+      obj->Set(String::New("MouseDeltaX"), String::New(dtEntity::InputHandler::MouseDeltaXId.c_str()));
+      obj->Set(String::New("MouseDeltaY"), String::New(dtEntity::InputHandler::MouseDeltaYId.c_str()));
+      obj->Set(String::New("MouseDeltaXRaw"), String::New(dtEntity::InputHandler::MouseDeltaXRawId.c_str()));
+      obj->Set(String::New("MouseDeltaYRaw"), String::New(dtEntity::InputHandler::MouseDeltaYRawId.c_str()));
+#else
       obj->Set(String::New("MouseX"), Uint32::New(dtEntity::InputHandler::MouseXId));
       obj->Set(String::New("MouseY"), Uint32::New(dtEntity::InputHandler::MouseYId));
       obj->Set(String::New("MouseXRaw"), Uint32::New(dtEntity::InputHandler::MouseXRawId));
@@ -514,7 +529,7 @@ namespace dtEntityWrappers
       obj->Set(String::New("MouseDeltaY"), Uint32::New(dtEntity::InputHandler::MouseDeltaYId));
       obj->Set(String::New("MouseDeltaXRaw"), Uint32::New(dtEntity::InputHandler::MouseDeltaXRawId));
       obj->Set(String::New("MouseDeltaYRaw"), Uint32::New(dtEntity::InputHandler::MouseDeltaYRawId));
-      
+#endif 
       return scope.Close(obj);
    }
 

@@ -189,6 +189,7 @@ namespace dtEntityWrappers
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec4(const osg::Vec4d& v);
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapQuat(const osg::Quat& v);
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapMatrix(const osg::Matrix& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapSID(dtEntity::StringId sid);
 
    DTENTITY_WRAPPERS_EXPORT bool IsVec2(v8::Handle<v8::Value> v);
    DTENTITY_WRAPPERS_EXPORT bool IsVec3(v8::Handle<v8::Value> v);
@@ -201,5 +202,7 @@ namespace dtEntityWrappers
    DTENTITY_WRAPPERS_EXPORT osg::Vec4d UnwrapVec4(v8::Handle<v8::Value> v);
    DTENTITY_WRAPPERS_EXPORT osg::Quat UnwrapQuat(v8::Handle<v8::Value> v);
    DTENTITY_WRAPPERS_EXPORT osg::Matrix UnwrapMatrix(v8::Handle<v8::Value> v);
+
+   DTENTITY_WRAPPERS_EXPORT dtEntity::StringId UnwrapSID(v8::Handle<v8::Value> v);
 
 }

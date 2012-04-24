@@ -194,6 +194,26 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   v8::Handle<v8::Value> WrapSID(dtEntity::StringId v)
+   {
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+      return String::New(v.c_str());
+#else
+      return Uint32::New(v);
+#endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::StringId UnwrapSID(v8::Handle<v8::Value> v)
+   {
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+      return ToStdString(v);
+#else
+      return v->Uint32Value();
+#endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool IsVec2(v8::Handle<v8::Value> v)
    {
       return (!v.IsEmpty() && v->IsArray() && Handle<Array>::Cast(v)->Length() >= 2);
