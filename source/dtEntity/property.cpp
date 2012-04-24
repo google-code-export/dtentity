@@ -359,6 +359,12 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   dtEntity::Property* ArrayProperty::At(unsigned int i) const
+   {
+      return mValue[i];
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    bool ArrayProperty::Remove(Property* prop)
    {
       for(PropertyArray::iterator i = mValue.begin(); i != mValue.end(); ++i)
