@@ -11,6 +11,7 @@ function EditorMotionComponent(eid) {
   this.movespeed = 100;
   this.rotatespeed = 0.001;
   this.rotatekeysspeed = 2;
+  this.TestText = "abc";
 
   var rotateOp = [0, 0, 0, 1];
   var toRight = [0,0,0];

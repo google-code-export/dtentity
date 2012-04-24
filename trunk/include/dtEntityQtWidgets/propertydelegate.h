@@ -689,4 +689,50 @@ namespace dtEntityQtWidgets
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
      void FinishedEditing(ColorSelectorWidget*);
    };
+
+   ////////////////////////////////////////////////////////////////////////////////
+
+   class TextAreaPropertyDelegate;
+   class TextAreaWidget : public QWidget
+   {
+      Q_OBJECT
+
+
+   public:
+      TextAreaWidget(TextAreaPropertyDelegate* dlgt, QWidget* parent = 0);
+      QLabel* mLabel;
+
+
+     public slots:
+        void GetText();
+
+   private:
+      TextAreaPropertyDelegate* mDelegate;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class TextAreaPropertyDelegate
+      : public PropertySubDelegate
+   {
+      Q_OBJECT
+
+      typedef PropertySubDelegate BaseClass;
+
+   public:
+
+     TextAreaPropertyDelegate(QWidget *parent = 0);
+
+     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                           const QModelIndex& index) const;
+
+     void setEditorData(QWidget* editor, const QModelIndex& index) const;
+     void setModelData(QWidget* editor, QAbstractItemModel* model,
+                       const QModelIndex& index) const;
+
+     void updateEditorGeometry(QWidget* editor,
+         const QStyleOptionViewItem& option, const QModelIndex& index) const;
+     void FinishedEditing(TextAreaWidget*);
+   };
+
+
 }

@@ -23,6 +23,7 @@
 #include <dtEntityQtWidgets/assetselector.h>
 #include <dtEntityQtWidgets/delegatefactory.h>
 #include <dtEntityQtWidgets/propertyeditor.h>
+#include <dtEntityQtWidgets/scripteditordialog.h>
 #include <iostream>
 #include <dtEntity/property.h>
 #include <float.h>
@@ -1304,6 +1305,89 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    void ColorPropertyDelegate::FinishedEditing(ColorSelectorWidget* editor)
+   {
+
+      //this does not cause the data to be submitted to the model. Why?
+      emit(commitData(editor));
+      emit(closeEditor(editor, QAbstractItemDelegate::SubmitModelCache));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+
+   TextAreaWidget::TextAreaWidget(TextAreaPropertyDelegate* dlgt, QWidget* parent)
+      : QWidget(parent)
+      , mDelegate(dlgt)
+   {
+      setFocusPolicy(Qt::StrongFocus);
+
+      QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
+      horizontalLayout->setContentsMargins(0, 0, 0, 0);
+      mLabel = new QLabel();
+      horizontalLayout->addWidget(mLabel);
+      QPushButton* button = new QPushButton();
+      button->setText("Choose");
+      button->setMaximumHeight(15);
+      horizontalLayout->addWidget(button);
+      connect(button, SIGNAL(clicked()), this, SLOT(GetText()));
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TextAreaWidget::GetText()
+   {
+      ScriptEditorDialog edit(mLabel->text());
+
+      if(edit.exec() == QDialog::Accepted)
+      {
+         mLabel->setText(edit.GetText());
+      }
+
+      mLabel->setText(edit.GetText());
+      mDelegate->FinishedEditing(this);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   TextAreaPropertyDelegate::TextAreaPropertyDelegate(QWidget *parent)
+      : PropertySubDelegate(parent)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QWidget* TextAreaPropertyDelegate::createEditor(QWidget* parent,
+     const QStyleOptionViewItem&/* option */,
+     const QModelIndex& index) const
+   {
+      return new TextAreaWidget(const_cast<TextAreaPropertyDelegate*>(this), parent);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TextAreaPropertyDelegate::setEditorData(QWidget *editor,
+                                     const QModelIndex &index) const
+   {
+      QString value = index.model()->data(index, Qt::EditRole).toString();
+      TextAreaWidget* e = static_cast<TextAreaWidget*>(editor);
+      e->mLabel->setText(value);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TextAreaPropertyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                    const QModelIndex &index) const
+   {
+      TextAreaWidget* e = static_cast<TextAreaWidget*>(editor);
+      QString value = e->mLabel->text();
+      model->setData(index, value, Qt::EditRole);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TextAreaPropertyDelegate::updateEditorGeometry(QWidget *editor,
+     const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+   {
+     editor->setGeometry(option.rect);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TextAreaPropertyDelegate::FinishedEditing(TextAreaWidget* editor)
    {
 
       //this does not cause the data to be submitted to the model. Why?
