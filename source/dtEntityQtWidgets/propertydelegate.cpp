@@ -1315,9 +1315,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
 
-   TextAreaWidget::TextAreaWidget(TextAreaPropertyDelegate* dlgt, QWidget* parent)
+   TextAreaWidget::TextAreaWidget(TextAreaPropertyDelegate* dlgt, const QString& language, QWidget* parent)
       : QWidget(parent)
       , mDelegate(dlgt)
+      , mLanguage(language)
    {
       setFocusPolicy(Qt::StrongFocus);
 
@@ -1336,7 +1337,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void TextAreaWidget::GetText()
    {
-      ScriptEditorDialog edit(mLabel->text());
+      ScriptEditorDialog edit(mLabel->text(), mLanguage);
 
       if(edit.exec() == QDialog::Accepted)
       {
@@ -1348,8 +1349,9 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   TextAreaPropertyDelegate::TextAreaPropertyDelegate(QWidget *parent)
+   TextAreaPropertyDelegate::TextAreaPropertyDelegate(const QString& language, QWidget *parent)
       : PropertySubDelegate(parent)
+      , mLanguage(language)
    {
    }
 
@@ -1358,7 +1360,7 @@ namespace dtEntityQtWidgets
      const QStyleOptionViewItem&/* option */,
      const QModelIndex& index) const
    {
-      return new TextAreaWidget(const_cast<TextAreaPropertyDelegate*>(this), parent);
+      return new TextAreaWidget(const_cast<TextAreaPropertyDelegate*>(this), mLanguage, parent);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
