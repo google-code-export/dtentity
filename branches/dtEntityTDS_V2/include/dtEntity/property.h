@@ -230,6 +230,11 @@ namespace dtEntity
       void Insert(Property* prop, unsigned int index);
 
       /**
+       * Return property at given index, NULL if index out of bounds
+       */
+      dtEntity::Property* At(unsigned int i) const;
+
+      /**
        * Remove from array and delete prop
        * Remove true if prop was found in array
        */
