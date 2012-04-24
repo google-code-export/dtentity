@@ -699,7 +699,7 @@ namespace dtEntityQtWidgets
 
 
    public:
-      TextAreaWidget(TextAreaPropertyDelegate* dlgt, QWidget* parent = 0);
+      TextAreaWidget(TextAreaPropertyDelegate* dlgt, const QString& language, QWidget* parent = 0);
       QLabel* mLabel;
 
 
@@ -708,6 +708,7 @@ namespace dtEntityQtWidgets
 
    private:
       TextAreaPropertyDelegate* mDelegate;
+      QString mLanguage;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -720,7 +721,7 @@ namespace dtEntityQtWidgets
 
    public:
 
-     TextAreaPropertyDelegate(QWidget *parent = 0);
+     TextAreaPropertyDelegate(const QString& language, QWidget *parent = 0);
 
      QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                            const QModelIndex& index) const;
@@ -732,6 +733,10 @@ namespace dtEntityQtWidgets
      void updateEditorGeometry(QWidget* editor,
          const QStyleOptionViewItem& option, const QModelIndex& index) const;
      void FinishedEditing(TextAreaWidget*);
+
+   private:
+
+     QString mLanguage;
    };
 
 

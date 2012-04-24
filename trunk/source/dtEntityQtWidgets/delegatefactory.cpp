@@ -198,7 +198,8 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   TextAreaDelegateFactory::TextAreaDelegateFactory()
+   TextAreaDelegateFactory::TextAreaDelegateFactory(const QString& language)
+      : mLanguage(language)
    {
    }
 
@@ -207,7 +208,7 @@ namespace dtEntityQtWidgets
       const QString& propname,
       const dtEntity::Property* prop) const
    {
-      return new TextAreaPropertyDelegate();
+      return new TextAreaPropertyDelegate(mLanguage);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -339,6 +340,7 @@ namespace dtEntityQtWidgets
       void ParseTextAreaInput(xml_node<>* element, DelegateFactory* delegateFactory)
       {
          std::string propertyName;
+         std::string language = "";
          for(xml_attribute<>* attr = element->first_attribute();
               attr; attr = attr->next_attribute())
          {
@@ -346,9 +348,13 @@ namespace dtEntityQtWidgets
             {
                propertyName = attr->value();
             }
+            else if(strcmp(attr->name(), "language") == 0)
+            {
+               language = attr->value();
+            }
          }
 
-         DelegateFactory* factory = new TextAreaDelegateFactory();
+         DelegateFactory* factory = new TextAreaDelegateFactory(language.c_str());
          delegateFactory->SetFactoryForChildren(propertyName.c_str(), factory);
       }
 
