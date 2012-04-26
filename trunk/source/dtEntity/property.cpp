@@ -23,6 +23,8 @@
 #include <sstream>
 #include <osg/io_utils>
 #include <dtEntity/log.h>
+#include <climits>
+
 namespace dtEntity
 {
   
