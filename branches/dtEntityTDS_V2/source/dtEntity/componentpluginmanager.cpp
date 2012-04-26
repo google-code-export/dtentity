@@ -85,11 +85,7 @@ namespace dtEntity
       return ".dll";
 #   endif
 #else
-#   if defined (_DEBUG)
-      return "d.so";
-#   else
       return ".so";
-#   endif
 #endif
    }
 
@@ -176,11 +172,11 @@ namespace dtEntity
       // store the name of this plugin
       std::string libName(osgDB::getSimpleFileName(abspath));
       libName.assign(osgDB::getNameLessAllExtensions(libName));
-#ifdef _DEBUG
+#if defined(_DEBUG) && (defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__))
       // remove debug postfix from lib name
       std::string debugPostfix("d");
       libName = libName.substr(0, libName.size() - debugPostfix.size());
-#endif // _DEBUG
+#endif
 
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
 #else
