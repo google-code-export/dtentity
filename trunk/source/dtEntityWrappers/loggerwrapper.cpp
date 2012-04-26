@@ -109,17 +109,23 @@ namespace dtEntityWrappers
          case dtEntity::LogLevel::LVL_WARNING: loglevel = mWarning; break;
          }
 
-         Handle<Value> argv[5] = {
+#if defined (_DEBUG)
+         bool is_debug = true;
+#else
+         bool is_debug = false;
+#endif
+         Handle<Value> argv[6] = {
             loglevel,
             ToJSString(filename),
             ToJSString(methodname),
             Integer::New(linenumber),
-            ToJSString(msg)
+            ToJSString(msg),
+            Boolean::New(is_debug)
          };
 
          Context::Scope context_scope(mFunction->CreationContext());
          TryCatch try_catch;
-         Handle<Value> result = mFunction->Call(mFunction, 5, argv);
+         Handle<Value> result = mFunction->Call(mFunction, 6, argv);
 
          if(result.IsEmpty())
          {
@@ -163,7 +169,7 @@ namespace dtEntityWrappers
         Handle<FunctionTemplate> templt = FunctionTemplate::New();
         s_loggerTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("Log"));
-        
+
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
         proto->Set("always", FunctionTemplate::New(LogAlways));
