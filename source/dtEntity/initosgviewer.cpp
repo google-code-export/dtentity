@@ -61,7 +61,8 @@ namespace dtEntity
 		 case  LogLevel::LVL_ALWAYS  : strm = &osg::notify(osg::ALWAYS); break;
 		 default: strm = &osg::notify(osg::ALWAYS);
          }
-		 (*strm) << "File: " << filename << " Line: " << linenumber << " Message: " << msg << std::endl; 
+       std::string fn = filename.size() < 30 ? filename : filename.substr(filename.size() - 30, filename.size() - 1);
+       (*strm) << "File: " << fn << " Line: " << linenumber << " Message: " << msg << std::endl;
 		 strm->flush();
          
       }
