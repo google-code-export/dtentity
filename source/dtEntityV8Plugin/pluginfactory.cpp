@@ -23,35 +23,6 @@
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 
-namespace dtEntityWrappers
-{
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class ScriptFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         es = new ScriptSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "Script";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "System for JavaScript/V8 scripts";
-      }
-   };
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityV8Plugin(dtEntity::MessageFactory& mf)
 {
@@ -59,5 +30,5 @@ extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityV8Plugin(dtEntity::Mes
 }
 
 REGISTER_DTENTITYPLUGIN(dtEntityV8Plugin, 1,
-   new dtEntityWrappers::ScriptFactory()
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityWrappers::ScriptSystem>("Script")
 )
