@@ -25,117 +25,15 @@
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 
-namespace dtEntitySimulation
-{
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class GroundClampingFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         es = new GroundClampingSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "GroundClamping";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "System for Ground Clamping";
-      }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class ManipulatorFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         es = new ManipulatorSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "Manipulator";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "System for osgManipulator";
-      }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class PathFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         es = new PathSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "Path";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "System for Path";
-      }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class ParticleFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         es = new dtEntitySimulation::ParticleSystem(*em);
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "Particle";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "System for osgParticle";
-      }
-   };
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntitySimulation(dtEntity::MessageFactory& mf)
 {
 }
 
 REGISTER_DTENTITYPLUGIN(dtEntitySimulation, 4,
-   new dtEntitySimulation::GroundClampingFactory(),
-   new dtEntitySimulation::ManipulatorFactory(),
-   new dtEntitySimulation::ParticleFactory(),
-   new dtEntitySimulation::PathFactory()
+   new dtEntity::ComponentPluginFactoryImpl<dtEntitySimulation::GroundClampingSystem>("GroundClamping"),
+   new dtEntity::ComponentPluginFactoryImpl<dtEntitySimulation::ManipulatorSystem>("Manipulator"),
+   new dtEntity::ComponentPluginFactoryImpl<dtEntitySimulation::ParticleSystem>("Particle"),
+   new dtEntity::ComponentPluginFactoryImpl<dtEntitySimulation::PathSystem>("Path")
 )
 

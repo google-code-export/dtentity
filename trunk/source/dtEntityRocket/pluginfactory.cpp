@@ -27,67 +27,6 @@
 #include <dtEntity/messagefactory.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 
-namespace dtEntityRocket
-{
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class RocketFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-         dtEntityWrappers::ScriptSystem* scriptsys;
-         bool success = em->GetEntitySystem(dtEntityWrappers::ScriptSystem::TYPE, scriptsys);
-         assert(success);
-         InitRocketSystemWrapper(scriptsys);
-         es = new RocketSystem(*em);        
-
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "Rocket";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "LibRocket bindings";
-      }
-
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   class HUDFactory : public dtEntity::ComponentPluginFactory
-   {
-   public:
-
-
-      virtual bool Create(dtEntity::EntityManager* em, dtEntity::EntitySystem*& es)
-      {
-        es = new HUDSystem(*em);
-
-         return true;
-      }
-
-      /** get the name of the plugin */
-      virtual std::string GetName() const
-      {
-         return "HUD";
-      }
-
-      /** get a description of the plugin */
-      virtual std::string GetDescription() const
-      {
-         return "LibRocket HUD";
-      }
-
-   };
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityRocket(dtEntity::MessageFactory& mf)
@@ -97,8 +36,7 @@ extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityRocket(dtEntity::Messa
 }
 
 
-
 REGISTER_DTENTITYPLUGIN(dtEntityRocket, 2,
-   new dtEntityRocket::RocketFactory(),
-   new dtEntityRocket::HUDFactory()
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityRocket::RocketSystem>("Rocket"),
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityRocket::HUDSystem>("HUD")
 )

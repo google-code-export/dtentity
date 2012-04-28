@@ -44,10 +44,6 @@ namespace dtEntity
    {
    public:
 
-      ComponentPluginFactory()
-      {
-      }
-
       /** get the name of the entity system (the type string) */
       virtual std::string GetName() const = 0;
 
@@ -55,7 +51,7 @@ namespace dtEntity
        * Implementations should construct their entity system now and assign it to es variable
        * Return true if success, else false
        */
-      virtual bool Create(dtEntity::EntityManager* em, EntitySystem*& es) = 0;
+      virtual bool Create(EntityManager* em, EntitySystem*& es) = 0;
 
       /** delete the entity system */
       virtual void Destroy() {}
@@ -84,5 +80,36 @@ namespace dtEntity
       osg::ref_ptr<osgDB::DynamicLibrary> mLibrary;
    };
 
+   template <class ES>
+   class ComponentPluginFactoryImpl : public ComponentPluginFactory
+   {
+   public:
 
+      ComponentPluginFactoryImpl(const std::string& name, const std::string& desc = "")
+         : mName(name)
+         , mDesc(desc)
+      {
+      }
+
+      virtual bool Create(EntityManager* em, EntitySystem*& es)
+      {
+         es = new ES(*em);
+         return true;
+      }
+
+      /** get the name of the plugin */
+      virtual std::string GetName() const
+      {
+         return mName;
+      }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() const
+      {
+         return mDesc;
+      }
+   private:
+      std::string mName;
+      std::string mDesc;
+   };
 }
