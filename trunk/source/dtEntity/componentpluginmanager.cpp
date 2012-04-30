@@ -307,14 +307,13 @@ namespace dtEntity
       {
          return true;
       }
-      std::string tname = GetStringFromSID(ctype);
-      LOG_DEBUG("Starting entity system " + tname);
+      LOG_DEBUG("Starting entity system " << GetStringFromSID(ctype));
       ComponentPluginFactory* factory = GetPluginFactory(ctype);
 
       if(factory == NULL)
       {
          LOG_DEBUG("Cannot start entity system "
-            + tname + std::string(": no factory found"));
+            << dtEntity::GetStringFromSID(ctype) << ": no factory found");
          return false;
       }
       // start all plugins this plugin depends on
@@ -333,7 +332,7 @@ namespace dtEntity
          // check if dependency can be fulfilled
          if(!FactoryExists(dependency))
          {
-            LOG_ERROR("Cannot start plugin " << tname << ": It depends on plugin "
+            LOG_ERROR("Cannot start plugin " << dtEntity::GetStringFromSID(ctype) << ": It depends on plugin "
              << GetStringFromSID(dependency) << " which was not found.");
             return false;
          }
@@ -354,13 +353,13 @@ namespace dtEntity
       {
          // call, although no properties were set yet
          es->Finished();
-         LOG_DEBUG("Created entity system of type " + GetStringFromSID(ctype));
+         LOG_DEBUG("Created entity system of type " << GetStringFromSID(ctype));
          em.AddEntitySystem(*es);
          return true;
       }
       else
       {
-         LOG_ERROR("Error starting entity system " + tname);
+         LOG_ERROR("Error starting entity system " << dtEntity::GetStringFromSID(ctype));
          return false;
       }
    }
@@ -376,7 +375,7 @@ namespace dtEntity
             dtEntity::EntitySystem* es = em.GetEntitySystem(ctype);
             if(es == NULL || !em.RemoveEntitySystem(*es))
             {
-               LOG_ERROR("Could not cleanly remove entity system " + GetStringFromSID(ctype));
+               LOG_ERROR("Could not cleanly remove entity system " << GetStringFromSID(ctype));
             }
          }
       }

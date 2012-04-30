@@ -474,7 +474,7 @@ namespace dtEntity
 
       virtual const std::string StringValue() const;
       virtual StringId StringIdValue() const;
-      virtual void SetStringId(dtEntity::StringId v) { Set(GetStringFromSID(v)); }
+      //virtual void SetStringId(dtEntity::StringId v) { Set(GetStringFromSID(v)); }
 
       const std::string Get() const { return mValue; }
 

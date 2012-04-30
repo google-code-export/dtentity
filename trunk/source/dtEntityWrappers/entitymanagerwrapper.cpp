@@ -161,27 +161,6 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMGetComponents(const v8::Arguments& args)
-   {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
-
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
-      dtEntity::EntityId id = args[0]->Uint32Value();
-      std::vector<dtEntity::Component*> comps;
-      em->GetComponents(id, comps);
-
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
-      std::vector<dtEntity::Component*>::iterator i;
-      for(i = comps.begin(); i != comps.end(); ++i)
-      {
-        std::string str = dtEntity::GetStringFromSID((*i)->GetType());
-        obj->Set(ToJSString(str), WrapComponent(ss, id, *i));
-      }
-      return scope.Close(obj);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMGetEntityIds(const v8::Arguments& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
@@ -517,7 +496,6 @@ namespace dtEntityWrappers
         proto->Set("addEntitySystem", FunctionTemplate::New(EMAddEntitySystem));
         proto->Set("addToScene", FunctionTemplate::New(EMAddToScene));
         proto->Set("createEntity", FunctionTemplate::New(EMCreateEntity));
-        proto->Set("getComponents", FunctionTemplate::New(EMGetComponents, External::New(ss)));
         proto->Set("getEntityIds", FunctionTemplate::New(EMGetEntityIds));
         proto->Set("emitMessage", FunctionTemplate::New(EMEmitMessage));
         proto->Set("enqueueMessage", FunctionTemplate::New(EMEnqueueMessage));

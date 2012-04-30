@@ -101,6 +101,10 @@ namespace dtEntityWrappers
 
       mLoadScriptFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnLoadScript);
       em.RegisterForMessages(ExecuteScriptMessage::TYPE, mLoadScriptFunctor, "ScriptSystem::OnLoadScript");
+
+      HandleScope scope;
+      mEntityIdString = Persistent<String>::New(String::New("__entityid__"));
+      mPropertyNamesString = Persistent<String>::New(String::New("__propertynames__"));
    }  
 
    ////////////////////////////////////////////////////////////////////////////
@@ -429,7 +433,7 @@ namespace dtEntityWrappers
          HandleScope scope;
          Handle<Object> o = Handle<Object>::Cast(v);
          assert(!o.IsEmpty());
-         Handle<Value> val = o->GetHiddenValue(String::New("__entityid__"));
+         Handle<Value> val = o->GetHiddenValue(scriptsys->GetEntityIdString());
          assert(!val.IsEmpty());
          dtEntity::EntityId id = val->Uint32Value();
          scriptsys->RemoveFromComponentMap(component->GetType(), id);         

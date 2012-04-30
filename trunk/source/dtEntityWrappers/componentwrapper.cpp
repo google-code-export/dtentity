@@ -185,7 +185,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Object> WrapComponent(ScriptSystem* scriptsys, dtEntity::EntityId eid, dtEntity::Component* v)
+   Handle<Object> WrapComponent(Handle<Object> wrappedes, ScriptSystem* scriptsys, dtEntity::EntityId eid, dtEntity::Component* v)
    {
 
       HandleScope handle_scope;
@@ -216,19 +216,41 @@ namespace dtEntityWrappers
 
       Local<Object> instance = s_componentTemplate->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
-      instance->SetHiddenValue(String::New("__entityid__"), Uint32::New(eid));
+      instance->SetHiddenValue(scriptsys->GetEntityIdString(), Uint32::New(eid));
 
-      const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
-
-      dtEntity::PropertyContainer::PropertyMap::const_iterator i;
-      for(i = props.begin(); i != props.end(); ++i)
+      // GetStringFromSID and conversion to v8::String is costly, create a 
+      // hidden value in entity system wrapper that stores
+      // strings and their string ids as name=>value pairs
+      Handle<Value> propnamesval = wrappedes->GetHiddenValue(scriptsys->GetPropertyNamesString());
+      if(propnamesval.IsEmpty())
       {
-         dtEntity::Property* prop = i->second;
+         Handle<Object> names = Object::New();
+         dtEntity::PropertyContainer::PropertyMap::const_iterator i;
+         const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
+         for(i = props.begin(); i != props.end(); ++i)
+         {
+            dtEntity::StringId sid = i->first;
+            std::string propname = dtEntity::GetStringFromSID(sid);
+            names->Set(String::New(propname.c_str()), Uint32::New(sid));
+         }
+         wrappedes->SetHiddenValue(scriptsys->GetPropertyNamesString(), names);
+         propnamesval = names;
+      }
+
+      Handle<Object> propnames = Handle<Object>::Cast(propnamesval);
+      Handle<Array> keys = propnames->GetPropertyNames();
+      for(unsigned int i = 0; i < keys->Length(); ++i)
+      {
+         Handle<String> str = keys->Get(i)->ToString();
+         dtEntity::StringId sid = (dtEntity::StringId)propnames->Get(str)->Uint32Value();
+         dtEntity::Property* prop = v->Get(sid);
+         if(prop == NULL)
+         {
+            LOG_ERROR("Could not find property in component: " << ToStdString(str));
+            continue;
+         }
          Handle<External> ext = v8::External::New(static_cast<void*>(prop));
-         std::string propname = dtEntity::GetStringFromSID(i->first);
-         instance->SetAccessor(ToJSString(propname),
-                         COPropertyGetter, COPropertySetter,
-                         ext);
+         instance->SetAccessor(str, COPropertyGetter, COPropertySetter, ext);
       }
       
       // store wrapped component to script system

@@ -189,7 +189,7 @@ namespace dtEntity
    {
       if(HasEntitySystem(s.GetComponentType()))
       {
-         LOG_ERROR("Entity system already added! Type: " + GetStringFromSID(s.GetComponentType()));
+         LOG_ERROR("Entity system already added! Type: " << GetStringFromSID(s.GetComponentType()));
          return false;
       }
       mEntitySystemStore[s.GetComponentType()] = &s;

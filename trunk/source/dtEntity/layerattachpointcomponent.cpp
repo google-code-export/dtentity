@@ -135,7 +135,7 @@ namespace dtEntity
    void LayerAttachPointComponent::SetNode(osg::Node* node)
    {
       assert(mEntityManager);
-      node->setName("Layer Attach Point: "+ GetStringFromSID(GetName()));
+      node->setName("Layer Attach Point");
       GroupComponent::SetNode(node);      
 
       LayerSystem* ls;

@@ -88,7 +88,7 @@ namespace dtEntityWrappers
       bool found = es->GetEntityManager().GetComponent(eid, es->GetComponentType(), comp, args[1]->BooleanValue());
       if(found)
       {
-         return WrapComponent(ss, eid, comp);
+         return WrapComponent(args.Holder(), ss, eid, comp);
       }
       else
       {
@@ -115,7 +115,7 @@ namespace dtEntityWrappers
          dtEntity::Component* comp;
          if(es->GetComponent(eid, comp))
          {
-            arr->Set(Integer::New(count++), WrapComponent(ss, eid, comp));
+            arr->Set(Integer::New(count++), WrapComponent(args.Holder(), ss, eid, comp));
          }
       }
       return scope.Close(arr);
@@ -162,7 +162,7 @@ namespace dtEntityWrappers
       dtEntity::EntityId eid = args[0]->Uint32Value();
       if(es->CreateComponent(eid, component))
       {
-         return WrapComponent(ss, eid, component);
+         return WrapComponent(args.Holder(), ss, eid, component);
       }
       else
       {
