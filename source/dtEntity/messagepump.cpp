@@ -61,7 +61,7 @@ namespace dtEntity
 
          if(it->second.mFunctor == ftr)
          {
-           LOG_ERROR("Trying to register a functor twice for same message: " + GetStringFromSID(msgtype));
+           LOG_ERROR("Trying to register a functor twice for same message: " << GetStringFromSID(msgtype));
          }
 
          if(otherpriority <= priority)

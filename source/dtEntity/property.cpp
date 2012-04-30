@@ -930,7 +930,7 @@ namespace dtEntity
          return true;
       
       case DataType::STRINGID:
-      
+         LOG_ERROR("Setting String Property from StringID property. Costly!");
          this->Set(GetStringFromSID(other.StringIdValue()));
          return true;
       default: return false;
@@ -1020,6 +1020,8 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    const std::string StringIdProperty::StringValue() const 
    { 
+      LOG_ERROR("Converting StringId Property to String. Costly!");
+      assert(false && "Don't convert SID to String!");
       return GetStringFromSID(Get()); 
    }
    
