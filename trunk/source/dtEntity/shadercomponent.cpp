@@ -97,9 +97,9 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId ShaderComponent::TYPE(SID("Shader"));
-   const StringId ShaderComponent::MaterialNamePrefixId(SID("MaterialNamePrefix"));
-   const StringId ShaderComponent::TopLevelMaterialNameId(SID("TopLevelMaterialName"));
+   const StringId ShaderComponent::TYPE(dtEntity::SID("Shader"));
+   const StringId ShaderComponent::MaterialNamePrefixId(dtEntity::SID("MaterialNamePrefix"));
+   const StringId ShaderComponent::TopLevelMaterialNameId(dtEntity::SID("TopLevelMaterialName"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShaderComponent::ShaderComponent()
@@ -127,7 +127,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId ShaderSystem::TYPE(SID("Shader"));
+   const StringId ShaderSystem::TYPE(dtEntity::SID("Shader"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShaderSystem::ShaderSystem(EntityManager& em)

@@ -63,7 +63,6 @@ SET(TARGET_COMMON_LIBRARIES
 )
 
 #PROJECT_BINARY_DIR for generated config header file
-MESSAGE ("osg dir: $ENV{OSG_DIR}")
 INCLUDE_DIRECTORIES(include ${OSG_INCLUDE_DIR} $ENV{OSG_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
 #to allow usage of hash_map without warnings:
@@ -82,6 +81,12 @@ if(APPLE)
 endif()
 
 OPTION(BUILD_TESTS "Build unit tests" OFF)
+
+OPTION(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR "Use a preprocessor to replace calls to dtEntity::SID with result of that operation (EXPERIMENTAL)" OFF)
+IF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
+  add_executable(HashSids source/hash_sids/hash_sids.cpp source/dtEntity/crc32.cpp)
+  SET(DTENTITY_SID_DB_PATH ${CMAKE_CURRENT_BINARY_DIR}/sids.txt)
+ENDIF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
 
 ADD_SUBDIRECTORY(ext)
 ADD_SUBDIRECTORY(source)

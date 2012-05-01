@@ -23,7 +23,6 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
-SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/buffer.h
@@ -48,25 +47,27 @@ SET(LIB_PUBLIC_HEADERS
 )
 
 SET(LIB_SOURCES
-	${SOURCE_PATH}/buffer.cpp
-	${SOURCE_PATH}/bytestorage.cpp
-	${SOURCE_PATH}/componentwrapper.cpp
-	${SOURCE_PATH}/debugdrawmanagerwrapper.cpp
-	${SOURCE_PATH}/entitymanagerwrapper.cpp
-	${SOURCE_PATH}/entitysystemjs.cpp
-	${SOURCE_PATH}/entitysystemwrapper.cpp
-	${SOURCE_PATH}/file.cpp
-	${SOURCE_PATH}/globalfunctions.cpp
-	${SOURCE_PATH}/inputhandlerwrapper.cpp	
-    ${SOURCE_PATH}/loggerwrapper.cpp
-	${SOURCE_PATH}/mapsystemwrapper.cpp
-	${SOURCE_PATH}/messages.cpp
-	${SOURCE_PATH}/propertyconverter.cpp
-	${SOURCE_PATH}/screenwrapper.cpp
-	${SOURCE_PATH}/scriptcomponent.cpp	
-	${SOURCE_PATH}/v8helpers.cpp
-	${SOURCE_PATH}/wrappers.cpp
+	buffer.cpp
+	bytestorage.cpp
+	componentwrapper.cpp
+	debugdrawmanagerwrapper.cpp
+	entitymanagerwrapper.cpp
+	entitysystemjs.cpp
+	entitysystemwrapper.cpp
+	file.cpp
+	globalfunctions.cpp
+	inputhandlerwrapper.cpp	
+    loggerwrapper.cpp
+	mapsystemwrapper.cpp
+	messages.cpp
+	propertyconverter.cpp
+	screenwrapper.cpp
+	scriptcomponent.cpp	
+	v8helpers.cpp
+	wrappers.cpp
 )
+
+
 
 SET(WRAPLIBRARIES dtEntity
                   ${V8_LIBRARIES}
@@ -78,33 +79,35 @@ IF(BUILD_CEGUI)
 	LIST(APPEND WRAPLIBRARIES ${CEGUI_LIBRARIES})
 	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/guiwidgetwrapper.h
 								   ${HEADER_PATH}/guiwrapper.h)
-	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/guiwidgetwrapper.cpp
-								   ${SOURCE_PATH}/guiwrapper.cpp)
+	LIST(APPEND LIB_SOURCES		   guiwidgetwrapper.cpp
+								   guiwrapper.cpp)
 	
 ENDIF(BUILD_CEGUI)
 
 IF(BUILD_CAL3D)
 	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationsystemwrapper.h)
-	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationsystemwrapper.cpp)
+	LIST(APPEND LIB_SOURCES		   animationsystemwrapper.cpp)
 	LIST(APPEND WRAPLIBRARIES      ${DTANIM_LIBRARIES}
 	)
 ENDIF(BUILD_CAL3D)
 
 IF(BUILD_OPENAL)
     LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/soundsystemwrapper.h)
-	LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/soundsystemwrapper.cpp)
+	LIST(APPEND LIB_SOURCES		   soundsystemwrapper.cpp)
 ENDIF(BUILD_OPENAL)
 
 IF (MSVC)
-  INCLUDE_DIRECTORIES( 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/win-iconv/
-   )
-   LIST(APPEND LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/win-iconv/win_iconv.c)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../ext/win-iconv/)
+   LIST(APPEND LIB_SOURCES ../../ext/win-iconv/win_iconv.c)
 ENDIF (MSVC)
+
+
+REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_SOURCES})
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
     ${LIB_PUBLIC_HEADERS}
-    ${LIB_SOURCES}
+	${LIB_SOURCES}
+    ${LIB_SOURCES_OUT}
 )
 
 
@@ -112,6 +115,8 @@ ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
 IF (MSVC)
   LIST(APPEND WRAPLIBRARIES ws2_32.lib winmm.lib)
 ENDIF (MSVC)
+
+
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME} ${WRAPLIBRARIES})
 

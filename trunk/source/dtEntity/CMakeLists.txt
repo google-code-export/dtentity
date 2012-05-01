@@ -133,46 +133,46 @@ SET(LIB_PUBLIC_HEADERS
 SET(LIB_SOURCES
 
 
-  ${SOURCE_PATH}/applicationcomponent.cpp
-  ${SOURCE_PATH}/cameracomponent.cpp
-  ${SOURCE_PATH}/commandmessages.cpp
-  ${SOURCE_PATH}/componentfactories.cpp
-  ${SOURCE_PATH}/componentpluginmanager.cpp
-  ${SOURCE_PATH}/crc32.cpp
-  ${SOURCE_PATH}/debugdrawmanager.cpp
-  ${SOURCE_PATH}/entity.cpp
-  ${SOURCE_PATH}/entitymanager.cpp
-  ${SOURCE_PATH}/groupcomponent.cpp
-  ${SOURCE_PATH}/initosgviewer.cpp
-  ${SOURCE_PATH}/inputhandler.cpp
-  ${SOURCE_PATH}/layerattachpointcomponent.cpp
-  ${SOURCE_PATH}/layercomponent.cpp
-  ${SOURCE_PATH}/lightcomponent.cpp
-  ${SOURCE_PATH}/logmanager.cpp
-  ${SOURCE_PATH}/mapcomponent.cpp
-  ${SOURCE_PATH}/matrixtransformcomponent.cpp
-  ${SOURCE_PATH}/messagefactory.cpp
-  ${SOURCE_PATH}/messagepump.cpp
-  ${SOURCE_PATH}/nodecomponent.cpp
-  ${SOURCE_PATH}/osganimationcomponent.cpp
-  ${SOURCE_PATH}/pickshapecomponent.cpp
-  ${SOURCE_PATH}/positionattitudetransformcomponent.cpp
-  ${SOURCE_PATH}/profile.cpp
-  ${SOURCE_PATH}/property.cpp
-  ${SOURCE_PATH}/propertycontainer.cpp
-  ${SOURCE_PATH}/rapidxmlmapencoder.cpp
-  ${SOURCE_PATH}/scriptaccessor.cpp
-  ${SOURCE_PATH}/shadercomponent.cpp
-  ${SOURCE_PATH}/shadowcomponent.cpp
-  ${SOURCE_PATH}/spawner.cpp
-  ${SOURCE_PATH}/staticmeshcomponent.cpp
-  ${SOURCE_PATH}/skyboxcomponent.cpp
-  ${SOURCE_PATH}/stringid.cpp
-  ${SOURCE_PATH}/systemmessages.cpp
-  ${SOURCE_PATH}/textlabelcomponent.cpp
-  ${SOURCE_PATH}/texturelabelcomponent.cpp
-  ${SOURCE_PATH}/transformcomponent.cpp
-  ${SOURCE_PATH}/windowmanager.cpp
+  applicationcomponent.cpp
+  cameracomponent.cpp
+  commandmessages.cpp
+  componentfactories.cpp
+  componentpluginmanager.cpp
+  crc32.cpp
+  debugdrawmanager.cpp
+  entity.cpp
+  entitymanager.cpp
+  groupcomponent.cpp
+  initosgviewer.cpp
+  inputhandler.cpp
+  layerattachpointcomponent.cpp
+  layercomponent.cpp
+  lightcomponent.cpp
+  logmanager.cpp
+  mapcomponent.cpp
+  matrixtransformcomponent.cpp
+  messagefactory.cpp
+  messagepump.cpp
+  nodecomponent.cpp
+  osganimationcomponent.cpp
+  pickshapecomponent.cpp
+  positionattitudetransformcomponent.cpp
+  profile.cpp
+  property.cpp
+  propertycontainer.cpp
+  rapidxmlmapencoder.cpp
+  scriptaccessor.cpp
+  shadercomponent.cpp
+  shadowcomponent.cpp
+  spawner.cpp
+  staticmeshcomponent.cpp
+  skyboxcomponent.cpp
+  stringid.cpp
+  systemmessages.cpp
+  textlabelcomponent.cpp
+  texturelabelcomponent.cpp
+  transformcomponent.cpp
+  windowmanager.cpp
 
 )
 
@@ -182,15 +182,15 @@ SET(DTENTITYLIBS      ${OPENSCENEGRAPH_LIBRARIES}
 
 IF(BUILD_WITH_DELTA3D)
   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/d3dwindowmanager.h )
-  LIST(APPEND LIB_SOURCES		    ${SOURCE_PATH}/d3dwindowmanager.cpp)
-  LIST(APPEND DTENTITYLIBS        ${DTABC_LIBRARIES} ${DTCORE_LIBRARIES} ${DTUTIL_LIBRARIES})
+  LIST(APPEND LIB_SOURCES		 d3dwindowmanager.cpp)
+  LIST(APPEND DTENTITYLIBS       ${DTABC_LIBRARIES} ${DTCORE_LIBRARIES} ${DTUTIL_LIBRARIES})
 ENDIF(BUILD_WITH_DELTA3D)
 
 IF(BUILD)
 
   LIST(APPEND DTENTITYLIBS       ${DTANIM_LIBRARIES} ${CAL3D_LIBRARIES})
   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationcomponent.h)
-  LIST(APPEND LIB_SOURCES		   ${SOURCE_PATH}/animationcomponent.cpp)
+  LIST(APPEND LIB_SOURCES		 animationcomponent.cpp)
 ENDIF(BUILD)
 
 IF(BUILD_OPENAL)
@@ -198,10 +198,10 @@ IF(BUILD_OPENAL)
    LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/listener.h)
    LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/sound.h)
    LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/soundcomponent.h)
-   LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/audiomanager.cpp)
-   LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/listener.cpp)
-   LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/sound.cpp)
-   LIST(APPEND LIB_SOURCES		${SOURCE_PATH}/soundcomponent.cpp)
+   LIST(APPEND LIB_SOURCES		audiomanager.cpp)
+   LIST(APPEND LIB_SOURCES		listener.cpp)
+   LIST(APPEND LIB_SOURCES		sound.cpp)
+   LIST(APPEND LIB_SOURCES		soundcomponent.cpp)
    LIST(APPEND DTENTITYLIBS   ${OPENAL_LIBRARIES})
    LIST(APPEND DTENTITYLIBS   ${OPENAL_UTIL_LIBRARIES})
 
@@ -221,15 +221,17 @@ IF(BUILD_CEGUI)
    LIST(APPEND LIB_SOURCES
       ${SOURCE_PATH}/gui.cpp
       ${SOURCE_PATH}/resourceprovider.cpp
-      ${SOURCE_PATH}/scriptmodule.cpp
+      scriptmodule.cpp
 )
 
 ENDIF(BUILD_CEGUI)
 
+REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_SOURCES})
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
+    ${LIB_SOURCES_OUT}
 )
 
 

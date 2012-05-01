@@ -179,13 +179,13 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SkyBoxComponent::TYPE(SID("SkyBox"));      
-   const StringId SkyBoxComponent::TextureUpId(SID("TextureUp"));   
-   const StringId SkyBoxComponent::TextureDownId(SID("TextureDown"));   
-   const StringId SkyBoxComponent::TextureNorthId(SID("TextureNorth"));   
-   const StringId SkyBoxComponent::TextureSouthId(SID("TextureSouth"));   
-   const StringId SkyBoxComponent::TextureEastId(SID("TextureEast"));   
-   const StringId SkyBoxComponent::TextureWestId(SID("TextureWest"));   
+   const StringId SkyBoxComponent::TYPE(dtEntity::SID("SkyBox"));      
+   const StringId SkyBoxComponent::TextureUpId(dtEntity::SID("TextureUp"));   
+   const StringId SkyBoxComponent::TextureDownId(dtEntity::SID("TextureDown"));   
+   const StringId SkyBoxComponent::TextureNorthId(dtEntity::SID("TextureNorth"));   
+   const StringId SkyBoxComponent::TextureSouthId(dtEntity::SID("TextureSouth"));   
+   const StringId SkyBoxComponent::TextureEastId(dtEntity::SID("TextureEast"));   
+   const StringId SkyBoxComponent::TextureWestId(dtEntity::SID("TextureWest"));   
 
    ////////////////////////////////////////////////////////////////////////////
    SkyBoxComponent::SkyBoxComponent()
@@ -309,7 +309,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId SkyBoxSystem::TYPE(SID("SkyBox"));
+   const StringId SkyBoxSystem::TYPE(dtEntity::SID("SkyBox"));
 
    ////////////////////////////////////////////////////////////////////////////
    SkyBoxSystem::SkyBoxSystem(EntityManager& em)

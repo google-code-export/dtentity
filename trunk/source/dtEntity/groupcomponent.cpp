@@ -27,8 +27,8 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId GroupComponent::TYPE(SID("Group"));   
-   const StringId GroupComponent::ChildrenId(SID("Children"));
+   const StringId GroupComponent::TYPE(dtEntity::SID("Group"));   
+   const StringId GroupComponent::ChildrenId(dtEntity::SID("Children"));
    
    ////////////////////////////////////////////////////////////////////////////
    GroupComponent::GroupComponent()

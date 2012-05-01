@@ -26,10 +26,10 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PositionAttitudeTransformComponent::TYPE(SID("PositionAttitudeTransform"));
-   const StringId PositionAttitudeTransformComponent::PositionId(SID("Position"));
-   const StringId PositionAttitudeTransformComponent::AttitudeId(SID("Attitude"));
-   const StringId PositionAttitudeTransformComponent::ScaleId(SID("Scale"));
+   const StringId PositionAttitudeTransformComponent::TYPE(dtEntity::SID("PositionAttitudeTransform"));
+   const StringId PositionAttitudeTransformComponent::PositionId(dtEntity::SID("Position"));
+   const StringId PositionAttitudeTransformComponent::AttitudeId(dtEntity::SID("Attitude"));
+   const StringId PositionAttitudeTransformComponent::ScaleId(dtEntity::SID("Scale"));
    
    ////////////////////////////////////////////////////////////////////////////
    PositionAttitudeTransformComponent::PositionAttitudeTransformComponent()

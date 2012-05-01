@@ -22,7 +22,7 @@ SET(TARGET_H
    rocketsystemwrapper.h
 )
 
-SET(TARGET_SRC contextwrapper.cpp
+SET(TARGET_SRC_IN contextwrapper.cpp
 	           elementdocumentwrapper.cpp
 	           elementwrapper.cpp
 	           eventinstancer.cpp
@@ -36,4 +36,6 @@ SET(TARGET_SRC contextwrapper.cpp
 			   rocketsystemwrapper.cpp	 
 )
 
+REPLACE_SIDS_IN_SOURCE(TARGET_SRC_OUT ${TARGET_SRC_IN})
+SET(TARGET_SRC ${TARGET_SRC_IN} ${TARGET_SRC_OUT})
 SETUP_PLUGIN(dtEntityRocket)

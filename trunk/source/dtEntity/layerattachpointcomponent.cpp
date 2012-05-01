@@ -37,8 +37,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
 
-   const StringId LayerAttachPointComponent::TYPE(SID("LayerAttachPoint"));
-   const StringId LayerAttachPointComponent::NameId(SID("Name"));
+   const StringId LayerAttachPointComponent::TYPE(dtEntity::SID("LayerAttachPoint"));
+   const StringId LayerAttachPointComponent::NameId(dtEntity::SID("Name"));
    
    ////////////////////////////////////////////////////////////////////////////
    LayerAttachPointComponent::LayerAttachPointComponent()    
@@ -156,9 +156,9 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId LayerAttachPointSystem::TYPE(SID("LayerAttachPoint"));
-   const StringId LayerAttachPointSystem::DefaultLayerId(SID("default"));
-   const StringId LayerAttachPointSystem::RootId(SID("root"));
+   const StringId LayerAttachPointSystem::TYPE(dtEntity::SID("LayerAttachPoint"));
+   const StringId LayerAttachPointSystem::DefaultLayerId(dtEntity::SID("default"));
+   const StringId LayerAttachPointSystem::RootId(dtEntity::SID("root"));
 
 
    ////////////////////////////////////////////////////////////////////////////////

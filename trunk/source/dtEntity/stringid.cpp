@@ -23,6 +23,10 @@
 #include <dtEntity/crc32.h>
 #include <dtEntity/dtentity_config.h>
 #include <map>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 namespace dtEntity
 {
@@ -36,6 +40,34 @@ namespace dtEntity
       OpenThreads::ReadWriteMutex mMutex;
 
    public:
+
+      ////////////////////////////////////////////////////////////////////////////////
+      StringIdManager()
+      {
+         std::ifstream indbstr("sids.txt");
+         if(!indbstr.fail()) 
+         {
+           while(indbstr.good() )
+           {
+              std::string line;
+              std::getline(indbstr, line);
+              
+              if(line.empty())
+              {
+                 continue;
+              }
+
+              std::string::size_type offset = line.find_first_of(' ');           
+              std::string hashstr = line.substr(0, offset);
+              std::stringstream ss(hashstr);
+              unsigned int hash; 
+              ss >> hash;
+              std::string text = line.substr(offset + 1, line.length() - 1);
+              mReverseLookup[hash] = text;
+           }
+         }
+        
+      }
 
       ////////////////////////////////////////////////////////////////////////////////
       unsigned int Hash(const std::string& str)

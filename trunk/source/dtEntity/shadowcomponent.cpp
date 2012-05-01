@@ -39,28 +39,28 @@ namespace dtEntity
 {
   
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId ShadowComponent::TYPE(SID("Shadow"));   
-   const StringId ShadowComponent::ShadowTechniqueId(SID("ShadowTechnique"));    
-   const StringId ShadowComponent::MinLightMarginId(SID("MinLightMargin"));    
-   const StringId ShadowComponent::MaxFarPlaneId(SID("MaxFarPlane"));    
-   const StringId ShadowComponent::TexSizeId(SID("TexSize"));    
-   const StringId ShadowComponent::BaseTexUnitId(SID("BaseTexUnit"));    
-   const StringId ShadowComponent::ShadowTexUnitId(SID("ShadowTexUnit"));
-   const StringId ShadowComponent::ShadowTexCoordIndexId(SID("ShadowTexCoordIndex"));   
-   const StringId ShadowComponent::BaseTexCoordIndexId(SID("BaseTexCoordIndex"));   
-   const StringId ShadowComponent::MapCountId(SID("MapCount"));
-   const StringId ShadowComponent::MapResId(SID("MapRes"));
-   const StringId ShadowComponent::DebugColorOnId(SID("DebugColorOn"));
-   const StringId ShadowComponent::MinNearSplitId(SID("MinNearSplit"));
-   const StringId ShadowComponent::MaxFarDistId(SID("MaxFarDist"));
-   const StringId ShadowComponent::MoveVCamFactorId(SID("MoveVCamFactor"));
-   const StringId ShadowComponent::PolyOffsetFactorId(SID("PolyOffsetFactor"));
-   const StringId ShadowComponent::PolyOffsetUnitId(SID("PolyOffsetUnit"));
-   const StringId ShadowComponent::EnabledId(SID("Enabled"));
-   const StringId ShadowComponent::ShadowTypeId(SID("ShadowType"));
-   const StringId ShadowComponent::LISPId(SID("LISP"));
-   const StringId ShadowComponent::PSSMId(SID("PSSM"));
-   const StringId ShadowComponent::__SELECTED__Id(SID("__SELECTED__"));
+   const StringId ShadowComponent::TYPE(dtEntity::SID("Shadow"));   
+   const StringId ShadowComponent::ShadowTechniqueId(dtEntity::SID("ShadowTechnique"));    
+   const StringId ShadowComponent::MinLightMarginId(dtEntity::SID("MinLightMargin"));    
+   const StringId ShadowComponent::MaxFarPlaneId(dtEntity::SID("MaxFarPlane"));    
+   const StringId ShadowComponent::TexSizeId(dtEntity::SID("TexSize"));    
+   const StringId ShadowComponent::BaseTexUnitId(dtEntity::SID("BaseTexUnit"));    
+   const StringId ShadowComponent::ShadowTexUnitId(dtEntity::SID("ShadowTexUnit"));
+   const StringId ShadowComponent::ShadowTexCoordIndexId(dtEntity::SID("ShadowTexCoordIndex"));   
+   const StringId ShadowComponent::BaseTexCoordIndexId(dtEntity::SID("BaseTexCoordIndex"));   
+   const StringId ShadowComponent::MapCountId(dtEntity::SID("MapCount"));
+   const StringId ShadowComponent::MapResId(dtEntity::SID("MapRes"));
+   const StringId ShadowComponent::DebugColorOnId(dtEntity::SID("DebugColorOn"));
+   const StringId ShadowComponent::MinNearSplitId(dtEntity::SID("MinNearSplit"));
+   const StringId ShadowComponent::MaxFarDistId(dtEntity::SID("MaxFarDist"));
+   const StringId ShadowComponent::MoveVCamFactorId(dtEntity::SID("MoveVCamFactor"));
+   const StringId ShadowComponent::PolyOffsetFactorId(dtEntity::SID("PolyOffsetFactor"));
+   const StringId ShadowComponent::PolyOffsetUnitId(dtEntity::SID("PolyOffsetUnit"));
+   const StringId ShadowComponent::EnabledId(dtEntity::SID("Enabled"));
+   const StringId ShadowComponent::ShadowTypeId(dtEntity::SID("ShadowType"));
+   const StringId ShadowComponent::LISPId(dtEntity::SID("LISP"));
+   const StringId ShadowComponent::PSSMId(dtEntity::SID("PSSM"));
+   const StringId ShadowComponent::__SELECTED__Id(dtEntity::SID("__SELECTED__"));
 
 
 
@@ -213,8 +213,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId ShadowSystem::TYPE(SID("Shadow"));
-   const StringId ShadowSystem::EnabledId(SID("Enabled"));
+   const StringId ShadowSystem::TYPE(dtEntity::SID("Shadow"));
+   const StringId ShadowSystem::EnabledId(dtEntity::SID("Enabled"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShadowSystem::ShadowSystem(EntityManager& em)

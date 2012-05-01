@@ -38,36 +38,36 @@ namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId CameraComponent::TYPE(SID("Camera"));
+   const StringId CameraComponent::TYPE(dtEntity::SID("Camera"));
 
-   const StringId CameraComponent::ContextIdId(SID("ContextId"));
-   const StringId CameraComponent::LayerAttachPointId(SID("LayerAttachPoint"));
+   const StringId CameraComponent::ContextIdId(dtEntity::SID("ContextId"));
+   const StringId CameraComponent::LayerAttachPointId(dtEntity::SID("LayerAttachPoint"));
 
-   const StringId CameraComponent::CullingModeId(SID("CullingMode"));
-   const StringId CameraComponent::NoAutoNearFarCullingId(SID("NoAutoNearFarCulling"));
-   const StringId CameraComponent::BoundingVolumeNearFarCullingId(SID("BoundingVolumeNearFarCulling"));
-   const StringId CameraComponent::PrimitiveNearFarCullingId(SID("PrimitiveNearFarCulling"));
-   const StringId CameraComponent::FieldOfViewId(SID("FieldOfView"));
-   const StringId CameraComponent::AspectRatioId(SID("AspectRatio"));
-   const StringId CameraComponent::NearClipId(SID("NearClip"));
-   const StringId CameraComponent::FarClipId(SID("FarClip"));
-   const StringId CameraComponent::ClearColorId(SID("ClearColor"));
-   const StringId CameraComponent::LODScaleId(SID("LODScale"));
-   const StringId CameraComponent::PositionId(SID("Position"));
-   const StringId CameraComponent::UpId(SID("Up"));
-   const StringId CameraComponent::EyeDirectionId(SID("EyeDirection"));
-   const StringId CameraComponent::CullMaskId(SID("CullMask"));
+   const StringId CameraComponent::CullingModeId(dtEntity::SID("CullingMode"));
+   const StringId CameraComponent::NoAutoNearFarCullingId(dtEntity::SID("NoAutoNearFarCulling"));
+   const StringId CameraComponent::BoundingVolumeNearFarCullingId(dtEntity::SID("BoundingVolumeNearFarCulling"));
+   const StringId CameraComponent::PrimitiveNearFarCullingId(dtEntity::SID("PrimitiveNearFarCulling"));
+   const StringId CameraComponent::FieldOfViewId(dtEntity::SID("FieldOfView"));
+   const StringId CameraComponent::AspectRatioId(dtEntity::SID("AspectRatio"));
+   const StringId CameraComponent::NearClipId(dtEntity::SID("NearClip"));
+   const StringId CameraComponent::FarClipId(dtEntity::SID("FarClip"));
+   const StringId CameraComponent::ClearColorId(dtEntity::SID("ClearColor"));
+   const StringId CameraComponent::LODScaleId(dtEntity::SID("LODScale"));
+   const StringId CameraComponent::PositionId(dtEntity::SID("Position"));
+   const StringId CameraComponent::UpId(dtEntity::SID("Up"));
+   const StringId CameraComponent::EyeDirectionId(dtEntity::SID("EyeDirection"));
+   const StringId CameraComponent::CullMaskId(dtEntity::SID("CullMask"));
 
-   const StringId CameraComponent::ProjectionModeId(SID("ProjectionMode"));
-   const StringId CameraComponent::ModePerspectiveId(SID("ModePerspective"));
-   const StringId CameraComponent::ModeOrthoId(SID("ModeOrtho"));
+   const StringId CameraComponent::ProjectionModeId(dtEntity::SID("ProjectionMode"));
+   const StringId CameraComponent::ModePerspectiveId(dtEntity::SID("ModePerspective"));
+   const StringId CameraComponent::ModeOrthoId(dtEntity::SID("ModeOrtho"));
 
-   const StringId CameraComponent::OrthoLeftId(SID("OrthoLeft"));
-   const StringId CameraComponent::OrthoRightId(SID("OrthoRight"));
-   const StringId CameraComponent::OrthoBottomId(SID("OrthoBottom"));
-   const StringId CameraComponent::OrthoTopId(SID("OrthoTop"));
-   const StringId CameraComponent::OrthoZNearId(SID("OrthoZNear"));
-   const StringId CameraComponent::OrthoZFarId(SID("OrthoZFar"));
+   const StringId CameraComponent::OrthoLeftId(dtEntity::SID("OrthoLeft"));
+   const StringId CameraComponent::OrthoRightId(dtEntity::SID("OrthoRight"));
+   const StringId CameraComponent::OrthoBottomId(dtEntity::SID("OrthoBottom"));
+   const StringId CameraComponent::OrthoTopId(dtEntity::SID("OrthoTop"));
+   const StringId CameraComponent::OrthoZNearId(dtEntity::SID("OrthoZNear"));
+   const StringId CameraComponent::OrthoZFarId(dtEntity::SID("OrthoZFar"));
 
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
@@ -543,7 +543,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId CameraSystem::TYPE(SID("Camera"));
+   const StringId CameraSystem::TYPE(dtEntity::SID("Camera"));
 
    ////////////////////////////////////////////////////////////////////////////
    CameraSystem::CameraSystem(EntityManager& em)
