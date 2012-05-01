@@ -35,13 +35,13 @@ namespace dtEntity
 {
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SoundComponent::TYPE(SID("Sound"));
-   const StringId SoundComponent::SoundPathId(SID("SoundPath"));
-   const StringId SoundComponent::AutoPlayId(SID("AutoPlay"));
-   const StringId SoundComponent::GainId(SID("Gain"));
-   const StringId SoundComponent::PitchId(SID("Pitch"));
-   const StringId SoundComponent::RollOffId(SID("RollOff"));
-   const StringId SoundComponent::LoopingId(SID("Looping"));
+   const StringId SoundComponent::TYPE(dtEntity::SID("Sound"));
+   const StringId SoundComponent::SoundPathId(dtEntity::SID("SoundPath"));
+   const StringId SoundComponent::AutoPlayId(dtEntity::SID("AutoPlay"));
+   const StringId SoundComponent::GainId(dtEntity::SID("Gain"));
+   const StringId SoundComponent::PitchId(dtEntity::SID("Pitch"));
+   const StringId SoundComponent::RollOffId(dtEntity::SID("RollOff"));
+   const StringId SoundComponent::LoopingId(dtEntity::SID("Looping"));
    
    
    ////////////////////////////////////////////////////////////////////////////////
@@ -167,9 +167,9 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SoundSystem::TYPE(SID("Sound"));
-   const StringId SoundSystem::ListenerGainId(SID("ListenerGain"));
-   const StringId SoundSystem::ListenerLinkToCameraId(SID("ListenerLinkToCamera"));
+   const StringId SoundSystem::TYPE(dtEntity::SID("Sound"));
+   const StringId SoundSystem::ListenerGainId(dtEntity::SID("ListenerGain"));
+   const StringId SoundSystem::ListenerLinkToCameraId(dtEntity::SID("ListenerLinkToCamera"));
 
    ////////////////////////////////////////////////////////////////////////////////
    SoundSystem::SoundSystem(EntityManager& em)

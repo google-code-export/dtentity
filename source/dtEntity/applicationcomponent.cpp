@@ -113,9 +113,9 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId ApplicationSystem::TYPE(SID("Application"));
-   const StringId ApplicationSystem::TimeScaleId(SID("TimeScale"));
-   const StringId ApplicationSystem::CmdLineArgsId(SID("CmdLineArgs"));
+   const StringId ApplicationSystem::TYPE(dtEntity::SID("Application"));
+   const StringId ApplicationSystem::TimeScaleId(dtEntity::SID("TimeScale"));
+   const StringId ApplicationSystem::CmdLineArgsId(dtEntity::SID("CmdLineArgs"));
  
    ////////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::ApplicationSystem(EntityManager& em)

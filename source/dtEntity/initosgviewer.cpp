@@ -339,7 +339,7 @@ namespace dtEntity
       em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
 
       unsigned int contextId;
-      bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", SID("root"), *traits, contextId);
+      bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", dtEntity::SID("root"), *traits, contextId);
       if(!success)
       {
          LOG_ERROR("Could not open window, exiting!");

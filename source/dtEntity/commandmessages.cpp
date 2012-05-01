@@ -45,8 +45,8 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType DeleteEntityMessage::TYPE(SID("DeleteEntityMessage"));
-   const StringId DeleteEntityMessage::UniqueIdId(SID("UniqueId"));
+   const MessageType DeleteEntityMessage::TYPE(dtEntity::SID("DeleteEntityMessage"));
+   const StringId DeleteEntityMessage::UniqueIdId(dtEntity::SID("UniqueId"));
 
    DeleteEntityMessage::DeleteEntityMessage()
       : Message(TYPE)
@@ -55,8 +55,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType EnableDebugDrawingMessage::TYPE(SID("EnableDebugDrawingMessage"));
-   const StringId EnableDebugDrawingMessage::EnableId(SID("Enable"));
+   const MessageType EnableDebugDrawingMessage::TYPE(dtEntity::SID("EnableDebugDrawingMessage"));
+   const StringId EnableDebugDrawingMessage::EnableId(dtEntity::SID("Enable"));
    
    EnableDebugDrawingMessage::EnableDebugDrawingMessage() 
       : Message(TYPE)
@@ -65,11 +65,11 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType MoveCameraToEntityMessage::TYPE(SID("MoveCameraToEntityMessage"));
-   const StringId MoveCameraToEntityMessage::AboutEntityId(SID("AboutEntity"));
-   const StringId MoveCameraToEntityMessage::KeepCameraDirectionId(SID("KeepCameraDirection"));
-   const StringId MoveCameraToEntityMessage::DistanceId(SID("Distance"));
-   const StringId MoveCameraToEntityMessage::ContextIdId(SID("ContextId"));
+   const MessageType MoveCameraToEntityMessage::TYPE(dtEntity::SID("MoveCameraToEntityMessage"));
+   const StringId MoveCameraToEntityMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId MoveCameraToEntityMessage::KeepCameraDirectionId(dtEntity::SID("KeepCameraDirection"));
+   const StringId MoveCameraToEntityMessage::DistanceId(dtEntity::SID("Distance"));
+   const StringId MoveCameraToEntityMessage::ContextIdId(dtEntity::SID("ContextId"));
 
    MoveCameraToEntityMessage::MoveCameraToEntityMessage()
       : Message(TYPE)
@@ -84,11 +84,11 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType MoveCameraToPositionMessage::TYPE(SID("MoveCameraToPositionMessage"));
-   const StringId MoveCameraToPositionMessage::PositionId(SID("Position"));
-   const StringId MoveCameraToPositionMessage::LookAtId(SID("LookAt"));
-   const StringId MoveCameraToPositionMessage::UpId(SID("Up"));
-   const StringId MoveCameraToPositionMessage::ContextIdId(SID("ContextId"));
+   const MessageType MoveCameraToPositionMessage::TYPE(dtEntity::SID("MoveCameraToPositionMessage"));
+   const StringId MoveCameraToPositionMessage::PositionId(dtEntity::SID("Position"));
+   const StringId MoveCameraToPositionMessage::LookAtId(dtEntity::SID("LookAt"));
+   const StringId MoveCameraToPositionMessage::UpId(dtEntity::SID("Up"));
+   const StringId MoveCameraToPositionMessage::ContextIdId(dtEntity::SID("ContextId"));
 
    MoveCameraToPositionMessage::MoveCameraToPositionMessage()
       : Message(TYPE)
@@ -101,9 +101,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType PlayAnimationMessage::TYPE(SID("PlayAnimationMessage"));
-   const StringId PlayAnimationMessage::AboutEntityId(SID("AboutEntity"));
-   const StringId PlayAnimationMessage::AnimationNameId(SID("AnimationName"));
+   const MessageType PlayAnimationMessage::TYPE(dtEntity::SID("PlayAnimationMessage"));
+   const StringId PlayAnimationMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId PlayAnimationMessage::AnimationNameId(dtEntity::SID("AnimationName"));
 
    PlayAnimationMessage::PlayAnimationMessage()
       : Message(TYPE)
@@ -113,8 +113,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType ResetSystemMessage::TYPE(SID("ResetSystemMessage"));
-   const StringId ResetSystemMessage::SceneNameId(SID("SceneName"));
+   const MessageType ResetSystemMessage::TYPE(dtEntity::SID("ResetSystemMessage"));
+   const StringId ResetSystemMessage::SceneNameId(dtEntity::SID("SceneName"));
 
    ResetSystemMessage::ResetSystemMessage()
       : Message(TYPE)
@@ -123,8 +123,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType RequestEntityDeselectMessage::TYPE(SID("RequestEntityDeselectMessage"));
-   const StringId RequestEntityDeselectMessage::AboutEntityId(SID("AboutEntity"));
+   const MessageType RequestEntityDeselectMessage::TYPE(dtEntity::SID("RequestEntityDeselectMessage"));
+   const StringId RequestEntityDeselectMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
 
    RequestEntityDeselectMessage::RequestEntityDeselectMessage()
       : Message(TYPE)
@@ -133,9 +133,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType RequestEntitySelectMessage::TYPE(SID("RequestEntitySelectMessage"));
-   const StringId RequestEntitySelectMessage::AboutEntityId(SID("AboutEntity"));
-   const StringId RequestEntitySelectMessage::UseMultiSelectId(SID("UseMultiSelect"));
+   const MessageType RequestEntitySelectMessage::TYPE(dtEntity::SID("RequestEntitySelectMessage"));
+   const StringId RequestEntitySelectMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId RequestEntitySelectMessage::UseMultiSelectId(dtEntity::SID("UseMultiSelect"));
 
    RequestEntitySelectMessage::RequestEntitySelectMessage()
       : Message(TYPE)
@@ -145,8 +145,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType RequestToggleEntitySelectionMessage::TYPE(SID("RequestToggleEntitySelectionMessage"));
-   const StringId RequestToggleEntitySelectionMessage::AboutEntityId(SID("AboutEntity"));
+   const MessageType RequestToggleEntitySelectionMessage::TYPE(dtEntity::SID("RequestToggleEntitySelectionMessage"));
+   const StringId RequestToggleEntitySelectionMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
 
    RequestToggleEntitySelectionMessage::RequestToggleEntitySelectionMessage()
       : Message(TYPE)
@@ -155,10 +155,10 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType SetComponentPropertiesMessage::TYPE(SID("SetComponentPropertiesMessage"));
-   const StringId SetComponentPropertiesMessage::ComponentTypeId(SID("ComponentType"));
-   const StringId SetComponentPropertiesMessage::EntityUniqueIdId(SID("EntityUniqueId"));
-   const StringId SetComponentPropertiesMessage::PropertiesId(SID("Properties"));
+   const MessageType SetComponentPropertiesMessage::TYPE(dtEntity::SID("SetComponentPropertiesMessage"));
+   const StringId SetComponentPropertiesMessage::ComponentTypeId(dtEntity::SID("ComponentType"));
+   const StringId SetComponentPropertiesMessage::EntityUniqueIdId(dtEntity::SID("EntityUniqueId"));
+   const StringId SetComponentPropertiesMessage::PropertiesId(dtEntity::SID("Properties"));
 
    SetComponentPropertiesMessage::SetComponentPropertiesMessage()
       : Message(TYPE)
@@ -183,9 +183,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType SetSystemPropertiesMessage::TYPE(SID("SetSystemPropertiesMessage"));
-   const StringId SetSystemPropertiesMessage::ComponentTypeId(SID("ComponentType"));
-   const StringId SetSystemPropertiesMessage::PropertiesId(SID("Properties"));
+   const MessageType SetSystemPropertiesMessage::TYPE(dtEntity::SID("SetSystemPropertiesMessage"));
+   const StringId SetSystemPropertiesMessage::ComponentTypeId(dtEntity::SID("ComponentType"));
+   const StringId SetSystemPropertiesMessage::PropertiesId(dtEntity::SID("Properties"));
 
    SetSystemPropertiesMessage::SetSystemPropertiesMessage()
       : Message(TYPE)
@@ -207,11 +207,11 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType SpawnEntityMessage::TYPE(SID("SpawnEntityMessage"));
-   const StringId SpawnEntityMessage::UniqueIdId(SID("UniqueId"));
-   const StringId SpawnEntityMessage::SpawnerNameId(SID("SpawnerName"));
-   const StringId SpawnEntityMessage::EntityNameId(SID("EntityName"));
-   const StringId SpawnEntityMessage::AddToSceneId(SID("AddToScene"));
+   const MessageType SpawnEntityMessage::TYPE(dtEntity::SID("SpawnEntityMessage"));
+   const StringId SpawnEntityMessage::UniqueIdId(dtEntity::SID("UniqueId"));
+   const StringId SpawnEntityMessage::SpawnerNameId(dtEntity::SID("SpawnerName"));
+   const StringId SpawnEntityMessage::EntityNameId(dtEntity::SID("EntityName"));
+   const StringId SpawnEntityMessage::AddToSceneId(dtEntity::SID("AddToScene"));
 
    SpawnEntityMessage::SpawnEntityMessage()
       : Message(TYPE)
@@ -223,8 +223,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType ToolActivatedMessage::TYPE(SID("ToolActivatedMessage"));
-   const StringId ToolActivatedMessage::ToolNameId(SID("ToolName"));
+   const MessageType ToolActivatedMessage::TYPE(dtEntity::SID("ToolActivatedMessage"));
+   const StringId ToolActivatedMessage::ToolNameId(dtEntity::SID("ToolName"));
 
    ToolActivatedMessage::ToolActivatedMessage()
       : Message(TYPE)
@@ -233,11 +233,11 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const MessageType ToolsUpdatedMessage::TYPE(SID("ToolsUpdatedMessage"));
-   const StringId ToolsUpdatedMessage::ToolsId(SID("Tools"));
-   const StringId ToolsUpdatedMessage::ToolNameId(SID("ToolName"));
-   const StringId ToolsUpdatedMessage::IconPathId(SID("IconPath"));
-   const StringId ToolsUpdatedMessage::ShortcutId(SID("Shortcut"));
+   const MessageType ToolsUpdatedMessage::TYPE(dtEntity::SID("ToolsUpdatedMessage"));
+   const StringId ToolsUpdatedMessage::ToolsId(dtEntity::SID("Tools"));
+   const StringId ToolsUpdatedMessage::ToolNameId(dtEntity::SID("ToolName"));
+   const StringId ToolsUpdatedMessage::IconPathId(dtEntity::SID("IconPath"));
+   const StringId ToolsUpdatedMessage::ShortcutId(dtEntity::SID("Shortcut"));
 
    ToolsUpdatedMessage::ToolsUpdatedMessage()
       : Message(TYPE)

@@ -43,10 +43,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
 
-   const StringId LayerComponent::TYPE(SID("Layer"));
-   const StringId LayerComponent::LayerId(SID("Layer"));
-   const StringId LayerComponent::AttachedComponentId(SID("AttachedComponent"));
-   const StringId LayerComponent::VisibleId(SID("Visible"));   
+   const StringId LayerComponent::TYPE(dtEntity::SID("Layer"));
+   const StringId LayerComponent::LayerId(dtEntity::SID("Layer"));
+   const StringId LayerComponent::AttachedComponentId(dtEntity::SID("AttachedComponent"));
+   const StringId LayerComponent::VisibleId(dtEntity::SID("Visible"));   
    
    ////////////////////////////////////////////////////////////////////////////
    LayerComponent::LayerComponent()
@@ -383,7 +383,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId LayerSystem::TYPE(SID("Layer"));
+   const StringId LayerSystem::TYPE(dtEntity::SID("Layer"));
 
 
    ////////////////////////////////////////////////////////////////////////////

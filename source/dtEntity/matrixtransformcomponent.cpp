@@ -25,8 +25,8 @@ namespace dtEntity
 {
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId MatrixTransformComponent::TYPE(SID("MatrixTransform"));
-   const StringId MatrixTransformComponent::MatrixId(SID("Matrix"));
+   const StringId MatrixTransformComponent::TYPE(dtEntity::SID("MatrixTransform"));
+   const StringId MatrixTransformComponent::MatrixId(dtEntity::SID("Matrix"));
    
    ////////////////////////////////////////////////////////////////////////////
    MatrixTransformComponent::MatrixTransformComponent()

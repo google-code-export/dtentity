@@ -232,8 +232,8 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId OSGAnimationComponent::TYPE(SID("OSGAnimation"));
-   const StringId OSGAnimationComponent::EnabledId(SID("Enabled"));
+   const StringId OSGAnimationComponent::TYPE(dtEntity::SID("OSGAnimation"));
+   const StringId OSGAnimationComponent::EnabledId(dtEntity::SID("Enabled"));
    
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationComponent::OSGAnimationComponent()
@@ -421,10 +421,10 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId OSGAnimationSystem::TYPE(SID("OSGAnimation"));
-   const StringId OSGAnimationSystem::VertexShaderId(SID("VertexShader"));
-   const StringId OSGAnimationSystem::FragmentShaderId(SID("FragmentShader"));
-   const StringId OSGAnimationSystem::EnabledId(SID("Enabled"));
+   const StringId OSGAnimationSystem::TYPE(dtEntity::SID("OSGAnimation"));
+   const StringId OSGAnimationSystem::VertexShaderId(dtEntity::SID("VertexShader"));
+   const StringId OSGAnimationSystem::FragmentShaderId(dtEntity::SID("FragmentShader"));
+   const StringId OSGAnimationSystem::EnabledId(dtEntity::SID("Enabled"));
    
    OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
      : DefaultEntitySystem<OSGAnimationComponent>(em)

@@ -160,16 +160,16 @@ namespace dtEntity
    static ModelCache s_modelCache;
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId StaticMeshComponent::TYPE(SID("StaticMesh"));
-   const StringId StaticMeshComponent::MeshId(SID("Mesh"));
-   const StringId StaticMeshComponent::OptimizeId(SID("Optimize"));
-   const StringId StaticMeshComponent::IsTerrainId(SID("IsTerrain"));
-   const StringId StaticMeshComponent::CacheHintId(SID("CacheHint"));
+   const StringId StaticMeshComponent::TYPE(dtEntity::SID("StaticMesh"));
+   const StringId StaticMeshComponent::MeshId(dtEntity::SID("Mesh"));
+   const StringId StaticMeshComponent::OptimizeId(dtEntity::SID("Optimize"));
+   const StringId StaticMeshComponent::IsTerrainId(dtEntity::SID("IsTerrain"));
+   const StringId StaticMeshComponent::CacheHintId(dtEntity::SID("CacheHint"));
 
-   const StringId StaticMeshComponent::CacheNoneId(SID("None"));
-   const StringId StaticMeshComponent::CacheAllId(SID("All"));
-   const StringId StaticMeshComponent::CacheNodesId(SID("Nodes"));
-   const StringId StaticMeshComponent::CacheHardwareMeshesId(SID("CacheHardwareMeshes"));
+   const StringId StaticMeshComponent::CacheNoneId(dtEntity::SID("None"));
+   const StringId StaticMeshComponent::CacheAllId(dtEntity::SID("All"));
+   const StringId StaticMeshComponent::CacheNodesId(dtEntity::SID("Nodes"));
+   const StringId StaticMeshComponent::CacheHardwareMeshesId(dtEntity::SID("CacheHardwareMeshes"));
 
    ////////////////////////////////////////////////////////////////////////////
    StaticMeshComponent::StaticMeshComponent()
@@ -299,7 +299,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId StaticMeshSystem::TYPE(SID("StaticMesh"));
+   const StringId StaticMeshSystem::TYPE(dtEntity::SID("StaticMesh"));
 
    ////////////////////////////////////////////////////////////////////////////
    StaticMeshSystem::StaticMeshSystem(EntityManager& em)

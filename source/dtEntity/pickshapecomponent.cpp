@@ -32,10 +32,10 @@ namespace dtEntity
 {
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PickShapeComponent::TYPE(SID("PickShape"));
-   const StringId PickShapeComponent::MinBoundsId(SID("MinBounds"));
-   const StringId PickShapeComponent::MaxBoundsId(SID("MaxBounds"));
-   const StringId PickShapeComponent::VisibleId(SID("Visible"));
+   const StringId PickShapeComponent::TYPE(dtEntity::SID("PickShape"));
+   const StringId PickShapeComponent::MinBoundsId(dtEntity::SID("MinBounds"));
+   const StringId PickShapeComponent::MaxBoundsId(dtEntity::SID("MaxBounds"));
+   const StringId PickShapeComponent::VisibleId(dtEntity::SID("Visible"));
    
    ////////////////////////////////////////////////////////////////////////////
    PickShapeComponent::PickShapeComponent()
@@ -132,7 +132,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PickShapeSystem::TYPE(SID("PickShape"));
+   const StringId PickShapeSystem::TYPE(dtEntity::SID("PickShape"));
 
    ////////////////////////////////////////////////////////////////////////////
    PickShapeSystem::PickShapeSystem(EntityManager& em)

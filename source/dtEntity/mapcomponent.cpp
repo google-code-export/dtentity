@@ -43,13 +43,13 @@
 
 namespace dtEntity
 {
-   const StringId MapComponent::TYPE(SID("Map"));   
-   const StringId MapComponent::EntityNameId(SID("EntityName"));  
-   const StringId MapComponent::MapNameId(SID("MapName"));  
-   const StringId MapComponent::SpawnerNameId(SID("SpawnerName"));  
-   const StringId MapComponent::UniqueIdId(SID("UniqueId"));  
-   const StringId MapComponent::SaveWithMapId(SID("SaveWithMap"));
-   const StringId MapComponent::VisibleInEntityListId(SID("VisibleInEntityList"));
+   const StringId MapComponent::TYPE(dtEntity::SID("Map"));   
+   const StringId MapComponent::EntityNameId(dtEntity::SID("EntityName"));  
+   const StringId MapComponent::MapNameId(dtEntity::SID("MapName"));  
+   const StringId MapComponent::SpawnerNameId(dtEntity::SID("SpawnerName"));  
+   const StringId MapComponent::UniqueIdId(dtEntity::SID("UniqueId"));  
+   const StringId MapComponent::SaveWithMapId(dtEntity::SID("SaveWithMap"));
+   const StringId MapComponent::VisibleInEntityListId(dtEntity::SID("VisibleInEntityList"));
    
    
    ////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId MapSystem::TYPE(SID("Map"));
+   const StringId MapSystem::TYPE(dtEntity::SID("Map"));
 
    ////////////////////////////////////////////////////////////////////////////
    MapSystem::MapSystem(EntityManager& em)

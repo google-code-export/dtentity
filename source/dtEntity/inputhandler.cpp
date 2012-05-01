@@ -44,14 +44,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId InputHandler::MouseXId(SID("MouseX"));  
-   const StringId InputHandler::MouseYId(SID("MouseY"));  
-   const StringId InputHandler::MouseXRawId(SID("MouseXRaw"));
-   const StringId InputHandler::MouseYRawId(SID("MouseYRaw"));
-   const StringId InputHandler::MouseDeltaXId(SID("MouseDeltaX"));
-   const StringId InputHandler::MouseDeltaYId(SID("MouseDeltaY"));
-   const StringId InputHandler::MouseDeltaXRawId(SID("MouseDeltaXRaw"));
-   const StringId InputHandler::MouseDeltaYRawId(SID("MouseDeltaYRaw"));
+   const StringId InputHandler::MouseXId(dtEntity::SID("MouseX"));  
+   const StringId InputHandler::MouseYId(dtEntity::SID("MouseY"));  
+   const StringId InputHandler::MouseXRawId(dtEntity::SID("MouseXRaw"));
+   const StringId InputHandler::MouseYRawId(dtEntity::SID("MouseYRaw"));
+   const StringId InputHandler::MouseDeltaXId(dtEntity::SID("MouseDeltaX"));
+   const StringId InputHandler::MouseDeltaYId(dtEntity::SID("MouseDeltaY"));
+   const StringId InputHandler::MouseDeltaXRawId(dtEntity::SID("MouseDeltaXRaw"));
+   const StringId InputHandler::MouseDeltaYRawId(dtEntity::SID("MouseDeltaYRaw"));
 
    ////////////////////////////////////////////////////////////////////////////////
    InputHandler::InputHandler(dtEntity::EntityManager& em)
