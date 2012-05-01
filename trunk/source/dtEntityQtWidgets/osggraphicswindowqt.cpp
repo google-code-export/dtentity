@@ -379,11 +379,24 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////
-   void OSGGraphicsWindowQt::grabFocusIfPointerInWindow()
+   void OSGGraphicsWindowQt::ApplySetFocus()
    {
-      if(mQWidget != NULL)
+      if (mQWidget != NULL)
       {
          mQWidget->setFocus();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////
+   void OSGGraphicsWindowQt::grabFocusIfPointerInWindow()
+   {
+      if(QCoreApplication::instance()->thread() != QThread::currentThread())
+      {
+         QMetaObject::invokeMethod(this, "ApplySetFocus", Qt::QueuedConnection);
+      }
+      else
+      {
+         ApplySetFocus();
       }
    }
 

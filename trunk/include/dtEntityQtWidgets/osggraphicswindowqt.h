@@ -139,6 +139,8 @@ namespace dtEntityQtWidgets
       void ApplySetWindowRectangle(int x, int y, int w, int h);
       void ApplyRealize();
       void ApplyClose();
+      void ApplySetFocus();
+
    private:
       bool mValid;
       bool mRealized;
