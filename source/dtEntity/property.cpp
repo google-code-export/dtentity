@@ -1020,8 +1020,6 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    const std::string StringIdProperty::StringValue() const 
    { 
-      LOG_ERROR("Converting StringId Property to String. Costly!");
-      assert(false && "Don't convert SID to String!");
       return GetStringFromSID(Get()); 
    }
    
