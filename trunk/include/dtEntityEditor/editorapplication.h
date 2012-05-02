@@ -98,6 +98,11 @@ namespace dtEntityEditor
       void ShutDownGame(bool);
      
       /**
+        * Reset scene
+        */
+      void NewScene();
+
+      /**
        * Load scene from path
        */
       void LoadScene(const QString& path);

@@ -117,6 +117,7 @@ namespace dtEntityEditor
       
       connect(this, SIGNAL(LoadScene(const QString&)), app, SLOT(LoadScene(const QString&)));
       connect(this, SIGNAL(AddScene(QString, QString)), app, SLOT(AddScene(QString, QString)));
+      connect(this, SIGNAL(NewScene()), app, SLOT(NewScene()));
       connect(this, SIGNAL(SaveScene()), app, SLOT(SaveScene()));
       connect(this, SIGNAL(SaveAll()), app, SLOT(SaveAll()));
 
@@ -184,7 +185,7 @@ namespace dtEntityEditor
       mChangeSceneAct = new QAction(tr("Open scene..."), this);
       connect(mChangeSceneAct , SIGNAL(triggered()), this, SLOT(OnChooseScene()));
 
-      mNewSceneAct = new QAction(tr("New Scene..."), this);
+      mNewSceneAct = new QAction(tr("New Scene"), this);
       connect(mNewSceneAct , SIGNAL(triggered()), this, SLOT(OnNewScene()));
 
       mSaveSceneAct = new QAction(tr("Save scene file only"), this);
@@ -652,7 +653,7 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnNewScene()
    {
-      QSettings settings;
+      /*QSettings settings;
       QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
 
       dtEntityQtWidgets::AssetCreationDialog dialog(paths, "Scenes/MyScene", ".dtescene");
@@ -662,7 +663,9 @@ namespace dtEntityEditor
          emit AddScene(dialog.GetDataPath(), dialog.GetMapPath());
          mSaveAllAct->setEnabled(true);
          mSaveSceneAct->setEnabled(true);
-      }
+      }*/
+
+      emit NewScene();
    }
 
    //////////////////////////////////////////////////////////////////////////

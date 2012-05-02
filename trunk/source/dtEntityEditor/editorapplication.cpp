@@ -278,7 +278,7 @@ namespace dtEntityEditor
          {
             LOG_ERROR("Project assets folder does not exist: " + path.toStdString());
          }
-         else
+         else if(std::find(in.begin(), in.end(), path.toStdString()) == in.end())
          {
             in.push_back(path.toStdString());
          }
@@ -332,6 +332,28 @@ namespace dtEntityEditor
          mapcomp->Finished();
          GetEntityManager().AddToScene(entity->GetId());
       }
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorApplication::NewScene()
+   {
+
+      dtEntity::MapSystem* mapSystem;
+      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+      mapSystem->UnloadScene();
+      dtEntity::Entity* cam;
+      GetEntityManager().CreateEntity(cam);
+      dtEntity::CameraComponent* camcomp;
+      cam->CreateComponent(camcomp);
+      camcomp->SetContextId(0);
+      camcomp->Finished();
+
+      dtEntity::MapComponent* map;
+      cam->CreateComponent(map);
+      map->SetEntityName("cam_0");
+      map->SetUniqueId("cam_0");
+      mapSystem->AddToScene(cam->GetId());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -1025,14 +1025,33 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::OnAddNewMapAction(bool)
    {
+
       QSettings settings;
-      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+      QString currpath = settings.value("AssetSelectorCurrentDataPath", "").toString();
 
-      AssetCreationDialog dialog(paths, "maps/MyMap", ".dtemap");
-
-      if(dialog.exec() == QDialog::Accepted)
+      QString fileName = QFileDialog::getSaveFileName(this, tr("Create Map"),
+                         currpath,
+                         tr("Maps (*.dtemap)"));
+      if(fileName != "")
       {
-         emit CreateNewMap(dialog.GetDataPath(), dialog.GetMapPath());
+         QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+         foreach(QString path, paths)
+         {
+            if(fileName.startsWith(path))
+            {
+               QString mappath = fileName.right(fileName.size() - path.size());
+               if(mappath[0] == '/' || mappath[0] == '\\')
+               {
+                  mappath = mappath.mid(1);
+               }
+               emit CreateNewMap(path, mappath);
+               return;
+            }
+         }
+         QMessageBox msgBox;
+         msgBox.setText("Cannot add map, not in a data path folder!");
+         msgBox.exec();
+
       }
    }
 
