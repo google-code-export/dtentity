@@ -57,16 +57,18 @@ SET(LIB_SOURCES
 	file.cpp
 	globalfunctions.cpp
 	inputhandlerwrapper.cpp	
-    loggerwrapper.cpp
+  loggerwrapper.cpp
 	mapsystemwrapper.cpp
-	messages.cpp
 	propertyconverter.cpp
 	screenwrapper.cpp
-	scriptcomponent.cpp	
 	v8helpers.cpp
 	wrappers.cpp
 )
 
+SET(LIB_SOURCES_REPLACE
+  messages.cpp
+  scriptcomponent.cpp
+)
 
 
 SET(WRAPLIBRARIES dtEntity
@@ -102,12 +104,13 @@ IF (MSVC)
 ENDIF (MSVC)
 
 
-REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_SOURCES})
+REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_SOURCES_REPLACE})
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
-    ${LIB_PUBLIC_HEADERS}
+  ${LIB_PUBLIC_HEADERS}
 	${LIB_SOURCES}
-    ${LIB_SOURCES_OUT}
+  ${LIB_SOURCES_OUT}
+  ${LIB_SOURCES_REPLACE}
 )
 
 

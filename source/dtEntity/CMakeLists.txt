@@ -130,48 +130,49 @@ SET(LIB_PUBLIC_HEADERS
 
 )
 
-SET(LIB_SOURCES
-
-
+SET(LIB_REPLACE
   applicationcomponent.cpp
   cameracomponent.cpp
   commandmessages.cpp
+  groupcomponent.cpp
+  inputhandler.cpp
+  layerattachpointcomponent.cpp
+  layercomponent.cpp
+  lightcomponent.cpp
+  mapcomponent.cpp
+  matrixtransformcomponent.cpp
+  nodecomponent.cpp
+  osganimationcomponent.cpp
+  pickshapecomponent.cpp
+  positionattitudetransformcomponent.cpp
+  shadercomponent.cpp
+  shadowcomponent.cpp
+  staticmeshcomponent.cpp
+  skyboxcomponent.cpp
+  systemmessages.cpp
+  textlabelcomponent.cpp
+  texturelabelcomponent.cpp
+  transformcomponent.cpp
+)
+
+SET(LIB_SOURCES
   componentfactories.cpp
   componentpluginmanager.cpp
   crc32.cpp
   debugdrawmanager.cpp
   entity.cpp
   entitymanager.cpp
-  groupcomponent.cpp
   initosgviewer.cpp
-  inputhandler.cpp
-  layerattachpointcomponent.cpp
-  layercomponent.cpp
-  lightcomponent.cpp
   logmanager.cpp
-  mapcomponent.cpp
-  matrixtransformcomponent.cpp
   messagefactory.cpp
   messagepump.cpp
-  nodecomponent.cpp
-  osganimationcomponent.cpp
-  pickshapecomponent.cpp
-  positionattitudetransformcomponent.cpp
   profile.cpp
   property.cpp
   propertycontainer.cpp
   rapidxmlmapencoder.cpp
   scriptaccessor.cpp
-  shadercomponent.cpp
-  shadowcomponent.cpp
   spawner.cpp
-  staticmeshcomponent.cpp
-  skyboxcomponent.cpp
   stringid.cpp
-  systemmessages.cpp
-  textlabelcomponent.cpp
-  texturelabelcomponent.cpp
-  transformcomponent.cpp
   windowmanager.cpp
 
 )
@@ -190,7 +191,7 @@ IF(BUILD)
 
   LIST(APPEND DTENTITYLIBS       ${DTANIM_LIBRARIES} ${CAL3D_LIBRARIES})
   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/animationcomponent.h)
-  LIST(APPEND LIB_SOURCES		 animationcomponent.cpp)
+  LIST(APPEND LIB_REPLACE		 animationcomponent.cpp)
 ENDIF(BUILD)
 
 IF(BUILD_OPENAL)
@@ -201,7 +202,7 @@ IF(BUILD_OPENAL)
    LIST(APPEND LIB_SOURCES		audiomanager.cpp)
    LIST(APPEND LIB_SOURCES		listener.cpp)
    LIST(APPEND LIB_SOURCES		sound.cpp)
-   LIST(APPEND LIB_SOURCES		soundcomponent.cpp)
+   LIST(APPEND LIB_REPLACE		soundcomponent.cpp)
    LIST(APPEND DTENTITYLIBS   ${OPENAL_LIBRARIES})
    LIST(APPEND DTENTITYLIBS   ${OPENAL_UTIL_LIBRARIES})
 
@@ -226,12 +227,13 @@ IF(BUILD_CEGUI)
 
 ENDIF(BUILD_CEGUI)
 
-REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_SOURCES})
+REPLACE_SIDS_IN_SOURCE(LIB_SOURCES_OUT ${LIB_REPLACE})
 
 ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
     ${LIB_SOURCES_OUT}
+    ${LIB_REPLACE}
 )
 
 

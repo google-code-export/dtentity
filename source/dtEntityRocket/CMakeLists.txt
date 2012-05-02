@@ -22,20 +22,24 @@ SET(TARGET_H
    rocketsystemwrapper.h
 )
 
-SET(TARGET_SRC_IN contextwrapper.cpp
-	           elementdocumentwrapper.cpp
-	           elementwrapper.cpp
-	           eventinstancer.cpp
-	           eventlistener.cpp
+SET(TARGET_SRC_DFTL
+         contextwrapper.cpp
+         elementdocumentwrapper.cpp
+         elementwrapper.cpp
+         eventinstancer.cpp
+         eventlistener.cpp
 			   eventlistenerinstancer.cpp
 			   eventlistenerwrapper.cpp
-			   hudcomponent.cpp
 			   messages.cpp
 			   pluginfactory.cpp
-			   rocketcomponent.cpp	 
 			   rocketsystemwrapper.cpp	 
 )
+SET(TARGET_SRC_REPLACE
+         hudcomponent.cpp
+         rocketcomponent.cpp
+)
 
-REPLACE_SIDS_IN_SOURCE(TARGET_SRC_OUT ${TARGET_SRC_IN})
-SET(TARGET_SRC ${TARGET_SRC_IN} ${TARGET_SRC_OUT})
+
+REPLACE_SIDS_IN_SOURCE(TARGET_SRC_OUT ${TARGET_SRC_REPLACE})
+SET(TARGET_SRC ${TARGET_SRC_DFTL} ${TARGET_SRC_OUT} ${TARGET_SRC_REPLACE})
 SETUP_PLUGIN(dtEntityRocket)
