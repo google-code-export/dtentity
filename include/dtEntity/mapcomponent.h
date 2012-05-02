@@ -237,21 +237,6 @@ namespace dtEntity
        */
       bool UnloadScene();
 
-      /**
-       * Unload current scene and create new, empty scene
-       */
-      bool CreateScene(const std::string& datapath, const std::string& scenepath);
-
-      /**
-       * Get path of currently loaded scene
-       */
-      std::string GetCurrentScene() const { return mCurrentScene; }
-
-      /**
-       * Save entity system configurations to current scene file,
-       * @param saveAllMaps if set, save all currently loaded maps to map files
-       */
-      bool SaveCurrentScene(bool saveAllMaps = true);
 
       /**
        * Save entity system configurations to scene file,
@@ -348,9 +333,6 @@ namespace dtEntity
       ComponentPluginManager mPluginManager;
 
       std::map<std::string, EntityId> mEntitiesByUniqueId;
-
-      std::string mCurrentScene;
-      std::string mCurrentSceneDataPath;
 
       osg::ref_ptr<MapEncoder> mMapEncoder;
    };

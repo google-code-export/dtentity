@@ -135,7 +135,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    MapSystem::MapSystem(EntityManager& em)
       : DefaultEntitySystem<MapComponent>(em)
-      , mCurrentScene("")
    {
 
       mSpawnEntityFunctor = MessageFunctor(this, &MapSystem::OnSpawnEntity);
@@ -226,18 +225,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::CreateScene(const std::string& datapath, const std::string& mapname)
-   {
-      UnloadScene();
-      SceneLoadedMessage msg;
-      msg.SetSceneName(mapname);
-      GetEntityManager().EmitMessage(msg);
-      mCurrentScene = mapname;
-      mCurrentSceneDataPath = datapath;
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::LoadScene(const std::string& path)
    {
       // get data path containing this map
@@ -270,8 +257,6 @@ namespace dtEntity
       SceneLoadedMessage msg;
       msg.SetSceneName(path);
       GetEntityManager().EmitMessage(msg);
-      mCurrentScene = path;
-      mCurrentSceneDataPath = scenedatapath;
       return success;
    }
 
@@ -285,17 +270,8 @@ namespace dtEntity
       {
          UnloadMap(mLoadedMaps.front().mMapPath);
       }
-      mCurrentScene = "";
-      mCurrentSceneDataPath = "";
-      return true;
-   }
 
-   ////////////////////////////////////////////////////////////////////////////
-   bool MapSystem::SaveCurrentScene(bool saveAllMaps)
-   {
-      std::ostringstream os;
-      os << mCurrentSceneDataPath << "/" << mCurrentScene;
-      return SaveScene(os.str(), saveAllMaps);
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////

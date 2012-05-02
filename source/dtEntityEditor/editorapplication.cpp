@@ -363,10 +363,7 @@ namespace dtEntityEditor
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
-      if(mapSystem->GetCurrentScene().size() != 0)
-      {
-         mapSystem->UnloadScene();
-      }
+      mapSystem->UnloadScene();
 
       mapSystem->LoadScene(path.toStdString());
 
@@ -377,39 +374,29 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::AddScene(const QString& datapath, const QString& mappath)
+   /*void EditorApplication::AddScene(const QString& datapath, const QString& mappath)
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
 
       mapSystem->CreateScene(datapath.toStdString(), mappath.toStdString());
       //CreateCameraEntityIfNotExists();
-   }
+   }*/
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::SaveScene()
+   void EditorApplication::SaveScene(const QString& path)
    {
       dtEntity::MapSystem* mapSystem;
       GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+
       std::ostringstream os;
-      bool success = mapSystem->SaveCurrentScene(false);
+      bool success = mapSystem->SaveScene(path.toStdString(), true);
       if(!success)
       {
          ErrorOccurred(tr("Cannot save scene, please check file permissions!"));
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::SaveAll()
-   {
-      dtEntity::MapSystem* mapSystem;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-      bool success = mapSystem->SaveCurrentScene(true);
-      if(!success)
-      {
-         ErrorOccurred(tr("Cannot save scene or one of the maps, please check file permissions!"));
-      }
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::InitializeScripting()
