@@ -1,4 +1,5 @@
 #include <string>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -21,12 +22,7 @@ int main (int argc, char *argv[])
      return 1;
   }
   
-  std::ofstream outstr(argv[2]);
-  if(outstr.fail()) 
-  {
-     std::cout << "Could not open output file " << argv[2] << std::endl;
-     return 1;
-  }
+
 
  
   typedef std::map<unsigned int, std::string> HashMap;
@@ -62,9 +58,10 @@ int main (int argc, char *argv[])
   const char* opentag = "dtEntity::SID(\"";
   const char* closetag = "\")";
   
+  std::ostringstream os;
   char buffer[256];
   char sidcontents[256];
-  
+  bool found_sid = false;
   while(instr.good())
   {
     instr.getline(buffer, sizeof(buffer));
@@ -74,7 +71,7 @@ int main (int argc, char *argv[])
     {
       while(buff_ptr < find_ptr)
 	   {
-         outstr << *buff_ptr++;
+         os << *buff_ptr++;
 	   }
       
       buff_ptr += strlen(opentag);
@@ -90,9 +87,11 @@ int main (int argc, char *argv[])
          sidcontents[i] = *buff_ptr++;         
       }
       
+      found_sid = true;
+
       unsigned int hash;
       MurmurHash3_x86_32(sidcontents, i, 0, &hash);
-      outstr << hash;
+      os << hash;
 
       HashMap::iterator found = hashed.find(hash);
       if(found != hashed.end())
@@ -113,11 +112,29 @@ int main (int argc, char *argv[])
          hashed[hash] = sidcontents;
       }   
     }
-    outstr << buff_ptr << std::endl;
+    os << buff_ptr << std::endl;
   }
   
   instr.close();
+
+  if(!found_sid)
+  {
+     std::cout << "No call to SID function in " << argv[1] << std::endl;
+     return 0;
+  }
+
+  std::ofstream outstr(argv[2]);
+  if(outstr.fail())
+  {
+     std::cout << "Could not open output file " << argv[2] << std::endl;
+     return 1;
+  }
+
+  outstr << os.str();
+
   outstr.close();
+
+
 
   std::ofstream outdbstr(argv[3]);
   if(outdbstr.fail()) 
