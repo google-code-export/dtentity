@@ -1029,18 +1029,27 @@ namespace dtEntityQtWidgets
       QSettings settings;
       QString currpath = settings.value("AssetSelectorCurrentDataPath", "").toString();
 
-      QString fileName = QFileDialog::getSaveFileName(this, tr("Create Map"),
-                         currpath,
-                         tr("Maps (*.dtemap)"));
-      if(fileName != "")
+      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      QList<QUrl> urls;
+      foreach(QString path, paths)
       {
-         QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+         urls << QUrl::fromLocalFile(path);
+      }
+
+      QFileDialog dialog(this, tr("Create Map"), currpath, tr("Maps (*.dtemap)"));
+      dialog.setSidebarUrls(urls);
+      dialog.setFileMode(QFileDialog::AnyFile);
+
+      if(dialog.exec()) {
+         QString fileName = dialog.selectedFiles().first();
+
          foreach(QString path, paths)
          {
             if(fileName.startsWith(path))
             {
                QString mappath = fileName.right(fileName.size() - path.size());
-               if(mappath[0] == '/' || mappath[0] == '\\')
+               if(mappath.startsWith(QDir::separator()))
                {
                   mappath = mappath.mid(1);
                }

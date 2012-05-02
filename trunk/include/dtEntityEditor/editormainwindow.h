@@ -83,8 +83,7 @@ namespace dtEntityEditor
       void ViewClosing();
       void DataPathsChanged(const QStringList&);
 
-      void SaveScene();
-      void SaveAll();
+      void SaveScene(const QString& path);
 
       void TextDroppedOntoGLWidget(const QPointF& pos, const QString&);
 
@@ -120,7 +119,7 @@ namespace dtEntityEditor
       void OnNewScene();
       void OnChooseDataPaths();
       void OnSaveScene();
-      void OnSaveAll();
+      void OnSaveSceneAs();
       void OnAddPlugin();
       void OnResetSystem();
       void EmitQueuedMessages();
@@ -149,7 +148,7 @@ namespace dtEntityEditor
       QAction* mChangeSceneAct;
       QAction* mNewSceneAct;
       QAction* mSaveSceneAct;
-      QAction* mSaveAllAct;
+      QAction* mSaveSceneAsAct;
       QAction* mAddPluginAct;
       QAction* mResetSystemAct;
       QAction* mExitAct;

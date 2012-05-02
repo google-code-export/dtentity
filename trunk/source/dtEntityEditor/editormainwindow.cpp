@@ -40,6 +40,7 @@
 #include <QtGui/QtGui>
 #include <QtOpenGL/QGLWidget>
 #include <osgDB/FileNameUtils>
+#include <osgDB/FileUtils>
 
 namespace dtEntityEditor
 {
@@ -118,8 +119,7 @@ namespace dtEntityEditor
       connect(this, SIGNAL(LoadScene(const QString&)), app, SLOT(LoadScene(const QString&)));
       connect(this, SIGNAL(AddScene(QString, QString)), app, SLOT(AddScene(QString, QString)));
       connect(this, SIGNAL(NewScene()), app, SLOT(NewScene()));
-      connect(this, SIGNAL(SaveScene()), app, SLOT(SaveScene()));
-      connect(this, SIGNAL(SaveAll()), app, SLOT(SaveAll()));
+      connect(this, SIGNAL(SaveScene(QString)), app, SLOT(SaveScene(QString)));
 
    }
 
@@ -188,13 +188,13 @@ namespace dtEntityEditor
       mNewSceneAct = new QAction(tr("New Scene"), this);
       connect(mNewSceneAct , SIGNAL(triggered()), this, SLOT(OnNewScene()));
 
-      mSaveSceneAct = new QAction(tr("Save scene file only"), this);
+      mSaveSceneAct = new QAction(tr("Save scene"), this);
       connect(mSaveSceneAct , SIGNAL(triggered()), this, SLOT(OnSaveScene()));
       mSaveSceneAct->setEnabled(false);
 
-      mSaveAllAct = new QAction(tr("Save scene and maps"), this);
-      connect(mSaveAllAct , SIGNAL(triggered()), this, SLOT(OnSaveAll()));
-      mSaveAllAct->setEnabled(false);
+      mSaveSceneAsAct = new QAction(tr("Save scene as..."), this);
+      connect(mSaveSceneAsAct , SIGNAL(triggered()), this, SLOT(OnSaveSceneAs()));
+      mSaveSceneAsAct->setEnabled(true);
 
       mAddPluginAct = new QAction(tr("Add Plugin/Library..."), this);
       connect(mAddPluginAct, SIGNAL(triggered()), this, SLOT(OnAddPlugin()));
@@ -221,7 +221,7 @@ namespace dtEntityEditor
       mFileMenu->addAction(mChangeSceneAct);
       mFileMenu->addSeparator();
       mFileMenu->addAction(mSaveSceneAct);
-      mFileMenu->addAction(mSaveAllAct);
+      mFileMenu->addAction(mSaveSceneAsAct);
       mFileMenu->addSeparator();
       mFileMenu->addAction(mChangeDataPathsAct);
       mFileMenu->addSeparator();
@@ -380,17 +380,18 @@ namespace dtEntityEditor
       const dtEntity::SceneLoadedMessage& msg =
             static_cast<const dtEntity::SceneLoadedMessage&>(m);
 
-      mCurrentScene = msg.GetSceneName().c_str();
-      mSaveAllAct->setEnabled(true);
+      std::string curr = msg.GetSceneName();
+      mCurrentScene = osgDB::findDataFile(curr).c_str();
+
       mSaveSceneAct->setEnabled(true);
-      setWindowTitle(QString("%1 - dtEntity Editor").arg(mCurrentScene));
+
+      setWindowTitle(QString("%1 - dtEntity Editor").arg(curr.c_str()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnSceneUnloaded(const dtEntity::Message& m)
    {
       mCurrentScene = "";
-      mSaveAllAct->setEnabled(false);
       mSaveSceneAct->setEnabled(false);
       setWindowTitle("dtEntity Editor");
    }
@@ -566,13 +567,34 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnSaveScene()
    {
-      emit SaveScene();
+      emit SaveScene(mCurrentScene);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::OnSaveAll()
+   void EditorMainWindow::OnSaveSceneAs()
    {
-      emit SaveAll();
+
+      QSettings settings;
+      QString currpath = settings.value("AssetSelectorCurrentDataPath", "").toString();
+
+      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      QList<QUrl> urls;
+      foreach(QString path, paths)
+      {
+         urls << QUrl::fromLocalFile(path);
+      }
+
+      QFileDialog dialog(this, tr("Save Scene"), currpath, tr("Scenes (*.dtescene)"));
+      dialog.setSidebarUrls(urls);
+      dialog.setFileMode(QFileDialog::AnyFile);
+
+      if(dialog.exec())
+      {
+         mCurrentScene = dialog.selectedFiles().first();
+         setWindowTitle(QString("%1 - dtEntity Editor").arg(mCurrentScene));
+         OnSaveScene();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -641,8 +663,8 @@ namespace dtEntityEditor
          QStringList sel = dialog->GetSelectedItems();
          if(sel.size() != 0)
          {
-            mCurrentScene = sel.front();
-            emit LoadScene(mCurrentScene);
+            QString selected = sel.front();
+            emit LoadScene(selected);
          }
       }
 
@@ -653,18 +675,7 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::OnNewScene()
    {
-      /*QSettings settings;
-      QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
-
-      dtEntityQtWidgets::AssetCreationDialog dialog(paths, "Scenes/MyScene", ".dtescene");
-
-      if(dialog.exec() == QDialog::Accepted)
-      {
-         emit AddScene(dialog.GetDataPath(), dialog.GetMapPath());
-         mSaveAllAct->setEnabled(true);
-         mSaveSceneAct->setEnabled(true);
-      }*/
-
+      mSaveSceneAct->setEnabled(false);
       emit NewScene();
    }
 
