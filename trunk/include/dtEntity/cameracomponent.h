@@ -93,7 +93,7 @@ namespace dtEntity
 
       void FetchCamera();
 
-      void SetContextId(unsigned int id) { mContextId.Set(id); }
+      void SetContextId(unsigned int id);
       unsigned int GetContextId() const { return mContextId.Get(); }
 
       void SetLayerAttachPoint(StringId id) { mLayerAttachPoint.Set(id); }

@@ -172,6 +172,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetContextId(unsigned int id)
+   {
+      mContextId.Set(id);
+      TryAssignContext();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetFieldOfView(double v)
    {
       double fov, asp, nc, fc;
