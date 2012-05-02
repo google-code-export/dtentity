@@ -231,7 +231,7 @@ namespace dtEntityWrappers
          {
             dtEntity::StringId sid = i->first;
             std::string propname = dtEntity::GetStringFromSID(sid);
-            names->Set(String::New(propname.c_str()), Uint32::New(sid));
+            names->Set(String::New(propname.c_str()), WrapSID(sid));
          }
          wrappedes->SetHiddenValue(scriptsys->GetPropertyNamesString(), names);
          propnamesval = names;
@@ -242,7 +242,7 @@ namespace dtEntityWrappers
       for(unsigned int i = 0; i < keys->Length(); ++i)
       {
          Handle<String> str = keys->Get(i)->ToString();
-         dtEntity::StringId sid = (dtEntity::StringId)propnames->Get(str)->Uint32Value();
+         dtEntity::StringId sid = UnwrapSID(propnames->Get(str));
          dtEntity::Property* prop = v->Get(sid);
          if(prop == NULL)
          {
