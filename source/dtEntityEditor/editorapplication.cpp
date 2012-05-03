@@ -338,22 +338,9 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::NewScene()
    {
-
       dtEntity::MapSystem* mapSystem;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
+      GetEntityManager().GetES(mapSystem);
       mapSystem->UnloadScene();
-      dtEntity::Entity* cam;
-      GetEntityManager().CreateEntity(cam);
-      dtEntity::CameraComponent* camcomp;
-      cam->CreateComponent(camcomp);
-      camcomp->SetContextId(0);
-      camcomp->Finished();
-
-      dtEntity::MapComponent* map;
-      cam->CreateComponent(map);
-      map->SetEntityName("cam_0");
-      map->SetUniqueId("cam_0");
-      mapSystem->AddToScene(cam->GetId());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -373,15 +360,6 @@ namespace dtEntityEditor
 
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   /*void EditorApplication::AddScene(const QString& datapath, const QString& mappath)
-   {
-      dtEntity::MapSystem* mapSystem;
-      GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-
-      mapSystem->CreateScene(datapath.toStdString(), mappath.toStdString());
-      //CreateCameraEntityIfNotExists();
-   }*/
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::SaveScene(const QString& path)

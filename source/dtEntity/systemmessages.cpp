@@ -102,6 +102,7 @@ namespace dtEntity
    const StringId EntityAddedToSceneMessage::EntityNameId(dtEntity::SID("EntityName"));
    const StringId EntityAddedToSceneMessage::UniqueIdId(dtEntity::SID("UniqueId"));
    const StringId EntityAddedToSceneMessage::MapNameId(dtEntity::SID("MapName"));
+   const StringId EntityAddedToSceneMessage::VisibleInEntityListId(dtEntity::SID("VisibleInEntityList"));
 
    EntityAddedToSceneMessage::EntityAddedToSceneMessage()
       : Message(TYPE)
@@ -110,6 +111,7 @@ namespace dtEntity
       this->Register(EntityNameId, &mEntityName);
       this->Register(UniqueIdId, &mUniqueId);
       this->Register(MapNameId, &mMapName);
+      this->Register(VisibleInEntityListId, &mVisibleInEntityList);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -128,6 +130,7 @@ namespace dtEntity
    const StringId EntityRemovedFromSceneMessage::EntityNameId(dtEntity::SID("EntityName"));
    const StringId EntityRemovedFromSceneMessage::UniqueIdId(dtEntity::SID("UniqueId"));
    const StringId EntityRemovedFromSceneMessage::MapNameId(dtEntity::SID("MapName"));
+   const StringId EntityRemovedFromSceneMessage::VisibleInEntityListId(dtEntity::SID("VisibleInEntityList"));
 
    EntityRemovedFromSceneMessage::EntityRemovedFromSceneMessage()
       : Message(TYPE)
@@ -136,6 +139,7 @@ namespace dtEntity
       this->Register(EntityNameId, &mEntityName);
       this->Register(UniqueIdId, &mUniqueId);
       this->Register(MapNameId, &mMapName);
+      this->Register(VisibleInEntityListId, &mVisibleInEntityList);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -24,7 +24,6 @@
 
 #include <dtEntityQtWidgets/datapatheditor.h>
 #include <dtEntityEditor/editorapplication.h>
-#include <dtEntityQtWidgets/entitylist.h>
 #include <dtEntityQtWidgets/entitytree.h>
 #include <dtEntityQtWidgets/listdialog.h>
 #include <dtEntity/basemessages.h>
@@ -117,7 +116,6 @@ namespace dtEntityEditor
       CreateDockWidgets();
       
       connect(this, SIGNAL(LoadScene(const QString&)), app, SLOT(LoadScene(const QString&)));
-      connect(this, SIGNAL(AddScene(QString, QString)), app, SLOT(AddScene(QString, QString)));
       connect(this, SIGNAL(NewScene()), app, SLOT(NewScene()));
       connect(this, SIGNAL(SaveScene(QString)), app, SLOT(SaveScene(QString)));
 
@@ -431,7 +429,7 @@ namespace dtEntityEditor
       mEntityTreeDock->setObjectName("EntityTreeDock");
       using namespace dtEntityQtWidgets;
 
-      EntityTreeModel* model = new EntityTreeModel(mApplication->GetEntityManager());
+      EntityTreeModel* model = new EntityTreeModel(mApplication->GetEntityManager(), false);
       EntityTreeView* view = new EntityTreeView();
       view->SetModel(model);
       EntityTreeController* controller = new EntityTreeController(&mApplication->GetEntityManager());
