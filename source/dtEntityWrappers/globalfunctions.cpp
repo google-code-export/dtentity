@@ -24,6 +24,7 @@
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
+#include <osgDB/FileNameUtils>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -110,7 +111,7 @@ namespace dtEntityWrappers
       Handle<Array> arr = Handle<Array>::Cast(args[0]);
       for(unsigned int i = 0; i < arr->Length(); ++i)
       {
-         pl.push_back(ToStdString(arr->Get(i)));
+         pl.push_back(osgDB::convertFileNameToUnixStyle(ToStdString(arr->Get(i))));
       }
       osgDB::setDataFilePathList(pl);
       return Undefined();

@@ -280,7 +280,7 @@ namespace dtEntityEditor
          }
          else if(std::find(in.begin(), in.end(), path.toStdString()) == in.end())
          {
-            in.push_back(path.toStdString());
+            in.push_back(osgDB::convertFileNameToUnixStyle(path.toStdString()));
          }
       }
 

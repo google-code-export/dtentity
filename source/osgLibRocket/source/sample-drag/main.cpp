@@ -21,6 +21,7 @@
 
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
 #include <osgViewer/View>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -65,7 +66,7 @@ int main(int argc, char** argv)
          ++curArg;
          if (curArg < argc)
          {            
-            osgDB::setDataFilePathList(argv[curArg] + std::string("/LibRocket"));
+            osgDB::setDataFilePathList(osgDB::convertFileNameToUnixStyle(argv[curArg]) + std::string("/LibRocket"));
          }
       }
       ++curArg;

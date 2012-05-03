@@ -1042,18 +1042,19 @@ namespace dtEntityQtWidgets
       dialog.setFileMode(QFileDialog::AnyFile);
 
       if(dialog.exec()) {
-         QString fileName = dialog.selectedFiles().first();
+         QString fileName = QDir::fromNativeSeparators(dialog.selectedFiles().first());
 
          foreach(QString path, paths)
          {
-            if(fileName.startsWith(path))
+            QString nativePath = QDir::fromNativeSeparators(path);
+            if(fileName.startsWith(nativePath))
             {
                QString mappath = fileName.right(fileName.size() - path.size());
-               if(mappath.startsWith(QDir::separator()))
+               if(mappath.startsWith("/"))
                {
                   mappath = mappath.mid(1);
                }
-               emit CreateNewMap(path, mappath);
+               emit CreateNewMap(nativePath, mappath);
                return;
             }
          }
