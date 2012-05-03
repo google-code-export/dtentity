@@ -76,7 +76,6 @@ namespace dtEntityEditor
    signals:      
 
       void LoadScene(const QString& path);
-      void AddScene(const QString& dataPath, const QString& scenename);
       void NewScene();
       void Closed(bool);
       void ViewResized(const QSize& size);

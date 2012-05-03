@@ -11,7 +11,6 @@ set(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/assetselector.h
    ${HEADER_PATH}/datapatheditor.h
    ${HEADER_PATH}/delegatefactory.h
-   ${HEADER_PATH}/entitylist.h
    ${HEADER_PATH}/entitytree.h
    ${HEADER_PATH}/export.h
    ${HEADER_PATH}/glwidgetfactory.h
@@ -33,7 +32,6 @@ SET(LIB_SOURCES
    ${SOURCE_PATH}/datapatheditor.cpp
    ${SOURCE_PATH}/datapatheditor.ui
    ${SOURCE_PATH}/delegatefactory.cpp
-   ${SOURCE_PATH}/entitylist.cpp
    ${SOURCE_PATH}/entitytree.cpp
    ${SOURCE_PATH}/icons
    ${SOURCE_PATH}/listdialog.cpp
@@ -54,7 +52,6 @@ set(MOC_INPUT
    ${HEADER_PATH}/assetcreationdialog.h
    ${HEADER_PATH}/assetselector.h
    ${HEADER_PATH}/datapatheditor.h
-   ${HEADER_PATH}/entitylist.h
    ${HEADER_PATH}/entitytree.h
    ${HEADER_PATH}/listdialog.h
    ${HEADER_PATH}/osgadapterwidget.h

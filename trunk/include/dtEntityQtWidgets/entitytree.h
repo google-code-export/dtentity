@@ -103,7 +103,7 @@ namespace dtEntityQtWidgets
 
    public:
 
-      EntityTreeModel(dtEntity::EntityManager& em);
+      EntityTreeModel(dtEntity::EntityManager& em, bool hideInvisible = true, bool showEntitySystems = true, bool showSpawners = true);
       ~EntityTreeModel();
 
       Qt::DropActions supportedDropActions() const;
@@ -169,6 +169,10 @@ namespace dtEntityQtWidgets
       dtEntity::EntityManager* mEntityManager;
 
       EntityTreeItem* mEntitySystemRootItem;
+
+      bool mHideInvisible;
+      bool mShowSpawners;
+      bool mShowEntitySystems;
    };
 
 

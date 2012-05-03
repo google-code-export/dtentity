@@ -834,6 +834,7 @@ namespace dtEntity
          msg.SetMapName(mc->GetMapName());
          msg.SetEntityName(mc->GetEntityName());
          msg.SetUniqueId(mc->GetUniqueId());
+         msg.SetVisibleInEntityList(mc->GetVisibleInEntityList());
       }
 
       GetEntityManager().EmitMessage(msg);
@@ -856,6 +857,7 @@ namespace dtEntity
          msg.SetMapName(mc->GetMapName());
          msg.SetEntityName(mc->GetEntityName());
          msg.SetUniqueId(mc->GetUniqueId());
+         msg.SetVisibleInEntityList(mc->GetVisibleInEntityList());
       }
       GetEntityManager().EmitMessage(msg);
       return true;

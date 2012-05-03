@@ -45,9 +45,12 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   EntityTreeModel::EntityTreeModel(dtEntity::EntityManager& em)
+   EntityTreeModel::EntityTreeModel(dtEntity::EntityManager& em, bool hideInvisible, bool showEntitySystems, bool showSpawners)
       : mRootItem(new EntityTreeItem(NULL, EntityTreeType::ROOT))
       , mEntityManager(&em)
+      , mHideInvisible(hideInvisible)
+      , mShowSpawners(showSpawners)
+      , mShowEntitySystems(showEntitySystems)
    {
 
       mMessagePump.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntitySelected));
@@ -65,14 +68,15 @@ namespace dtEntityQtWidgets
 
       mEnqueueFunctor = dtEntity::MessageFunctor(this, &EntityTreeModel::EnqueueMessage);
       
-
-      unsigned int size = mRootItem->childCount();
-      beginInsertRows(QModelIndex(), size, size);
-
-      mEntitySystemRootItem = new EntityTreeItem(mRootItem, EntityTreeType::ENTITYSYSTEM);
-      mEntitySystemRootItem->mName = tr("Entity Systems");
-      mRootItem->appendChild(mEntitySystemRootItem);
-      endInsertRows();
+      if(showEntitySystems)
+      {
+         unsigned int size = mRootItem->childCount();
+         beginInsertRows(QModelIndex(), size, size);
+         mEntitySystemRootItem = new EntityTreeItem(mRootItem, EntityTreeType::ENTITYSYSTEM);
+         mEntitySystemRootItem->mName = tr("Entity Systems");
+         mRootItem->appendChild(mEntitySystemRootItem);
+         endInsertRows();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -294,6 +298,10 @@ namespace dtEntityQtWidgets
       const dtEntity::EntityAddedToSceneMessage& msg = 
          static_cast<const dtEntity::EntityAddedToSceneMessage&>(m);
 
+      if(!msg.GetVisibleInEntityList() && mHideInvisible)
+      {
+         return;
+      }
       QString mapName = msg.GetMapName().c_str();
       QString entityName = msg.GetEntityName().c_str();
       QString uniqueId = msg.GetUniqueId().c_str();
@@ -343,6 +351,11 @@ namespace dtEntityQtWidgets
    {
       const dtEntity::EntityRemovedFromSceneMessage& msg = 
          static_cast<const dtEntity::EntityRemovedFromSceneMessage&>(m);
+
+      if(!msg.GetVisibleInEntityList() && mHideInvisible)
+      {
+         return;
+      }
 
       dtEntity::EntityId eid = msg.GetAboutEntityId();
       EntityEntry entry;
@@ -437,6 +450,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeModel::OnEntitySystemAdded(const dtEntity::Message& m)
    {
+      if(!mShowEntitySystems)
+      {
+         return;
+      }
       const dtEntity::EntitySystemAddedMessage& msg = 
          static_cast<const dtEntity::EntitySystemAddedMessage&>(m);
       
@@ -462,6 +479,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeModel::OnEntitySystemRemoved(const dtEntity::Message& m)
    {
+      if(!mShowEntitySystems)
+      {
+         return;
+      }
       const dtEntity::EntitySystemRemovedMessage& msg = 
          static_cast<const dtEntity::EntitySystemRemovedMessage&>(m);
 
@@ -471,6 +492,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeModel::OnSpawnerAdded(const dtEntity::Message& m)
    {
+      if(!mShowSpawners)
+      {
+         return;
+      }
       const dtEntity::SpawnerAddedMessage& msg = 
          static_cast<const dtEntity::SpawnerAddedMessage&>(m);
       
@@ -502,6 +527,10 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeModel::OnSpawnerRemoved(const dtEntity::Message& m)
    {
+      if(!mShowSpawners)
+      {
+         return;
+      }
       const dtEntity::SpawnerRemovedMessage& msg = 
          static_cast<const dtEntity::SpawnerRemovedMessage&>(m);
 
@@ -1603,6 +1632,7 @@ namespace dtEntityQtWidgets
       msg1.SetEntityName(mapcomp->GetEntityName());
       msg1.SetUniqueId(mapcomp->GetUniqueId());
       msg1.SetMapName(mapcomp->GetMapName());
+      msg1.SetVisibleInEntityList(mapcomp->GetVisibleInEntityList());
       mModel->EnqueueMessage(msg1);
       
       mapcomp->SetMapName(mapname.toStdString());
@@ -1613,6 +1643,7 @@ namespace dtEntityQtWidgets
       msg2.SetEntityName(mapcomp->GetEntityName());
       msg2.SetUniqueId(mapcomp->GetUniqueId());
       msg2.SetMapName(mapcomp->GetMapName());
+      msg2.SetVisibleInEntityList(mapcomp->GetVisibleInEntityList());
       mModel->EnqueueMessage(msg2);
    }
 

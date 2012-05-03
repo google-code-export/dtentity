@@ -199,6 +199,7 @@ namespace dtEntity
       static const StringId EntityNameId;
       static const StringId UniqueIdId;
       static const StringId MapNameId;
+      static const StringId VisibleInEntityListId;
 
       EntityAddedToSceneMessage();
 
@@ -216,12 +217,16 @@ namespace dtEntity
       std::string GetMapName() const { return mMapName.Get(); }
       void SetMapName(const std::string& v) { mMapName.Set(v); }
 
+      bool GetVisibleInEntityList() const { return mVisibleInEntityList.Get(); }
+      void SetVisibleInEntityList(bool v) { mVisibleInEntityList.Set(v); }
+
    private:
 
       UIntProperty mAboutEntityId;
       StringProperty mEntityName;
       StringProperty mUniqueId;
       StringProperty mMapName;
+      BoolProperty mVisibleInEntityList;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -265,6 +270,7 @@ namespace dtEntity
       static const StringId EntityNameId;
       static const StringId UniqueIdId;
       static const StringId MapNameId;
+      static const StringId VisibleInEntityListId;
 
       EntityRemovedFromSceneMessage();
 
@@ -282,12 +288,16 @@ namespace dtEntity
       std::string GetMapName() const { return mMapName.Get(); }
       void SetMapName(const std::string& v) { mMapName.Set(v); }
 
+      bool GetVisibleInEntityList() const { return mVisibleInEntityList.Get(); }
+      void SetVisibleInEntityList(bool v) { mVisibleInEntityList.Set(v); }
+
    private:
 
       UIntProperty mAboutEntityId;
       StringProperty mEntityName;
       StringProperty mUniqueId;
       StringProperty mMapName;
+      BoolProperty mVisibleInEntityList;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
