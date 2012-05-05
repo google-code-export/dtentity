@@ -107,7 +107,5 @@ namespace dtEntity
       static const ComponentType TYPE;
 
       StaticMeshSystem(EntityManager& em);
-
-      void ClearCache();
    };
 }
