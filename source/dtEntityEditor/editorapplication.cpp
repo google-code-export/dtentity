@@ -30,6 +30,8 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/resourcemanager.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
@@ -60,6 +62,7 @@ namespace dtEntityEditor
       , mEntityManager(new dtEntity::EntityManager())
       , mStartOfFrameTick(osg::Timer::instance()->tick())
       , mTimeScale(1)
+      , mFileSystemWatcher(new QFileSystemWatcher())
    {
 
       // default plugin dir
@@ -74,7 +77,9 @@ namespace dtEntityEditor
       static const char* winvar = "OSG_WINDOW=0 0 800 600";
       putenv(const_cast<char*>(winvar));
 
-
+      dtEntity::MessageFunctor f(this, &EditorApplication::OnResourceLoaded);
+      mEntityManager->RegisterForMessages(dtEntity::ResourceLoadedMessage::TYPE, f, "EditorApplication::OnResourceLoaded");
+      connect(mFileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(OnFileChanged(QString)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -93,13 +98,11 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::SetMainWindow(EditorMainWindow* mw)
    {
-
       assert(mMainWindow == NULL);
       mMainWindow = mw;
       
       connect(mMainWindow, SIGNAL(Closed(bool)), this, SLOT(ShutDownGame(bool)));
       connect(mMainWindow, SIGNAL(ViewResized(const QSize&)), this, SLOT(ViewResized(const QSize&)));
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +266,30 @@ namespace dtEntityEditor
          out.push_back(i->c_str());
       }
       return out;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorApplication::OnResourceLoaded(const dtEntity::Message& m)
+   {
+      const dtEntity::ResourceLoadedMessage& msg = static_cast<const dtEntity::ResourceLoadedMessage&>(m);
+      QString path = msg.GetPath().c_str();
+      if(!mFileSystemWatcher->files().contains(path))
+      {
+         mFileSystemWatcher->addPath(path);
+      }      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorApplication::OnFileChanged(const QString& path)
+   {
+      
+      if(mFileSystemWatcher->files().contains(path))
+      {
+         mFileSystemWatcher->removePath(path);
+         mFileSystemWatcher->addPath(path);
+      }
+
+      dtEntity::ResourceManager::GetInstance().TriggerReload(path.toStdString(), *mEntityManager);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

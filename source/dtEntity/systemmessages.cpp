@@ -42,6 +42,8 @@ namespace dtEntity
       em.RegisterMessageType<MapUnloadedMessage>(MapUnloadedMessage::TYPE);
       em.RegisterMessageType<MeshChangedMessage>(MeshChangedMessage::TYPE);
       em.RegisterMessageType<PostFrameMessage>(PostFrameMessage::TYPE);
+      em.RegisterMessageType<ResourceChangedMessage>(ResourceChangedMessage::TYPE);      
+      em.RegisterMessageType<ResourceLoadedMessage>(ResourceLoadedMessage::TYPE);      
       em.RegisterMessageType<SceneLoadedMessage>(SceneLoadedMessage::TYPE);
       em.RegisterMessageType<SceneUnloadedMessage>(SceneUnloadedMessage::TYPE);
       em.RegisterMessageType<SpawnerAddedMessage>(SpawnerAddedMessage::TYPE);
@@ -54,7 +56,7 @@ namespace dtEntity
       em.RegisterMessageType<VisibilityChangedMessage>(VisibilityChangedMessage::TYPE);
       em.RegisterMessageType<WindowCreatedMessage>(WindowCreatedMessage::TYPE);
       em.RegisterMessageType<WindowClosedMessage>(WindowClosedMessage::TYPE);      
-
+            
    }
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType CameraAddedMessage::TYPE(dtEntity::SID("CameraAddedMessage"));
@@ -189,6 +191,26 @@ namespace dtEntity
    PostFrameMessage::PostFrameMessage()
       : TickMessage(TYPE)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType ResourceChangedMessage::TYPE(dtEntity::SID("ResourceChanged"));
+   const StringId ResourceChangedMessage::PathId(dtEntity::SID("Path"));
+   
+   ResourceChangedMessage::ResourceChangedMessage()
+      : Message(TYPE)
+   {
+      this->Register(PathId, &mPath);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType ResourceLoadedMessage::TYPE(dtEntity::SID("ResourceLoadedMessage"));
+   const StringId ResourceLoadedMessage::PathId(dtEntity::SID("Path"));
+   
+   ResourceLoadedMessage::ResourceLoadedMessage()
+      : Message(TYPE)
+   {
+      this->Register(PathId, &mPath);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@
 #include <QtCore/QString>
 #include <QtCore/QSize>
 #include <QtCore/QObject>
+#include <QtCore/QFileSystemWatcher>
 #include <osg/Timer>
 #include <set>
 
@@ -78,6 +79,8 @@ namespace dtEntityEditor
        */
       QStringList GetDataPaths() const;
 
+      void OnResourceLoaded(const dtEntity::Message& msg);
+
    public slots:
 
       /**
@@ -113,6 +116,8 @@ namespace dtEntityEditor
 
       void InitializeScripting();
 
+      void OnFileChanged(const QString& path);
+
    private slots:
 
       /**
@@ -135,6 +140,7 @@ namespace dtEntityEditor
       osg::ref_ptr<osgViewer::Viewer> mViewer;
       std::vector<std::string> mPluginPaths;
       osg::Timer_t mStartOfFrameTick;
+      QFileSystemWatcher* mFileSystemWatcher;
       double mTimeScale;
     };
 }
