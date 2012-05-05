@@ -33,15 +33,17 @@ namespace osg
 
 namespace dtEntity
 {
+   class EntityManager;
+
    namespace ResourceManagerOptions
    {
       enum e
       {
-         DeepCopy             = 1<<0,
-         ShallowCopy          = 1<<1,
-         CopyNodes            = 1<<2,
-         CopyHardwareMeshes   = 1<<3,
-         DoOptimization       = 1<<4,
+         DeepCopy             = 1<<0,        // If in cache: Create copy of node and all of its subnodes
+         ShallowCopy          = 1<<1,        // If in cache: Create copy of node, share subnodes of cached node
+         CopyNodes            = 1<<2,        // If in cache: Create copy of node and subnodes, share vertices, textures etc
+         CopyHardwareMeshes   = 1<<3,        // If in cache: Special mode for efficiently sharing osgAnimation objects
+         DoOptimization       = 1<<4,        // Run osgUtil::Optimizer on first load
          Default              = ShallowCopy
       };
    }
@@ -53,9 +55,33 @@ namespace dtEntity
    public:
       
       typedef std::map<std::string, osg::ref_ptr<osg::Node> > NodeStore;
-      osg::ref_ptr<osg::Node> GetNode(const std::string& path, unsigned int options = ResourceManagerOptions::Default);
-      void RemoveFromCache(const std::string& path);
+
+      /**
+       * Try to read node from data paths.
+       * @param path Load resource from this path
+       * @param options Loading options.
+       * @return node, NULL if not found
+       */
+      osg::ref_ptr<osg::Node> GetNode(EntityManager& em, const std::string& path, unsigned int options = ResourceManagerOptions::Default);
+
+      /**
+       * @return true if this resource resides in the cache
+       */
+      bool IsInNodeCache(const std::string& path);
+      /**
+
+      /**
+       * remove from cache
+       * @return true if this resource was in the cache
+       */
+      bool RemoveFromNodeCache(const std::string& path);
       
+      /**
+       * Call this method to notify the resource manager that this resource has changed
+       * and should be reloaded
+       */
+      void TriggerReload(const std::string& path, EntityManager& em);
+
    private:
       NodeStore mNodeStore;
    };

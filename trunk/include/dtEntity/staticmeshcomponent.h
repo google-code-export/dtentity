@@ -107,5 +107,10 @@ namespace dtEntity
       static const ComponentType TYPE;
 
       StaticMeshSystem(EntityManager& em);
+
+      void OnResourceChanged(const Message& msg);
+
+   private:
+      MessageFunctor mResourceChangedFunctor;
    };
 }

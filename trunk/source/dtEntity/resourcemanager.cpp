@@ -20,6 +20,9 @@
 
 #include <dtEntity/resourcemanager.h>
 
+#include <dtEntity/log.h>
+#include <dtEntity/entitymanager.h>
+#include <dtEntity/systemmessages.h>
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
 #include <osgUtil/Optimizer>
@@ -27,40 +30,46 @@
 namespace dtEntity
 {
    ///////////////////////////////////////////////////////////////////////////
-   osg::ref_ptr<osg::Node> ResourceManager::GetNode(const std::string& path, unsigned int options)
+   osg::ref_ptr<osg::Node> ResourceManager::GetNode(EntityManager& em, const std::string& path, unsigned int options)
    {
+      osg::Node* ret = NULL;
+
+      std::string abspath = osgDB::findDataFile(path);
+
+      if(abspath.empty())
+      {
+         LOG_ERROR("Error loading node, could not find data file: " << path);
+         return NULL;
+      }
+
       if((options & ResourceManagerOptions::CopyNodes) != 0)
       {
-         NodeStore::iterator i = mNodeStore.find(path);
+         NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
          {
-            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+            ret = osg::clone(i->second.get(), osg::CopyOp(
                osg::CopyOp::DEEP_COPY_OBJECTS        |
                osg::CopyOp::DEEP_COPY_NODES          |
                osg::CopyOp::DEEP_COPY_USERDATA
             ));
-            n->setUserData(NULL);
-            return n;
          }
       }
       else if((options & ResourceManagerOptions::ShallowCopy) != NULL)
       {
-         NodeStore::iterator i = mNodeStore.find(path);
+         NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
          {
-            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+            ret = osg::clone(i->second.get(), osg::CopyOp(
                osg::CopyOp::DEEP_COPY_USERDATA
             ));
-            n->setUserData(NULL);
-            return n;
          }
       }
       else if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
       {
-         NodeStore::iterator i = mNodeStore.find(path);
+         NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
          {
-            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+            ret = osg::clone(i->second.get(), osg::CopyOp(
                osg::CopyOp::DEEP_COPY_ALL
                & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
                & ~osg::CopyOp::DEEP_COPY_ARRAYS
@@ -70,28 +79,30 @@ namespace dtEntity
                &  ~osg::CopyOp::DEEP_COPY_SHAPES
                & ~osg::CopyOp::DEEP_COPY_UNIFORMS
             ));
-            n->setUserData(NULL);
-            return n;
          }
       }
       else if((options & ResourceManagerOptions::DeepCopy) != NULL)
       {
-         NodeStore::iterator i = mNodeStore.find(path);
+         NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
          {
-            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+            ret = osg::clone(i->second.get(), osg::CopyOp(
                osg::CopyOp::DEEP_COPY_ALL
             ));
-            n->setUserData(NULL);
-            return n;
          }
       }
       
+      if(ret != NULL)
+      {
+         ret->setUserData(NULL);
+         return ret;
+      }
       
-      osg::Node* node = osgDB::readNodeFile(path);
+      osg::Node* node = osgDB::readNodeFile(abspath);
 
       if(node == NULL)
       {
+         LOG_ERROR("Error loading node, could not interpret data file: " << abspath);
          return NULL;
       }
 
@@ -102,8 +113,12 @@ namespace dtEntity
       }
       if((options & ResourceManagerOptions::DeepCopy) == NULL)
       {
-         mNodeStore[path] = node;
+         mNodeStore[abspath] = node;
       }
+
+      ResourceLoadedMessage msg;
+      msg.SetPath(abspath);
+      em.EmitMessage(msg);
 
       if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
       {
@@ -121,12 +136,31 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////
-   void ResourceManager::RemoveFromCache(const std::string& path)
+   bool ResourceManager::IsInNodeCache(const std::string& path)
+   {
+      return (mNodeStore.find(path) != mNodeStore.end());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
+   bool ResourceManager::RemoveFromNodeCache(const std::string& path)
    {
       NodeStore::iterator i = mNodeStore.find(path);
       if(i != mNodeStore.end())
       {
          mNodeStore.erase(i);
+         return true;
       }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
+   void ResourceManager::TriggerReload(const std::string& path, EntityManager& em)
+   {
+      RemoveFromNodeCache(path);
+      
+      ResourceChangedMessage msg;
+      msg.SetPath(path);
+      em.EmitMessage(msg);
+   
    }
 }

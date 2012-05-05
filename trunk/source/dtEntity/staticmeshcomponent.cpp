@@ -23,131 +23,10 @@
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
-
-
-
+#include <osgDB/FileUtils>
 
 namespace dtEntity
 {
-
- 
-
-   ////////////////////////////////////////////////////////////////////////////////
-   /*class ModelCache
-   {
-      typedef std::map<std::string, osg::ref_ptr<osg::Node> > ModelMap;
-
-   public:
-
-      osg::ref_ptr<osg::Node> GetNode(const std::string& path, CacheMode::e cachemode, bool optimize)
-      {
-         switch(cachemode)
-         {
-            case CacheMode::Nodes:
-            {
-               ModelMap::iterator i = mModels.find(path);
-               if(i != mModels.end())
-               {
-                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::DEEP_COPY_OBJECTS        |
-                     osg::CopyOp::DEEP_COPY_NODES          |
-                     osg::CopyOp::DEEP_COPY_USERDATA
-                  ));
-                  n->setUserData(NULL);
-                  return n;
-               }
-            }
-            break;
-            case CacheMode::All:
-            {
-               ModelMap::iterator i = mModels.find(path);
-               if(i != mModels.end())
-               {
-                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::DEEP_COPY_USERDATA
-                  ));
-                  n->setUserData(NULL);
-                  return n;
-               }
-            }break;
-            case CacheMode::HardwareMeshes:
-            {
-               ModelMap::iterator i = mModels.find(path);
-               if(i != mModels.end())
-               {
-                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::DEEP_COPY_ALL
-                     & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
-                     & ~osg::CopyOp::DEEP_COPY_ARRAYS
-                     & ~osg::CopyOp::DEEP_COPY_TEXTURES
-                     & ~osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
-                     & ~osg::CopyOp::DEEP_COPY_IMAGES
-                     &  ~osg::CopyOp::DEEP_COPY_SHAPES
-                     & ~osg::CopyOp::DEEP_COPY_UNIFORMS
-                  ));
-                  n->setUserData(NULL);
-                  return n;
-               }
-            }
-            break;
-            case CacheMode::None:
-            {
-               ModelMap::iterator i = mModels.find(path);
-               if(i != mModels.end())
-               {
-                  osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                     osg::CopyOp::DEEP_COPY_ALL
-                  ));
-                  n->setUserData(NULL);
-                  return n;
-               }
-            }
-            break;
-         }
-         
-         osg::Node* node = osgDB::readNodeFile(path);
-
-         if(node == NULL)
-         {
-            return NULL;
-         }
-
-         if(optimize)
-         {
-            osgUtil::Optimizer optimizer;
-            optimizer.optimize(node);
-         }
-         if(cachemode != CacheMode::None)
-         {
-            mModels[path] = node;
-         }
-
-         if(cachemode == CacheMode::HardwareMeshes)
-         {
-            return osg::clone(node, osg::CopyOp(
-               osg::CopyOp::DEEP_COPY_ALL &
-               ~osg::CopyOp::DEEP_COPY_PRIMITIVES &
-               ~osg::CopyOp::DEEP_COPY_ARRAYS &
-               ~osg::CopyOp::DEEP_COPY_TEXTURES
-            ));           
-         }
-         else
-         {
-            return node;
-         }
-      }
-
-      void Clear()
-      {
-         mModels.clear();
-      }
-
-   private:
-      ModelMap mModels;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   static ModelCache s_modelCache;*/
 
    ////////////////////////////////////////////////////////////////////////////
    const StringId StaticMeshComponent::TYPE(dtEntity::SID("StaticMesh"));
@@ -243,7 +122,7 @@ namespace dtEntity
             options |= ResourceManagerOptions::DoOptimization;
          }
 
-         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(path, options);
+         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(mEntity->GetEntityManager(), path, options);
          if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
@@ -300,6 +179,26 @@ namespace dtEntity
    StaticMeshSystem::StaticMeshSystem(EntityManager& em)
       : DefaultEntitySystem<StaticMeshComponent>(em, NodeComponent::TYPE)
    {
+      mResourceChangedFunctor = MessageFunctor(this, &StaticMeshSystem::OnResourceChanged);
+      em.RegisterForMessages(ResourceChangedMessage::TYPE, mResourceChangedFunctor, "StaticMeshSystem::OnResourceChanged");
+      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void StaticMeshSystem::OnResourceChanged(const Message& m)
+   {
+      const ResourceChangedMessage& msg = static_cast<const ResourceChangedMessage&>(m);
+
+      for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         StaticMeshComponent* c = i->second;
+         std::string abspath = osgDB::findDataFile(c->GetMesh());
+         if(abspath == msg.GetPath())
+         {
+            c->SetMesh("");
+            c->SetMesh(msg.GetPath());
+         }
+      }
    }
 
 }
