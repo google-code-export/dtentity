@@ -27,71 +27,66 @@
 namespace dtEntity
 {
    ///////////////////////////////////////////////////////////////////////////
-   osg::ref_ptr<osg::Node> ResourceManager::GetNode(const std::string& path, CacheMode::e cachemode, bool optimize)
+   osg::ref_ptr<osg::Node> ResourceManager::GetNode(const std::string& path, unsigned int options)
    {
-      switch(cachemode)
+      if((options & ResourceManagerOptions::CopyNodes) != 0)
       {
-         case CacheMode::Nodes:
+         NodeStore::iterator i = mNodeStore.find(path);
+         if(i != mNodeStore.end())
          {
-            NodeStore::iterator i = mNodeStore.find(path);
-            if(i != mNodeStore.end())
-            {
-               osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                  osg::CopyOp::DEEP_COPY_OBJECTS        |
-                  osg::CopyOp::DEEP_COPY_NODES          |
-                  osg::CopyOp::DEEP_COPY_USERDATA
-               ));
-               n->setUserData(NULL);
-               return n;
-            }
+            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+               osg::CopyOp::DEEP_COPY_OBJECTS        |
+               osg::CopyOp::DEEP_COPY_NODES          |
+               osg::CopyOp::DEEP_COPY_USERDATA
+            ));
+            n->setUserData(NULL);
+            return n;
          }
-         break;
-         case CacheMode::All:
-         {
-            NodeStore::iterator i = mNodeStore.find(path);
-            if(i != mNodeStore.end())
-            {
-               osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                  osg::CopyOp::DEEP_COPY_USERDATA
-               ));
-               n->setUserData(NULL);
-               return n;
-            }
-         }break;
-         case CacheMode::HardwareMeshes:
-         {
-            NodeStore::iterator i = mNodeStore.find(path);
-            if(i != mNodeStore.end())
-            {
-               osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                  osg::CopyOp::DEEP_COPY_ALL
-                  & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
-                  & ~osg::CopyOp::DEEP_COPY_ARRAYS
-                  & ~osg::CopyOp::DEEP_COPY_TEXTURES
-                  & ~osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
-                  & ~osg::CopyOp::DEEP_COPY_IMAGES
-                  &  ~osg::CopyOp::DEEP_COPY_SHAPES
-                  & ~osg::CopyOp::DEEP_COPY_UNIFORMS
-               ));
-               n->setUserData(NULL);
-               return n;
-            }
-         }
-         break;
-         case CacheMode::None:
-         {
-            NodeStore::iterator i = mNodeStore.find(path);
-            if(i != mNodeStore.end())
-            {
-               osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
-                  osg::CopyOp::DEEP_COPY_ALL
-               ));
-               n->setUserData(NULL);
-               return n;
-            }
-         }
-         break;
       }
+      else if((options & ResourceManagerOptions::ShallowCopy) != NULL)
+      {
+         NodeStore::iterator i = mNodeStore.find(path);
+         if(i != mNodeStore.end())
+         {
+            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+               osg::CopyOp::DEEP_COPY_USERDATA
+            ));
+            n->setUserData(NULL);
+            return n;
+         }
+      }
+      else if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
+      {
+         NodeStore::iterator i = mNodeStore.find(path);
+         if(i != mNodeStore.end())
+         {
+            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+               osg::CopyOp::DEEP_COPY_ALL
+               & ~osg::CopyOp::DEEP_COPY_PRIMITIVES
+               & ~osg::CopyOp::DEEP_COPY_ARRAYS
+               & ~osg::CopyOp::DEEP_COPY_TEXTURES
+               & ~osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
+               & ~osg::CopyOp::DEEP_COPY_IMAGES
+               &  ~osg::CopyOp::DEEP_COPY_SHAPES
+               & ~osg::CopyOp::DEEP_COPY_UNIFORMS
+            ));
+            n->setUserData(NULL);
+            return n;
+         }
+      }
+      else if((options & ResourceManagerOptions::DeepCopy) != NULL)
+      {
+         NodeStore::iterator i = mNodeStore.find(path);
+         if(i != mNodeStore.end())
+         {
+            osg::Node* n = osg::clone(i->second.get(), osg::CopyOp(
+               osg::CopyOp::DEEP_COPY_ALL
+            ));
+            n->setUserData(NULL);
+            return n;
+         }
+      }
+      
       
       osg::Node* node = osgDB::readNodeFile(path);
 
@@ -100,17 +95,17 @@ namespace dtEntity
          return NULL;
       }
 
-      if(optimize)
+      if((options & ResourceManagerOptions::DoOptimization) != NULL)
       {
          osgUtil::Optimizer optimizer;
          optimizer.optimize(node);
       }
-      if(cachemode != CacheMode::None)
+      if((options & ResourceManagerOptions::DeepCopy) == NULL)
       {
          mNodeStore[path] = node;
       }
 
-      if(cachemode == CacheMode::HardwareMeshes)
+      if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
       {
          return osg::clone(node, osg::CopyOp(
             osg::CopyOp::DEEP_COPY_ALL &
@@ -122,6 +117,16 @@ namespace dtEntity
       else
       {
          return node;
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
+   void ResourceManager::RemoveFromCache(const std::string& path)
+   {
+      NodeStore::iterator i = mNodeStore.find(path);
+      if(i != mNodeStore.end())
+      {
+         mNodeStore.erase(i);
       }
    }
 }

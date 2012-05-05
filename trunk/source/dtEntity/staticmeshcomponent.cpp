@@ -225,20 +225,25 @@ namespace dtEntity
       }
       else
       {
-         CacheMode::e cm = CacheMode::None;
+         unsigned int options = ResourceManagerOptions::DeepCopy;
          if(cacheHint == CacheAllId)
          {
-           cm = CacheMode::All;
+           options = ResourceManagerOptions::ShallowCopy;
          }
          else if(cacheHint == CacheNodesId)
          {
-           cm = CacheMode::Nodes;
+            options = ResourceManagerOptions::CopyNodes;
          }
          else if(cacheHint == CacheHardwareMeshesId)
          {
-           cm = CacheMode::HardwareMeshes;
+            options = ResourceManagerOptions::CopyHardwareMeshes;
          }
-         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(path, cm, GetOptimize());
+         if(GetOptimize())
+         {
+            options |= ResourceManagerOptions::DoOptimization;
+         }
+
+         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(path, options);
          if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);

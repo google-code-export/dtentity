@@ -33,14 +33,16 @@ namespace osg
 
 namespace dtEntity
 {
-   namespace CacheMode
+   namespace ResourceManagerOptions
    {
       enum e
       {
-         None,
-         All,
-         Nodes,
-         HardwareMeshes
+         DeepCopy             = 1<<0,
+         ShallowCopy          = 1<<1,
+         CopyNodes            = 1<<2,
+         CopyHardwareMeshes   = 1<<3,
+         DoOptimization       = 1<<4,
+         Default              = ShallowCopy
       };
    }
    
@@ -51,7 +53,8 @@ namespace dtEntity
    public:
       
       typedef std::map<std::string, osg::ref_ptr<osg::Node> > NodeStore;
-      osg::ref_ptr<osg::Node> GetNode(const std::string& path, CacheMode::e cachemode, bool optimize);
+      osg::ref_ptr<osg::Node> GetNode(const std::string& path, unsigned int options = ResourceManagerOptions::Default);
+      void RemoveFromCache(const std::string& path);
       
    private:
       NodeStore mNodeStore;
