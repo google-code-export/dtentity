@@ -21,29 +21,19 @@
 #include <dtEntity/staticmeshcomponent.h>
 
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 
-#include <osgDB/ReadFile>
-#include <osgDB/FileUtils>
-#include <osgUtil/Optimizer>
+
 
 
 namespace dtEntity
 {
 
-  namespace CacheMode
-  {
-      enum e
-      {
-         None,
-         All,
-         Nodes,
-         HardwareMeshes
-      };
-   }
+ 
 
    ////////////////////////////////////////////////////////////////////////////////
-   class ModelCache
+   /*class ModelCache
    {
       typedef std::map<std::string, osg::ref_ptr<osg::Node> > ModelMap;
 
@@ -157,7 +147,7 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   static ModelCache s_modelCache;
+   static ModelCache s_modelCache;*/
 
    ////////////////////////////////////////////////////////////////////////////
    const StringId StaticMeshComponent::TYPE(dtEntity::SID("StaticMesh"));
@@ -248,7 +238,7 @@ namespace dtEntity
          {
            cm = CacheMode::HardwareMeshes;
          }
-         osg::ref_ptr<osg::Node> meshnode = s_modelCache.GetNode(path, cm, GetOptimize());
+         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(path, cm, GetOptimize());
          if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
@@ -305,12 +295,6 @@ namespace dtEntity
    StaticMeshSystem::StaticMeshSystem(EntityManager& em)
       : DefaultEntitySystem<StaticMeshComponent>(em, NodeComponent::TYPE)
    {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshSystem::ClearCache()
-   {
-      s_modelCache.Clear();
    }
 
 }
