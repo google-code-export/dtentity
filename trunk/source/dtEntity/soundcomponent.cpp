@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* dtEntity Game and Simulation Engine
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
