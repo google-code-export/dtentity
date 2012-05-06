@@ -3,7 +3,6 @@ SET(APP_NAME dtEntityUnitTests)
 INCLUDE_DIRECTORIES( 
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${OSG_INCLUDE_DIR}
-  ${DELTA3D_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/UnitTest++/src
 )
 

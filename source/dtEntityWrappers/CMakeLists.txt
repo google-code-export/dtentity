@@ -8,18 +8,10 @@ IF(BUILD_CEGUI)
   INCLUDE_DIRECTORIES(${CEGUI_INCLUDE_DIR})
 ENDIF(BUILD_CEGUI)
 
-IF(BUILD_WITH_DELTA3D)
-  IF(BUILD_CAL3D)
-    FIND_PACKAGE(CAL3D REQUIRED)
-  ENDIF(BUILD_CAL3D)
-  OPTION(BUILD_OPENAL "Build OpenAL Sound module" OFF)
-ENDIF(BUILD_WITH_DELTA3D)
-
 INCLUDE_DIRECTORIES( 
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
   ${OSG_INCLUDE_DIR}
   ${V8_INCLUDE_DIR}
-  ${DELTA3D_INCLUDE_DIR}
 )
 
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
@@ -57,7 +49,7 @@ SET(LIB_SOURCES
 	file.cpp
 	globalfunctions.cpp
 	inputhandlerwrapper.cpp	
-  loggerwrapper.cpp
+    loggerwrapper.cpp
 	mapsystemwrapper.cpp
 	propertyconverter.cpp
 	screenwrapper.cpp

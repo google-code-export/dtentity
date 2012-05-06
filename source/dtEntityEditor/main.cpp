@@ -200,8 +200,8 @@ int main(int argc, char *argv[])
 
    if(!singleThread)
    {
-      // start delta3d in a background thread. All communications between
-      // Qt and D3D go over signal slot connections.
+      // start dtEntity in a background thread. All communications between
+      // Qt and dtEntity go over signal slot connections.
       viewerThread = new QThread();
       application->moveToThread(viewerThread);
    }
