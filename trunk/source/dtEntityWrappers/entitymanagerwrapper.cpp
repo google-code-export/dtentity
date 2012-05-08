@@ -148,6 +148,13 @@ namespace dtEntityWrappers
    {
       return String::New("<EntityManager>");
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EMCloneEntity(const v8::Arguments& args)
+   {
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      return Boolean::New(em->CloneEntity(args[0]->Uint32Value(), args[1]->Uint32Value()));
+   }
    
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMCreateEntity(const v8::Arguments& args)
@@ -495,6 +502,7 @@ namespace dtEntityWrappers
 
         proto->Set("addEntitySystem", FunctionTemplate::New(EMAddEntitySystem));
         proto->Set("addToScene", FunctionTemplate::New(EMAddToScene));
+        proto->Set("cloneEntity", FunctionTemplate::New(EMCloneEntity));
         proto->Set("createEntity", FunctionTemplate::New(EMCreateEntity));
         proto->Set("getEntityIds", FunctionTemplate::New(EMGetEntityIds));
         proto->Set("emitMessage", FunctionTemplate::New(EMEmitMessage));

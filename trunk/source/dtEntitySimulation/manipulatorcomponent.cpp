@@ -374,19 +374,21 @@ namespace dtEntitySimulation
       if(layerattsystem->GetByName(mLayerProperty.Get(), next))
       {
          dtEntity::TransformComponent* tcomp;
-         mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true);
+         if(mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true))
+         {
 
-         assert(!mDraggerContainer.valid());
-         assert(dynamic_cast<osgManipulator::Dragger*>(GetNode()) != NULL);
-         DraggerContainer* dc = new DraggerContainer(GetDragger(), tcomp);
-         mDraggerContainer = dc;
+            assert(!mDraggerContainer.valid());
+            assert(dynamic_cast<osgManipulator::Dragger*>(GetNode()) != NULL);
+            DraggerContainer* dc = new DraggerContainer(GetDragger(), tcomp);
+            mDraggerContainer = dc;
 
-         dc->SetUseLocalCoords(mUseLocalCoords.Get());
-         dc->setKeepSizeConstant(mKeepSizeConstant.Get());
-         dc->setPivotAtBottom(mPivotAtBottom.Get());
+            dc->SetUseLocalCoords(mUseLocalCoords.Get());
+            dc->setKeepSizeConstant(mKeepSizeConstant.Get());
+            dc->setPivotAtBottom(mPivotAtBottom.Get());
 
-         next->GetAttachmentGroup()->addChild(mDraggerContainer);
-         mAttachPoint = mLayerProperty.Get();
+            next->GetAttachmentGroup()->addChild(mDraggerContainer);
+            mAttachPoint = mLayerProperty.Get();
+         }
       }
    }
 

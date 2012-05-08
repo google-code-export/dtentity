@@ -265,7 +265,24 @@ namespace dtEntityWrappers
       
       return scope.Close(obj);
    }
-   
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> MSGetSpawnerCreatedEntities(const Arguments& args)
+   {
+      dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
+      std::string spawnername = ToStdString(args[0]);
+      bool recursive = args[1]->BooleanValue();
+
+      std::vector<dtEntity::EntityId> ids;
+      ms->GetSpawnerCreatedEntities(spawnername, ids, recursive);
+      HandleScope scope;
+      Handle<Array> arr = Array::New();
+      for(unsigned int i = 0; i < ids.size(); ++i)
+      {
+         arr->Set(i, Integer::New(ids[i]));
+      }
+      return scope.Close(arr);
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> MSGetAllSpawnerNames(const Arguments& args)
@@ -343,6 +360,7 @@ namespace dtEntityWrappers
       proto->Set("addSpawner", FunctionTemplate::New(MSAddSpawner));
       proto->Set("deleteSpawner", FunctionTemplate::New(MSDeleteSpawner));
       proto->Set("getSpawner", FunctionTemplate::New(MSGetSpawner));
+      proto->Set("getSpawnerCreatedEntities", FunctionTemplate::New(MSGetSpawnerCreatedEntities));
       proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
       proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
       

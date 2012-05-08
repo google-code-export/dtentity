@@ -515,7 +515,12 @@ namespace dtEntityWrappers
       
       dtEntity::Component* comp;
       bool success = const_cast<EntitySystemJS*>(this)->CreateComponent(0, comp);
-      assert(success);
+      if(!success)
+      {
+         LOG_ERROR("Cannot instantiate javascript component of type " << dtEntity::GetStringFromSID(GetComponentType()));
+         dtEntity::DynamicPropertyContainer c;
+         return c;
+      }
       ConstPropertyMap m;
       comp->GetProperties(m);
       dtEntity::DynamicPropertyContainer c;
