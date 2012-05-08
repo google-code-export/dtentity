@@ -146,7 +146,7 @@ namespace dtEntity
       ////////////////////////////////////////////////////////////////////////////////
       ~DefaultEntitySystem()
       {
-         DestroyAll(mComponents);
+         MemAllocPolicy<T>::DestroyAll(mComponents);
       }
 
       virtual ComponentType GetComponentType() const

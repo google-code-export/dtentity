@@ -69,7 +69,6 @@ namespace dtEntity
        * @return true if this resource resides in the cache
        */
       bool IsInNodeCache(const std::string& path);
-      /**
 
       /**
        * remove from cache
