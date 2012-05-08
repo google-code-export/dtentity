@@ -135,6 +135,14 @@ namespace dtEntity
       bool CreateEntity(Entity*& entity);
 
       /**
+       * Loops through all components of origin and creates them on target entity
+       * @param target ID of an existing entity with no components
+       * @param origin Clone components of this entity
+       * @return true if success
+       */
+      bool CloneEntity(EntityId target, EntityId origin);
+
+      /**
        * returns true while at least one entity exists
        */
       bool HasEntities() const;

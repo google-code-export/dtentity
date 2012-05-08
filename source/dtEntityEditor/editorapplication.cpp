@@ -122,7 +122,7 @@ namespace dtEntityEditor
       dtEntity::InitOSGViewer(0, NULL, *mViewer, *mEntityManager, false, false);
 
       dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
-      
+
       osgViewer::ViewerBase::Windows wins;
       mViewer->getWindows(wins);
 
@@ -303,7 +303,7 @@ namespace dtEntityEditor
          QString path = *i;
          if(!QFile::exists(path))
          {
-            LOG_ERROR("Project assets folder does not exist: " + path.toStdString());
+            qWarning() << "Project assets folder does not exist: " << path;
          }
          else if(std::find(in.begin(), in.end(), path.toStdString()) == in.end())
          {

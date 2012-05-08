@@ -84,6 +84,66 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::CloneEntity(EntityId target, EntityId origin)
+   {
+      bool success = true;
+      std::vector<Component*> createdComponents;
+
+      for(EntitySystemStore::iterator i = mEntitySystemStore.begin();
+          i != mEntitySystemStore.end(); ++i)
+      {
+         EntitySystem* sys = i->second;
+
+         if(!sys->AllowComponentCreationBySpawner())
+         {
+            continue;
+         }
+
+         Component* origincomp;
+
+         if(sys->GetComponent(origin, origincomp))
+         {
+            Component* clonecomp;
+            bool created = sys->CreateComponent(target, clonecomp);
+            if(!created)
+            {
+               LOG_ERROR("Error cloning component!");
+               success = false;
+            }
+            else
+            {
+               createdComponents.push_back(clonecomp);
+               const PropertyContainer::PropertyMap& props = origincomp->GetAllProperties();
+
+               for(PropertyContainer::PropertyMap::const_iterator i = props.begin(); i != props.end(); ++i)
+               {
+                  Property* prp = clonecomp->Get(i->first);
+                  if(prp)
+                  {
+                     prp->SetFrom(*i->second);
+                     clonecomp->OnPropertyChanged(i->first, *prp);
+                  }
+                  else
+                  {
+                     LOG_ERROR("Error cloning: Property does not exist in target");
+                     success = false;
+                  }
+               }
+            }
+         }
+      }
+
+
+      for(std::vector<Component*>::iterator i = createdComponents.begin();
+          i != createdComponents.end(); ++i)
+      {
+         (*i)->Finished();
+      }
+      return success;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::HasEntities() const
    {
       OpenThreads::ScopedReadLock lock(mEntityMutex);

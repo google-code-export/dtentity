@@ -73,7 +73,9 @@ var Selection = {
     var ret = [];
     for (var k in this.ids) {
       var eid = this.ids[k];
-      var newid = createEntity(createSpawnerFromEntity(eid));
+
+      var newid = EntityManager.createEntity();
+      EntityManager.cloneEntity(newid, eid);
       EntityManager.addToScene(newid);
       ret.push(newid);
     }

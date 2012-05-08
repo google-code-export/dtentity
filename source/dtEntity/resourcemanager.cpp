@@ -54,7 +54,7 @@ namespace dtEntity
             ));
          }
       }
-      else if((options & ResourceManagerOptions::ShallowCopy) != NULL)
+      else if((options & ResourceManagerOptions::ShallowCopy) != 0)
       {
          NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
@@ -64,7 +64,7 @@ namespace dtEntity
             ));
          }
       }
-      else if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
+      else if((options & ResourceManagerOptions::CopyHardwareMeshes) != 0)
       {
          NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
@@ -81,7 +81,7 @@ namespace dtEntity
             ));
          }
       }
-      else if((options & ResourceManagerOptions::DeepCopy) != NULL)
+      else if((options & ResourceManagerOptions::DeepCopy) != 0)
       {
          NodeStore::iterator i = mNodeStore.find(abspath);
          if(i != mNodeStore.end())
@@ -106,12 +106,12 @@ namespace dtEntity
          return NULL;
       }
 
-      if((options & ResourceManagerOptions::DoOptimization) != NULL)
+      if((options & ResourceManagerOptions::DoOptimization) != 0)
       {
          osgUtil::Optimizer optimizer;
          optimizer.optimize(node);
       }
-      if((options & ResourceManagerOptions::DeepCopy) == NULL)
+      if((options & ResourceManagerOptions::DeepCopy) == 0)
       {
          mNodeStore[abspath] = node;
       }
@@ -120,7 +120,7 @@ namespace dtEntity
       msg.SetPath(abspath);
       em.EmitMessage(msg);
 
-      if((options & ResourceManagerOptions::CopyHardwareMeshes) != NULL)
+      if((options & ResourceManagerOptions::CopyHardwareMeshes) != 0)
       {
          return osg::clone(node, osg::CopyOp(
             osg::CopyOp::DEEP_COPY_ALL &
