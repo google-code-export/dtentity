@@ -527,7 +527,7 @@ namespace dtEntityEditor
 
             // loop over input types and add them
             std::set<dtEntity::ComponentType>::const_iterator itr;
-            for (itr = newTypes.begin(); itr != newTypes.end(); itr++)
+            for (itr = newTypes.begin(); itr != newTypes.end(); ++itr)
             {
                model->EntitySystemAdded(*itr);
             }

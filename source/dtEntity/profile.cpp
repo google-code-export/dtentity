@@ -202,7 +202,7 @@ void	CProfileManager::dumpRecursive(CProfileIterator* profileIterator, int spaci
         printf("----------------------------------\n");
 	for (i=0;i<spacing;i++)	printf(".");
 	printf("Profiling: %s (total running time: %.3f ms) ---\n",	dtEntity::GetStringFromSID(profileIterator->Get_Current_Parent_Name()).c_str(), parent_time );
-	float totalTime = 0.f;
+
 
 	
 	int numChildren = 0;
