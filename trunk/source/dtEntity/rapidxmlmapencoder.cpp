@@ -1484,7 +1484,7 @@ namespace dtEntity
 
       const std::map<std::string, bool>& pluginList = pluginManager.GetLoadedPlugins();
       std::map<std::string, bool>::const_iterator itr;
-      for(itr = pluginList.begin(); itr != pluginList.end(); itr++)
+      for(itr = pluginList.begin(); itr != pluginList.end(); ++itr)
       {
          if (itr->second == true)
          {

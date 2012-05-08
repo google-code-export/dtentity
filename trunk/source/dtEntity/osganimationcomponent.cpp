@@ -96,7 +96,7 @@ namespace dtEntity
       std::string mVertexShader;
       std::string mFragmentShader;
 
-      MyRigTransformHardware(const std::string vertshader, const std::string& fragshader)
+      MyRigTransformHardware(const std::string& vertshader, const std::string& fragshader)
          : mVertexShader(vertshader)
          , mFragmentShader(fragshader)
       {

@@ -42,7 +42,7 @@ namespace dtEntity
 
    public:
 
-      MaterialVisitor(ShaderSystem* ss, const std::string prefix)
+      MaterialVisitor(ShaderSystem* ss, const std::string& prefix)
          : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
          , mShaderSystem(ss)
          , mPrefix(prefix)

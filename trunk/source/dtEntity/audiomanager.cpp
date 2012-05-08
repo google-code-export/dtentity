@@ -240,7 +240,7 @@ namespace dtEntity
       {
          if (alutInit(NULL, NULL) == AL_FALSE)
          {
-            std::cout << "Error initializing alut" << std::cout;
+            std::cout << "Error initializing alut" << std::endl;
             Sound::CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
          }
          Sound::CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -255,7 +255,7 @@ namespace dtEntity
       {
          if(alutInitWithoutContext(NULL, NULL) == AL_FALSE)
          {
-            std::cout << "Error initializing alut" << std::cout;
+            std::cout << "Error initializing alut" << std::endl;
             Sound::CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
          }
          Sound::CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
