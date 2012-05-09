@@ -142,6 +142,12 @@ namespace dtEntity
       return success;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EntityManager::HasEntity(EntityId id) const
+   {
+      OpenThreads::ScopedReadLock lock(mEntityMutex);
+      return mEntities.find(id) != mEntities.end();
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool EntityManager::HasEntities() const

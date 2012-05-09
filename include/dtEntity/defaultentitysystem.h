@@ -48,6 +48,7 @@
 namespace dtEntity
 {
 
+   ////////////////////////////////////////////////////////////////////////////////
 #if defined(_MSC_VER) && (_MSC_VER >=1500)
 
    template<class T>
@@ -62,13 +63,14 @@ namespace dtEntity
    {
    };
 #else
-	template<class T>
+   template<class T>
    class ComponentStoreMap
       : public std::map<EntityId, T*>
    {
    };
 #endif
 
+   ////////////////////////////////////////////////////////////////////////////////
    template<class T>
    struct MemAllocPolicyNew
    {
@@ -95,6 +97,7 @@ namespace dtEntity
    };
 
 
+   ////////////////////////////////////////////////////////////////////////////////
 #if USE_BOOST_POOL
    template<class T>
    struct MemAllocPolicyBoostPool
@@ -122,6 +125,7 @@ namespace dtEntity
    };
 #endif
 
+   ////////////////////////////////////////////////////////////////////////////////
    /**
     * A simple base for an entity system that handles component allocation
     * and deletion.
@@ -136,167 +140,219 @@ namespace dtEntity
 
       typedef ComponentStoreMap<T> ComponentStore;
 
-      ////////////////////////////////////////////////////////////////////////////////
       DefaultEntitySystem(EntityManager& em, ComponentType baseType = StringId())
          : EntitySystem(em, baseType)
          , mComponentType(T::TYPE)
       {
       }
 
-      ////////////////////////////////////////////////////////////////////////////////
       ~DefaultEntitySystem()
       {
          MemAllocPolicy<T>::DestroyAll(mComponents);
       }
 
-      virtual ComponentType GetComponentType() const
-      {
-         return mComponentType;
-      }
+      virtual ComponentType GetComponentType() const;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual bool HasComponent(EntityId eid) const
-      {
-         typename ComponentStore::const_iterator i = mComponents.find(eid);
-         return(i != mComponents.end());
-      }
+      virtual bool HasComponent(EntityId eid) const;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      T* GetComponent(EntityId eid)
-      {
-         typename ComponentStore::iterator i = mComponents.find(eid);
-         if(i != mComponents.end())
-         {
-            return i->second;
-         }
-         return NULL;
-      }
+      T* GetComponent(EntityId eid);
+      const T* GetComponent(EntityId eid) const;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual bool GetComponent(EntityId eid, Component*& c)
-      {
-         typename ComponentStore::iterator i = mComponents.find(eid);
-         if(i != mComponents.end())
-         {
-            c = i->second;
-            return true;
-         }
-         return false;
-      }
+      virtual bool GetComponent(EntityId eid, Component*& c);
+      virtual bool GetComponent(EntityId eid, const Component*& c) const;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual bool GetComponent(EntityId eid, const Component*& c) const
-      {
-         typename ComponentStore::const_iterator i = mComponents.find(eid);
-         if(i != mComponents.end())
-         {
-            c = i->second;
-            return true;
-         }
-         return false;
-      }
+      virtual bool CreateComponent(EntityId eid, Component*& component);
+      virtual bool DeleteComponent(EntityId eid);
 
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual bool CreateComponent(EntityId eid, Component*& component)
-      {
-         if(HasComponent(eid))
-         {
-            LOG_ERROR("Could not create component: already exists!");
-            return false;
-         }
+      virtual void GetEntitiesInSystem(std::list<EntityId>& toFill) const;
 
-         T* t = MemAllocPolicy<T>::Create();
+      unsigned int GetNumComponents() const;
 
-         if(t == NULL)
-         {
-            LOG_ERROR("Out of memory!");
-            return false;
-         }
-         component = t;
-         mComponents[eid] = t;
+      virtual DynamicPropertyContainer GetComponentProperties() const;
 
-         Entity* e;
-         bool found = GetEntityManager().GetEntity(eid, e);
-         if(!found)
-         {
-            LOG_ERROR("Can't add component to entity: entity does not exist!");
-            return false;
-         }
-         component->OnAddedToEntity(*e);
-         return true;
-      }
+      typename ComponentStore::iterator begin();
+      typename ComponentStore::const_iterator begin() const;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual bool DeleteComponent(EntityId eid)
-      {
-         typename ComponentStore::iterator i = mComponents.find(eid);
-         if(i == mComponents.end())
-            return false;
-         T* component = i->second;
-         Entity* e;
-         bool found = GetEntityManager().GetEntity(eid, e);
-         assert(found);
-         component->OnRemovedFromEntity(*e);
-         mComponents.erase(i);
-         MemAllocPolicy<T>::Destroy(component);
-         return true;
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual void GetEntitiesInSystem(std::list<EntityId>& toFill) const
-      {
-         typename ComponentStore::const_iterator i = mComponents.begin();
-         for(;i != mComponents.end(); ++i)
-         {
-            toFill.push_back(i->first);
-         }
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      unsigned int GetNumComponents() const 
-      {
-         return mComponents.size();
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual DynamicPropertyContainer GetComponentProperties() const
-      {
-         ConstPropertyMap m;
-         T t;
-         t.GetProperties(m);
-         DynamicPropertyContainer c;
-         c.SetProperties(m);
-         return c;
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      typename ComponentStore::iterator begin()
-      {
-         return mComponents.begin();
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      typename ComponentStore::const_iterator begin() const
-      {
-         return mComponents.begin();
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      typename ComponentStore::iterator end()
-      {
-         return mComponents.end();
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-      typename ComponentStore::const_iterator end() const
-      {
-         return mComponents.end();
-      }
+      typename ComponentStore::iterator end();
+      typename ComponentStore::const_iterator end() const;
 
    protected:
 
       ComponentStore mComponents;
       ComponentType mComponentType;
    };
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      ComponentType DefaultEntitySystem<T, MemAllocPolicy>::GetComponentType() const
+   {
+      return mComponentType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      bool DefaultEntitySystem<T, MemAllocPolicy>::HasComponent(EntityId eid) const
+   {
+      typename ComponentStore::const_iterator i = mComponents.find(eid);
+      return(i != mComponents.end());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      T* DefaultEntitySystem<T, MemAllocPolicy>::GetComponent(EntityId eid)
+   {
+      typename ComponentStore::iterator i = mComponents.find(eid);
+      if(i != mComponents.end())
+      {
+         return i->second;
+      }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      const T* DefaultEntitySystem<T, MemAllocPolicy>::GetComponent(EntityId eid) const
+   {
+      typename ComponentStore::const_iterator i = mComponents.find(eid);
+      if(i != mComponents.end())
+      {
+         return i->second;
+      }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      bool DefaultEntitySystem<T, MemAllocPolicy>::GetComponent(EntityId eid, Component*& c)
+   {
+      typename ComponentStore::iterator i = mComponents.find(eid);
+      if(i != mComponents.end())
+      {
+         c = i->second;
+         return true;
+      }
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      bool DefaultEntitySystem<T, MemAllocPolicy>::GetComponent(EntityId eid, const Component*& c) const
+   {
+      typename ComponentStore::const_iterator i = mComponents.find(eid);
+      if(i != mComponents.end())
+      {
+         c = i->second;
+         return true;
+      }
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      bool DefaultEntitySystem<T, MemAllocPolicy>::CreateComponent(EntityId eid, Component*& component)
+   {
+      if(HasComponent(eid))
+      {
+         LOG_ERROR("Could not create component: already exists!");
+         return false;
+      }
+
+      T* t = MemAllocPolicy<T>::Create();
+
+      if(t == NULL)
+      {
+         LOG_ERROR("Out of memory!");
+         return false;
+      }
+      component = t;
+      mComponents[eid] = t;
+
+      Entity* e;
+      bool found = GetEntityManager().GetEntity(eid, e);
+      if(!found)
+      {
+         LOG_ERROR("Can't add component to entity: entity does not exist!");
+         return false;
+      }
+      component->OnAddedToEntity(*e);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      bool DefaultEntitySystem<T, MemAllocPolicy>::DeleteComponent(EntityId eid)
+   {
+      typename ComponentStore::iterator i = mComponents.find(eid);
+      if(i == mComponents.end())
+         return false;
+      T* component = i->second;
+      Entity* e;
+      bool found = GetEntityManager().GetEntity(eid, e);
+      assert(found);
+      component->OnRemovedFromEntity(*e);
+      mComponents.erase(i);
+      MemAllocPolicy<T>::Destroy(component);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      void DefaultEntitySystem<T, MemAllocPolicy>::GetEntitiesInSystem(std::list<EntityId>& toFill) const
+   {
+      typename ComponentStore::const_iterator i = mComponents.begin();
+      for(;i != mComponents.end(); ++i)
+      {
+         toFill.push_back(i->first);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      unsigned int DefaultEntitySystem<T, MemAllocPolicy>::GetNumComponents() const
+   {
+      return mComponents.size();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      DynamicPropertyContainer DefaultEntitySystem<T, MemAllocPolicy>::GetComponentProperties() const
+   {
+      ConstPropertyMap m;
+      T t;
+      t.GetProperties(m);
+      DynamicPropertyContainer c;
+      c.SetProperties(m);
+      return c;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      typename ComponentStoreMap<T>::iterator DefaultEntitySystem<T, MemAllocPolicy>::begin()
+   {
+      return mComponents.begin();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      typename ComponentStoreMap<T>::const_iterator DefaultEntitySystem<T, MemAllocPolicy>::begin() const
+   {
+      return mComponents.begin();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      typename ComponentStoreMap<T>::iterator DefaultEntitySystem<T, MemAllocPolicy>::end()
+   {
+      return mComponents.end();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   template<typename T, template<class> class MemAllocPolicy>
+      typename ComponentStoreMap<T>::const_iterator DefaultEntitySystem<T, MemAllocPolicy>::end() const
+   {
+      return mComponents.end();
+   }
 }
 

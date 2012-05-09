@@ -143,6 +143,12 @@ namespace dtEntity
       bool CloneEntity(EntityId target, EntityId origin);
 
       /**
+       * @param id Check if an entity with this id exists
+       * @return true if such an entity exists
+       */
+      bool HasEntity(EntityId id) const;
+
+      /**
        * returns true while at least one entity exists
        */
       bool HasEntities() const;
