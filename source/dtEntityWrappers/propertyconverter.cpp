@@ -183,7 +183,7 @@ namespace dtEntityWrappers
             Handle<Value> key = keys->Get(Integer::New(i));
             std::string keyname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
-            prp->Add(dtEntity::SIDHash(keyname), ConvertValueToProperty(val));
+            prp->Add(dtEntity::SID(keyname), ConvertValueToProperty(val));
          }
          return prp;
       }
