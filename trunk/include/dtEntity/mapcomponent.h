@@ -89,6 +89,12 @@ namespace dtEntity
        */
       std::string GetSpawnerName() const;
       void SetSpawnerName(const std::string& v);
+
+      /**
+       * @return the spawner the entity was created from or NULL
+       * if entity was not created from spawner
+       */
+      Spawner* GetSpawner() const;
    
       /**
        * name of map that entity was loaded from and that it will be stored to
@@ -225,6 +231,11 @@ namespace dtEntity
       bool Spawn(const std::string& name, Entity& spawned) const;
 
       void GetSpawnerCreatedEntities(const std::string& spawnername, std::vector<EntityId>& ids, bool recursive = true) const;
+
+      /**
+       * @return true if entity exists and was spawned by spawner or one of its child spawners
+       */
+      bool IsSpawnOf(EntityId, const std::string& spawnername) const;
 
       /**
        * Load scene from map file, start and configure entity systems

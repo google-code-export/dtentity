@@ -114,6 +114,12 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   Spawner* MapComponent::GetSpawner() const
+   {
+      return mSpawner;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void MapComponent::SetUniqueId(const std::string& v) { 
 
       std::string olduid = mUniqueIdStr;
@@ -815,6 +821,26 @@ namespace dtEntity
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MapSystem::IsSpawnOf(EntityId id, const std::string& spawnername) const
+   {
+      const MapComponent* comp = GetComponent(id);
+      if(!comp)
+      {
+         return false;
+      }
+      const Spawner* s = comp->GetSpawner();
+      while(s != NULL)
+      {
+         if(s->GetName() == spawnername)
+         {
+            return true;
+         }
+         s = s->GetParent();
+      }
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

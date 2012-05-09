@@ -69,7 +69,15 @@ namespace dtEntityWrappers
       dtEntity::EntityId id = ms->GetEntityIdByUniqueId(ToStdString(args[0]));
       return Integer::New(id);
    }
-   
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> MSIsSpawnOf(const Arguments& args)
+   {
+      dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
+      return Boolean::New(ms->IsSpawnOf(args[0]->Uint32Value(), ToStdString(args[1])));
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> MSLoadMap(const Arguments& args)
    {
@@ -348,6 +356,7 @@ namespace dtEntityWrappers
 
       proto->Set("addEmptyMap", FunctionTemplate::New(MSAddEmptyMap));
       proto->Set("getEntityIdByUniqueId", FunctionTemplate::New(MSGetEntityIdByUniqueId));
+      proto->Set("isSpawnOf", FunctionTemplate::New(MSIsSpawnOf));
       proto->Set("toString", FunctionTemplate::New(MSToString));
       proto->Set("loadMap", FunctionTemplate::New(MSLoadMap));
       proto->Set("loadScene", FunctionTemplate::New(MSLoadScene));

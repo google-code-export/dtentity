@@ -186,6 +186,13 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> EMHasEntity(const v8::Arguments& args)
+   {
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      return Boolean::New(em->HasEntity(args[0]->Uint32Value()));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ConvertJSToMessage(Handle<Value> val, dtEntity::Message* msg)
    {
       HandleScope scope;
@@ -505,6 +512,7 @@ namespace dtEntityWrappers
         proto->Set("cloneEntity", FunctionTemplate::New(EMCloneEntity));
         proto->Set("createEntity", FunctionTemplate::New(EMCreateEntity));
         proto->Set("getEntityIds", FunctionTemplate::New(EMGetEntityIds));
+        proto->Set("hasEntity", FunctionTemplate::New(EMHasEntity));
         proto->Set("emitMessage", FunctionTemplate::New(EMEmitMessage));
         proto->Set("enqueueMessage", FunctionTemplate::New(EMEnqueueMessage));
         proto->Set("getEntitySystem", FunctionTemplate::New(EMGetEntitySystem));
