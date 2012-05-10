@@ -55,8 +55,8 @@ namespace dtEntityQtWidgets
 
       mMessagePump.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntitySelected));
       mMessagePump.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntityDeselected));
-
       mMessagePump.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEnterWorld));
+      mMessagePump.RegisterForMessages(dtEntity::EntityNameUpdatedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnEntityNameUpdated));
       mMessagePump.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnLeaveWorld));
       mMessagePump.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnMapBeginAdd));
       mMessagePump.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, dtEntity::MessageFunctor(this, &EntityTreeModel::OnMapRemoved));
@@ -83,6 +83,8 @@ namespace dtEntityQtWidgets
    EntityTreeModel::~EntityTreeModel()
    {
       // TODO not thread safe, execute in app thread!
+
+
       mEntityManager->UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnqueueFunctor);
       mEntityManager->UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mEnqueueFunctor);
       mEntityManager->UnregisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, mEnqueueFunctor);
@@ -344,6 +346,24 @@ namespace dtEntityQtWidgets
       GetInternal(parent)->appendChild(nitem);
       endInsertRows();
 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeModel::OnEntityNameUpdated(const dtEntity::Message& m)
+   {
+      const dtEntity::EntityNameUpdatedMessage& msg =
+         static_cast<const dtEntity::EntityNameUpdatedMessage&>(m);
+      QModelIndex idx = GetEntityIndex(msg.GetAboutEntityId());
+
+      if(idx.isValid())
+      {
+         EntityTreeItem* item = GetInternal(idx);
+         if(item != NULL)
+         {
+            item->mName = msg.GetEntityName().c_str();
+            emit dataChanged (idx, idx);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1322,6 +1342,7 @@ namespace dtEntityQtWidgets
       em.RegisterForMessages(dtEntity::EntitySelectedMessage::TYPE, funct, "EntityTreeController::EntitySelected");
       em.RegisterForMessages(dtEntity::EntityDeselectedMessage::TYPE, funct, "EntityTreeController::EntityDeselected");
       em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
+      em.RegisterForMessages(dtEntity::EntityNameUpdatedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::MapBeginLoadMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");
       em.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, funct, "EntityTreeController::EnqueueMessage");

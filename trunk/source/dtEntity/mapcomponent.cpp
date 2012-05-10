@@ -62,6 +62,10 @@ namespace dtEntity
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetUniqueId),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetUniqueId)
         )
+      , mEntityName(
+           DynamicStringProperty::SetValueCB(this, &MapComponent::SetEntityName),
+           DynamicStringProperty::GetValueCB(this, &MapComponent::GetEntityName)
+        )
       , mSpawner(NULL)
       , mOwner(NULL)
    {
@@ -84,13 +88,27 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MapComponent::OnPropertyChanged(StringId propname, Property& prop)
+   std::string MapComponent::GetEntityName() const
    {
-      if(propname == UniqueIdId)
+      return mEntityNameStr;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void MapComponent::SetEntityName(const std::string& v)
+   {
+      bool changed = (mEntityNameStr != "" && v != mEntityNameStr);
+
+      mEntityNameStr = v;
+      if(changed)
       {
-         SetUniqueId(mUniqueId.Get());
+         EntityNameUpdatedMessage msg;
+         msg.SetAboutEntityId(mOwner->GetId());
+         msg.SetEntityName(v);
+         msg.SetUniqueId(mUniqueId.Get());
+         mOwner->GetEntityManager().EmitMessage(msg);
       }
    }
+
 
    ////////////////////////////////////////////////////////////////////////////
    std::string MapComponent::GetSpawnerName() const
@@ -228,6 +246,12 @@ namespace dtEntity
       {
          mEntitiesByUniqueId[newUniqueId] = id;
       }
+
+      EntityNameUpdatedMessage msg;
+      msg.SetAboutEntityId(id);
+      msg.SetEntityName(comp->GetEntityName());
+      msg.SetUniqueId(newUniqueId);
+      GetEntityManager().EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////
