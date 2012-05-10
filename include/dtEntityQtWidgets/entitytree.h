@@ -125,6 +125,7 @@ namespace dtEntityQtWidgets
       void OnEntitySelected(const dtEntity::Message& msg);
       void OnEntityDeselected(const dtEntity::Message& msg);
       void OnEnterWorld(const dtEntity::Message& msg);
+      void OnEntityNameUpdated(const dtEntity::Message& msg);
       void OnLeaveWorld(const dtEntity::Message& msg);
       void OnMapBeginAdd(const dtEntity::Message& msg);
       void OnMapRemoved(const dtEntity::Message& msg);

@@ -32,6 +32,7 @@ namespace dtEntity
       em.RegisterMessageType<EndOfFrameMessage>(EndOfFrameMessage::TYPE);
       em.RegisterMessageType<EntityAddedToSceneMessage>(EntityAddedToSceneMessage::TYPE);
       em.RegisterMessageType<EntityDeselectedMessage>(EntityDeselectedMessage::TYPE);
+      em.RegisterMessageType<EntityNameUpdatedMessage>(EntityNameUpdatedMessage::TYPE);
       em.RegisterMessageType<EntityRemovedFromSceneMessage>(EntityRemovedFromSceneMessage::TYPE);
       em.RegisterMessageType<EntitySelectedMessage>(EntitySelectedMessage::TYPE);
       em.RegisterMessageType<EntitySystemAddedMessage>(EntitySystemAddedMessage::TYPE);
@@ -124,6 +125,20 @@ namespace dtEntity
       : Message(TYPE)
    {
       Register(AboutEntityId, &mAboutEntity);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType EntityNameUpdatedMessage::TYPE(dtEntity::SID("EntityNameUpdatedMessage"));
+   const StringId EntityNameUpdatedMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId EntityNameUpdatedMessage::EntityNameId(dtEntity::SID("EntityName"));
+   const StringId EntityNameUpdatedMessage::UniqueIdId(dtEntity::SID("UniqueId"));
+
+   EntityNameUpdatedMessage::EntityNameUpdatedMessage()
+      : Message(TYPE)
+   {
+      Register(AboutEntityId, &mAboutEntity);
+      Register(EntityNameId, &mEntityName);
+      Register(UniqueIdId, &mUniqueId);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

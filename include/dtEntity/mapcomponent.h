@@ -73,15 +73,14 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity; }
 
       /**
        * string identifier of entity. Does not need to be unique. Mainly used
        * for debugging purposes
        */
-      std::string GetEntityName() const { return mEntityName.Get(); }
-      void SetEntityName(const std::string& v) { mEntityName.Set(v); }
+      std::string GetEntityName() const;
+      void SetEntityName(const std::string& v);
 
       /**
        * If entity was created from a spawner then this is set to the spawners name.
@@ -116,12 +115,13 @@ namespace dtEntity
       bool GetVisibleInEntityList() const { return mVisibleInEntityList.Get(); }
 
    private:
-      StringProperty mEntityName;
+      DynamicStringProperty mEntityName;
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
       DynamicStringProperty mUniqueId;
       Spawner* mSpawner;
       std::string mUniqueIdStr;
+      std::string mEntityNameStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
       Entity* mOwner;

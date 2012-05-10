@@ -256,6 +256,41 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
+    * Is sent when name or unique id of entity is changed
+    */
+   class DT_ENTITY_EXPORT EntityNameUpdatedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      static const StringId EntityNameId;
+      static const StringId UniqueIdId;
+
+      EntityNameUpdatedMessage();
+
+      // Create a copy of this message on the heap
+      virtual Message* Clone() const { return CloneContainer<EntityNameUpdatedMessage>(); }
+
+      void SetAboutEntityId(EntityId id) { mAboutEntity.Set(id); }
+      EntityId GetAboutEntityId() const { return mAboutEntity.Get(); }
+
+      void SetEntityName(const std::string& v) { mEntityName.Set(v); }
+      std::string GetEntityName() const { return mEntityName.Get(); }
+
+      void SetUniqueId(const std::string& v) { mUniqueId.Set(v); }
+      std::string GetUniqueId() const { return mUniqueId.Get(); }
+
+   private:
+
+      UIntProperty mAboutEntity;
+      StringProperty mEntityName;
+      StringProperty mUniqueId;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
     * This message gets sent when the method EntityManager::RemoveFromScene method is
     * called. The layer system reacts to this message by removing the entity from the scene
     * graph.
