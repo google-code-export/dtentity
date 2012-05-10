@@ -121,6 +121,46 @@ namespace dtEntityEditor
 
       dtEntity::InitOSGViewer(0, NULL, *mViewer, *mEntityManager, false, false);
 
+      ////////////////////
+      // make sure we don't loose the paths used by OSG...
+      osgDB::FilePathList oldpaths = osgDB::getDataFilePathList();
+      osgDB::FilePathList newpaths;
+
+      QSettings settings;
+      QStringList qtpaths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      foreach(QString qtpath, qtpaths)
+      {
+         if(!QFile::exists(qtpath))
+         {
+            LOG_ERROR("Project assets folder does not exist: " << qtpath.toStdString());
+            continue;
+         }
+
+         newpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
+      }
+
+      for(unsigned int i = 0; i < oldpaths.size(); ++i)
+      {
+         if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end())
+         {
+            newpaths.push_back(oldpaths[i]);
+         }
+      }
+
+      osgDB::setDataFilePathList(newpaths);
+
+      QStringList newpathsqt;
+      for(unsigned int i = 0; i < newpaths.size(); ++i)
+      {
+         newpathsqt.push_back(newpaths[i].c_str());
+      }
+
+      settings.setValue("DataPaths", newpathsqt);
+      emit DataPathsChanged(newpathsqt);
+
+      ////////////////////
+      
       dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
 
       osgViewer::ViewerBase::Windows wins;
@@ -189,7 +229,30 @@ namespace dtEntityEditor
    }
 
    //////////////////////////////////////////////////////////////////////////
+   QStringList EditorApplication::GetDataPaths() const
+   {
+      QSettings settings;
+      return settings.value("DataPaths", "ProjectAssets").toStringList();
+   }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorApplication::SetDataPaths(const QStringList& l)
+   {
+      QSettings settings;
+      settings.setValue("DataPaths", l);
+
+      osgDB::FilePathList osgpaths;
+      foreach(QString qtpath, l)
+      {
+         if(QFile::exists(qtpath))
+         {
+           osgpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
+         }
+      }
+      osgDB::setDataFilePathList(osgpaths);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void EditorApplication::AddPluginLibrary(std::string fileName)
    {
       // get Map system
@@ -257,18 +320,6 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QStringList EditorApplication::GetDataPaths() const
-   {
-      QStringList out;
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      for(osgDB::FilePathList::iterator i = paths.begin(); i != paths.end(); ++i)
-      {
-         out.push_back(i->c_str());
-      }
-      return out;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::OnResourceLoaded(const dtEntity::Message& m)
    {
       const dtEntity::ResourceLoadedMessage& msg = static_cast<const dtEntity::ResourceLoadedMessage&>(m);
@@ -290,32 +341,6 @@ namespace dtEntityEditor
       }
 
       dtEntity::ResourceManager::GetInstance().TriggerReload(path.toStdString(), *mEntityManager);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::SetDataPaths(const QStringList& paths)
-   {
-      // make sure we don't loose the paths used by OSG...
-      osgDB::FilePathList in = osgDB::getDataFilePathList();
-
-      for(QStringList::const_iterator i = paths.begin(); i != paths.end(); ++i)
-      {
-         QString path = *i;
-         if(!QFile::exists(path))
-         {
-            qWarning() << "Project assets folder does not exist: " << path;
-         }
-         else if(std::find(in.begin(), in.end(), path.toStdString()) == in.end())
-         {
-            in.push_back(osgDB::convertFileNameToUnixStyle(path.toStdString()));
-         }
-      }
-
-      osgDB::setDataFilePathList(in);
-
-      QSettings settings;
-      settings.setValue("DataPaths", paths);
-      emit DataPathsChanged(paths);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

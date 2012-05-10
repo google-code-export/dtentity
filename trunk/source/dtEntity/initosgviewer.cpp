@@ -40,6 +40,10 @@
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 namespace dtEntity
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -74,14 +78,19 @@ namespace dtEntity
       std::string projectassets = "";
       std::string baseassets = "";
 
+#ifdef _WIN32
+      std::string cwd = _getcwd(NULL, 0);
+#else
+      std::string cwd = getcwd(NULL, 0);
+#endif
       if(osgDB::fileExists("ProjectAssets")) 
       {
-         projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
+         projectassets = cwd + osgDB::getNativePathSeparator() + "ProjectAssets";
       }
 
       if(osgDB::fileExists("BaseAssets")) 
       {
-         projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
+         baseassets = cwd + osgDB::getNativePathSeparator() + "BaseAssets";
       }
 
       const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
@@ -145,6 +154,7 @@ namespace dtEntity
       const char separator = ':';
 #endif
 
+      // split project assets string by ";" or ":" and add as separate paths
       if(!projectassets.empty())
       {
          std::vector<std::string> pathsplit = dtEntity::split(projectassets, separator);
