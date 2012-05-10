@@ -105,19 +105,6 @@ int main(int argc, char *argv[])
 
    bool singleThread = false;
 
-    std::string projectassets = "";
-    std::string baseassets = "";
-
-    if(osgDB::fileExists("ProjectAssets")) 
-    {
-       projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "ProjectAssets";
-    }
-
-    if(osgDB::fileExists("BaseAssets")) 
-    {
-       projectassets = osgDB::getFilePath(argv[0]) + osgDB::getNativePathSeparator() + "BaseAssets";
-    }
-
    QString pluginPath = "plugins";
    QString scene = "";
    for(int curArg = 1; curArg < argc; ++curArg)
@@ -131,32 +118,6 @@ int main(int argc, char *argv[])
       {
          singleThread = true;
       }
-      else if (curArgv == "--projectAssets")
-      {
-         ++curArg;
-         if (curArg < argc)
-         {
-            projectassets = argv[curArg];
-         }
-
-      }
-      else if (curArgv == "--baseAssets")
-      {
-         ++curArg;
-         if (curArg < argc)
-         {
-            baseassets = argv[curArg];
-         }
-
-      }
-      else if(curArgv == "--pluginPath")
-      {
-         ++curArg;
-         if (curArg < argc)
-         {
-            pluginPath = argv[curArg];
-         }
-      }
       else if(curArgv == "--scene")
       {
          ++curArg;
@@ -168,33 +129,6 @@ int main(int argc, char *argv[])
    }
 
    osg::ref_ptr<EditorApplication> application = new EditorApplication(argc, argv);
-
-   application->SetAdditionalPluginPath(pluginPath);
-
-   QStringList paths;
-
-   if(baseassets == "")
-   {
-      QSettings settings;
-      paths = settings.value("DataPaths", "ProjectAssets").toStringList();
-   }
-   else
-   {
-      paths.push_back(baseassets.c_str());
-
-      QSettings settings;
-      settings.setValue("DataPaths", paths);
-   }
-
-   if(projectassets != "")
-   {
-      paths.push_back(projectassets.c_str());
-
-      QSettings settings;
-      settings.setValue("DataPaths", paths);
-   }
-
-   application->SetDataPaths(paths);
 
    QThread* viewerThread;
 
