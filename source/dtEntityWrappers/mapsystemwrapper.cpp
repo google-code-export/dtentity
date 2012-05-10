@@ -184,6 +184,12 @@ namespace dtEntityWrappers
       std::string mapname = ToStdString(args[1]);
       Handle<Object> obj = Handle<Object>::Cast(args[2]);
       dtEntity::Spawner* parent = NULL;
+
+      if(args.Length() < 3)
+      {
+         return ThrowError("Usage: addSpawner(name, mapname, componentvalues, [parent, addToSpawnerStore, iconpath, guicategory]");
+      }
+
       if(args.Length() > 3)
       {
          std::string parentname = ToStdString(args[3]);
@@ -192,6 +198,21 @@ namespace dtEntityWrappers
 
       osg::ref_ptr<dtEntity::Spawner> spawner = new dtEntity::Spawner(name, mapname, parent);
       
+      if(args.Length() > 4 && args[4]->BooleanValue())
+      {
+         spawner->SetAddToSpawnerStore(true);
+      }
+
+      if(args.Length() > 5)
+      {
+         spawner->SetIconPath(ToStdString(args[5]));
+      }
+
+      if(args.Length() > 6)
+      {
+         spawner->SetGUICategory(ToStdString(args[6]));
+      }
+
       Handle<Array> keys = obj->GetPropertyNames();
       
       for(unsigned int i = 0; i < keys->Length(); ++i)

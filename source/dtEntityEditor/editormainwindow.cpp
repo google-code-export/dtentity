@@ -606,7 +606,7 @@ namespace dtEntityEditor
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RecursiveSearch(QDir dir, QStringList& entries, const QString& extension, const QString relDir = "")
+   void RecursiveSearch(QDir dir, QSet<QString>& entries, const QString& extension, const QString relDir = "")
    {
       dir.setSorting( QDir::Name );
       dir.setFilter( QDir::Files | QDir::Dirs );
@@ -630,7 +630,7 @@ namespace dtEntityEditor
           }
          else if(finfo.suffix() == extension)
          {
-            entries.push_back(relDir + "/" + finfo.fileName());
+            entries.insert(relDir + "/" + finfo.fileName());
          }
       }
    }
@@ -641,7 +641,7 @@ namespace dtEntityEditor
       QSettings settings;
       QStringList paths = settings.value("DataPaths", "ProjectAssets").toStringList();
 
-      QStringList entries;
+      QSet<QString> entries;
       for(QStringList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          QDir dir(*i);
@@ -654,8 +654,10 @@ namespace dtEntityEditor
          return;
       }
 
-      dtEntityQtWidgets::ListDialog* dialog = new dtEntityQtWidgets::ListDialog(entries);
-      entries.sort();
+      QStringList l = entries.toList();
+      l.sort();
+      dtEntityQtWidgets::ListDialog* dialog = new dtEntityQtWidgets::ListDialog(l);
+
       if(dialog->exec() == QDialog::Accepted)
       {  
          QStringList sel = dialog->GetSelectedItems();
