@@ -874,6 +874,19 @@ namespace dtEntityQtWidgets
       mSaveMapCopyAction = new QAction(tr("Save copy of map"), this);
       connect(mSaveMapCopyAction, SIGNAL(triggered(bool)), this, SLOT(OnSaveMapCopyAction(bool)));
 
+      mEntityContextMenu.addAction(mJumpToEntityAction);
+      mEntityContextMenu.addAction(mDeleteEntityAction);
+
+      mSpawnerContextMenu.addAction(mAddChildSpawnerAction);
+      mSpawnerContextMenu.addAction(mDeleteSpawnerAction);
+      mSpawnerContextMenu.addAction(mSpawnSpawnerAction);
+
+      mMapContextMenu.addAction(mAddEntityAction);
+      mMapContextMenu.addAction(mAddSpawnerAction);
+      mMapContextMenu.addAction(mUnloadMapAction);
+      mMapContextMenu.addAction(mSaveMapAction);
+      mMapContextMenu.addAction(mSaveMapCopyAction);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -914,7 +927,7 @@ namespace dtEntityQtWidgets
          
          switch(item->GetItemType() )
          {
-            case EntityTreeType::ENTITY:
+            /*case EntityTreeType::ENTITY:
             {
                QMenu menu(this);
                menu.addAction(mJumpToEntityAction);
@@ -940,6 +953,20 @@ namespace dtEntityQtWidgets
                menu.addAction(mSaveMapAction);
                menu.addAction(mSaveMapCopyAction);
                menu.exec(mTreeView->mapToGlobal(p));
+            }*/
+            case EntityTreeType::ENTITY:
+            {
+               mEntityContextMenu.exec(mTreeView->mapToGlobal(p));
+               break;
+            }
+            case EntityTreeType::SPAWNER:
+            {
+               mSpawnerContextMenu.exec(mTreeView->mapToGlobal(p));
+               break;
+            }
+            case EntityTreeType::MAP:
+            {
+               mMapContextMenu.exec(mTreeView->mapToGlobal(p));
             }
             default: break;
          }      
@@ -1004,6 +1031,11 @@ namespace dtEntityQtWidgets
          {
             if(j->column() != 0) continue;
             EntityTreeItem* item = GetInternal(*j);
+            if(item->mSelectedBySelectionManager)
+            {
+               item->mSelectedBySelectionManager = false;
+               continue;
+            }
             switch(item->GetItemType())
             {
             case EntityTreeType::ENTITY: 
@@ -1309,6 +1341,8 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::EntityWasSelected(const QModelIndex& idx)
    {
+      EntityTreeItem* item = GetInternal(idx);
+      item->mSelectedBySelectionManager = true;
       mTreeView->selectionModel()->select(idx, QItemSelectionModel::Select | QItemSelectionModel::Rows);
    }
 

@@ -63,6 +63,7 @@ namespace dtEntityQtWidgets
          : mEntityId(0)
          , mParentItem(parent)
          , mItemType(itemtype)
+         , mSelectedBySelectionManager(false)
       {
       }
 
@@ -86,7 +87,13 @@ namespace dtEntityQtWidgets
       QString mName;
       QString mMapName;
       unsigned int mSaveOrder; // for maps
-      
+
+      // hack to prevent a loop between entity tree and selection manager
+      // when entity tree receives selection msg from selection manager it
+      // would otherwise emit a RequestSelection message, causing a loop.
+      // TODO: Find out how to differentiate between a user-click selection
+      // and an API selection
+      bool mSelectedBySelectionManager;
    protected:
 
       QList<EntityTreeItem*> mChildItems;
@@ -94,7 +101,7 @@ namespace dtEntityQtWidgets
       EntityTreeType::e mItemType;
    };
 
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    class ENTITYQTWIDGETS_EXPORT EntityTreeModel
       : public QAbstractItemModel
@@ -139,8 +146,8 @@ namespace dtEntityQtWidgets
 
       dtEntity::MessageFunctor& GetEnqueueFunctor() { return mEnqueueFunctor; }
 
-   public slots:      
-     
+   public slots:
+
       void ProcessMessages();
       QModelIndex parent(const QModelIndex &index) const;
       QModelIndex index(int row, int column, const QModelIndex &parent) const;
@@ -163,7 +170,7 @@ namespace dtEntityQtWidgets
 
    private:
       void RemoveEntryFromRoot(const QString& name, EntityTreeType::e t);
-      
+
       EntityTreeItem* mRootItem;
       dtEntity::MessagePump mMessagePump;
       dtEntity::MessageFunctor mEnqueueFunctor;
@@ -184,12 +191,16 @@ namespace dtEntityQtWidgets
       Q_OBJECT
 
    public:
-      
+
       EntityTreeView(QWidget *parent = 0);
 
       virtual ~EntityTreeView();
       void SetModel(QAbstractItemModel* model);
       QTreeView* GetTreeView() const { return mTreeView; }
+
+      QMenu& GetEntityContextMenu() { return mEntityContextMenu; }
+      QMenu& GetMapContextMenu() { return mMapContextMenu; }
+      QMenu& GetSpawnerContextMenu() { return mSpawnerContextMenu; }
 
    signals:
 
@@ -226,7 +237,7 @@ namespace dtEntityQtWidgets
    protected slots:
 
       void OnDoubleClick(const QModelIndex&);
-      void ShowContextMenu(const QPoint&);     
+      void ShowContextMenu(const QPoint&);
       void OnDeleteEntityAction(bool);
       void OnJumpToEntityAction(bool);
       void OnAddEntityAction(bool);
@@ -262,7 +273,10 @@ namespace dtEntityQtWidgets
       QAction* mSaveMapCopyAction;
       QAction* mSaveMapAction;
       QToolButton* mAddItemButton;
-   }; 
+      QMenu mEntityContextMenu;
+      QMenu mMapContextMenu;
+      QMenu mSpawnerContextMenu;
+   };
 
    ////////////////////////////////////////////////////////////////////////////////
    class ENTITYQTWIDGETS_EXPORT EntityTreeController
@@ -270,11 +284,11 @@ namespace dtEntityQtWidgets
    {
       Q_OBJECT
 
-   public:      
+   public:
 
       EntityTreeController(dtEntity::EntityManager*);
-      virtual ~EntityTreeController();      
-      
+      virtual ~EntityTreeController();
+
       void SetupSlots(EntityTreeModel* model, EntityTreeView*);
 
       void EntitySystemAdded(const dtEntity::Message& msg);
@@ -282,7 +296,7 @@ namespace dtEntityQtWidgets
    public slots:
 
       void Init();
-      
+
       void OnDeleteEntity(dtEntity::EntityId id);
       void OnDeleteSpawner(const QString& name);
       void OnSpawnSpawner(const QString& spawnername, const QString& entityname);
@@ -300,7 +314,7 @@ namespace dtEntityQtWidgets
 
    signals:
 
-     void ShowErrorMessage(const QString&);     
+     void ShowErrorMessage(const QString&);
 
    private:
 

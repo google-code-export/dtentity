@@ -47,17 +47,20 @@ namespace dtEntityQtWidgets
    protected slots:
 
       void DeleteSelectedSpawners();
+      void SelectBySelectedSpawner();
       void OnReclassify(QAction*);
 
    signals:
 
       void spawnerClicked(QListWidgetItem*);
       void DeleteSpawner(const QString& name);
+      void SelectBySpawner(const QString& name);
       void ChangeCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
 
    private:
        QString mTargetMap;
        QAction* mDeleteSpawnerAction;
+       QAction* mSelectBySpawnerAction;
        QListWidgetItem* mSelected;
        QMenu* mReclassifyMeny;
 
@@ -70,7 +73,7 @@ namespace dtEntityQtWidgets
       Q_OBJECT
 
    public:
-      
+
       SpawnerStoreView(const QStringList& loadedMaps, QWidget* parent = NULL);
       virtual ~SpawnerStoreView();
 
@@ -92,6 +95,7 @@ namespace dtEntityQtWidgets
    signals:
       void SpawnerClicked(const QString& name, const QString& category);
       void DeleteSpawner(const QString&);
+      void SelectBySpawner(const QString& name);
       void ChangeSpawnerCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
    private:
 
@@ -102,7 +106,7 @@ namespace dtEntityQtWidgets
       QWidget* mButtons;
       QComboBox* mTargetMap;
 
-   }; 
+   };
 
    ////////////////////////////////////////////////////////////////////////////////
    class ENTITYQTWIDGETS_EXPORT SpawnerStoreController
@@ -111,7 +115,7 @@ namespace dtEntityQtWidgets
       Q_OBJECT
 
    public:
-      
+
       SpawnerStoreController(dtEntity::EntityManager*);
       virtual ~SpawnerStoreController();
 
@@ -126,11 +130,12 @@ namespace dtEntityQtWidgets
       void RemoveSpawner(const QString& name, const QString& category);
 
    public slots:
-   
+
       void Init();
       void OnTextDroppedOntoGLWidget(const QPointF& pos, const QString&);
       void OnSpawnerClicked(const QString& name, const QString& category);
       void SpawnerDeleted(const QString&);
+      void DoSelectBySpawner(const QString& name);
       void OnChangeSpawnerCategory(const QString& spawnername, const QString& oldcat, const QString& newcat);
 
    private:
