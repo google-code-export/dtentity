@@ -818,18 +818,8 @@ namespace dtEntity
       ComponentStore::const_iterator i;
       for(i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         MapComponent* component = i->second;
-         std::string cspawnername = component->GetSpawnerName();
-         if(cspawnername.empty())
-         {
-            continue;
-         }
-
-         Spawner* spwn;
-         if(!GetSpawner(cspawnername, spwn))
-         {
-             continue;
-         }
+         MapComponent* component = i->second;         
+         Spawner* spwn = component->GetSpawner();
 
          while(spwn != NULL)
          {

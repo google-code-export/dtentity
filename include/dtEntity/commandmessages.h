@@ -136,6 +136,7 @@ namespace dtEntity
       IntProperty mContextId;
    };
 
+   ///////////////////////////////////////////////////////////////////////////////
    /**
     * Cause camera to be moved to a specific position
     */
