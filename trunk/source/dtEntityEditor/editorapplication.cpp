@@ -55,7 +55,7 @@ namespace dtEntityEditor
     USE_DTENTITYPLUGIN(dtEntitySimulation)
     USE_DTENTITYPLUGIN(dtEntityRocket)    
     USE_DTENTITYPLUGIN(dtEntityV8Plugin)    
- 
+
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::EditorApplication(int argc, char *argv[])
       : mMainWindow(NULL)
@@ -64,6 +64,52 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
+
+      dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
+      
+      dtEntity::SetupDataPaths(argc,argv, false);
+
+      osgDB::FilePathList oldpaths;
+      for(osgDB::FilePathList::iterator i = osgDB::getDataFilePathList().begin(); i!= osgDB::getDataFilePathList().end(); ++i)
+      {
+         oldpaths.push_back(osgDB::convertFileNameToUnixStyle(*i));
+      }
+      osgDB::FilePathList newpaths;
+
+      QSettings settings;
+      QStringList qtpaths = settings.value("DataPaths", "ProjectAssets").toStringList();
+
+      foreach(QString qtpath, qtpaths)
+      {
+         if(!QFile::exists(qtpath))
+         {
+            LOG_ERROR("Project assets folder does not exist: " << qtpath.toStdString());
+            continue;
+         }
+
+         newpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
+      }
+
+      for(unsigned int i = 0; i < oldpaths.size(); ++i)
+      {
+         if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end())
+         {
+            newpaths.push_back(oldpaths[i]);
+         }
+      }
+
+      osgDB::setDataFilePathList(newpaths);
+
+      QStringList newpathsqt;
+      for(unsigned int i = 0; i < newpaths.size(); ++i)
+      {
+         newpathsqt.push_back(newpaths[i].c_str());
+      }
+
+      settings.setValue("DataPaths", newpathsqt);
+      emit DataPathsChanged(newpathsqt);
+
+      dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, *mEntityManager);
 
       // default plugin dir
       mPluginPaths.push_back("plugins");
@@ -119,53 +165,36 @@ namespace dtEntityEditor
    {
       assert(mMainWindow != NULL);
 
-      dtEntity::InitOSGViewer(0, NULL, *mViewer, *mEntityManager, false, false);
+      // give application system access to viewer
+      dtEntity::ApplicationSystem* appsystem;
+      GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
+      appsystem->SetViewer(mViewer);
 
-      ////////////////////
-      // make sure we don't loose the paths used by OSG...
-      osgDB::FilePathList oldpaths = osgDB::getDataFilePathList();
-      osgDB::FilePathList newpaths;
-
-      QSettings settings;
-      QStringList qtpaths = settings.value("DataPaths", "ProjectAssets").toStringList();
-
-      foreach(QString qtpath, qtpaths)
+      bool success = dtEntity::DoScreenSetup(0, NULL, *mViewer, GetEntityManager());
+      if(!success)
       {
-         if(!QFile::exists(qtpath))
-         {
-            LOG_ERROR("Project assets folder does not exist: " << qtpath.toStdString());
-            continue;
-         }
-
-         newpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
+         LOG_ERROR("Error setting up screens! exiting");
+         return;
       }
 
-      for(unsigned int i = 0; i < oldpaths.size(); ++i)
+      dtEntity::SetupSceneGraph(*mViewer, GetEntityManager(), new osg::Group());
+    
+      osgViewer::ViewerBase::Views views;
+      mViewer->getViews(views);
+      for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
       {
-         if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end())
-         {
-            newpaths.push_back(oldpaths[i]);
-         }
+         osgViewer::StatsHandler* stats = new osgViewer::StatsHandler();
+         stats->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_Insert);
+         stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
+         (*i)->addEventHandler(stats);
       }
-
-      osgDB::setDataFilePathList(newpaths);
-
-      QStringList newpathsqt;
-      for(unsigned int i = 0; i < newpaths.size(); ++i)
-      {
-         newpathsqt.push_back(newpaths[i].c_str());
-      }
-
-      settings.setValue("DataPaths", newpathsqt);
-      emit DataPathsChanged(newpathsqt);
-
+      
       ////////////////////
       
       dtEntityQtWidgets::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
 
       osgViewer::ViewerBase::Windows wins;
       mViewer->getWindows(wins);
-
 
       dtEntityQtWidgets::OSGGraphicsWindowQt* osgGraphWindow =
             dynamic_cast<dtEntityQtWidgets::OSGGraphicsWindowQt*>(wins.front());
