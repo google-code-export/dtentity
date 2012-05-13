@@ -631,6 +631,7 @@ namespace dtEntityQtWidgets
       ///////////////////////////////////////////////////////////////////////////////////////////////////////
       bool LoadFactoryFromFile(const QString& path, DelegateFactory*& factory, Translator*& translator)
       {
+         osgDB::FilePathList l = osgDB::getDataFilePathList();
          const std::string foundPath = osgDB::findDataFile(path.toStdString());
          if(!osgDB::fileExists(foundPath))
          {
@@ -644,8 +645,6 @@ namespace dtEntityQtWidgets
          {
             return false;
          }
-
-
 
          std::ostringstream os;
          char buffer[1024];

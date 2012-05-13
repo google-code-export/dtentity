@@ -24,7 +24,6 @@
 #include <dtEntity/componentfactories.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/layercomponent.h>
-#include <dtEntity/logmanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/matrixtransformcomponent.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
@@ -48,29 +47,24 @@ namespace dtEntity
 {
    ////////////////////////////////////////////////////////////////////////////////
    // a simple log handler that forwards log messages to osg log system
-   class ConsoleLogHandler
-      : public LogListener
+    void ConsoleLogHandler::LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
+                   const std::string& msg)
    {
-    public:
-      virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
-                      const std::string& msg)
+	 std::ostream* strm;
+	 switch(level)
       {
-		 std::ostream* strm;
-		 switch(level)
-         {
-		 case  LogLevel::LVL_DEBUG   : strm = &osg::notify(osg::DEBUG_INFO); break;
-		 case  LogLevel::LVL_INFO    : strm = &osg::notify(osg::INFO); break;
-		 case  LogLevel::LVL_WARNING : strm = &osg::notify(osg::WARN); break;
-		 case  LogLevel::LVL_ERROR   : strm = &osg::notify(osg::FATAL); break;
-		 case  LogLevel::LVL_ALWAYS  : strm = &osg::notify(osg::ALWAYS); break;
-		 default: strm = &osg::notify(osg::ALWAYS);
-         }
-       std::string fn = filename.size() < 30 ? filename : filename.substr(filename.size() - 30, filename.size() - 1);
-       (*strm) << "File: " << fn << " Line: " << linenumber << " Message: " << msg << std::endl;
-		 strm->flush();
-         
+	 case  LogLevel::LVL_DEBUG   : strm = &osg::notify(osg::DEBUG_INFO); break;
+	 case  LogLevel::LVL_INFO    : strm = &osg::notify(osg::INFO); break;
+	 case  LogLevel::LVL_WARNING : strm = &osg::notify(osg::WARN); break;
+	 case  LogLevel::LVL_ERROR   : strm = &osg::notify(osg::FATAL); break;
+	 case  LogLevel::LVL_ALWAYS  : strm = &osg::notify(osg::ALWAYS); break;
+	 default: strm = &osg::notify(osg::ALWAYS);
       }
-   };
+    std::string fn = filename.size() < 30 ? filename : filename.substr(filename.size() - 30, filename.size() - 1);
+    (*strm) << "File: " << fn << " Line: " << linenumber << " Message: " << msg << std::endl;
+	 strm->flush();
+      
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool SetupDataPaths(int argc, char** argv, bool checkPaths)

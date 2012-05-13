@@ -21,6 +21,7 @@
 */
 
 #include <dtEntity/export.h>
+#include <dtEntity/logmanager.h>
 
 namespace osg
 {
@@ -35,6 +36,14 @@ namespace osgViewer
 namespace dtEntity
 {
    class EntityManager;
+
+   class DT_ENTITY_EXPORT ConsoleLogHandler
+      : public LogListener
+   {
+    public:
+      virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
+                      const std::string& msg);
+   };
 
    /**
     * Convenience setup function for dtEntity.
@@ -82,5 +91,5 @@ namespace dtEntity
      * analyze command line and open OSG window with correct traits
      * @return true if success
      */
-   bool DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
+   bool DT_ENTITY_EXPORT DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
 }
