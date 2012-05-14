@@ -362,6 +362,36 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
+    * Is sent when an entity was added to the selection
+    */
+   class DT_ENTITY_EXPORT EntitySpawnedMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+      static const StringId SpawnerNameId;
+
+      EntitySpawnedMessage();
+
+      // Create a copy of this message on the heap
+      virtual Message* Clone() const { return CloneContainer<EntitySpawnedMessage>(); }
+
+      void SetAboutEntityId(EntityId id) { mAboutEntity.Set(id); }
+      EntityId GetAboutEntityId() const { return mAboutEntity.Get(); }
+
+      void SetSpawnerName(const std::string& name) { mSpawnerName.Set(name); }
+      std::string GetSpawnerName() const { return mSpawnerName.Get(); }
+
+   private:
+
+      UIntProperty mAboutEntity;
+      StringProperty mSpawnerName;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
     * Gets sent when an entity system is added to the entity manager.
     */
    class DT_ENTITY_EXPORT EntitySystemAddedMessage

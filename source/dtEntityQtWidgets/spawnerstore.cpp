@@ -28,6 +28,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/spawner.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <osgUtil/LineSegmentIntersector>
@@ -444,17 +445,28 @@ namespace dtEntityQtWidgets
          mc->SetEntityName(spawner->GetName());
          mc->SetMapName(targetMap.toStdString());
       }
-      mEntityManager->AddToScene(entity->GetId());
 
-      dtEntity::TransformComponent* tcomp;      
+      dtEntity::TransformComponent* tcomp;
       if(mEntityManager->GetComponent(entity->GetId(), tcomp, true))
       {
          tcomp->SetTranslation(spawnPosition);
       }
-      
-      dtEntity::RequestEntitySelectMessage msg;
-      msg.SetAboutEntityId(entity->GetId());
-      mEntityManager->EmitMessage(msg);
+
+      {
+         dtEntity::EntitySpawnedMessage msg;
+         msg.SetSpawnerName(spawner->GetName());
+         msg.SetAboutEntityId(entity->GetId());
+         mEntityManager->EmitMessage(msg);
+      }
+
+
+      mEntityManager->AddToScene(entity->GetId());
+
+      {
+         dtEntity::RequestEntitySelectMessage msg;
+         msg.SetAboutEntityId(entity->GetId());
+         mEntityManager->EmitMessage(msg);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

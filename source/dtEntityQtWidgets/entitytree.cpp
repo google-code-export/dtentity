@@ -820,6 +820,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    EntityTreeView::EntityTreeView(QWidget* parent)
       : QWidget(parent)
+      , mContextMenuFactory(new ContextMenuFactory())
    {
       Ui_EntityTree ui;
       ui.setupUi(this);
@@ -853,7 +854,7 @@ namespace dtEntityQtWidgets
       mAddChildSpawnerAction = new QAction(tr("Add Child Spawner"), this);
       connect(mAddChildSpawnerAction, SIGNAL(triggered(bool)), this, SLOT(OnAddChildSpawnerAction(bool)));
 
-      mDeleteEntityAction = new QAction(tr("Delete Entity"), this);
+      mDeleteEntityAction = new QAction(tr("Delete"), this);
       connect(mDeleteEntityAction, SIGNAL(triggered(bool)), this, SLOT(OnDeleteEntityAction(bool)));
 
       mJumpToEntityAction = new QAction(tr("Jump to"), this);
@@ -874,18 +875,13 @@ namespace dtEntityQtWidgets
       mSaveMapCopyAction = new QAction(tr("Save copy of map"), this);
       connect(mSaveMapCopyAction, SIGNAL(triggered(bool)), this, SLOT(OnSaveMapCopyAction(bool)));
 
-      mEntityContextMenu.addAction(mJumpToEntityAction);
-      mEntityContextMenu.addAction(mDeleteEntityAction);
+      mAddItemMenu.addAction(mAddNewMapAction);
+      mAddItemMenu.addAction(mAddExistingMapAction);
 
-      mSpawnerContextMenu.addAction(mAddChildSpawnerAction);
-      mSpawnerContextMenu.addAction(mDeleteSpawnerAction);
-      mSpawnerContextMenu.addAction(mSpawnSpawnerAction);
-
-      mMapContextMenu.addAction(mAddEntityAction);
-      mMapContextMenu.addAction(mAddSpawnerAction);
-      mMapContextMenu.addAction(mUnloadMapAction);
-      mMapContextMenu.addAction(mSaveMapAction);
-      mMapContextMenu.addAction(mSaveMapCopyAction);
+      mAddItemMenuItemSelected.addAction(mAddNewMapAction);
+      mAddItemMenuItemSelected.addAction(mAddExistingMapAction);
+      mAddItemMenuItemSelected.addAction(mAddEntityAction);
+      mAddItemMenuItemSelected.addAction(mAddSpawnerAction);
 
    }
 
@@ -916,60 +912,53 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntityTreeView::ShowContextMenu(const QPoint& p)
+   void EntityTreeView::ContextMenuFactory::ShowContextMenu(const QModelIndex& index, EntityTreeView* view, const QPoint& position)
    {
 
+      EntityTreeItem* item = GetInternal(index);
+
+      switch(item->GetItemType() )
+      {
+         case EntityTreeType::ENTITY:
+         {
+            QMenu m;
+            m.addAction(view->GetJumpToEntityAction());
+            m.addAction(view->GetDeleteEntityAction());
+            m.exec(position);
+            break;
+         }
+         case EntityTreeType::SPAWNER:
+         {
+            QMenu m;
+            m.addAction(view->GetAddChildSpawnerAction());
+            m.addAction(view->GetDeleteSpawnerAction());
+            m.addAction(view->GetSpawnSpawnerAction());
+            m.exec(position);
+            break;
+         }
+         case EntityTreeType::MAP:
+         {
+            QMenu m;
+            m.addAction(view->GetAddEntityAction());
+            m.addAction(view->GetAddSpawnerAction());
+            m.addAction(view->GetUnloadMapAction());
+            m.addAction(view->GetSaveMapAction());
+            m.addAction(view->GetSaveMapCopyAction());
+            m.exec(position);
+         }
+         default: break;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EntityTreeView::ShowContextMenu(const QPoint& p)
+   {
+      QPoint mapped = mTreeView->mapToGlobal(p);
       QModelIndex index = mTreeView->indexAt(p);
       if(index.isValid()) 
       {
          mContextMenuSelectedIndex = index;
-         EntityTreeItem* item = GetInternal(index);
-         
-         switch(item->GetItemType() )
-         {
-            /*case EntityTreeType::ENTITY:
-            {
-               QMenu menu(this);
-               menu.addAction(mJumpToEntityAction);
-               menu.addAction(mDeleteEntityAction);
-               menu.exec(mTreeView->mapToGlobal(p));
-               break;
-            }
-            case EntityTreeType::SPAWNER:
-            {
-               QMenu menu(this);
-               menu.addAction(mAddChildSpawnerAction);
-               menu.addAction(mDeleteSpawnerAction);
-               menu.addAction(mSpawnSpawnerAction);
-               menu.exec(mTreeView->mapToGlobal(p));
-               break;
-            }
-            case EntityTreeType::MAP:
-            {
-               QMenu menu(this);
-               menu.addAction(mAddEntityAction);
-               menu.addAction(mAddSpawnerAction);
-               menu.addAction(mUnloadMapAction);
-               menu.addAction(mSaveMapAction);
-               menu.addAction(mSaveMapCopyAction);
-               menu.exec(mTreeView->mapToGlobal(p));
-            }*/
-            case EntityTreeType::ENTITY:
-            {
-               mEntityContextMenu.exec(mTreeView->mapToGlobal(p));
-               break;
-            }
-            case EntityTreeType::SPAWNER:
-            {
-               mSpawnerContextMenu.exec(mTreeView->mapToGlobal(p));
-               break;
-            }
-            case EntityTreeType::MAP:
-            {
-               mMapContextMenu.exec(mTreeView->mapToGlobal(p));
-            }
-            default: break;
-         }      
+         mContextMenuFactory->ShowContextMenu(index, this, mapped);
       }   
    }
 
@@ -980,8 +969,9 @@ namespace dtEntityQtWidgets
       QModelIndex sel = mTreeView->selectionModel()->currentIndex();
       if(sel.isValid())
       {
-         mapname = GetInternal(sel)->mMapName;
-         return true;
+         EntityTreeItem* item = GetInternal(sel);
+         mapname = item->mMapName;
+         return item->GetItemType() == EntityTreeType::MAP;
       }
       return false;
    }
@@ -990,15 +980,14 @@ namespace dtEntityQtWidgets
    void EntityTreeView::OnAddItemButton()
    {      
       QString mapname;
-      QMenu menu(this);
-      menu.addAction(mAddNewMapAction);
-      menu.addAction(mAddExistingMapAction);
       if(IsSingleMapItemSelected(mapname))
       {
-         menu.addAction(mAddEntityAction);
-         menu.addAction(mAddSpawnerAction);
-      }      
-      menu.exec(mAddItemButton->mapToGlobal(QPoint(0, mAddItemButton->height())));
+         mAddItemMenuItemSelected.exec(mAddItemButton->mapToGlobal(QPoint(0, mAddItemButton->height())));
+      }
+      else
+      {
+         mAddItemMenu.exec(mAddItemButton->mapToGlobal(QPoint(0, mAddItemButton->height())));
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1031,11 +1020,7 @@ namespace dtEntityQtWidgets
          {
             if(j->column() != 0) continue;
             EntityTreeItem* item = GetInternal(*j);
-            if(item->mSelectedBySelectionManager)
-            {
-               item->mSelectedBySelectionManager = false;
-               continue;
-            }
+
             switch(item->GetItemType())
             {
             case EntityTreeType::ENTITY: 
@@ -1342,7 +1327,6 @@ namespace dtEntityQtWidgets
    void EntityTreeView::EntityWasSelected(const QModelIndex& idx)
    {
       EntityTreeItem* item = GetInternal(idx);
-      item->mSelectedBySelectionManager = true;
       mTreeView->selectionModel()->select(idx, QItemSelectionModel::Select | QItemSelectionModel::Rows);
    }
 

@@ -784,6 +784,12 @@ namespace dtEntity
       }
       comp->SetUniqueId(m.GetUniqueId());
       comp->SetEntityName(m.GetEntityName());
+
+      EntitySpawnedMessage smsg;
+      smsg.SetSpawnerName(spawnerName);
+      smsg.SetAboutEntityId(entity->GetId());
+      GetEntityManager().EmitMessage(smsg);
+
       if(m.GetAddToScene())
       {
          GetEntityManager().AddToScene(entity->GetId());

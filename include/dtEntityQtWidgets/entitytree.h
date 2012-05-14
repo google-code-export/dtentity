@@ -63,7 +63,6 @@ namespace dtEntityQtWidgets
          : mEntityId(0)
          , mParentItem(parent)
          , mItemType(itemtype)
-         , mSelectedBySelectionManager(false)
       {
       }
 
@@ -88,12 +87,6 @@ namespace dtEntityQtWidgets
       QString mMapName;
       unsigned int mSaveOrder; // for maps
 
-      // hack to prevent a loop between entity tree and selection manager
-      // when entity tree receives selection msg from selection manager it
-      // would otherwise emit a RequestSelection message, causing a loop.
-      // TODO: Find out how to differentiate between a user-click selection
-      // and an API selection
-      bool mSelectedBySelectionManager;
    protected:
 
       QList<EntityTreeItem*> mChildItems;
@@ -146,9 +139,6 @@ namespace dtEntityQtWidgets
 
       dtEntity::MessageFunctor& GetEnqueueFunctor() { return mEnqueueFunctor; }
 
-   public slots:
-
-      void ProcessMessages();
       QModelIndex parent(const QModelIndex &index) const;
       QModelIndex index(int row, int column, const QModelIndex &parent) const;
       int rowCount(const QModelIndex &parent) const;
@@ -156,6 +146,10 @@ namespace dtEntityQtWidgets
       QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
       QVariant headerData(int section, Qt::Orientation orientation, int role) const;
       bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+
+   public slots:
+
+      void ProcessMessages();
       void OnShowErrorMessage(const QString&);
 
    signals:
@@ -192,15 +186,38 @@ namespace dtEntityQtWidgets
 
    public:
 
+      ////////////////////////////////////////////////////////////////////////////////
+      class ContextMenuFactory : public osg::Referenced
+      {
+      public:
+         virtual ~ContextMenuFactory() {}
+         virtual void ShowContextMenu(const QModelIndex& index, EntityTreeView* view, const QPoint& position);
+      };
+
       EntityTreeView(QWidget *parent = 0);
 
       virtual ~EntityTreeView();
       void SetModel(QAbstractItemModel* model);
       QTreeView* GetTreeView() const { return mTreeView; }
 
-      QMenu& GetEntityContextMenu() { return mEntityContextMenu; }
-      QMenu& GetMapContextMenu() { return mMapContextMenu; }
-      QMenu& GetSpawnerContextMenu() { return mSpawnerContextMenu; }
+      QMenu& GetAddItemMenu() { return mAddItemMenu; }
+      QMenu& GetAddItemMenuItemSelected() { return mAddItemMenuItemSelected; }
+      QAction* GetDeleteEntityAction() { return mDeleteEntityAction; }
+      QAction* GetJumpToEntityAction() { return mJumpToEntityAction; }
+      QAction* GetDeleteSpawnerAction() { return mDeleteSpawnerAction; }
+      QAction* GetSpawnSpawnerAction() { return mSpawnSpawnerAction; }
+      QAction* GetAddEntityAction() { return mAddEntityAction; }
+      QAction* GetAddNewMapAction() { return mAddNewMapAction; }
+      QAction* GetAddExistingMapAction() { return mAddExistingMapAction; }
+      QAction* GetAddSpawnerAction() { return mAddSpawnerAction; }
+      QAction* GetAddChildSpawnerAction () { return mAddChildSpawnerAction; }
+      QAction* GetUnloadMapAction() { return mUnloadMapAction; }
+      QAction* GetSaveMapCopyAction() { return mSaveMapCopyAction; }
+      QAction* GetSaveMapAction() { return mSaveMapAction; }
+
+      void SetContextMenuFactory(ContextMenuFactory* f) { mContextMenuFactory = f; }
+      ContextMenuFactory* GetContextMenuFactory() { return mContextMenuFactory; }
+      QModelIndex GetContextMenuSelectedIndex() const {  return mContextMenuSelectedIndex; }
 
    signals:
 
@@ -260,6 +277,7 @@ namespace dtEntityQtWidgets
       bool IsSingleMapItemSelected(QString& name) const;
       QTreeView* mTreeView;
       QModelIndex mContextMenuSelectedIndex;
+
       QAction* mDeleteEntityAction;
       QAction* mJumpToEntityAction;
       QAction* mDeleteSpawnerAction;
@@ -272,10 +290,13 @@ namespace dtEntityQtWidgets
       QAction* mUnloadMapAction;
       QAction* mSaveMapCopyAction;
       QAction* mSaveMapAction;
+
       QToolButton* mAddItemButton;
-      QMenu mEntityContextMenu;
-      QMenu mMapContextMenu;
-      QMenu mSpawnerContextMenu;
+
+      QMenu mAddItemMenu;
+      QMenu mAddItemMenuItemSelected;
+
+      osg::ref_ptr<ContextMenuFactory> mContextMenuFactory;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
