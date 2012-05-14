@@ -301,7 +301,7 @@ namespace dtEntityWrappers
       obj->Set(String::New("guicategory"), String::New(spawner->GetGUICategory().c_str()));
       obj->Set(String::New("mapname"), String::New(spawner->GetMapName().c_str()));
       obj->Set(String::New("addtospawnerstore"), Boolean::New(spawner->GetAddToSpawnerStore()));
-      obj->Set(String::New("iconpath"), Boolean::New(spawner->GetIconPath().c_str()));
+      obj->Set(String::New("iconpath"), String::New(spawner->GetIconPath().c_str()));
 
       Handle<Object> comps = Object::New();
       dtEntity::Spawner::ComponentProperties props;
