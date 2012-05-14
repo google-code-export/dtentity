@@ -35,6 +35,7 @@ namespace dtEntity
       em.RegisterMessageType<EntityNameUpdatedMessage>(EntityNameUpdatedMessage::TYPE);
       em.RegisterMessageType<EntityRemovedFromSceneMessage>(EntityRemovedFromSceneMessage::TYPE);
       em.RegisterMessageType<EntitySelectedMessage>(EntitySelectedMessage::TYPE);
+      em.RegisterMessageType<EntitySpawnedMessage>(EntitySpawnedMessage::TYPE);
       em.RegisterMessageType<EntitySystemAddedMessage>(EntitySystemAddedMessage::TYPE);
       em.RegisterMessageType<EntitySystemRemovedMessage>(EntitySystemRemovedMessage::TYPE);
       em.RegisterMessageType<MapBeginLoadMessage>(MapBeginLoadMessage::TYPE);
@@ -167,6 +168,18 @@ namespace dtEntity
       : Message(TYPE)
    {
       Register(AboutEntityId, &mAboutEntity);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType EntitySpawnedMessage::TYPE(dtEntity::SID("EntitySpawnedMessage"));
+   const StringId EntitySpawnedMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId EntitySpawnedMessage::SpawnerNameId(dtEntity::SID("SpawnerName"));
+
+   EntitySpawnedMessage::EntitySpawnedMessage()
+      : Message(TYPE)
+   {
+      Register(AboutEntityId, &mAboutEntity);
+      Register(SpawnerNameId, &mSpawnerName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

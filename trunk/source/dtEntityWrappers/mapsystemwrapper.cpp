@@ -180,40 +180,58 @@ namespace dtEntityWrappers
    {
       HandleScope scope;
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
-      std::string name = ToStdString(args[0]);
-      std::string mapname = ToStdString(args[1]);
-      Handle<Object> obj = Handle<Object>::Cast(args[2]);
-      dtEntity::Spawner* parent = NULL;
 
-      if(args.Length() < 3)
+      if(args.Length() != 1)
       {
-         return ThrowError("Usage: addSpawner(name, mapname, componentvalues, [parent, addToSpawnerStore, iconpath, guicategory]");
+         return ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath})");
       }
 
-      if(args.Length() > 3)
+      Handle<Object> obj = Handle<Object>::Cast(args[0]);
+
+      Handle<Value> vname = obj->Get(String::New("name"));
+      Handle<Value> vcomponents = obj->Get(String::New("components"));
+
+      if(vname.IsEmpty() || vcomponents.IsEmpty())
       {
-         std::string parentname = ToStdString(args[3]);
-         ms->GetSpawner(parentname, parent);
+         return ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath, parentname})");
+      }
+
+      Handle<Value> vguicategory = obj->Get(String::New("guicategory"));
+      Handle<Value> vmapname = obj->Get(String::New("mapname"));
+      Handle<Value> vaddtospawnerstore = obj->Get(String::New("addtospawnerstore"));
+      Handle<Value> viconpath = obj->Get(String::New("iconpath"));
+      Handle<Value> vparentname = obj->Get(String::New("parentname"));
+
+      std::string name = ToStdString(vname);
+      std::string mapname = vmapname.IsEmpty() ? "" : ToStdString(vmapname);
+
+      Handle<Object> components = Handle<Object>::Cast(vcomponents);
+
+      dtEntity::Spawner* parent = NULL;
+
+      if(!vparentname.IsEmpty())
+      {
+         ms->GetSpawner(ToStdString(vparentname), parent);
       }
 
       osg::ref_ptr<dtEntity::Spawner> spawner = new dtEntity::Spawner(name, mapname, parent);
-      
-      if(args.Length() > 4 && args[4]->BooleanValue())
+
+      if(!vguicategory.IsEmpty())
       {
-         spawner->SetAddToSpawnerStore(true);
+         spawner->SetGUICategory(ToStdString(vguicategory));
       }
 
-      if(args.Length() > 5)
+      if(!vaddtospawnerstore.IsEmpty())
       {
-         spawner->SetIconPath(ToStdString(args[5]));
+         spawner->SetAddToSpawnerStore(vaddtospawnerstore->BooleanValue());
       }
 
-      if(args.Length() > 6)
+      if(!viconpath.IsEmpty())
       {
-         spawner->SetGUICategory(ToStdString(args[6]));
+         spawner->SetIconPath(ToStdString(viconpath));
       }
 
-      Handle<Array> keys = obj->GetPropertyNames();
+      Handle<Array> keys = components->GetPropertyNames();
       
       for(unsigned int i = 0; i < keys->Length(); ++i)
       {
@@ -270,6 +288,22 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Object> obj = Object::New();
 
+      if(spawner->GetParent())
+      {
+         obj->Set(String::New("parent"), String::New(spawner->GetParent()->GetName().c_str()));
+      }
+      else
+      {
+         obj->Set(String::New("parent"), String::New(""));
+      }
+
+      obj->Set(String::New("name"), String::New(spawner->GetName().c_str()));
+      obj->Set(String::New("guicategory"), String::New(spawner->GetGUICategory().c_str()));
+      obj->Set(String::New("mapname"), String::New(spawner->GetMapName().c_str()));
+      obj->Set(String::New("addtospawnerstore"), Boolean::New(spawner->GetAddToSpawnerStore()));
+      obj->Set(String::New("iconpath"), Boolean::New(spawner->GetIconPath().c_str()));
+
+      Handle<Object> comps = Object::New();
       dtEntity::Spawner::ComponentProperties props;
       spawner->GetAllComponentProperties(props);
       dtEntity::Spawner::ComponentProperties::iterator i;
@@ -289,9 +323,9 @@ namespace dtEntityWrappers
             jscomp->Set(ToJSString(propname), ConvertPropertyToValue(args.Holder()->CreationContext(), prop));
          }
          
-         obj->Set(ToJSString(compname), jscomp);
+         comps->Set(ToJSString(compname), jscomp);
       }
-      
+      obj->Set(String::New("components"), comps);
       return scope.Close(obj);
    }
 
