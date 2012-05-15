@@ -81,18 +81,20 @@ namespace dtEntityEditor
 
       foreach(QString qtpath, qtpaths)
       {
-         if(!QFile::exists(qtpath))
+         if(QFile::exists(qtpath))
          {
-            LOG_ERROR("Project assets folder does not exist: " << qtpath.toStdString());
-            continue;
+            newpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
          }
-
-         newpaths.push_back(osgDB::convertFileNameToUnixStyle(qtpath.toStdString()));
+         else
+         {
+            LOG_ERROR("Project assets folder does not exist: " << qtpath.toStdString());            
+         }      
       }
 
       for(unsigned int i = 0; i < oldpaths.size(); ++i)
       {
-         if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end())
+         if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end() && 
+            QFile::exists(oldpaths[i].c_str()))
          {
             newpaths.push_back(oldpaths[i]);
          }

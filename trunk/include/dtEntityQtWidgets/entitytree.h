@@ -187,7 +187,7 @@ namespace dtEntityQtWidgets
    public:
 
       ////////////////////////////////////////////////////////////////////////////////
-      class ContextMenuFactory : public osg::Referenced
+      class ENTITYQTWIDGETS_EXPORT ContextMenuFactory : public osg::Referenced
       {
       public:
          virtual ~ContextMenuFactory() {}

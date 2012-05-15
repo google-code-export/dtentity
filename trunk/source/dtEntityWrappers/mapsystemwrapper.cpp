@@ -242,7 +242,7 @@ namespace dtEntityWrappers
 
          if(ms->GetEntityManager().HasEntitySystem(ctype))
          {
-            Handle<Value> val = obj->Get(key);
+            Handle<Value> val = components->Get(key);
             if(val->IsObject())
             {
                Handle<Object> compobj = Handle<Object>::Cast(val);
