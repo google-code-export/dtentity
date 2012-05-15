@@ -20,7 +20,6 @@
 
 #include <dtEntity/pickshapecomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>

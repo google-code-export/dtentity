@@ -31,7 +31,6 @@
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
-#include <dtEntity/basemessages.h>
 #include <iostream>
 #include <v8.h>
 

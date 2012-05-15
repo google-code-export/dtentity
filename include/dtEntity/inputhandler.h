@@ -22,15 +22,16 @@
 
 #include <osg/Referenced>
 #include <dtEntity/export.h>
-#include <dtEntity/entitymanager.h>
+#include <dtEntity/stringid.h>
 #include <osgGA/GUIEventHandler>
-#include <osgViewer/GraphicsWindow>
 #include <map>
 #include <sstream>
 
 
 namespace dtEntity
 {
+   class EntityManager;
+
    ////////////////////////////////////////////////////////////////////////////////
    namespace TouchPhase
    {

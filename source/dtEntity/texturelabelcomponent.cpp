@@ -20,8 +20,6 @@
 
 #include <dtEntity/texturelabelcomponent.h>
 
-
-#include <dtEntity/basemessages.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/stringid.h>
 #include <osg/BlendFunc>

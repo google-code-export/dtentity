@@ -1,10 +1,10 @@
 #include "testcomponent.h"
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/debugdrawmanager.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <sstream>
 

@@ -21,7 +21,6 @@
 */
 
 #include <dtEntity/export.h>
-#include <dtEntity/entitymanager.h>
 #include <osg/Referenced>
 
 namespace dtEntity

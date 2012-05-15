@@ -20,15 +20,14 @@
 * Martin Scheffler
 */
 
-#include <osg/Referenced>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/component.h>
 #include <list>
 
 namespace dtEntity
 {
+   class Component;
    class EntityManager;
 
 

@@ -21,6 +21,7 @@
 */
 
 #include <dtEntity/export.h>
+#include <osg/Group>
 #include <osg/NodeVisitor>
 
 namespace dtEntity

@@ -20,11 +20,11 @@
 
 #include <dtEntity/osganimationcomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <osg/Geode>
 #include <osgAnimation/RigGeometry>

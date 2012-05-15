@@ -21,20 +21,17 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/component.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/export.h>
 #include <dtEntity/messagepump.h>
-#include <dtEntity/objectfactory.h>
 #include <map>
 #include <vector>
 #include <assert.h>
-#include <osg/Referenced>
 #include <OpenThreads/ReadWriteMutex>
 
 namespace dtEntity
 {
-
+   class Component;
    class Entity;
    class EntitySystem;
    class Message;

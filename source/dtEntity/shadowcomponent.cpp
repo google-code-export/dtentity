@@ -20,7 +20,6 @@
 
 #include <dtEntity/shadowcomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/lightcomponent.h>

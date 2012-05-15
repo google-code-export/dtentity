@@ -20,10 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
 #include <dtEntity/propertycontainer.h>
-#include <dtEntity/FastDelegate.h>
-#include <dtEntity/FastDelegateBind.h>
 
 namespace dtEntity
 {

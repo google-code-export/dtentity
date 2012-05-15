@@ -21,8 +21,8 @@
 #include "hudcomponent.h"
 #include "rocketcomponent.h"
 #include <dtEntity/entity.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/transformcomponent.h>
 #include <Rocket/Core/Context.h>
 #include <Rocket/Core/ElementDocument.h>

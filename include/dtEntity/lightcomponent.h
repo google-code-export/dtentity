@@ -22,7 +22,6 @@
 */
 
 #include <dtEntity/export.h>
-#include <dtEntity/component.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>

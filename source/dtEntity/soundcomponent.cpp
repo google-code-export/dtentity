@@ -22,10 +22,10 @@
 
 #include <dtEntity/audiomanager.h>
 #include <dtEntity/sound.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/transformcomponent.h>
 #include <osg/Camera>
 #include <assert.h>

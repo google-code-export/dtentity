@@ -21,10 +21,10 @@
 #include <dtEntity/layercomponent.h>
 
 #include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/transformcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <osg/LineWidth>

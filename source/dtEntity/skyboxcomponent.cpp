@@ -20,7 +20,6 @@
 
 #include <dtEntity/skyboxcomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
 #include <assert.h>

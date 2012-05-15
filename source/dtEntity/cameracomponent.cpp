@@ -21,12 +21,12 @@
 #include <dtEntity/cameracomponent.h>
 
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/systemmessages.h>
 
 #include <osgViewer/View>
 #include <osgViewer/Viewer>

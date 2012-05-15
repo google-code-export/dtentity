@@ -24,9 +24,12 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/transformcomponent.h>
 #include <dtEntity/stringid.h>
-#include <osg/Group>
-#include <osg/ref_ptr>
-#include <osg/Camera>
+
+namespace osg
+{
+   class Group;
+   class Camera;
+}
 
 namespace dtEntity
 { 

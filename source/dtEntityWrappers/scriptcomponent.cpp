@@ -20,19 +20,20 @@
 
 #include <dtEntityWrappers/scriptcomponent.h>
 
-#include <dtEntityWrappers/componentwrapper.h>
-#include <dtEntityWrappers/inputhandlerwrapper.h>
-#include <dtEntityWrappers/globalfunctions.h>
-#include <dtEntityWrappers/messages.h>
-#include <dtEntityWrappers/wrappers.h>
-#include <dtEntityWrappers/entitymanagerwrapper.h>
+
 
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
+#include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/stringid.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntity/inputhandler.h>
+#include <dtEntity/stringid.h>
+#include <dtEntity/systemmessages.h>
+#include <dtEntity/windowmanager.h>
+#include <dtEntityWrappers/componentwrapper.h>
+#include <dtEntityWrappers/entitymanagerwrapper.h>
+#include <dtEntityWrappers/globalfunctions.h>
+#include <dtEntityWrappers/inputhandlerwrapper.h>
+#include <dtEntityWrappers/messages.h>
 #include <dtEntityWrappers/screenwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>

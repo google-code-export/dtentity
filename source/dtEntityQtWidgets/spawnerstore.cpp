@@ -20,8 +20,8 @@
 
 #include <dtEntityQtWidgets/spawnerstore.h>
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/cameracomponent.h>
+#include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>

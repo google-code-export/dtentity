@@ -21,7 +21,6 @@
 */
 
 #include <list>
-#include <dtEntity/export.h>
 #include <dtEntity/entityid.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>

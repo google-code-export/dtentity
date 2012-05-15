@@ -22,7 +22,6 @@
 * Martin Scheffler
 */
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/component.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/defaultentitysystem.h>

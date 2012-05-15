@@ -21,7 +21,8 @@
 
 #include <dtEntity/debugdrawmanager.h>
 
-#include <dtEntity/basemessages.h>
+#include <dtEntity/commandmessages.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/nodemasks.h>
 #include <osg/BlendFunc>
 #include <osg/Geometry>
