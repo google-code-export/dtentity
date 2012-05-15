@@ -23,7 +23,6 @@
 */
 #include <osgDB/FileUtils>
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/component.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/defaultentitysystem.h>
@@ -35,6 +34,7 @@
 #include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systemmessages.h>
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>

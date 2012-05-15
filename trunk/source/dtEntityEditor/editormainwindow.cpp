@@ -26,7 +26,6 @@
 #include <dtEntityEditor/editorapplication.h>
 #include <dtEntityQtWidgets/entitytree.h>
 #include <dtEntityQtWidgets/listdialog.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntityQtWidgets/assetcreationdialog.h>
 #include <dtEntityQtWidgets/osgadapterwidget.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
@@ -34,6 +33,8 @@
 #include <dtEntityQtWidgets/qtguiwindowsystemwrapper.h>
 #include <dtEntityQtWidgets/spawnerstore.h>
 #include <dtEntity/log.h>
+#include <dtEntity/commandmessages.h>
+#include <dtEntity/systemmessages.h>
 #include <cassert>
 #include <iostream>
 #include <QtGui/QtGui>

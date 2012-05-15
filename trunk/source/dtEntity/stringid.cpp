@@ -20,7 +20,7 @@
 
 #include <dtEntity/stringid.h>
 #include <OpenThreads/ReadWriteMutex>
-#include <dtEntity/crc32.h>
+#include <dtEntity/hash.h>
 #include <dtEntity/dtentity_config.h>
 #include <map>
 #include <string>

@@ -20,7 +20,6 @@
 
 #include <dtEntity/rapidxmlmapencoder.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/component.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>

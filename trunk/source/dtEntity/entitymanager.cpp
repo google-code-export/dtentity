@@ -19,14 +19,14 @@
 */
 #include <dtEntity/entitymanager.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/log.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
-#include <dtEntity/log.h>
+#include <dtEntity/systemmessages.h>
 #include <float.h>
 
 namespace dtEntity

@@ -20,7 +20,6 @@
 
 #include <dtEntity/windowmanager.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
@@ -28,6 +27,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/systemmessages.h>
 
 #include <osg/GraphicsContext>
 #include <osg/NodeCallback>

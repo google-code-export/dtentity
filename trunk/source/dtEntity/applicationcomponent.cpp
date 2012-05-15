@@ -20,13 +20,14 @@
 
 #include <dtEntity/applicationcomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/windowmanager.h>
+#include <dtEntity/commandmessages.h>
+#include <dtEntity/systemmessages.h>
 #include <assert.h>
 
 #include <sstream>

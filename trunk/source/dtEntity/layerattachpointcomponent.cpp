@@ -21,7 +21,6 @@
 #include <dtEntity/layerattachpointcomponent.h>
 
 #include <dtEntity/layercomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>

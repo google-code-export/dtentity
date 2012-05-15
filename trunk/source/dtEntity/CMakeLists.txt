@@ -47,14 +47,13 @@ configure_file (
 
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/applicationcomponent.h
-  ${HEADER_PATH}/basemessages.h
   ${HEADER_PATH}/cameracomponent.h
   ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/component.h
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/componentplugin.h
   ${HEADER_PATH}/componentpluginmanager.h
-  ${HEADER_PATH}/crc32.h
+  ${HEADER_PATH}/hash.h
   ${HEADER_PATH}/debugdrawmanager.h
   ${HEADER_PATH}/defaultentitysystem.h
   ${HEADER_PATH}/dynamicproperty.h
@@ -139,7 +138,7 @@ SET(LIB_REPLACE
 SET(LIB_SOURCES
   componentfactories.cpp
   componentpluginmanager.cpp
-  crc32.cpp
+  hash.cpp
   debugdrawmanager.cpp
   entity.cpp
   entitymanager.cpp

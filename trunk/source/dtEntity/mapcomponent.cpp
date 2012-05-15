@@ -20,8 +20,9 @@
 
 #include <dtEntity/mapcomponent.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntity/rapidxmlmapencoder.h>
+#include <dtEntity/systemmessages.h>
+#include <dtEntity/commandmessages.h>
 #include <assert.h>
 #include <dtEntity/spawner.h>
 #include <sstream>

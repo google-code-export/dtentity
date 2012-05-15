@@ -22,7 +22,6 @@
 
 #include <assert.h>
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entity.h>

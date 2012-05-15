@@ -7,7 +7,7 @@
 // compile and run any of them on any platform, but your performance with the
 // non-native version will be less than optimal.
 
-#include <dtEntity/crc32.h>
+#include <dtEntity/hash.h>
 
 //-----------------------------------------------------------------------------
 // Platform-specific functions and macros

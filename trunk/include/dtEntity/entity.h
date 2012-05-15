@@ -25,13 +25,11 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/component.h>
 #include <osg/Referenced>
-#include <list>
-#include <dtEntity/component.h>
+#include <vector>
 
 namespace dtEntity
 {
-   class EntityManager;
-
+  
    /**
     * The entity class is simply a convenience class to bundle
     * the entity ID and access to the entity manager.

@@ -20,17 +20,18 @@
 
 #include <dtEntityQtWidgets/propertyeditor.h>
 
-#include <dtEntity/basemessages.h>
 #include <dtEntityQtWidgets/assetselector.h>
 #include <dtEntityQtWidgets/delegatefactory.h>
 #include <dtEntityQtWidgets/listdialog.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/propertydelegate.h>
+#include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
+#include <dtEntity/systemmessages.h>
 #include <iostream>
 #include <sstream>
 #include <iomanip>

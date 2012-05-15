@@ -23,7 +23,6 @@
 */
 
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>

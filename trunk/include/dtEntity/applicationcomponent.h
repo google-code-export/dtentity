@@ -20,16 +20,12 @@
 * Martin Scheffler
 */
 
-
-
-#include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/message.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
-#include <osg/Group>
 #include <osg/Timer>
 
 namespace osgViewer
@@ -38,6 +34,13 @@ namespace osgViewer
    class Window;
    class ViewerBase;
    class GraphicsWindow;
+}
+
+namespace osg
+{
+   class Camera;
+   class Group;
+   class Node;
 }
 
 namespace dtEntity

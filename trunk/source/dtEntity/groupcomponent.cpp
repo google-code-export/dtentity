@@ -19,7 +19,7 @@
 */
 
 #include <dtEntity/groupcomponent.h>
-
+#include <osg/Group>
 
 namespace dtEntity
 {

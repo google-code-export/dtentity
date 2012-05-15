@@ -21,13 +21,13 @@
 #include <dtEntitySimulation/groundclampingcomponent.h>
 
 #include <dtEntity/cameracomponent.h>
-#include <dtEntity/basemessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systemmessages.h>
 #include <iostream>
 #include <osg/io_utils>
 #include <osgSim/LineOfSight>
