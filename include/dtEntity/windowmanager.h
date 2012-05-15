@@ -26,11 +26,13 @@
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/inputhandler.h>
+#include <dtEntity/messagepump.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 
 namespace osgViewer
 {
+   class GraphicsWindow;
    class View;
    class CompositeViewer;
    class Window;
