@@ -35,7 +35,7 @@ namespace dtEntityWrappers
    {
       using namespace v8;
 
-      switch(prop->GetType())
+      switch(prop->GetDataType())
       {
       case dtEntity::DataType::ARRAY:
       {
@@ -217,7 +217,7 @@ namespace dtEntityWrappers
    {
       using namespace v8;
 
-      switch(prop->GetType())
+      switch(prop->GetDataType())
       {
       case dtEntity::DataType::ARRAY:
       {
@@ -368,7 +368,7 @@ namespace dtEntityWrappers
    {
       using namespace v8;
 
-      switch(prop->GetType())
+      switch(prop->GetDataType())
       {
       case dtEntity::DataType::ARRAY:
       {

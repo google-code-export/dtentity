@@ -236,7 +236,7 @@ namespace dtEntityQtWidgets
                   TreeItem* item = static_cast<TreeItem*>(parent.internalPointer());
                   PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
                   if(pitem &&
-                        pitem->mProperty->GetType() == dtEntity::DataType::ARRAY &&
+                        pitem->mProperty->GetDataType() == dtEntity::DataType::ARRAY &&
                         dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
                   {
                      return "-";
@@ -372,7 +372,7 @@ namespace dtEntityQtWidgets
          emit(dataChanged(idx, idx));
          
          // re-load all properties into array or group. They are held redundantly :(
-         if(pitem->mProperty->GetType() == dtEntity::DataType::ARRAY)
+         if(pitem->mProperty->GetDataType() == dtEntity::DataType::ARRAY)
          {
             dtEntity::PropertyArray arr;
             for(int i = 0; i < pitem->childCount(); ++i)
@@ -382,7 +382,7 @@ namespace dtEntityQtWidgets
             }
             static_cast<dtEntity::ArrayProperty*>(pitem->mProperty)->Set(arr);
          }
-         else if(pitem->mProperty->GetType() == dtEntity::DataType::GROUP)
+         else if(pitem->mProperty->GetDataType() == dtEntity::DataType::GROUP)
          {
             dtEntity::PropertyGroup grp;
 
@@ -596,12 +596,12 @@ namespace dtEntityQtWidgets
          PropertyTreeItem* pitem = new PropertyTreeItem(parent, delegateFactory->GetFactoryForChildren(propname), propname, prop->Clone(), dlgt);
          parent->appendChild(pitem);
 
-         if(prop->GetType() == dtEntity::DataType::GROUP)
+         if(prop->GetDataType() == dtEntity::DataType::GROUP)
          {
             // add group properties
             AddProperties(pitem, prop->GroupValue());
          }
-         else if(prop->GetType() == dtEntity::DataType::ARRAY)
+         else if(prop->GetDataType() == dtEntity::DataType::ARRAY)
          {
             // add array entries
             dtEntity::PropertyArray grp = prop->ArrayValue();
@@ -639,7 +639,7 @@ namespace dtEntityQtWidgets
       TreeItem* parent = static_cast<TreeItem*>(index.internalPointer());
       PropertyTreeItem* pparent = dynamic_cast<PropertyTreeItem*>(parent);
       assert(pparent);
-      assert(pparent->mProperty->GetType() == dtEntity::DataType::ARRAY);
+      assert(pparent->mProperty->GetDataType() == dtEntity::DataType::ARRAY);
       pparent->mChanged = true;
       ArrayPropertyDelegate* dlgt = dynamic_cast<ArrayPropertyDelegate*>(pparent->mDelegate);
       assert(dlgt);
@@ -673,7 +673,7 @@ namespace dtEntityQtWidgets
       TreeItem* parent = static_cast<TreeItem*>(index.parent().internalPointer());
       PropertyTreeItem* pparent = dynamic_cast<PropertyTreeItem*>(parent);
       assert(pparent);
-      assert(pparent->mProperty->GetType() == dtEntity::DataType::ARRAY);
+      assert(pparent->mProperty->GetDataType() == dtEntity::DataType::ARRAY);
       ArrayPropertyDelegate* dlgt = dynamic_cast<ArrayPropertyDelegate*>(pparent->mDelegate);
       assert(dlgt);
       dtEntity::ArrayProperty* arrprop = dynamic_cast<dtEntity::ArrayProperty*>(pparent->mProperty);
@@ -1043,7 +1043,7 @@ namespace dtEntityQtWidgets
          PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
          if(pitem)
          {
-            if(pitem->mProperty->GetType() == dtEntity::DataType::ARRAY)
+            if(pitem->mProperty->GetDataType() == dtEntity::DataType::ARRAY)
             {
                QMenu menu(this);
                menu.addAction(mAppendArrayEntry);

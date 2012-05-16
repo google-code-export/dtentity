@@ -1062,7 +1062,7 @@ namespace dtEntity
    xml_node<>* SerializeProperty(xml_document<>& doc, const Names& names,  const char* name, const Property* prop)
    {
       xml_node<>* propelem;
-      switch(prop->GetType())
+      switch(prop->GetDataType())
       {
       case DataType::BOOL: propelem = SerializePropertyFromString(doc, names, names.mBoolProperty, prop); break;
       case DataType::CHAR: propelem = SerializePropertyFromString(doc, names, names.mCharProperty, prop); break;

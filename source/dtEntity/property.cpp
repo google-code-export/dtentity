@@ -250,7 +250,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool ArrayProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -415,7 +415,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool BoolProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -470,7 +470,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool CharProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -528,7 +528,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool FloatProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -592,7 +592,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool DoubleProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -665,7 +665,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool GroupProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -820,7 +820,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool UIntProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -892,7 +892,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool MatrixProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -971,9 +971,9 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool StringProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
-         if(other.GetType() == DataType::STRINGID)
+         if(other.GetDataType() == DataType::STRINGID)
          {
             return (SID(mValue) == other.StringIdValue());
          }
@@ -992,7 +992,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool StringProperty::SetFrom(const Property& other)
    {
-      switch(other.GetType())
+      switch(other.GetDataType())
       {
       case DataType::STRING:
       
@@ -1044,7 +1044,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool QuatProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1102,9 +1102,9 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool StringIdProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
-         if(other.GetType() == DataType::STRING)
+         if(other.GetDataType() == DataType::STRING)
          {
             StringId str = other.StringIdValue();
             return (str == mValue);
@@ -1181,7 +1181,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool IntProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1258,7 +1258,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec2Property::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1340,7 +1340,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec3Property::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1436,7 +1436,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec4Property::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1509,7 +1509,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec2dProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1591,7 +1591,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec3dProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }
@@ -1687,7 +1687,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    bool Vec4dProperty::operator==(const Property& other) const
    {
-      if(other.GetType() != GetType())
+      if(other.GetDataType() != GetDataType())
       {
          return false;
       }

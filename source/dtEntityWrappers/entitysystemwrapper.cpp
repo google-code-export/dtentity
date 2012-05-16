@@ -369,7 +369,7 @@ namespace dtEntityWrappers
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
 
-      switch(prop->GetType())
+      switch(prop->GetDataType())
       {
       case dtEntity::DataType::ARRAY:
       case dtEntity::DataType::VEC2:
