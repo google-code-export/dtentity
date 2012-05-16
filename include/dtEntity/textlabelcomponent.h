@@ -20,56 +20,55 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/nodemasks.h>
-
 #include <dtEntity/export.h>
 #include <dtEntity/component.h>
-#include <dtEntity/entity.h>
-#include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
-#include <osg/Geometry>
-#include <osgText/Text>
 #include <dtEntity/scriptaccessor.h>
 
+namespace osgText
+{
+   class Text;
+}
 namespace dtEntity
 {      
+   class Entity;
    class TextLabelSystem;
       
    class DT_ENTITY_EXPORT TextLabelComponent : public dtEntity::NodeComponent
    {
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
    public:
       
-      static const dtEntity::ComponentType TYPE;
-      static const dtEntity::StringId TextsId;
-      static const dtEntity::StringId AlwaysOnTopId;
-      static const dtEntity::StringId TextId;
-      static const dtEntity::StringId ColorId;
-      static const dtEntity::StringId BackdropColorId;
-      static const dtEntity::StringId VisibleId;
-      static const dtEntity::StringId HighlightedId;
-      static const dtEntity::StringId OffsetId;
-      static const dtEntity::StringId CharacterHeightId;
-      static const dtEntity::StringId FontId;
-      static const dtEntity::StringId AlignmentId;
+      static const ComponentType TYPE;
+      static const StringId TextsId;
+      static const StringId AlwaysOnTopId;
+      static const StringId TextId;
+      static const StringId ColorId;
+      static const StringId BackdropColorId;
+      static const StringId VisibleId;
+      static const StringId HighlightedId;
+      static const StringId OffsetId;
+      static const StringId CharacterHeightId;
+      static const StringId FontId;
+      static const StringId AlignmentId;
       
       TextLabelComponent();
       virtual ~TextLabelComponent();
 
-      virtual dtEntity::ComponentType GetType() const { return TYPE; }
+      virtual ComponentType GetType() const { return TYPE; }
       
-      virtual bool IsInstanceOf(dtEntity::ComponentType id) const
+      virtual bool IsInstanceOf(ComponentType id) const
       { 
          return (id == TYPE); 
       }      
 
-      virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
+      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void Finished();
 
-      void OnAddedToEntity(dtEntity::Entity& entity);
+      void OnAddedToEntity(Entity& entity);
 
       unsigned int GetNumTexts() const { return mTextEntries.size(); }
       void Create(unsigned int textid);
@@ -112,8 +111,8 @@ namespace dtEntity
 
    private:
 
-      dtEntity::ArrayProperty mTexts;
-      dtEntity::BoolProperty mAlwaysOnTop;
+      ArrayProperty mTexts;
+      BoolProperty mAlwaysOnTop;
       typedef std::vector<osg::ref_ptr<osgText::Text> > TextEntries;
       TextEntries mTextEntries;
       TextLabelSystem* mTextLabelSystem;

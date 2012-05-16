@@ -25,7 +25,11 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/stringid.h>
-#include <osg/Geode>
+
+namespace osg
+{
+   class Geode;
+}
 
 namespace dtEntity
 {

@@ -21,7 +21,6 @@
 */
 
 #include <dtEntity/export.h>
-#include <dtEntity/entity.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/stringid.h>
@@ -30,7 +29,8 @@
 
 namespace dtEntity
 {
-   
+   class Entity;
+
    /** 
      * Spawner: a template for creating entities.
 	 * Each spawner contains a number of components which contain properties. 

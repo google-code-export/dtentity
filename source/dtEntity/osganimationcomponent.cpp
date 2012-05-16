@@ -34,6 +34,7 @@
 #include <osgDB/ReadFile>
 #include <sstream>
 #include <osg/ShapeDrawable>
+#include <osgDB/FileUtils>
 
 namespace dtEntity
 {

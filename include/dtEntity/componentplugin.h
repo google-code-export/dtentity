@@ -25,7 +25,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osgDB/DynamicLibrary>
-
+#include <dtEntity/stringid.h>
 
 namespace dtEntity
 {

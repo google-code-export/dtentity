@@ -31,8 +31,7 @@
 namespace dtEntity
 {
 
-   class DT_ENTITY_EXPORT StringIdManager
-      : public Singleton<StringIdManager>
+   class StringIdManager
    {
 
       typedef std::map<unsigned int, std::string> ReverseLookupMap;
@@ -104,11 +103,13 @@ namespace dtEntity
       }
    };
 
+   StringIdManager s_stringIdManager;
+
    ////////////////////////////////////////////////////////////////////////////////
    StringId SID(const std::string& str)
    {
-      unsigned int hash = StringIdManager::GetInstance().Hash(str);
-      StringIdManager::GetInstance().AddToReverseLookup(str, hash);
+      unsigned int hash = s_stringIdManager.Hash(str);
+      s_stringIdManager.AddToReverseLookup(str, hash);
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return str;
 #else
@@ -122,7 +123,7 @@ namespace dtEntity
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return id;
 #else
-      return StringIdManager::GetInstance().ReverseLookup(id);
+      return s_stringIdManager.ReverseLookup(id);
 #endif
    }
 
@@ -132,7 +133,7 @@ namespace dtEntity
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return str;
 #else
-      unsigned int hash = StringIdManager::GetInstance().Hash(str);
+      unsigned int hash = s_stringIdManager.Hash(str);
       return hash;
 #endif
    }
@@ -141,7 +142,7 @@ namespace dtEntity
    StringId SID(unsigned int hash)
    {
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      return StringIdManager::GetInstance().ReverseLookup(hash);
+      return s_stringIdManager.ReverseLookup(hash);
 #else
       return hash;
 #endif      

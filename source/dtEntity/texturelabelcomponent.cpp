@@ -25,6 +25,7 @@
 #include <osg/BlendFunc>
 #include <osg/Geode>
 #include <osg/Geometry>
+#include <osg/Program>
 #include <osg/Image>
 #include <osg/LineWidth>
 #include <osg/Point>

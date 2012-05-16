@@ -24,10 +24,8 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/entitysystem.h>
-#include <dtEntity/component.h>
 #include <dtEntity/inputhandler.h>
 #include <dtEntity/messagepump.h>
-#include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 
 namespace osgViewer
@@ -58,13 +56,8 @@ namespace dtEntity
    class DT_ENTITY_EXPORT WindowManager : public osg::Referenced
    {     
    public:
-      WindowManager(EntityManager& em)
-         : mEntityManager(&em)
-         , mInputHandler(new InputHandler(em))
 
-      {
-
-      }
+      WindowManager(EntityManager& em);
 
       /**
        * Opens a new window if used viewer is a composite viewer.

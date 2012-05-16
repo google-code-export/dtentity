@@ -11,7 +11,6 @@ SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 SET(LIB_SOURCES
-	 ${SOURCE_PATH}/testComponent.cpp
 	 ${SOURCE_PATH}/testEntityManager.cpp
 	 ${SOURCE_PATH}/testInitOsgViewer.cpp
 	 ${SOURCE_PATH}/testMap.cpp

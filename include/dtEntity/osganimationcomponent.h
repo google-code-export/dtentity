@@ -28,8 +28,6 @@
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
-#include <osg/Group>
-#include <osgDB/FileUtils>
 
 namespace dtEntity
 {

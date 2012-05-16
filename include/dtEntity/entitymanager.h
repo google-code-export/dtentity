@@ -372,7 +372,6 @@ namespace dtEntity
       {
          return false;
       }
-      assert(c->GetType() == T::TYPE);
       component = static_cast<T*>(c);
       return true;
    }

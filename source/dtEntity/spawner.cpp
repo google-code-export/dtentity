@@ -21,6 +21,7 @@
 #include <dtEntity/spawner.h>
 
 #include <dtEntity/component.h>
+#include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/propertycontainer.h>

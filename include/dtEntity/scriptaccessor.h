@@ -20,7 +20,6 @@
 * Martin Scheffler
 */
 
-#include <osg/Referenced>
 #include <dtEntity/export.h>
 #include <dtEntity/property.h>
 #include <dtEntity/FastDelegate.h>

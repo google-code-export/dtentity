@@ -28,6 +28,11 @@
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
+namespace osg
+{
+   class MatrixTransform;
+}
+
 namespace dtEntity
 {
 

@@ -22,27 +22,9 @@
 
 #include <dtEntity/dtentity_config.h>
 
-#if DTENTITY_USE_STRINGS_AS_STRINGIDS
-  #include <string>
-#endif
-
 namespace dtEntity
 {
    // serial ID for entities
    typedef unsigned int EntityId;
-
-   // serial ID for strings
-
-#if DTENTITY_USE_STRINGS_AS_STRINGIDS
-   typedef std::string StringId;
-#else
-   typedef unsigned int StringId;
-#endif
-
-   // type id for messages
-   typedef StringId MessageType;
-
-   // type id for components
-   typedef StringId ComponentType;
    
 }

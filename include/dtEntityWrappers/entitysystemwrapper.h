@@ -22,7 +22,7 @@
 
 #include <dtEntityWrappers/export.h>
 #include <v8.h>
-#include <dtEntity/entityid.h>
+#include <dtEntity/stringid.h>
 
 namespace dtEntity
 {

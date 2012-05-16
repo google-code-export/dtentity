@@ -24,8 +24,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapencoder.h>
 #include <dtEntity/property.h>
-#include <osg/ref_ptr>
-#include <osg/Timer>
 #include <rapidxml.hpp>
 
 namespace dtEntity
