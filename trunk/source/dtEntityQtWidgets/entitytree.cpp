@@ -1442,7 +1442,7 @@ namespace dtEntityQtWidgets
             std::vector<const dtEntity::EntitySystem*>::iterator i;
             for(i = esystems.begin(); i != esystems.end(); ++i)
             {
-               if((*i)->GetAllProperties().size() != 0)
+               if((*i)->Get().size() != 0)
                {
                   dtEntity::EntitySystemAddedMessage m;
                   m.SetComponentType((*i)->GetComponentType());

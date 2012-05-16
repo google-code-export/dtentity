@@ -1402,11 +1402,8 @@ namespace dtEntityQtWidgets
       entity->GetComponents(components);
       for(CompList::const_iterator i = components.begin(); i != components.end(); ++i)
       {
-         const dtEntity::Component* component = *i;
-         dtEntity::PropertyContainer::ConstPropertyMap pmap;
-
-         dtEntity::GroupProperty props = component->GetProperties();
-         emit(ComponentRetrieved(component->GetType(), props));
+         const dtEntity::Component* c = *i;
+         emit(ComponentRetrieved(c->GetType(), *c));
       }
 
       emit EnableAddComponent(true);
@@ -1425,8 +1422,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      dtEntity::GroupProperty props = es->GetProperties();
-      emit(ComponentRetrieved(es->GetComponentType(), props));
+      emit(ComponentRetrieved(es->GetComponentType(), *es));
       emit EnableAddComponent(false);
    }
 
@@ -1755,9 +1751,7 @@ namespace dtEntityQtWidgets
       }
 
       comp->Finished();
-
-      dtEntity::GroupProperty props = comp->GetProperties();
-      emit(ComponentRetrieved(ctype, props));
+      emit(ComponentRetrieved(ctype, *comp));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1830,8 +1824,7 @@ namespace dtEntityQtWidgets
       bool found = mEntityManager->GetComponent(id, componentType, component);
       if(found)
       {
-         dtEntity::GroupProperty props = component->GetProperties();
-         emit ComponentRetrieved(componentType, props);
+         emit ComponentRetrieved(componentType, *component);
       }
    }
 
@@ -1843,8 +1836,7 @@ namespace dtEntityQtWidgets
       bool found = mEntityManager->GetEntitySystem(sid, es);
       if(found)
       {
-         dtEntity::GroupProperty props = es->GetProperties();
-         emit ComponentRetrieved(sid, props);
+         emit ComponentRetrieved(sid, *es);
       }
    }
 

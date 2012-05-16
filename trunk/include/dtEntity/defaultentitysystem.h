@@ -320,7 +320,7 @@ namespace dtEntity
       GroupProperty DefaultEntitySystem<T, MemAllocPolicy>::GetComponentProperties() const
    {
       T t;
-      return t.GetProperties();
+      return t;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

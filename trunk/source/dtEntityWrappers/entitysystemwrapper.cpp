@@ -475,9 +475,9 @@ namespace dtEntityWrappers
       Local<Object> instance = tpl->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
 
-      const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
+      const dtEntity::PropertyGroup& props = v->Get();
 
-      dtEntity::PropertyContainer::PropertyMap::const_iterator j;
+      dtEntity::PropertyGroup::const_iterator j;
       for(j = props.begin(); j != props.end(); ++j)
       {
          Handle<External> ext = v8::External::New(static_cast<void*>(j->second));

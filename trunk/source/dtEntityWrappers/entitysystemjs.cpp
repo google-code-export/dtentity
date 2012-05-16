@@ -91,13 +91,13 @@ namespace dtEntityWrappers
             dtEntity::Property* prop = ConvertValueToProperty(val);
             if(prop)
             {
-               PropertyMap::iterator j = mProperties.find(propname_sid);
-               if(j != mProperties.end())
+               dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
+               if(j != mValue.end())
                {
 		           delete j->second;
-                 mProperties.erase(j);
+                 mValue.erase(j);
 	            }        
-               mProperties[propname_sid] = prop;     
+               mValue[propname_sid] = prop;     
             }      
             
             Handle<External> ext = v8::External::New(static_cast<void*>(this));
@@ -110,7 +110,7 @@ namespace dtEntityWrappers
    ComponentJS::~ComponentJS()
    {
       V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(ComponentJS));
-      for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
+      for(dtEntity::PropertyGroup::iterator i = mValue.begin(); i != mValue.end(); ++i)
       {
          delete i->second;
       }
@@ -269,13 +269,13 @@ namespace dtEntityWrappers
             dtEntity::Property* prop = ConvertValueToProperty(val);
             if(prop)
             {
-               PropertyMap::iterator j = mProperties.find(propname_sid);
-               if(j != mProperties.end())
+               dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
+               if(j != mValue.end())
                {
 		           delete j->second;
-                 mProperties.erase(j);
+                 mValue.erase(j);
 	            }        
-               mProperties[propname_sid] = prop;     
+               mValue[propname_sid] = prop;     
             }         
          }
       }
@@ -510,24 +510,6 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::GroupProperty EntitySystemJS::GetComponentProperties() const
-   {
-      
-      dtEntity::Component* comp;
-      bool success = const_cast<EntitySystemJS*>(this)->CreateComponent(0, comp);
-      if(!success)
-      {
-         LOG_ERROR("Cannot instantiate javascript component of type " << dtEntity::GetStringFromSID(GetComponentType()));
-         dtEntity::PropertyGroup c;
-         return c;
-      }
-      dtEntity::GroupProperty c = comp->GetProperties();
-      const_cast<EntitySystemJS*>(this)->DeleteComponent(0);
-      return c;
-      
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    dtEntity::GroupProperty EntitySystemJS::GetProperties() const
    {
       dtEntity::GroupProperty ret;
@@ -549,8 +531,8 @@ namespace dtEntityWrappers
          dtEntity::Property* prop = ConvertValueToProperty(val);
          if(prop)
          {
-            PropertyMap::const_iterator j = mProperties.find(propname_sid);
-            if(j != mProperties.end())
+            dtEntity::PropertyGroup::const_iterator j = mValue.find(propname_sid);
+            if(j != mValue.end())
             {
               j->second->SetFrom(*prop);
               ret.Add(propname_sid, j->second->Clone());

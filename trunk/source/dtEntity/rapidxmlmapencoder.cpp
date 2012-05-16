@@ -1176,8 +1176,7 @@ namespace dtEntity
       xml_attribute<>* typeattr = doc.allocate_attribute(names.mType, doc.allocate_string(tname.c_str()));
       element->append_attribute(typeattr);
 
-      GroupProperty props = component->GetProperties();
-      PropertyGroup p = props.Get();
+      const PropertyGroup& p = component->Get();
       // write properties sorted by property name
       std::map<std::string, const Property*> sorted;
       PropertyGroup::const_iterator i;
@@ -1275,8 +1274,7 @@ namespace dtEntity
       xml_attribute<>* attr = doc.allocate_attribute(names.mType, doc.allocate_string(tname.c_str()));
       entity->append_attribute(attr);
 
-      GroupProperty props = es->GetProperties();
-      PropertyGroup p = props.Get();
+      const PropertyGroup& p = es->Get();
 
       std::map<std::string, const Property*> sorted;
       PropertyGroup::const_iterator i;

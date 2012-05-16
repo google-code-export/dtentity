@@ -102,12 +102,3 @@ TEST(PropertyContainerString)
    container.SetString(sid, v);
    CHECK_EQUAL(container.GetString(sid), v);
 }
-
-TEST(PropertyGetProperties)
-{
-   
-   MyPropertyContainer container;  
-   dtEntity::GroupProperty props = container.GetProperties();
-   CHECK_EQUAL(props.Get().size(), (unsigned int)6);
-}
-
