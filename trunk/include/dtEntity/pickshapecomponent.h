@@ -26,7 +26,11 @@
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
-#include <osg/ShapeDrawable>
+
+namespace osg
+{
+   class Box;
+}
 
 namespace dtEntity
 {

@@ -21,7 +21,6 @@
 */
 
 #include <osg/ref_ptr>
-#include <osg/Referenced>
 #include <dtEntity/export.h>
 #include <dtEntity/singleton.h>
 #include <map>

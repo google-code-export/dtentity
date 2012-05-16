@@ -28,7 +28,6 @@
 #include <dtEntity/component.h>
 #include <dtEntity/message.h>
 #include <dtEntity/stringid.h>
-#include <osg/Group>
 #include <dtEntity/sound.h>
 
 

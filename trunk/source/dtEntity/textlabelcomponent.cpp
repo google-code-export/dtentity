@@ -35,7 +35,7 @@
 #include <osgDB/FileUtils>
 #include <osg/Multisample>
 #include <osg/PolygonOffset>
-
+#include <osgText/Text>
 
 namespace dtEntity
 {

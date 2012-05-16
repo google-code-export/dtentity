@@ -28,7 +28,11 @@
 #include <dtEntity/transformcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
-#include <osg/Group>
+
+namespace osg
+{
+   class PositionAttitudeTransform;
+}
 
 namespace dtEntity
 {

@@ -22,7 +22,6 @@
 
 #include <map>
 #include <vector>
-#include <osg/Referenced>  // for base_class
 
 namespace dtEntity
 {
@@ -132,7 +131,7 @@ namespace dtEntity
          // so throw an exception.
          if (itor == this->objectTypeMap.end())
          {
-            return NULL;
+            return 0;
          }
 
          return (itor->second)();

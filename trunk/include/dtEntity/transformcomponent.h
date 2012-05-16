@@ -24,11 +24,9 @@
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
-#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
-#include <osg/Group>
 
 namespace dtEntity
 {

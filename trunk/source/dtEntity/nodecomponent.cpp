@@ -21,10 +21,32 @@
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/layercomponent.h>
-#include <dtEntity/nodemaskvisitor.h>
+#include <osg/NodeVisitor>
+#include <osg/Group>
 
 namespace dtEntity
 {
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class NodeMaskVisitor : public osg::NodeVisitor
+   {
+   public:
+
+      NodeMaskVisitor(unsigned int mask) : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+      {
+         mMask = mask;
+      }
+
+      virtual void apply(osg::Group& node)
+      {
+        node.setNodeMask(mMask);
+        this->traverse(node);
+      }
+
+   private:
+
+      unsigned int mMask;
+   };
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////

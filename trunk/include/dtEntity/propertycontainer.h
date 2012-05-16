@@ -22,7 +22,6 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/stringid.h>
-#include <OpenThreads/Mutex>
 #include <osg/Matrix>
 #include <osg/Vec2>
 #include <osg/Vec3>

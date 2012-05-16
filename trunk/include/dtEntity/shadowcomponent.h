@@ -25,8 +25,11 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/stringid.h>
-#include <osg/Geode>
-#include <osgShadow/ShadowMap>
+
+namespace osgShadow
+{
+   class ShadowTechnique;
+}
 
 namespace dtEntity
 {

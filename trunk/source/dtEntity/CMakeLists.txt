@@ -80,10 +80,8 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/messagepump.h
   ${HEADER_PATH}/nodecomponent.h
   ${HEADER_PATH}/nodemasks.h
-  ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
   ${HEADER_PATH}/osganimationcomponent.h  
-  ${HEADER_PATH}/policycomponent.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
