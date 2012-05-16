@@ -25,11 +25,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/stringid.h>
-
-namespace osgShadow
-{
-   class ShadowTechnique;
-}
+#include <osgShadow/ShadowTechnique>
 
 namespace dtEntity
 {
@@ -102,6 +98,7 @@ namespace dtEntity
       static const StringId EnabledId;
 
       ShadowSystem(EntityManager& em);
+      virtual ~ShadowSystem();
 
       virtual void OnPropertyChanged(StringId propname, Property &prop);
       void SetEnabled(bool);

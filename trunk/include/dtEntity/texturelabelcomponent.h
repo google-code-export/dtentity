@@ -25,12 +25,8 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
-
-namespace osg
-{
-   class Geometry;
-   class Program;
-}
+#include <osg/Geometry>
+#include <osg/Program>
 
 namespace dtEntity
 {      
@@ -135,6 +131,7 @@ namespace dtEntity
       static const dtEntity::ComponentType TYPE;
 
       TextureLabelSystem(dtEntity::EntityManager& em);
+      ~TextureLabelSystem();
       virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
       
       osg::StateSet* GetSymbolStateset(const std::string& symbolpath, TextureLabelComponent& component);
