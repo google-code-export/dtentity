@@ -621,6 +621,18 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   GroupProperty::GroupProperty(const GroupProperty& other)
+   {
+      const PropertyGroup& o = other.Get();
+      for(PropertyGroup::const_iterator i = o.begin(); i != o.end(); ++i)
+      {
+         StringId key = (*i).first;
+         Property* val = (*i).second->Clone();
+         Add(key, val);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    GroupProperty::~GroupProperty()
    {
       Clear();
@@ -629,7 +641,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    PropertyGroup GroupProperty::GroupValue() const 
    { 
-      return Get(); 
+      return mValue;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -645,6 +657,12 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void GroupProperty::operator=(const GroupProperty& other)
+   {
+      operator+=(other);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    bool GroupProperty::operator==(const Property& other) const
    {
       if(other.GetType() != GetType())
@@ -653,6 +671,25 @@ namespace dtEntity
       }
       const GroupProperty& aother = static_cast<const GroupProperty&>(other);
       return (aother.mValue == mValue);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void GroupProperty::operator+=(const GroupProperty& other)
+   {
+      const PropertyGroup& o = other.Get();
+      for(PropertyGroup::const_iterator i = o.begin(); i != o.end(); ++i)
+      {
+         StringId key = (*i).first;
+         std::string k = GetStringFromSID(key);
+         Property* val = (*i).second->Clone();
+         Add(key, val);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   bool GroupProperty::Empty() const
+   {
+      return mValue.empty();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -670,6 +707,11 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    void GroupProperty::Add(StringId name, Property* prop)
    {
+      PropertyGroup::iterator i = mValue.find(name);
+      if(i != mValue.end())
+      {
+         delete i->second;
+      }
       mValue[name] = prop;
    }
 
@@ -695,6 +737,34 @@ namespace dtEntity
          mValue.erase(mValue.begin());
          delete pair.second;
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Property* GroupProperty::Get(StringId id)
+   {
+      PropertyGroup::iterator i = mValue.find(id);
+      if(i == mValue.end())
+      {
+         return NULL;
+      }
+      return i->second;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   bool GroupProperty::Has(StringId id) const
+   {
+      return mValue.find(id) != mValue.end();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   const Property* GroupProperty::Get(StringId id) const
+   {
+      PropertyGroup::const_iterator i = mValue.find(id);
+      if(i == mValue.end())
+      {
+         return NULL;
+      }
+      return i->second;
    }
 
    /////////////////////////////////////////////////////////////////////////////////

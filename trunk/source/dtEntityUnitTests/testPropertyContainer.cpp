@@ -107,8 +107,7 @@ TEST(PropertyGetProperties)
 {
    
    MyPropertyContainer container;  
-   PropertyContainer::ConstPropertyMap toFill;
-   container.GetProperties(toFill);
-   CHECK_EQUAL(toFill.size(), (unsigned int)6);
+   dtEntity::GroupProperty props = container.GetProperties();
+   CHECK_EQUAL(props.Get().size(), (unsigned int)6);
 }
 

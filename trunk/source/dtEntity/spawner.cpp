@@ -54,16 +54,7 @@ namespace dtEntity
       for(i = toFill.begin(); i != toFill.end(); ++i)
       {
          const Component* component = *i;
-         PropertyContainer::ConstPropertyMap props;
-         component->GetProperties(props);
-         
-         DynamicPropertyContainer ph;         
-         PropertyContainer::ConstPropertyMap::iterator j;
-         for(j = props.begin(); j != props.end(); ++j)
-         {
-            ph.AddProperty(j->first, *j->second);
-         }
-         mComponentProperties[component->GetType()] = ph;
+         mComponentProperties[component->GetType()] = component->GetProperties();
       }
    }
 
@@ -73,7 +64,7 @@ namespace dtEntity
       ComponentProperties::iterator i = mComponentProperties.find(ctype);
       if(i != mComponentProperties.end()) 
       {
-         DynamicPropertyContainer props = i->second;
+         GroupProperty props = i->second;
          Property* toSet = props.Get(propname);
          if(toSet != NULL)
          {
@@ -147,7 +138,7 @@ namespace dtEntity
       for(i = componentValues.begin(); i != componentValues.end(); ++i)
       {      
          ComponentType ctype = i->first;
-         DynamicPropertyContainer propertyHolder = i->second;
+         GroupProperty propertyHolder = i->second;
          Component* newcomp;
          bool success = entity.GetComponent(ctype, newcomp);
          if(!success)
@@ -156,10 +147,9 @@ namespace dtEntity
             continue;
          }
 
-         PropertyContainer::ConstPropertyMap props;
-         propertyHolder.GetProperties(props);
+         PropertyGroup props = propertyHolder.Get();
 
-         PropertyContainer::ConstPropertyMap::iterator j;         
+         PropertyGroup::iterator j;
          for(j = props.begin(); j != props.end(); ++j)
          {
             StringId propname = j->first;
@@ -228,7 +218,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Spawner::AddComponent(ComponentType ctype, const DynamicPropertyContainer& props)
+   void Spawner::AddComponent(ComponentType ctype, const GroupProperty &props)
    {
       mComponentProperties[ctype] = props;
    }
@@ -246,17 +236,17 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DynamicPropertyContainer Spawner::GetComponentValues(ComponentType ctype) const
+   GroupProperty Spawner::GetComponentValues(ComponentType ctype) const
    {
       ComponentProperties::const_iterator i = mComponentProperties.find(ctype);
       if(i == mComponentProperties.end())
-         return DynamicPropertyContainer();
+         return PropertyGroup();
       else
          return i->second;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Spawner::SetComponentValues(ComponentType ctype, const DynamicPropertyContainer& props)
+   void Spawner::SetComponentValues(ComponentType ctype, const GroupProperty &props)
    {
       mComponentProperties[ctype] = props;
    }

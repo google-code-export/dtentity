@@ -45,8 +45,8 @@ TEST(SpawnComponent)
 
    Spawner* spawner = new Spawner("mymap", "");
 
-   DynamicPropertyContainer pprops;
-   pprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(33,66,99)));
+   GroupProperty pprops;
+   pprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(33,66,99)));
    spawner->AddComponent(PositionAttitudeTransformComponent::TYPE, pprops);
 
    
@@ -71,12 +71,12 @@ TEST(SpawnHierarchy)
    Spawner* parentSpawner = new Spawner("Bla", "mapname");
    Spawner* childSpawner = new Spawner("Bla2", "mapname",parentSpawner);   
 
-   DynamicPropertyContainer parentprops;
-   parentprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(33,66,99)));
+   GroupProperty parentprops;
+   parentprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(33,66,99)));
    parentSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, parentprops);
 
-   DynamicPropertyContainer childprops;
-   childprops.AddProperty(PositionAttitudeTransformComponent::PositionId, Vec3Property(osg::Vec3(333,666,999)));
+   GroupProperty childprops;
+   childprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(333,666,999)));
    childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
 
    EntityManager* em = new EntityManager();

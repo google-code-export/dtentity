@@ -21,6 +21,7 @@
 */
 
 #include <dtEntity/propertycontainer.h>
+#include <dtEntity/property.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/stringid.h>
 #include <list>
@@ -113,7 +114,7 @@ namespace dtEntity
        * Get property names and default property values of component. Used
        * for spawner creation
        */
-      virtual DynamicPropertyContainer GetComponentProperties() const { return DynamicPropertyContainer(); }
+      virtual GroupProperty GetComponentProperties() const { return GroupProperty(); }
 
 	  /**
 	   * @return entity manager that the entity system was added to

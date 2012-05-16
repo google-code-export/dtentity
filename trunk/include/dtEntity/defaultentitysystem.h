@@ -168,7 +168,7 @@ namespace dtEntity
 
       unsigned int GetNumComponents() const;
 
-      virtual DynamicPropertyContainer GetComponentProperties() const;
+      virtual GroupProperty GetComponentProperties() const;
 
       typename ComponentStore::iterator begin();
       typename ComponentStore::const_iterator begin() const;
@@ -317,14 +317,10 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    template<typename T, template<class> class MemAllocPolicy>
-      DynamicPropertyContainer DefaultEntitySystem<T, MemAllocPolicy>::GetComponentProperties() const
+      GroupProperty DefaultEntitySystem<T, MemAllocPolicy>::GetComponentProperties() const
    {
-      ConstPropertyMap m;
       T t;
-      t.GetProperties(m);
-      DynamicPropertyContainer c;
-      c.SetProperties(m);
-      return c;
+      return t.GetProperties();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

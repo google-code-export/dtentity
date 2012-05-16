@@ -562,16 +562,16 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditorModel::AddProperties(TreeItem* parent, const dtEntity::PropertyContainer& props)
+   void PropertyEditorModel::AddProperties(TreeItem* parent, const dtEntity::GroupProperty& props)
    {
-      dtEntity::PropertyContainer::ConstPropertyMap map;
-      props.GetProperties(map);
+
+      const dtEntity::PropertyGroup pg = props.Get();
 
       // map is sorted by string ID, have to sort by string value, otherwise
       // order is chaotic.
       std::map<std::string, const dtEntity::Property*> sortedMap;
-      dtEntity::PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = map.begin(); i != map.end(); ++i)
+      dtEntity::PropertyGroup::const_iterator i;
+      for(i = pg.begin(); i != pg.end(); ++i)
       {
          sortedMap[dtEntity::GetStringFromSID(i->first)] = i->second;
       }
@@ -581,7 +581,7 @@ namespace dtEntityQtWidgets
             
       // Signal to views attached to this model that rows are about to be inserted
       int numitems = parent->childCount();
-      beginInsertRows(createIndex(parent->row(), 0, parent), numitems, numitems + map.size());  
+      beginInsertRows(createIndex(parent->row(), 0, parent), numitems, numitems + pg.size());
       
       // loop through properties and insert them into model
       std::map<std::string, const dtEntity::Property*>::const_iterator j;
@@ -599,25 +599,19 @@ namespace dtEntityQtWidgets
          if(prop->GetType() == dtEntity::DataType::GROUP)
          {
             // add group properties
-            dtEntity::PropertyGroup grp = prop->GroupValue();
-            dtEntity::DynamicPropertyContainer cmap;
-            for(dtEntity::PropertyGroup::iterator j = grp.begin(); j != grp.end(); ++j)
-            {
-               cmap.AddProperty(j->first, *j->second);
-            }
-            AddProperties(pitem, cmap);
+            AddProperties(pitem, prop->GroupValue());
          }
          else if(prop->GetType() == dtEntity::DataType::ARRAY)
          {
             // add array entries
             dtEntity::PropertyArray grp = prop->ArrayValue();
-            dtEntity::DynamicPropertyContainer cmap;
+            dtEntity::GroupProperty cmap;
             int index = 0;
             for(dtEntity::PropertyArray::iterator j = grp.begin(); j != grp.end(); ++j)
             {
                std::ostringstream idx;
                idx << std::setfill('0') << std::setw(6) << index++;
-               cmap.AddProperty(dtEntity::SID(idx.str()), **j);
+               cmap.Add(dtEntity::SID(idx.str()), (*j)->Clone());
             }
             AddProperties(pitem, cmap);
          }
@@ -663,9 +657,9 @@ namespace dtEntityQtWidgets
       {
          arr.push_back(proto);
          arrprop->Set(arr);
-         dtEntity::DynamicPropertyContainer pc;
+         dtEntity::GroupProperty pc;
          dtEntity::StringId name = dtEntity::SID(QString("%1").arg(arr.size() - 1).toStdString());
-         pc.AddProperty(name, *proto);
+         pc.Add(name, proto->Clone());
          AddProperties(parent, pc);
       }
       delete clone;
@@ -690,7 +684,7 @@ namespace dtEntityQtWidgets
       //pa.erase(pa.begin() + row);
       dtEntity::ArrayProperty* np = new dtEntity::ArrayProperty();
       int newcount = 0;
-      dtEntity::DynamicPropertyContainer pc;
+      dtEntity::GroupProperty pc;
       for(unsigned int i = 0; i < pa.size(); ++i)
       {
          if(i != (unsigned int)row)
@@ -699,7 +693,7 @@ namespace dtEntityQtWidgets
             os << newcount;
             ++newcount;
 
-            pc.AddProperty(dtEntity::SIDHash(os.str()), *pa[i]);
+            pc.Add(dtEntity::SIDHash(os.str()), pa[i]->Clone());
             np->Add(pa[i]->Clone());
          }
       }
@@ -816,7 +810,7 @@ namespace dtEntityQtWidgets
       TreeItem* root = GetRootItem();
       for(int i = 0; i < root->childCount(); ++i)
       {
-         dtEntity::DynamicPropertyContainer props;
+         dtEntity::GroupProperty props;
          bool changes = false;
          ComponentTreeItem* component = static_cast<ComponentTreeItem*>(root->child(i));
          for(int j = 0; j < component->childCount(); ++j)
@@ -826,7 +820,7 @@ namespace dtEntityQtWidgets
             {
                ResetChangedFlag(prop);
                changes = true;
-               props.AddProperty(dtEntity::SIDHash(prop->mName.toStdString()), *prop->mProperty);
+               props.Add(dtEntity::SIDHash(prop->mName.toStdString()), prop->mProperty->Clone());
             }
          }
          if(changes)
@@ -878,7 +872,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditorModel::ComponentRetrieved(dtEntity::ComponentType ctype, const dtEntity::DynamicPropertyContainer& props)
+   void PropertyEditorModel::ComponentRetrieved(dtEntity::ComponentType ctype, const dtEntity::GroupProperty& props)
    {
       QString componentName = dtEntity::GetStringFromSID(ctype).c_str();
 
@@ -1245,9 +1239,9 @@ namespace dtEntityQtWidgets
       connect(this, SIGNAL(EntitySystemSelected(const QString&)), model, SLOT(OnEntitySystemSelected(const QString&)));
       connect(
          this, 
-         SIGNAL(ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&)),
+         SIGNAL(ComponentRetrieved(dtEntity::ComponentType, const dtEntity::GroupProperty&)),
          model, 
-         SLOT(ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&))
+         SLOT(ComponentRetrieved(dtEntity::ComponentType, const dtEntity::GroupProperty&))
       );
 
       connect(
@@ -1281,14 +1275,14 @@ namespace dtEntityQtWidgets
       connect(model, SIGNAL(EditEntitySystem(const QString&)), view, SLOT(OnEditEntitySystem(const QString&)));
       connect(model, SIGNAL(EditNone()), view, SLOT(OnEditNone()));
 
-      connect(model, SIGNAL(ApplyPropertiesToEntity(dtEntity::EntityId, const QString&, const dtEntity::DynamicPropertyContainer&)),
-      this, SLOT(ApplyPropertiesToEntity(dtEntity::EntityId, const QString&, const dtEntity::DynamicPropertyContainer&)));
+      connect(model, SIGNAL(ApplyPropertiesToEntity(dtEntity::EntityId, const QString&, const dtEntity::GroupProperty&)),
+      this, SLOT(ApplyPropertiesToEntity(dtEntity::EntityId, const QString&, const dtEntity::GroupProperty&)));
 
-      connect(model, SIGNAL(ApplyPropertiesToSpawner(const QString&, const QString&, const dtEntity::DynamicPropertyContainer&, bool)),
-      this, SLOT(ApplyPropertiesToSpawner(const QString&, const QString&, const dtEntity::DynamicPropertyContainer&, bool)));
+      connect(model, SIGNAL(ApplyPropertiesToSpawner(const QString&, const QString&, const dtEntity::GroupProperty&, bool)),
+      this, SLOT(ApplyPropertiesToSpawner(const QString&, const QString&, const dtEntity::GroupProperty&, bool)));
 
-      connect(model, SIGNAL(ApplyPropertiesToEntitySystem(const QString&, const dtEntity::DynamicPropertyContainer&)),
-      this, SLOT(ApplyPropertiesToEntitySystem(const QString&, const dtEntity::DynamicPropertyContainer&)));
+      connect(model, SIGNAL(ApplyPropertiesToEntitySystem(const QString&, const dtEntity::GroupProperty&)),
+      this, SLOT(ApplyPropertiesToEntitySystem(const QString&, const dtEntity::GroupProperty&)));
       
 
       connect(model, SIGNAL(AddComponentToSpawner(const QString&, const QString&)), 
@@ -1410,9 +1404,8 @@ namespace dtEntityQtWidgets
       {
          const dtEntity::Component* component = *i;
          dtEntity::PropertyContainer::ConstPropertyMap pmap;
-         component->GetProperties(pmap);  
-         dtEntity::DynamicPropertyContainer props;
-         props.SetProperties(pmap);
+
+         dtEntity::GroupProperty props = component->GetProperties();
          emit(ComponentRetrieved(component->GetType(), props));
       }
 
@@ -1432,10 +1425,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      dtEntity::PropertyContainer::ConstPropertyMap pmap;
-      es->GetProperties(pmap);  
-      dtEntity::DynamicPropertyContainer props;
-      props.SetProperties(pmap);
+      dtEntity::GroupProperty props = es->GetProperties();
       emit(ComponentRetrieved(es->GetComponentType(), props));
       emit EnableAddComponent(false);
    }
@@ -1473,7 +1463,7 @@ namespace dtEntityQtWidgets
       for(i = cprops.begin(); i != cprops.end(); ++i)
       {
          dtEntity::StringId ctype = i->first;
-         const dtEntity::DynamicPropertyContainer props = i->second;
+         const dtEntity::GroupProperty props = i->second;
          emit(ComponentRetrieved(ctype, props));
       }
 
@@ -1489,7 +1479,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditorController::ApplyPropertiesToEntity(dtEntity::EntityId id, const QString& componentType, const dtEntity::DynamicPropertyContainer& props)
+   void PropertyEditorController::ApplyPropertiesToEntity(dtEntity::EntityId id, const QString& componentType, const dtEntity::GroupProperty& props)
    {
       dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
       dtEntity::EntitySystem* es;
@@ -1506,11 +1496,9 @@ namespace dtEntityQtWidgets
          LOG_WARNING("Error applying entity changes: Entity has no component of this type: " + componentType.toStdString());
          return;
       }
-      dtEntity::PropertyContainer::ConstPropertyMap map;
-      props.GetProperties(map);
+      dtEntity::PropertyGroup map = props.Get();
 
-      dtEntity::PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = map.begin(); i != map.end(); ++i)
+      for(dtEntity::PropertyGroup::const_iterator i = map.begin(); i != map.end(); ++i)
       {
          dtEntity::StringId sid = i->first;
          const dtEntity::Property* prop = i->second;
@@ -1533,7 +1521,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditorController::ApplyPropertiesToEntitySystem(const QString& componentType, const dtEntity::DynamicPropertyContainer& props)
+   void PropertyEditorController::ApplyPropertiesToEntitySystem(const QString& componentType, const dtEntity::GroupProperty& props)
    {
 
       dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
@@ -1544,11 +1532,10 @@ namespace dtEntityQtWidgets
          LOG_WARNING("Error applying entity system changes: No system of this type: " + componentType.toStdString());
          return;
       }
-      dtEntity::PropertyContainer::ConstPropertyMap map;
-      props.GetProperties(map);
+      dtEntity::PropertyGroup map = props.Get();
 
-      dtEntity::PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = map.begin(); i != map.end(); ++i)
+
+      for(dtEntity::PropertyGroup::const_iterator i = map.begin(); i != map.end(); ++i)
       {
          dtEntity::StringId sid = i->first;
          const dtEntity::Property* prop = i->second;
@@ -1617,7 +1604,7 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditorController::ApplyPropertiesToSpawner(const QString& spawnerName, const QString& componentType, const dtEntity::DynamicPropertyContainer& props, bool updateEntities)
+   void PropertyEditorController::ApplyPropertiesToSpawner(const QString& spawnerName, const QString& componentType, const dtEntity::GroupProperty& props, bool updateEntities)
    {
       // get spawner
       dtEntity::MapSystem* ms;
@@ -1632,35 +1619,31 @@ namespace dtEntityQtWidgets
 
       // get current component values from spawner ///////////////////////////////
       dtEntity::StringId ctype = dtEntity::SIDHash(componentType.toStdString());
-      dtEntity::DynamicPropertyContainer currentSpawnerComponentProps = spawner->GetComponentValues(ctype);
+      dtEntity::GroupProperty currentSpawnerComponentProps = spawner->GetComponentValues(ctype);
       
       // Loop through incoming properties and check if they are already set in spawner.
       // If not, create a component default property
       dtEntity::EntitySystem* es = mEntityManager->GetEntitySystem(ctype);
       if(es)
       {
-         dtEntity::DynamicPropertyContainer defaultprops = es->GetComponentProperties();
+         dtEntity::GroupProperty defaultprops = es->GetComponentProperties();
 
-         dtEntity::PropertyContainer::ConstPropertyMap incoming;
-         props.GetProperties(incoming);
+         dtEntity::PropertyGroup incoming = props.Get();
 
-         dtEntity::PropertyContainer::ConstPropertyMap::const_iterator i;
-         for(i = incoming.begin(); i != incoming.end(); ++i)
+         for(dtEntity::PropertyGroup::const_iterator i = incoming.begin(); i != incoming.end(); ++i)
          {
             if(!currentSpawnerComponentProps.Has(i->first))
             {
-               currentSpawnerComponentProps.AddProperty(i->first, *defaultprops.Get(i->first));
+               currentSpawnerComponentProps.Add(i->first, defaultprops.Get(i->first)->Clone());
             }
          }
       }
 
 
       // Apply received properties to spawner
-      dtEntity::PropertyContainer::ConstPropertyMap map;
-      props.GetProperties(map);
-      
-      dtEntity::PropertyContainer::ConstPropertyMap::const_iterator j;
-      for(j = map.begin(); j != map.end(); ++j)
+      dtEntity::PropertyGroup map = props.Get();
+
+      for(dtEntity::PropertyGroup::const_iterator j = map.begin(); j != map.end(); ++j)
       {
          dtEntity::StringId sid = j->first;
          const dtEntity::Property* newprop = j->second;
@@ -1717,7 +1700,7 @@ namespace dtEntityQtWidgets
          return;
       }
       
-      dtEntity::DynamicPropertyContainer dynprops = compsys->GetComponentProperties();
+      dtEntity::GroupProperty dynprops = compsys->GetComponentProperties();
       spawner->AddComponent(ctype, dynprops);
       emit(ComponentRetrieved(ctype, dynprops));
    }
@@ -1773,10 +1756,7 @@ namespace dtEntityQtWidgets
 
       comp->Finished();
 
-      dtEntity::PropertyContainer::ConstPropertyMap pmap;
-      comp->GetProperties(pmap);  
-      dtEntity::DynamicPropertyContainer props;
-      props.SetProperties(pmap);
+      dtEntity::GroupProperty props = comp->GetProperties();
       emit(ComponentRetrieved(ctype, props));
    }
 
@@ -1850,10 +1830,7 @@ namespace dtEntityQtWidgets
       bool found = mEntityManager->GetComponent(id, componentType, component);
       if(found)
       {
-         dtEntity::PropertyContainer::ConstPropertyMap pmap;
-         component->GetProperties(pmap);
-         dtEntity::DynamicPropertyContainer props;
-         props.SetProperties(pmap);
+         dtEntity::GroupProperty props = component->GetProperties();
          emit ComponentRetrieved(componentType, props);
       }
    }
@@ -1866,10 +1843,7 @@ namespace dtEntityQtWidgets
       bool found = mEntityManager->GetEntitySystem(sid, es);
       if(found)
       {
-         dtEntity::PropertyContainer::ConstPropertyMap pmap;
-         es->GetProperties(pmap);
-         dtEntity::DynamicPropertyContainer props;
-         props.SetProperties(pmap);
+         dtEntity::GroupProperty props = es->GetProperties();
          emit ComponentRetrieved(sid, props);
       }
    }

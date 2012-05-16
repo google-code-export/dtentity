@@ -248,15 +248,14 @@ namespace dtEntityWrappers
                Handle<Object> compobj = Handle<Object>::Cast(val);
                Handle<Array> compkeys = compobj->GetPropertyNames();
 
-               dtEntity::DynamicPropertyContainer props;  
+               dtEntity::GroupProperty props;
                for(unsigned int j = 0; j < compkeys->Length(); ++j)
                {
                   Handle<Value> compkey = compkeys->Get(Integer::New(j));
                   std::string compkeystr = ToStdString(compkey);
                   Handle<Value> compval = compobj->Get(compkey);
                   dtEntity::Property* prop = ConvertValueToProperty(compval);
-                  props.AddProperty(dtEntity::SIDHash(compkeystr), *prop);
-                  delete prop;
+                  props.Add(dtEntity::SIDHash(compkeystr), prop);
                }
                spawner->AddComponent(ctype, props);
             }
@@ -312,11 +311,10 @@ namespace dtEntityWrappers
          std::string compname = dtEntity::GetStringFromSID(i->first);
          Handle<Object> jscomp = Object::New();
 
-         const dtEntity::DynamicPropertyContainer props = i->second;
-         dtEntity::PropertyContainer::ConstPropertyMap propmap;
-         props.GetProperties(propmap);
-         dtEntity::PropertyContainer::ConstPropertyMap::const_iterator j;
-         for(j = propmap.begin(); j != propmap.end(); ++j)
+         const dtEntity::GroupProperty props = i->second;
+         dtEntity::PropertyGroup g = props.Get();
+
+         for(dtEntity::PropertyGroup::const_iterator j = g.begin(); j != g.end(); ++j)
          {
             std::string propname = dtEntity::GetStringFromSID(j->first);
             const dtEntity::Property* prop = j->second;
