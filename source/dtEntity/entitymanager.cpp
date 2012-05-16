@@ -113,9 +113,9 @@ namespace dtEntity
             else
             {
                createdComponents.push_back(clonecomp);
-               const PropertyContainer::PropertyMap& props = origincomp->GetAllProperties();
+               const PropertyGroup& props = origincomp->Get();
 
-               for(PropertyContainer::PropertyMap::const_iterator i = props.begin(); i != props.end(); ++i)
+               for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
                {
                   Property* prp = clonecomp->Get(i->first);
                   if(prp)

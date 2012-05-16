@@ -82,7 +82,6 @@ namespace dtEntityWrappers
       virtual bool CreateComponent(dtEntity::EntityId eid, dtEntity::Component*& component);
       virtual bool DeleteComponent(dtEntity::EntityId eid);
       virtual void GetEntitiesInSystem(std::list<dtEntity::EntityId>& toFill) const;
-      virtual dtEntity::GroupProperty GetComponentProperties() const;
       virtual void OnPropertyChanged(dtEntity::StringId propnamesid, dtEntity::Property& prop);
       virtual void Finished();
       virtual dtEntity::GroupProperty GetProperties() const;

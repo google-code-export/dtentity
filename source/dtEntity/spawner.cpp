@@ -54,7 +54,7 @@ namespace dtEntity
       for(i = toFill.begin(); i != toFill.end(); ++i)
       {
          const Component* component = *i;
-         mComponentProperties[component->GetType()] = component->GetProperties();
+         mComponentProperties[component->GetType()] = *component;
       }
    }
 

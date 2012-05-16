@@ -137,8 +137,8 @@ namespace dtEntityWrappers
       HandleScope scope;
       Handle<Object> obj = Object::New();
 
-      const dtEntity::PropertyContainer::PropertyMap& props = component->GetAllProperties();
-      dtEntity::PropertyContainer::PropertyMap::const_iterator i;
+      const dtEntity::PropertyGroup& props = component->Get();
+      dtEntity::PropertyGroup::const_iterator i;
 
       for(i = props.begin(); i != props.end(); ++i)
       {
@@ -225,8 +225,8 @@ namespace dtEntityWrappers
       if(propnamesval.IsEmpty())
       {
          Handle<Object> names = Object::New();
-         dtEntity::PropertyContainer::PropertyMap::const_iterator i;
-         const dtEntity::PropertyContainer::PropertyMap& props = v->GetAllProperties();
+         dtEntity::PropertyGroup::const_iterator i;
+         const dtEntity::PropertyGroup& props = v->Get();
          for(i = props.begin(); i != props.end(); ++i)
          {
             dtEntity::StringId sid = i->first;

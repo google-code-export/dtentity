@@ -39,47 +39,18 @@ namespace dtEntity
     * Holds a number of properties. This container does NOT take ownership
     * of properties, they are not deleted in the constructor.
     */
-   class DT_ENTITY_EXPORT PropertyContainer
+   class DT_ENTITY_EXPORT PropertyContainer : public GroupProperty
    {
    public:
 
-      typedef std::map<StringId, Property*> PropertyMap;
-      typedef std::map<StringId, const Property*> ConstPropertyMap;
-
       PropertyContainer() {}
 
-      virtual ~PropertyContainer() {}
+      virtual ~PropertyContainer() 
+      {
+         // don't delete properties, they are not on heap
+         mValue.clear();
+      }
       
-      /**
-       * Return true if no properties are registered with container
-       */
-      bool Empty() const;
-
-      /**
-       * Get property registered under this string id
-       * @return The property, NULL if not found
-       */
-      const Property* Get(StringId name)  const;
-
-      /**
-       * Get property registered under this string id
-       * @return The property, NULL if not found
-       */
-      Property* Get(StringId name);
-
-      /**
-       * Get a list with all properties registered in this container
-       */
-      virtual GroupProperty GetProperties() const;
-
-      const PropertyMap& GetAllProperties() const { return mProperties; }
-
-
-      /**
-       * @return true if a property was registered with this string id
-       */
-      bool Has(StringId name) const;
-
       /**
        * Can be overridden to react to changes of properties.
        * Should be called by user when changing a property on the
@@ -156,11 +127,6 @@ namespace dtEntity
        * Register a property under the given string id
        */
       void Register(StringId name, Property* prop);
-
-	  /**
-	   * storage for the properties
-	   */
-      PropertyMap mProperties;
       
    private:
 

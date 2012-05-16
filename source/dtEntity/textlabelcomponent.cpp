@@ -286,7 +286,7 @@ namespace dtEntity
       dtEntity::PropertyArray arr = mTexts.Get();
       assert(arr.size() > textid);
       dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      assert(props[VisibleId]->GetType() == dtEntity::DataType::BOOL);
+      assert(props[VisibleId]->GetDataType() == dtEntity::DataType::BOOL);
       static_cast<dtEntity::BoolProperty*>(props[VisibleId])->Set(enabled);
    }
 
@@ -312,7 +312,7 @@ namespace dtEntity
       dtEntity::PropertyArray arr = mTexts.Get();
       assert(arr.size() > textid);
       dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      assert(props[TextId]->GetType() == dtEntity::DataType::STRING);
+      assert(props[TextId]->GetDataType() == dtEntity::DataType::STRING);
       static_cast<dtEntity::StringProperty*>(props[TextId])->Set(txt);
    }
 
@@ -338,7 +338,7 @@ namespace dtEntity
       dtEntity::PropertyArray arr = mTexts.Get();
       assert(arr.size() > textid);
       dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      assert(props[HighlightedId]->GetType() == dtEntity::DataType::BOOL);
+      assert(props[HighlightedId]->GetDataType() == dtEntity::DataType::BOOL);
       static_cast<dtEntity::BoolProperty*>(props[HighlightedId])->Set(h);
    }
 
@@ -465,7 +465,7 @@ namespace dtEntity
       dtEntity::PropertyArray arr = mTexts.Get();
       assert(arr.size() > textid);
       dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      assert(props[FontId]->GetType() == dtEntity::DataType::STRING);
+      assert(props[FontId]->GetDataType() == dtEntity::DataType::STRING);
       static_cast<dtEntity::StringProperty*>(props[FontId])->Set(f);
    }
 
@@ -552,7 +552,7 @@ namespace dtEntity
       dtEntity::PropertyArray arr = mTexts.Get();
       assert(arr.size() > textid);
       dtEntity::PropertyGroup props = arr[textid]->GroupValue();
-      assert(props[AlignmentId]->GetType() == dtEntity::DataType::STRING);
+      assert(props[AlignmentId]->GetDataType() == dtEntity::DataType::STRING);
       static_cast<dtEntity::StringProperty*>(props[AlignmentId])->Set(align);
    }
 

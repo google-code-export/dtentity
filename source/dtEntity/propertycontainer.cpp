@@ -26,61 +26,11 @@
 namespace dtEntity
 {
   
-   ////////////////////////////////////////////////////////////////////////////////
-   const Property* PropertyContainer::Get(StringId name) const
-   {
-      PropertyMap::const_iterator it = mProperties.find(name);
-      if(it == mProperties.end())
-      {
-         return NULL;
-      }
-      else
-      {
-         return it->second;
-      }
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-   bool PropertyContainer::Empty() const
-   {
-      return mProperties.empty();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   Property* PropertyContainer::Get(StringId name)
-   {
-      PropertyMap::iterator it = mProperties.find(name);
-      if(it == mProperties.end())
-      {
-         return NULL;
-      }
-      else
-      {
-         return it->second;
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   GroupProperty PropertyContainer::GetProperties() const
-   {
-      GroupProperty gp;
-      for(PropertyMap::const_iterator i = mProperties.begin(); i != mProperties.end(); ++i)
-      {
-         gp.Add(i->first, i->second->Clone());
-      }
-      return gp;
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-   bool PropertyContainer::Has(StringId name) const
-   {
-      return mProperties.find(name) != mProperties.end();
-   }
-
+  
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::InitFrom(const PropertyContainer& other)
    {
-      for(PropertyMap::const_iterator i = other.mProperties.begin(); i != other.mProperties.end(); ++i)
+      for(PropertyGroup::const_iterator i = other.mValue.begin(); i != other.mValue.end(); ++i)
       {
          Property* own = Get(i->first);
          if(own != NULL)
@@ -93,8 +43,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::Register(StringId name, Property* prop)
    {
-      assert(Get(name) == NULL && "Property already registered!");
-      mProperties[name] = prop;
+      assert(!Has(name) && "Property already registered!");
+      Add(name, prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

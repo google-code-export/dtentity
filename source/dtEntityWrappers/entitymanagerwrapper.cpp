@@ -79,12 +79,12 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ConvertMessageToJS(Handle<Context> context, const dtEntity::Message& msg)
    {
-      const dtEntity::PropertyContainer::PropertyMap& params = msg.GetAllProperties();
+      const dtEntity::PropertyGroup& params = msg.Get();
 
       HandleScope scope;
      
       Handle<Object> o = Object::New();
-      dtEntity::PropertyContainer::PropertyMap::const_iterator i;
+      dtEntity::PropertyGroup::const_iterator i;
       for(i = params.begin(); i != params.end(); ++i)
       {
          dtEntity::StringId n = i->first;
