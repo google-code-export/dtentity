@@ -25,11 +25,8 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/scriptaccessor.h>
+#include <osgText/Text>
 
-namespace osgText
-{
-   class Text;
-}
 namespace dtEntity
 {      
    class Entity;

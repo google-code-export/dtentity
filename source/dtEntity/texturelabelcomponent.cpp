@@ -239,6 +239,11 @@ namespace dtEntity
    }  
 
    ////////////////////////////////////////////////////////////////////////////
+   TextureLabelSystem::~TextureLabelSystem()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void TextureLabelSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
    {
       if(propname == EnabledId)
