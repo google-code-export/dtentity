@@ -57,7 +57,7 @@ namespace dtEntityQtWidgets
          TreeItem* item = static_cast<TreeItem*>(index.parent().internalPointer());
          PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
          if(   pitem &&
-               pitem->mProperty->GetType() == dtEntity::DataType::ARRAY &&
+               pitem->mProperty->GetDataType() == dtEntity::DataType::ARRAY &&
                dynamic_cast<ArrayDelegateFactory*>(item->GetChildDelegateFactory()) != NULL)
          {
 
@@ -744,7 +744,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void SwitchPropertyDelegate::SetValueByString(dtEntity::Property& prop, const QString& val) const
    {
-      assert(prop.GetType() == dtEntity::DataType::GROUP);
+      assert(prop.GetDataType() == dtEntity::DataType::GROUP);
       dtEntity::PropertyGroup grp = prop.GroupValue();
       dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
@@ -756,7 +756,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    QVariant SwitchPropertyDelegate::GetEditableValue(const dtEntity::Property& prop) const
    {
-      assert(prop.GetType() == dtEntity::DataType::GROUP);
+      assert(prop.GetDataType() == dtEntity::DataType::GROUP);
 
       dtEntity::PropertyGroup grp = prop.GroupValue();
 

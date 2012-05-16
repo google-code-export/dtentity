@@ -40,7 +40,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::FLOAT; }
+      virtual DataType::e GetDataType() const { return DataType::FLOAT; }
 
       virtual float FloatValue() const { return mGetValueCallback(); }
       virtual void SetFloat(float v) { Set(v); }
@@ -73,7 +73,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::DOUBLE; }
+      virtual DataType::e GetDataType() const { return DataType::DOUBLE; }
 
       virtual double DoubleValue() const { return mGetValueCallback(); }
       virtual void SetDouble(double v) { Set(v); }
@@ -106,7 +106,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::UINT; }
+      virtual DataType::e GetDataType() const { return DataType::UINT; }
 
       virtual unsigned int UIntValue() const { return mGetValueCallback(); }
       virtual void SetUInt(unsigned int v) { Set(v); }
@@ -139,7 +139,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::STRING; }
+      virtual DataType::e GetDataType() const { return DataType::STRING; }
 
       virtual const std::string StringValue() const { return mGetValueCallback(); }
       virtual StringId StringIdValue() const { return dtEntity::SIDHash(StringValue()); }
@@ -172,7 +172,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::VEC3D; }
+      virtual DataType::e GetDataType() const { return DataType::VEC3D; }
 
       virtual osg::Vec3f Vec3Value() const { return Get(); }
       virtual void SetVec3(const osg::Vec3& v) { Set(v); }
@@ -206,7 +206,7 @@ namespace dtEntity
       {
       }
 
-      virtual DataType::e GetType() const { return DataType::VEC4; }
+      virtual DataType::e GetDataType() const { return DataType::VEC4; }
 
       virtual osg::Vec4f Vec4Value() const { return Get(); }
       virtual void SetVec4(const osg::Vec4& v) { Set(v); }
@@ -234,7 +234,7 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Quat&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Quat> GetValueCB;
 
-      virtual DataType::e GetType() const { return DataType::QUAT; }
+      virtual DataType::e GetDataType() const { return DataType::QUAT; }
 
       DynamicQuatProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -266,7 +266,7 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Matrix&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Matrix> GetValueCB;
 
-      virtual DataType::e GetType() const { return DataType::MATRIX; }
+      virtual DataType::e GetDataType() const { return DataType::MATRIX; }
 
       DynamicMatrixProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)

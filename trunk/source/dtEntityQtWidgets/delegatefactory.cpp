@@ -124,7 +124,7 @@ namespace dtEntityQtWidgets
       {
          return mChildFactories[propname]->Create(parent, propname, prop);
       }
-      return CreateDefault(prop->GetType());
+      return CreateDefault(prop->GetDataType());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ namespace dtEntityQtWidgets
       {
          return mChildFactories[propname]->Create(parent, propname, prop);
       }
-      if(prop->GetType() == dtEntity::DataType::GROUP)
+      if(prop->GetDataType() == dtEntity::DataType::GROUP)
       {
          dtEntity::PropertyGroup pg = prop->GroupValue();
          if(pg.find(dtEntity::SIDHash("__SELECTED__")) != pg.end())
@@ -164,7 +164,7 @@ namespace dtEntityQtWidgets
             return new SwitchPropertyDelegate();
          }
       }
-      return CreateDefault(prop->GetType());
+      return CreateDefault(prop->GetDataType());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -262,15 +262,15 @@ namespace dtEntityQtWidgets
       {
          return mChildFactories[propname]->Create(parent, propname, prop);
       }
-      if(prop->GetType() == dtEntity::DataType::ARRAY)
+      if(prop->GetDataType() == dtEntity::DataType::ARRAY)
       {
          return new ArrayPropertyDelegate(mDataPrototype);
       }
-      if(prop->GetType() == mDataPrototype->GetType() && !mChildFactories.empty())
+      if(prop->GetDataType() == mDataPrototype->GetDataType() && !mChildFactories.empty())
       {
          return (*mChildFactories.begin())->Create(parent, propname, prop);
       }
-      return CreateDefault(prop->GetType());
+      return CreateDefault(prop->GetDataType());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +290,7 @@ namespace dtEntityQtWidgets
       const QString& propname,
       const dtEntity::Property* prop) const
    {
-      return CreateDefault(prop->GetType());
+      return CreateDefault(prop->GetDataType());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

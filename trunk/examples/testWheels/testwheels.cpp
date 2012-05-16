@@ -157,7 +157,7 @@ public:
       for(PropertyArray::iterator i = props.begin(); i != props.end(); ++i)
       {
          Property* prop = *i;
-         assert(prop->GetType() == DataType::GROUP);
+         assert(prop->GetDataType() == DataType::GROUP);
          PropertyGroup pg = prop->GroupValue();
          assert(pg.find(SID("NodeName")) != pg.end());
          assert(pg.find(SID("Radius")) != pg.end());
