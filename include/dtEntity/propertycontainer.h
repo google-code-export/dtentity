@@ -21,6 +21,7 @@
 */
 
 #include <dtEntity/export.h>
+#include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/Matrix>
 #include <osg/Vec2>
@@ -36,9 +37,7 @@ namespace dtEntity
 
    /**
     * Holds a number of properties. This container does NOT take ownership
-    * of properties, they are not deleted in the constructor. If you
-    * want the container to take ownership then use the subclass
-    * DynamicPropertyContainer.
+    * of properties, they are not deleted in the constructor.
     */
    class DT_ENTITY_EXPORT PropertyContainer
    {
@@ -71,8 +70,7 @@ namespace dtEntity
       /**
        * Get a list with all properties registered in this container
        */
-      virtual void GetProperties(PropertyMap& toFill);
-      virtual void GetProperties(ConstPropertyMap& toFill) const;
+      virtual GroupProperty GetProperties() const;
 
       const PropertyMap& GetAllProperties() const { return mProperties; }
 
@@ -177,38 +175,5 @@ namespace dtEntity
       ret->InitFrom(*this);
       return ret;
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-
-    
-   /**
-    * A less encapsulated subclass of PropertyContainer.
-	* Public methods to add properties.
-   * Takes ownership of properties: All properties added to this
-   * container are deleted in the destructor.
-	*/
-   class DT_ENTITY_EXPORT DynamicPropertyContainer
-      : public PropertyContainer
-   {
-   public:
-      DynamicPropertyContainer();
-      virtual ~DynamicPropertyContainer();
-
-      DynamicPropertyContainer(const DynamicPropertyContainer& other);
-
-      void operator=(const DynamicPropertyContainer&);
-
-      // add props of other to this, overwriting existing values
-      DynamicPropertyContainer& operator+=(const DynamicPropertyContainer& other);
-
-      void SetProperties(const ConstPropertyMap& props);
-
-	  // Add a clone of property to container. 
-      void AddProperty(StringId name, const Property&);
-      
-	  // Remove and delete property from container.
-	  // @return true if property was found in container, else false
-	  bool DeleteProperty(StringId name);
-   };
 
 }

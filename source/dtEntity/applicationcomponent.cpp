@@ -405,7 +405,7 @@ namespace dtEntity
             + msg.GetComponentType());
          return;
       }
-      PropertyGroup props = msg.GetProperties();
+      const PropertyGroup& props = msg.GetComponentProperties();
       for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
       {
          Property* target = component->Get(i->first);
@@ -436,7 +436,7 @@ namespace dtEntity
             << msg.GetComponentType());
          return;
       }
-      PropertyGroup props = msg.GetProperties();
+      const PropertyGroup& props = msg.GetSystemProperties();
       for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
       {
          Property* target = sys->Get(i->first);

@@ -313,7 +313,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    GroupProperty* ParseGroupProperty(xml_node<>* element)
    {
-      DynamicPropertyContainer subprops;
+      GroupProperty* subprops = new GroupProperty();
 
       for(xml_node<>* currentNode(element->first_node());
           currentNode != NULL; currentNode = currentNode->next_sibling())
@@ -328,23 +328,13 @@ namespace dtEntity
                   Property* prop = RapidXMLMapEncoder::ParseProperty(currentNode);
                   if(prop != NULL)
                   {
-                     subprops.AddProperty(SID(attr->value()), *prop);
-                     delete prop;
+                     subprops->Add(SID(attr->value()), prop);
                   }
                }
             }
-
          }
       }
-
-      PropertyContainer::PropertyMap pmap;
-      subprops.GetProperties(pmap);
-      PropertyGroup groupvals;
-      for(PropertyContainer::PropertyMap::iterator i = pmap.begin(); i != pmap.end(); ++i)
-      {
-         groupvals[i->first] = i->second;
-      }
-      return new GroupProperty(groupvals);
+      return subprops;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +568,8 @@ namespace dtEntity
       {
          return;
       }
-      DynamicPropertyContainer props;
+
+      GroupProperty props;
 
       for(xml_node<>* currentNode(element->first_node());
           currentNode != NULL; currentNode = currentNode->next_sibling())
@@ -598,8 +589,7 @@ namespace dtEntity
 
             if(property != NULL)
             {
-               props.AddProperty(SID(name), *property);
-               delete property;
+               props.Add(SID(name), property);
             }
          }
       }
@@ -686,14 +676,14 @@ namespace dtEntity
 
 
       // add meta data component to entity
-      DynamicPropertyContainer mapComponentProps;
+      GroupProperty mapComponentProps;
       if(spawner->HasComponent(MapComponent::TYPE))
       {
          mapComponentProps = spawner->GetComponentValues(MapComponent::TYPE);
       }
 
-      mapComponentProps.AddProperty(MapComponent::SpawnerNameId, StringIdProperty(SID(name)));
-      mapComponentProps.AddProperty(MapComponent::MapNameId, StringProperty(mapName));
+      mapComponentProps.Add(MapComponent::SpawnerNameId, new StringIdProperty(SID(name)));
+      mapComponentProps.Add(MapComponent::MapNameId, new StringProperty(mapName));
       spawner->AddComponent(MapComponent::TYPE, mapComponentProps);
       mapSystem->AddSpawner(*spawner);
    }
@@ -1053,10 +1043,10 @@ namespace dtEntity
 
       xml_node<>* entity = doc.allocate_node(node_element, names.mGroupProperty);
 
-      PropertyGroup grp = prop->Get();
+      const PropertyGroup& grp = prop->Get();
 
       std::map<std::string, const Property*> sorted;
-      for(PropertyGroup::iterator i = grp.begin(); i != grp.end(); ++i)
+      for(PropertyGroup::const_iterator i = grp.begin(); i != grp.end(); ++i)
       {
          sorted[GetStringFromSID(i->first)] = i->second;
       }
@@ -1134,7 +1124,7 @@ namespace dtEntity
       spawner->GetAllComponentProperties(spawnerprops);
 
       // write components sorted by component type name
-      std::map<std::string, DynamicPropertyContainer> sorted;
+      std::map<std::string, GroupProperty> sorted;
       Spawner::ComponentProperties::const_iterator j;
       for(j = spawnerprops.begin(); j != spawnerprops.end(); ++j)
       {
@@ -1147,12 +1137,12 @@ namespace dtEntity
       }
 
 
-      std::map<std::string, DynamicPropertyContainer>::const_iterator i;
+      std::map<std::string, GroupProperty>::const_iterator i;
       for(i = sorted.begin(); i != sorted.end(); ++i)
       {
          std::string tname = i->first;
 
-         DynamicPropertyContainer props = i->second;
+         GroupProperty props = i->second;
 
          xml_node<>* compelem = doc.allocate_node(node_element, names.mComponent);
          entity->append_node(compelem);
@@ -1160,11 +1150,10 @@ namespace dtEntity
          xml_attribute<>* typeattr = doc.allocate_attribute(names.mType, doc.allocate_string(tname.c_str()));
          compelem->append_attribute(typeattr);
 
-         PropertyContainer::ConstPropertyMap p;
-         props.GetProperties(p);
+         PropertyGroup p = props.Get();
 
          std::map<std::string, const Property*> sorted;
-         for(PropertyContainer::ConstPropertyMap::const_iterator j = p.begin(); j != p.end(); ++j)
+         for(PropertyGroup::const_iterator j = p.begin(); j != p.end(); ++j)
          {
             sorted[GetStringFromSID(j->first)] = j->second;
          }
@@ -1177,7 +1166,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SerializeComponent(xml_document<>& doc, const Names& names, xml_node<>* parent, const Component* component, const PropertyContainer& defaults)
+   void SerializeComponent(xml_document<>& doc, const Names& names, xml_node<>* parent, const Component* component, const GroupProperty& defaults)
    {
       xml_node<>* element = doc.allocate_node(node_element, names.mComponent);
       parent->append_node(element);
@@ -1187,13 +1176,12 @@ namespace dtEntity
       xml_attribute<>* typeattr = doc.allocate_attribute(names.mType, doc.allocate_string(tname.c_str()));
       element->append_attribute(typeattr);
 
-      PropertyContainer::ConstPropertyMap props;
-      component->GetProperties(props);
-
+      GroupProperty props = component->GetProperties();
+      PropertyGroup p = props.Get();
       // write properties sorted by property name
       std::map<std::string, const Property*> sorted;
-      PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = props.begin(); i != props.end(); ++i)
+      PropertyGroup::const_iterator i;
+      for(i = p.begin(); i != p.end(); ++i)
       {
          sorted[GetStringFromSID(i->first)] = i->second;
       }
@@ -1201,8 +1189,9 @@ namespace dtEntity
       std::map<std::string, const Property*>::const_iterator j;
       for(j = sorted.begin(); j != sorted.end(); ++j)
       {
+         std::string k = j->first;
          // only save property to map if it is changed from its default
-         const Property* deflt = defaults.Get(SID(j->first));
+         const Property* deflt = defaults.Get(SID(k));
          if(!((*deflt) == (*j->second)))
          {
             element->append_node(SerializeProperty(doc, names, doc.allocate_string(j->first.c_str()), j->second));
@@ -1263,7 +1252,7 @@ namespace dtEntity
          {
             // Get default component values. If entity was created from a spawner
             // then overwrite component values with values from spawner
-            DynamicPropertyContainer defaultprops = es->GetComponentProperties();
+            GroupProperty defaultprops = es->GetComponentProperties();
             Spawner::ComponentProperties::iterator it = spawnerprops.find(j->second->GetType());
             if(it != spawnerprops.end())
             {
@@ -1286,12 +1275,12 @@ namespace dtEntity
       xml_attribute<>* attr = doc.allocate_attribute(names.mType, doc.allocate_string(tname.c_str()));
       entity->append_attribute(attr);
 
-      PropertyContainer::ConstPropertyMap props;
-      es->GetProperties(props);
+      GroupProperty props = es->GetProperties();
+      PropertyGroup p = props.Get();
 
       std::map<std::string, const Property*> sorted;
-      PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = props.begin(); i != props.end(); ++i)
+      PropertyGroup::const_iterator i;
+      for(i = p.begin(); i != p.end(); ++i)
       {
          sorted[GetStringFromSID(i->first)] = i->second;
       }

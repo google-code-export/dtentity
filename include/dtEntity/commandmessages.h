@@ -336,8 +336,8 @@ namespace dtEntity
 	  /**
 		* Group of properties that will be applied to entity system
 		*/
-		void SetProperties(PropertyGroup& v) { mProperties.Set(v); }
-		PropertyGroup GetProperties() const { return mProperties.Get(); }
+      void SetComponentProperties(PropertyGroup& v) { mProperties.Set(v); }
+      const PropertyGroup& GetComponentProperties() const { return mProperties.Get(); }
 
    private:
       StringProperty mComponentType;
@@ -374,8 +374,8 @@ namespace dtEntity
 	  /**
 		* Group of properties that will be applied to entity system
 		*/
-		void SetProperties(PropertyGroup& v) { mProperties.Set(v); }
-		PropertyGroup GetProperties() const { return mProperties.Get(); }
+      void SetSystemProperties(PropertyGroup& v) { mProperties.Set(v); }
+      const PropertyGroup& GetSystemProperties() const { return mProperties.Get(); }
 
    private:
       StringProperty mComponentType;

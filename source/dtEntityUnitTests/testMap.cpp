@@ -90,9 +90,9 @@ bool Has(const dtEntity::Spawner::ComponentProperties& props, const std::string&
    return props.find(dtEntity::SID(key)) != props.end();
 }
 
-const dtEntity::Property* GetProp(const dtEntity::DynamicPropertyContainer& props, const std::string& key)
+const dtEntity::Property* GetProp(const dtEntity::GroupProperty& props, const std::string& key)
 {
-   dtEntity::PropertyContainer::PropertyMap propmap = props.GetAllProperties();
+   dtEntity::PropertyGroup propmap = props.Get();
    if(propmap.find(dtEntity::SID(key)) == propmap.end())
    {
       return NULL;
@@ -100,7 +100,7 @@ const dtEntity::Property* GetProp(const dtEntity::DynamicPropertyContainer& prop
    return propmap[dtEntity::SID(key)];
 }
 
-bool Equals(const dtEntity::DynamicPropertyContainer& props, const std::string& key, const std::string& value)
+bool Equals(const dtEntity::GroupProperty& props, const std::string& key, const std::string& value)
 {
    const dtEntity::Property* prop = GetProp(props, key);
    if(prop == NULL)
@@ -124,7 +124,7 @@ TEST_FIXTURE(MapFixture, SpawnerPropertyValuesCorrect)
    spawner->GetAllComponentProperties(props);
    CHECK(Has(props, "TestComponent"));
 
-   dtEntity::DynamicPropertyContainer compprops = 
+   dtEntity::GroupProperty compprops =
       spawner->GetComponentValues(dtEntity::SID("TestComponent"));
 
    CHECK(Equals(compprops, "StringProperty", "StringValue"));
@@ -238,9 +238,9 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
       spawner1->SetGUICategory("TestGuiCategory");
       spawner1->SetIconPath("TestIconPath");
 
-      DynamicPropertyContainer props;
-      props.AddProperty(dtEntity::SID("StringProp1"), dtEntity::StringProperty("StringPropValue1"));
-      props.AddProperty(dtEntity::SID("StringProp2"), dtEntity::StringProperty("StringPropValue2"));
+      GroupProperty props;
+      props.Add(dtEntity::SID("StringProp1"), new dtEntity::StringProperty("StringPropValue1"));
+      props.Add(dtEntity::SID("StringProp2"), new dtEntity::StringProperty("StringPropValue2"));
       spawner1->AddComponent(dtEntity::SID("TestComponent"), props);
 
       mMapSystem->AddSpawner(*spawner1);
@@ -261,8 +261,8 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
       CHECK_EQUAL(true, spawner1->GetAddToSpawnerStore());
       CHECK_EQUAL("TestGuiCategory", spawner1->GetGUICategory());
       CHECK_EQUAL("TestIconPath", spawner1->GetIconPath());
-      DynamicPropertyContainer props = spawner1->GetComponentValues(dtEntity::SID("TestComponent"));
-      CHECK_EQUAL((unsigned int)2, props.GetAllProperties().size());
+      GroupProperty props = spawner1->GetComponentValues(dtEntity::SID("TestComponent"));
+      CHECK_EQUAL((unsigned int)2, props.Get().size());
       CHECK_EQUAL("StringPropValue1", props.Get(dtEntity::SID("StringProp1"))->StringValue());
       CHECK_EQUAL("StringPropValue2", props.Get(dtEntity::SID("StringProp2"))->StringValue());
    }

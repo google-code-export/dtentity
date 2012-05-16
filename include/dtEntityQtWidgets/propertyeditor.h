@@ -138,7 +138,7 @@ namespace dtEntityQtWidgets
 
       ComponentTreeItem* AddComponent(const QString& name);
       void RemoveComponent(const QString& name);
-      void AddProperties(TreeItem* parent, const dtEntity::PropertyContainer& map);
+      void AddProperties(TreeItem* parent, const dtEntity::GroupProperty& map);
       void RemoveProperties(TreeItem* parent);
 
       // get a list of all available component types
@@ -170,7 +170,7 @@ namespace dtEntityQtWidgets
       void OnEntitySystemSelected(const QString& name);
       void OnSpawnerSelected(const QString& name, bool addToStore, const QString& category, const QString& iconPath);
       void OnMapSelected(const QString& name);
-      void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&);
+      void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::GroupProperty&);
       void ComponentDeleted(dtEntity::ComponentType);
       
       void EntitySystemAdded(dtEntity::ComponentType ctype);
@@ -194,9 +194,9 @@ namespace dtEntityQtWidgets
       void EditEntitySystem(const QString& name);
       void EditNone();
 
-      void ApplyPropertiesToEntity(dtEntity::EntityId, const QString& componentType, const dtEntity::DynamicPropertyContainer&);
-      void ApplyPropertiesToSpawner(const QString& name, const QString& componentType, const dtEntity::DynamicPropertyContainer&, bool updateEntities);
-      void ApplyPropertiesToEntitySystem(const QString& name, const dtEntity::DynamicPropertyContainer&);
+      void ApplyPropertiesToEntity(dtEntity::EntityId, const QString& componentType, const dtEntity::GroupProperty&);
+      void ApplyPropertiesToSpawner(const QString& name, const QString& componentType, const dtEntity::GroupProperty&, bool updateEntities);
+      void ApplyPropertiesToEntitySystem(const QString& name, const dtEntity::GroupProperty&);
       
       void AddComponentToSpawner(const QString& spawner, const QString& ctype);
       void AddComponentToEntity(dtEntity::EntityId id, const QString& ctype);
@@ -337,7 +337,7 @@ namespace dtEntityQtWidgets
       void MapSelected(const QString& name);
       void EntitySystemSelected(const QString& name);
       
-      void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&);
+      void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::GroupProperty&);
       void ComponentDeleted(dtEntity::ComponentType);
 
       void AddDelegatesForComponent(dtEntity::ComponentType ctype);
@@ -351,10 +351,10 @@ namespace dtEntityQtWidgets
       void Init();
       void SetupDelegates();
       void ApplyPropertiesToEntity(dtEntity::EntityId, const QString& componentType,
-                                   const dtEntity::DynamicPropertyContainer&);
+                                   const dtEntity::GroupProperty&);
       void ApplyPropertiesToSpawner(const QString& name, const QString& componentType,
-                                    const dtEntity::DynamicPropertyContainer&, bool updateEntities);
-      void ApplyPropertiesToEntitySystem(const QString&, const dtEntity::DynamicPropertyContainer&);
+                                    const dtEntity::GroupProperty&, bool updateEntities);
+      void ApplyPropertiesToEntitySystem(const QString&, const dtEntity::GroupProperty&);
       
       void OnAddComponentToSpawner(const QString& spawner, const QString& ctype);
       void OnAddComponentToEntity(dtEntity::EntityId id, const QString& ctype);

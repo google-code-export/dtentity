@@ -510,7 +510,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::DynamicPropertyContainer EntitySystemJS::GetComponentProperties() const
+   dtEntity::GroupProperty EntitySystemJS::GetComponentProperties() const
    {
       
       dtEntity::Component* comp;
@@ -518,53 +518,19 @@ namespace dtEntityWrappers
       if(!success)
       {
          LOG_ERROR("Cannot instantiate javascript component of type " << dtEntity::GetStringFromSID(GetComponentType()));
-         dtEntity::DynamicPropertyContainer c;
+         dtEntity::PropertyGroup c;
          return c;
       }
-      ConstPropertyMap m;
-      comp->GetProperties(m);
-      dtEntity::DynamicPropertyContainer c;
-      c.SetProperties(m);
+      dtEntity::GroupProperty c = comp->GetProperties();
       const_cast<EntitySystemJS*>(this)->DeleteComponent(0);
       return c;
       
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EntitySystemJS::GetProperties(PropertyMap& toFill)
+   dtEntity::GroupProperty EntitySystemJS::GetProperties() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSystem->CreationContext());
-      Handle<Array> propnames = mSystem->GetPropertyNames();
-      // loop through all properties of object
-      for(unsigned int i = 0; i < propnames->Length(); ++i)
-      {
-         Handle<Value> p = propnames->Get(Integer::New(i));
-         Handle<String> propname = Handle<String>::Cast(p);
-         std::string propname_str = ToStdString(propname);
-         if(propname_str == "componentType")
-         {
-            continue;
-         }
-         dtEntity::StringId propname_sid = dtEntity::SIDHash(propname_str);
-         Handle<Value> val = mSystem->Get(propname);
-         dtEntity::Property* prop = ConvertValueToProperty(val);
-         if(prop)
-         {
-            PropertyMap::iterator j = mProperties.find(propname_sid);
-            if(j != mProperties.end())
-            {
-		        j->second->SetFrom(*prop);
-              toFill[propname_sid] = j->second;
-	         }        
-            delete prop;
-         }         
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EntitySystemJS::GetProperties(ConstPropertyMap& toFill) const
-   {
+      dtEntity::GroupProperty ret;
       HandleScope scope;
       Context::Scope context_scope(mSystem->CreationContext());
       Handle<Array> propnames = mSystem->GetPropertyNames();
@@ -586,12 +552,12 @@ namespace dtEntityWrappers
             PropertyMap::const_iterator j = mProperties.find(propname_sid);
             if(j != mProperties.end())
             {
-		        j->second->SetFrom(*prop);
-              toFill[propname_sid] = j->second;
-	         }        
-            delete prop;
-         }         
+              j->second->SetFrom(*prop);
+              ret.Add(propname_sid, j->second->Clone());
+            }
+         }
       }
+      return ret;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

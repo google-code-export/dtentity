@@ -363,6 +363,7 @@ namespace dtEntity
       GroupProperty(const PropertyGroup& v = PropertyGroup());
 
       ~GroupProperty();
+      GroupProperty(const GroupProperty&);
 
       virtual DataType::e GetType() const { return DataType::GROUP; }
 
@@ -371,16 +372,22 @@ namespace dtEntity
       virtual PropertyGroup GroupValue() const;
       virtual void SetGroup(const PropertyGroup& v) { Set(v); }
       virtual const std::string StringValue() const;
-      PropertyGroup Get() const { return mValue; }
+      PropertyGroup& Get() { return mValue; }
+      const PropertyGroup& Get() const { return mValue; }
 
       // add prop and take ownership
       void Add(StringId name, Property* prop);
       virtual Property* Clone() const;
-      virtual bool operator==(const Property& other) const;
-
+      void operator=(const GroupProperty&);
+      bool operator==(const Property& other) const;
+      void operator+=(const GroupProperty& other);
       void Set(const PropertyGroup& v);
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
+      bool Empty() const;
+      Property* Get(StringId);
+      const Property* Get(StringId) const;
+      bool Has(StringId) const;
 
    private:
      PropertyGroup mValue;

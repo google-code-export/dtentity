@@ -22,6 +22,7 @@
 #include <OpenThreads/ReadWriteMutex>
 #include <dtEntity/hash.h>
 #include <dtEntity/dtentity_config.h>
+#include <dtEntity/singleton.h>
 #include <map>
 #include <string>
 #include <iostream>
@@ -31,7 +32,7 @@
 namespace dtEntity
 {
 
-   class StringIdManager
+   class StringIdManager : public Singleton<StringIdManager>
    {
 
       typedef std::map<unsigned int, std::string> ReverseLookupMap;
@@ -69,7 +70,7 @@ namespace dtEntity
       }
 
       ////////////////////////////////////////////////////////////////////////////////
-      unsigned int Hash(const std::string& str)
+      static unsigned int Hash(const std::string& str)
       {
          const unsigned char* s = reinterpret_cast<const unsigned char*>(str.c_str());
          unsigned int hash;
@@ -103,13 +104,12 @@ namespace dtEntity
       }
    };
 
-   StringIdManager s_stringIdManager;
 
    ////////////////////////////////////////////////////////////////////////////////
    StringId SID(const std::string& str)
    {
-      unsigned int hash = s_stringIdManager.Hash(str);
-      s_stringIdManager.AddToReverseLookup(str, hash);
+      unsigned int hash = StringIdManager::Hash(str);
+      StringIdManager::GetInstance().AddToReverseLookup(str, hash);
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return str;
 #else
@@ -123,7 +123,7 @@ namespace dtEntity
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return id;
 #else
-      return s_stringIdManager.ReverseLookup(id);
+      return StringIdManager::GetInstance().ReverseLookup(id);
 #endif
    }
 
@@ -133,7 +133,7 @@ namespace dtEntity
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return str;
 #else
-      unsigned int hash = s_stringIdManager.Hash(str);
+      unsigned int hash = StringIdManager::Hash(str);
       return hash;
 #endif
    }
@@ -142,7 +142,7 @@ namespace dtEntity
    StringId SID(unsigned int hash)
    {
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      return s_stringIdManager.ReverseLookup(hash);
+      return StringIdManager::GetInstance().ReverseLookup(hash);
 #else
       return hash;
 #endif      

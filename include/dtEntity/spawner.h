@@ -22,7 +22,7 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/entityid.h>
-#include <dtEntity/propertycontainer.h>
+#include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
@@ -44,7 +44,7 @@ namespace dtEntity
    {
    public:
       
-      typedef std::map<ComponentType, DynamicPropertyContainer> ComponentProperties;
+      typedef std::map<ComponentType, GroupProperty> ComponentProperties;
 
       /** 
        * Constructor 
@@ -116,7 +116,7 @@ namespace dtEntity
 	   * Add a component of type ctype. The props container holds the initial property
 	   * values to assign to the component.
 	   */
-      void AddComponent(ComponentType ctype, const DynamicPropertyContainer& props);
+      void AddComponent(ComponentType ctype, const GroupProperty& props);
 
 	  /**
 	   * Remove component of this type. Return true if component existed
@@ -126,13 +126,13 @@ namespace dtEntity
 	  /**
 	   * Get property values to assign to component after spawning it
 	   */
-      DynamicPropertyContainer GetComponentValues(ComponentType ctype) const;
+      GroupProperty GetComponentValues(ComponentType ctype) const;
 
 	  /**
 	   * Set properties of existing component in spawner.The props container holds the initial property
 	   * values to assign to the component. All previous component values are cleared.
 	   */
-      void SetComponentValues(ComponentType ctype, const DynamicPropertyContainer&);
+      void SetComponentValues(ComponentType ctype, const GroupProperty&);
 
       /**
        * Get a map of components and their properties set for this spawner

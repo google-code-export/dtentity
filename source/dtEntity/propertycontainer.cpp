@@ -61,23 +61,16 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetProperties(PropertyMap& toFill)
+   GroupProperty PropertyContainer::GetProperties() const
    {
-      for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
-      {
-         toFill.insert(*i);
-      }
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetProperties(ConstPropertyMap& toFill) const
-   {
+      GroupProperty gp;
       for(PropertyMap::const_iterator i = mProperties.begin(); i != mProperties.end(); ++i)
       {
-         toFill.insert(*i);
+         gp.Add(i->first, i->second->Clone());
       }
+      return gp;
    }
-
+   
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::Has(StringId name) const
    {
@@ -383,94 +376,5 @@ namespace dtEntity
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
       return prop->Vec4dValue();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   DynamicPropertyContainer::DynamicPropertyContainer()
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   DynamicPropertyContainer::DynamicPropertyContainer(const DynamicPropertyContainer& other)
-   {
-      PropertyMap::const_iterator i;
-      for(i = other.mProperties.begin(); i != other.mProperties.end(); ++i)
-      {
-         this->AddProperty(i->first, *i->second);
-      }
-   }
-    
-   ////////////////////////////////////////////////////////////////////////////////
-   DynamicPropertyContainer::~DynamicPropertyContainer()
-   {
-      for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
-      {
-         delete i->second;
-      }
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-   void DynamicPropertyContainer::operator=(const DynamicPropertyContainer& other)
-   {
-      if(!mProperties.empty())
-      {
-         for(PropertyMap::iterator i = mProperties.begin(); i != mProperties.end(); ++i)
-         {
-            delete i->second;
-         }
-         mProperties.clear();
-      }
-      PropertyMap::const_iterator j;
-      for(j = other.mProperties.begin(); j != other.mProperties.end(); ++j)
-      {
-         this->AddProperty(j->first, *j->second);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   DynamicPropertyContainer& DynamicPropertyContainer::operator+=(const DynamicPropertyContainer& other)
-   {
-      PropertyMap::const_iterator i;
-      for(i = other.mProperties.begin(); i != other.mProperties.end(); ++i)
-      {
-         this->AddProperty(i->first, *i->second);
-      }
-      return *this;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DynamicPropertyContainer::AddProperty(StringId name, const Property& p)
-   {
-      DeleteProperty(name);
-      Register(name, p.Clone());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool DynamicPropertyContainer::DeleteProperty(StringId name)
-   {
-      PropertyMap::iterator i = mProperties.find(name);
-      if(i == mProperties.end())
-      {
-         return false;
-      }
-      delete i->second;
-      mProperties.erase(i);
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DynamicPropertyContainer::SetProperties(const ConstPropertyMap& props)
-   {
-	   while(!mProperties.empty())
-	   {
-	      this->DeleteProperty(mProperties.begin()->first);
-	   }
-
-      PropertyContainer::ConstPropertyMap::const_iterator i;
-      for(i = props.begin(); i != props.end(); ++i)
-      {
-         this->AddProperty(i->first, *i->second);
-      }
    }
 }
