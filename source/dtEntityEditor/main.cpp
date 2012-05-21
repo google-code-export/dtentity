@@ -127,9 +127,19 @@ int main(int argc, char *argv[])
             scene = argv[curArg];
          }
       }
+      else if(curArgv == "--pluginPath")
+      {
+         ++curArg;
+         if (curArg < argc)
+         {
+            pluginPath = argv[curArg];
+         }
+      }
    }
 
    osg::ref_ptr<EditorApplication> application = new EditorApplication(argc, argv);
+
+   application->SetAdditionalPluginPath(pluginPath);
 
    QThread* viewerThread;
 
