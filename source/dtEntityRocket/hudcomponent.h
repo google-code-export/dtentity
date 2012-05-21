@@ -27,14 +27,22 @@
 #include <Rocket/Core/Element.h>
 #include <v8.h>
 
+namespace dtEntity
+{
+   class TransformComponent;
+}
 
 namespace dtEntityRocket
 {
+
+   class HUDSystem;
    
    class HUDComponent : public dtEntity::NodeComponent
    {
+      friend class HUDSystem;
 
       typedef dtEntity::NodeComponent BaseClass;
+
    public:
       
       static const dtEntity::ComponentType TYPE;
@@ -47,6 +55,8 @@ namespace dtEntityRocket
       static const dtEntity::StringId AlignToBoundingSphereCenterId;
       static const dtEntity::StringId AlignToBoundingSphereTopId;
       static const dtEntity::StringId AlignToBoundingSphereBottomId;
+      static const dtEntity::StringId AlignToBoundingBoxTopId;
+      static const dtEntity::StringId AlignToBoundingBoxBottomId;
       static const dtEntity::StringId HideWhenNormalPointsAwayId;
 
       HUDComponent();
@@ -90,7 +100,12 @@ namespace dtEntityRocket
       void SetHideWhenNormalPointsAway(bool v) { mHideWhenNormalPointsAway.Set(v); }
       bool GetHideWhenNormalPointsAway() const { return mHideWhenNormalPointsAway.Get(); }
 
+   protected:
+
+      void CalculateRelPosition();
+
    private:
+
 
       dtEntity::Entity* mEntity;
       Rocket::Core::Element* mElement;
@@ -100,7 +115,8 @@ namespace dtEntityRocket
       dtEntity::BoolProperty mVisible;
       dtEntity::StringIdProperty mAlignment;
       dtEntity::BoolProperty mHideWhenNormalPointsAway;
-      
+      dtEntity::TransformComponent* mTransformComponent;
+      osg::Vec3 mRelPosition;
    };
 
 
@@ -120,6 +136,7 @@ namespace dtEntityRocket
 
       void Tick(const dtEntity::Message& msg);
       void OnVisibilityChanged(const dtEntity::Message& msg);
+      void OnMeshChanged(const dtEntity::Message& m);
 
       void OnRemoveFromEntityManager(dtEntity::EntityManager &em);
 
@@ -131,6 +148,7 @@ namespace dtEntityRocket
 
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mVisibilityChangedFunctor;
+      dtEntity::MessageFunctor mMeshChangedFunctor;
       dtEntity::BoolProperty mEnabled;
 
    };

@@ -21,13 +21,15 @@
 #include "hudcomponent.h"
 #include "rocketcomponent.h"
 #include <dtEntity/entity.h>
+#include <dtEntity/basemessages.h>
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/systemmessages.h>
+#include <dtEntity/nodemasks.h>
 #include <dtEntity/transformcomponent.h>
 #include <Rocket/Core/Context.h>
 #include <Rocket/Core/ElementDocument.h>
 #include <iostream>
 #include <osg/Camera>
+#include <osg/ComputeBoundsVisitor>
 
 namespace dtEntityRocket
 {
@@ -42,12 +44,15 @@ namespace dtEntityRocket
    const dtEntity::StringId HUDComponent::AlignToBoundingSphereCenterId(dtEntity::SID("AlignToBoundingSphereCenter"));
    const dtEntity::StringId HUDComponent::AlignToBoundingSphereTopId(dtEntity::SID("AlignToBoundingSphereTop"));
    const dtEntity::StringId HUDComponent::AlignToBoundingSphereBottomId(dtEntity::SID("AlignToBoundingSphereBottom"));
+   const dtEntity::StringId HUDComponent::AlignToBoundingBoxTopId(dtEntity::SID("AlignToBoundingBoxTop"));
+   const dtEntity::StringId HUDComponent::AlignToBoundingBoxBottomId(dtEntity::SID("AlignToBoundingBoxBottom"));
    const dtEntity::StringId HUDComponent::HideWhenNormalPointsAwayId(dtEntity::SID("HideWhenNormalPointsAway"));
 
    ////////////////////////////////////////////////////////////////////////////
    HUDComponent::HUDComponent()
       : mEntity(NULL)
       , mElement(NULL)
+      , mTransformComponent(NULL)
    {
       Register(ElementId, &mElementProp);
       Register(OffsetId, &mOffset);
@@ -97,6 +102,70 @@ namespace dtEntityRocket
       if(propname == ElementId)
       {
          SetElementById(prop.StringValue());
+      }
+      else if(propname == AlignmentId)
+      {
+         CalculateRelPosition();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDComponent::CalculateRelPosition()
+   {
+
+      mRelPosition = GetOffset();
+
+      if(mTransformComponent == NULL)
+      {
+         if(mEntity == NULL || !mEntity->GetEntityManager().GetComponent(mEntity->GetId(), mTransformComponent, true))
+         {
+            return;
+         }
+      }
+
+      dtEntity::StringId alignment = GetAlignment();
+
+      osg::BoundingSphere bs = mTransformComponent->GetNode()->getBound();
+
+      if(alignment == HUDComponent::AlignToBoundingSphereCenterId)
+      {
+         mRelPosition = bs.center() - mTransformComponent->GetTranslation() + GetOffset();
+      }
+      else if(alignment == HUDComponent::AlignToBoundingSphereTopId)
+      {
+         mRelPosition = bs.center();
+         mRelPosition[2] += bs.radius();
+         mRelPosition -= mTransformComponent->GetTranslation();
+         mRelPosition += GetOffset();
+      }
+      else if(alignment == HUDComponent::AlignToBoundingSphereBottomId)
+      {
+         mRelPosition = bs.center();
+         mRelPosition[2] -= bs.radius();
+         mRelPosition -= mTransformComponent->GetTranslation();
+         mRelPosition += GetOffset();
+      }
+      else if(alignment == HUDComponent::AlignToBoundingBoxTopId)
+      {
+         osg::ComputeBoundsVisitor v;
+         v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+         mTransformComponent->GetNode()->accept(v);
+         osg::BoundingBox bb = v.getBoundingBox();
+         mRelPosition = bb.center();
+         mRelPosition[2] = bb.zMax();
+         mRelPosition += GetOffset();
+         mRelPosition -= mTransformComponent->GetTranslation();
+      }
+      else if(alignment == HUDComponent::AlignToBoundingBoxBottomId)
+      {
+         osg::ComputeBoundsVisitor v;
+         v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+         mTransformComponent->GetNode()->accept(v);
+         osg::BoundingBox bb = v.getBoundingBox();
+         mRelPosition = bb.center();
+         mRelPosition[2] = bb.zMin();
+         mRelPosition += GetOffset();
+         mRelPosition -= mTransformComponent->GetTranslation();
       }
    }
 
@@ -158,6 +227,11 @@ namespace dtEntityRocket
       mVisibilityChangedFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnVisibilityChanged);
       GetEntityManager().RegisterForMessages(dtEntity::VisibilityChangedMessage::TYPE,
          mVisibilityChangedFunctor, dtEntity::FilterOptions::ORDER_LATE, "HUDSystem::OnVisibilityChanged");
+
+      mMeshChangedFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnMeshChanged);
+      GetEntityManager().RegisterForMessages(dtEntity::MeshChangedMessage::TYPE, mMeshChangedFunctor,
+                            dtEntity::FilterOptions::ORDER_DEFAULT, "HUDSystem::OnMeshChanged");
+
       mEnabled.Set(true);
    }
 
@@ -202,6 +276,18 @@ namespace dtEntityRocket
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDSystem::OnMeshChanged(const dtEntity::Message& m)
+   {
+     const dtEntity::MeshChangedMessage& msg =
+           static_cast<const dtEntity::MeshChangedMessage&>(m);
+     dtEntity::EntityId id = msg.GetAboutEntityId();
+     HUDComponent* comp = GetComponent(id);
+     if(comp)
+     {
+       comp->CalculateRelPosition();
+     }
+   }
    ////////////////////////////////////////////////////////////////////////////
    void HUDSystem::Tick(const dtEntity::Message& msg)
    {
@@ -259,70 +345,56 @@ namespace dtEntityRocket
 
             HUDComponent* comp = j->second;
             Rocket::Core::Element* element = comp->GetElement();
-            if(element == NULL || element->GetContext() != context)
+            if(element == NULL || element->GetContext() != context || element->GetNumChildren() == 0)
             {
                continue;
             }
 
             dtEntity::EntityId id = j->first;
             dtEntity::TransformComponent* tc;
-            if(GetEntityManager().GetComponent(id, tc, true))
+            if(comp->mTransformComponent == NULL)
             {
-               osg::BoundingSphere bs = tc->GetNode()->getBound();
-               osg::Vec4 trans;
-               if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereCenterId)
+               if(!GetEntityManager().GetComponent(id, comp->mTransformComponent, true))
                {
-                  trans = osg::Vec4(bs.center() + comp->GetOffset(), 1);
+                  LOG_ERROR("HUD component depends on a transform component!");
+                  continue;
                }
-               else if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereTopId)
-               {
+            }
 
-                  trans = osg::Vec4(bs.center() + comp->GetOffset(), 1);
-                  trans[2] += bs.radius();
-               }
-               else if(comp->GetAlignment() == HUDComponent::AlignToBoundingSphereBottomId)
-               {
-                  trans = osg::Vec4(bs.center() - comp->GetOffset(), 1);
-                  trans[2] += bs.radius();
-               }
-               else
-               {
-                  trans = osg::Vec4(tc->GetTranslation() + comp->GetOffset(), 1);
-               }
+            osg::Vec4 trans = osg::Vec4(comp->mTransformComponent->GetTranslation() + comp->mRelPosition, 1);
 
-               osg::Vec4 camtrans = trans * matrix;
-               double w = camtrans[3];
-               Rocket::Core::Vector2i dim = context->GetDimensions();
-               float x = camtrans[0] / w + comp->GetPixelOffset()[0];
-               float y = dim[1] - (camtrans[1] / w  + comp->GetPixelOffset()[1]);
-               Rocket::Core::Vector2f sizes = element->GetBox(0).GetSize(Rocket::Core::Box::MARGIN);
-               
-               bool hideBecauseNormalPointsAway = false;
-               if(comp->GetHideWhenNormalPointsAway())
-               {
-                  osg::Vec3 normal(0, 0, 1);
-                  normal = tc->GetRotation() * normal;
+            osg::Vec4 camtrans = trans * matrix;
+            double w = camtrans[3];
+            Rocket::Core::Vector2i dim = context->GetDimensions();
+            float x = camtrans[0] / w + comp->GetPixelOffset()[0];
+            float y = dim[1] - (camtrans[1] / w  + comp->GetPixelOffset()[1]);
+            Rocket::Core::Vector2f sizes = element->GetBox(0).GetSize(Rocket::Core::Box::MARGIN);
 
-                  osg::Vec4 camnormal = osg::Vec4(normal, 0) * matrix;
-                  if(camnormal[2] > 0)
-                  {
-                     hideBecauseNormalPointsAway = true;
-                  }
-               }
-               if(hideBecauseNormalPointsAway || !comp->GetVisible() || w < 0 || x < -sizes.x || x > window_w || y < -sizes.y || y > window_h)
+            bool hideBecauseNormalPointsAway = false;
+            if(comp->GetHideWhenNormalPointsAway())
+            {
+               osg::Vec3 normal(0, 0, 1);
+               normal = tc->GetRotation() * normal;
+
+               osg::Vec4 camnormal = osg::Vec4(normal, 0) * matrix;
+               if(camnormal[2] > 0)
                {
-                  if(element->GetProperty("visibility")->ToString() != "hidden")
-                  {
-                     element->SetProperty("visibility", "hidden");
-                  }
+                  hideBecauseNormalPointsAway = true;
                }
-               else
+            }
+            if(hideBecauseNormalPointsAway || !comp->GetVisible() || w < 0 || x < -sizes.x || x > window_w || y < -sizes.y || y > window_h)
+            {
+               if(element->GetProperty("visibility")->ToString() != "hidden")
                {
-                  element->SetOffset(Rocket::Core::Vector2f(x, y), context->GetDocument(0), true);
-                  if(element->GetProperty("visibility")->ToString() != "visible")
-                  {
-                     element->SetProperty("visibility", "visible");
-                  }
+                  element->SetProperty("visibility", "hidden");
+               }
+            }
+            else
+            {
+               element->SetOffset(Rocket::Core::Vector2f(x, y), context->GetDocument(0), true);
+               if(element->GetProperty("visibility")->ToString() != "visible")
+               {
+                  element->SetProperty("visibility", "visible");
                }
             }
          }
