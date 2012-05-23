@@ -23,6 +23,7 @@
 #include <dtEntity/export.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapencoder.h>
+#include <iostream>
 
 namespace dtEntity
 {
@@ -56,6 +57,9 @@ namespace dtEntity
       {
          return extension == "bscene";
       }
+
+      static bool EncodeMessage(const Message& m, std::iostream& stream);
+      static Message* DecodeMessage(std::istream& stream);
 
    private:
 
