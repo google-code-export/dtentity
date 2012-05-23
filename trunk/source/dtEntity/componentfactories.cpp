@@ -44,6 +44,9 @@
   #include <dtEntity/animationcomponent.h>
 #endif
 
+#if ENET_FOUND && PROTOBUF_FOUND
+  #include <dtEntity/enetcomponent.h>
+#endif
 namespace dtEntity
 {
 
@@ -66,5 +69,8 @@ namespace dtEntity
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<SoundSystem>("Sound"));
 #endif
 
+#if ENET_FOUND && PROTOBUF_FOUND
+      pluginManager.AddFactory(new ComponentPluginFactoryImpl<ENetSystem>("ENet"));
+#endif
    }
 }

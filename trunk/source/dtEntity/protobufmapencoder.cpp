@@ -798,8 +798,6 @@ namespace dtEntity
    bool ProtoBufMapEncoder::SaveSceneToFile(const std::string& path)
    {
 
-
-
       // Verify that the version of the library that we linked against is
       // compatible with the version of the headers we compiled against.
       GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -861,4 +859,56 @@ namespace dtEntity
 
       return success;
    }   
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ProtoBufMapEncoder::EncodeMessage(const Message& m, std::iostream& stream)
+   {
+      dtProtoBuf::Message messageobj;
+      messageobj.set_message_type(m.GetType());
+      const PropertyGroup& props = m.Get();
+      for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
+      {
+         SerializeProperty(*messageobj.add_property(), i->first, *i->second);
+      }
+      return messageobj.SerializeToOstream(&stream);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Message* ProtoBufMapEncoder::DecodeMessage(std::istream& stream)
+   {
+      dtProtoBuf::Message messageobj;
+      if(!messageobj.ParseFromIstream(&stream))
+      {
+         return NULL;
+      }
+
+      Message* msg;
+      bool success = MessageFactory::GetInstance().CreateMessage(messageobj.message_type(), msg);
+      if(!success)
+      {
+         LOG_ERROR("Message type not found!");
+         return NULL;
+      }
+      for(int i = 0; i < messageobj.property_size(); ++i)
+      {
+         const dtProtoBuf::Property& prop = messageobj.property(i);
+         Property* property = ParseProperty(prop);
+         if(property != NULL)
+         {
+            Property* toset = msg->Get(prop.property_name());
+            if(toset == NULL)
+            {
+               LOG_WARNING("Message property mismatch! Cannot decode message!");
+               delete property;
+               return NULL;
+            }
+            else
+            {
+               toset->SetFrom(*property);
+            }
+            delete property;
+         }
+      }
+      return msg;
+   }
 }

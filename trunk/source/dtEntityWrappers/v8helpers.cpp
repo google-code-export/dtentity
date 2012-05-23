@@ -25,7 +25,6 @@
 #include <sstream>
 #include <iostream>
 #include <osg/MatrixTransform>
-#include <osg/Referenced>
 #include <osgDB/FileUtils>
 #include <fstream>
 #ifdef HAVE_MMAN_H
