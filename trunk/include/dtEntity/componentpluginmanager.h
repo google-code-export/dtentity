@@ -22,7 +22,6 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/singleton.h>
-#include <osg/ref_ptr>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntity/entityid.h>
@@ -56,7 +55,7 @@ namespace dtEntity
       ComponentPluginManager();
       ~ComponentPluginManager();
 
-      typedef std::map<ComponentType, osg::ref_ptr<ComponentPluginFactory> > PluginFactoryMap;
+      typedef std::map<ComponentType, ComponentPluginFactory*> PluginFactoryMap;
       typedef std::set<ComponentType> ActivePlugins;
 
       /**
@@ -85,7 +84,7 @@ namespace dtEntity
        * Directly add a factory for starting an entity system (instead of loading
        * it from a plugin
        */
-      void AddFactory(ComponentPluginFactory* factory);
+      bool AddFactory(ComponentPluginFactory* factory);
 
       /**
        * Load a shared library / dll from abs path and register
@@ -124,7 +123,7 @@ namespace dtEntity
       ComponentPluginFactory* GetPluginFactory(ComponentType ctype);
 
       /** load all plugin factories from libraries found in path */
-      void LoadPluginFactories(const std::string& pluginname, const std::string& path, std::list<osg::ref_ptr<ComponentPluginFactory> >& factories);
+      void LoadPluginFactories(const std::string& pluginname, const std::string& path, std::list<ComponentPluginFactory*>& factories);
 
       /** map from plugin name -> plugin factory */
       PluginFactoryMap mFactories;

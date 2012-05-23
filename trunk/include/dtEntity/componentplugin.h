@@ -22,7 +22,6 @@
 
 #include <list>
 #include <dtEntity/entityid.h>
-#include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osgDB/DynamicLibrary>
 #include <dtEntity/stringid.h>
@@ -39,9 +38,13 @@ namespace dtEntity
     * The plugin factories are stored in the plugin manager and are used to list available
     * entity systems, start and stop them.
     */
-   class ComponentPluginFactory : public osg::Referenced
+   class ComponentPluginFactory
    {
    public:
+
+      virtual ~ComponentPluginFactory()
+      {
+      }
 
       /** get the name of the entity system (the type string) */
       virtual std::string GetName() const = 0;
@@ -71,10 +74,6 @@ namespace dtEntity
       void SetLibrary(osgDB::DynamicLibrary* l) { mLibrary = l; }
 
    protected:
-
-      virtual ~ComponentPluginFactory()
-      {
-      }
 
       osg::ref_ptr<osgDB::DynamicLibrary> mLibrary;
    };
