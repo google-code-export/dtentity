@@ -75,7 +75,7 @@ namespace dtEntityEditor
 
    ////////////////////////////////////////////////////////////////////////////////
    EditorMainWindow::EditorMainWindow(EditorApplication* app, QWidget* parent)
-      : QMainWindow(parent) 
+      : QMainWindow(parent)
       , mApplication(app)
       , mEntityTreeDock(NULL)
       , mSpawnersDock(NULL)
@@ -105,17 +105,17 @@ namespace dtEntityEditor
       setMinimumSize(800, 600);
       layout()->setContentsMargins(0, 0, 0, 0);
 
-      setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowTabbedDocks | 
+      setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowTabbedDocks |
                      QMainWindow::VerticalTabs);
 
-      
+
       setWindowTitle("dtEntity Editor");
 
       createActions();
       createMenus();
       createToolBars();
       CreateDockWidgets();
-      
+
       connect(this, SIGNAL(LoadScene(const QString&)), app, SLOT(LoadScene(const QString&)));
       connect(this, SIGNAL(NewScene()), app, SLOT(NewScene()));
       connect(this, SIGNAL(SaveScene(QString)), app, SLOT(SaveScene(QString)));
@@ -168,7 +168,7 @@ namespace dtEntityEditor
 
       settings.setValue("geometry", saveGeometry());
       settings.setValue("windowState", saveState());
-      
+
       settings.setValue("size", size());
       settings.setValue("pos", pos());
       settings.endGroup();
@@ -202,7 +202,7 @@ namespace dtEntityEditor
       connect(mResetSystemAct , SIGNAL(triggered()), this, SLOT(OnResetSystem()));
 
       mExitAct = new QAction(tr("E&xit"), this);
-      
+
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
       mExitAct->setShortcuts(QKeySequence::Quit);
 #endif
@@ -506,7 +506,7 @@ namespace dtEntityEditor
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::CreateDockWidgets()
-   {      
+   {
       CreateEntityTree();
       CreateSpawners();
       CreatePropertyEditor();
@@ -584,7 +584,7 @@ namespace dtEntityEditor
          urls << QUrl::fromLocalFile(path);
       }
 
-      QFileDialog dialog(this, tr("Save Scene"), currpath, tr("Scenes (*.dtescene)"));
+      QFileDialog dialog(this, tr("Save Scene"), currpath, tr("Scenes (*.dtescene *.bscene)"));
       dialog.setSidebarUrls(urls);
       dialog.setFileMode(QFileDialog::AnyFile);
 
@@ -647,6 +647,7 @@ namespace dtEntityEditor
       {
          QDir dir(*i);
          RecursiveSearch(dir, entries, "dtescene");
+         RecursiveSearch(dir, entries, "bscene");
       }
       if(entries.empty())
       {
@@ -660,7 +661,7 @@ namespace dtEntityEditor
       dtEntityQtWidgets::ListDialog* dialog = new dtEntityQtWidgets::ListDialog(l);
 
       if(dialog->exec() == QDialog::Accepted)
-      {  
+      {
          QStringList sel = dialog->GetSelectedItems();
          if(sel.size() != 0)
          {
@@ -721,7 +722,7 @@ namespace dtEntityEditor
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::SetOSGWindow(dtEntityQtWidgets::OSGGraphicsWindowQt* osgGraphWindow)
-   {      
+   {
       dtEntityQtWidgets::OSGAdapterWidget* glwidget =
             dynamic_cast<dtEntityQtWidgets::OSGAdapterWidget*>(osgGraphWindow->GetQGLWidget());
       glwidget->setObjectName("glwidget_main");
