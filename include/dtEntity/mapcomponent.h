@@ -325,6 +325,11 @@ namespace dtEntity
 
       static std::string CreateUniqueIdString();
 
+      void AddMapEncoder(MapEncoder* ec);
+
+      MapEncoder* GetEncoderForMap(const std::string& extension) const;
+      MapEncoder* GetEncoderForScene(const std::string& extension) const;
+
    private:
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
@@ -345,6 +350,7 @@ namespace dtEntity
 
       std::map<std::string, EntityId> mEntitiesByUniqueId;
 
-      osg::ref_ptr<MapEncoder> mMapEncoder;
+      typedef std::vector<MapEncoder*> MapEncoders;
+      MapEncoders mMapEncoders;
    };
 }

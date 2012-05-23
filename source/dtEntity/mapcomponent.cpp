@@ -21,8 +21,10 @@
 #include <dtEntity/mapcomponent.h>
 
 #include <dtEntity/rapidxmlmapencoder.h>
+
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/commandmessages.h>
+#include <dtEntity/dtentity_config.h>
 #include <assert.h>
 #include <dtEntity/spawner.h>
 #include <sstream>
@@ -31,6 +33,9 @@
 #include <OpenThreads/ScopedLock>
 #include <fstream>
 
+#if PROTOBUF_FOUND
+#include <dtEntity/protobufmapencoder.h>
+#endif
 
 #ifdef WIN32
    #include <Rpc.h>
@@ -177,14 +182,21 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    MapSystem::~MapSystem()
    {
+      for(MapEncoders::iterator i = mMapEncoders.begin(); i != mMapEncoders.end(); ++i)
+      {
+         delete *i;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void MapSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
       em.AddEntitySystemRequestCallback(this);
+#if PROTOBUF_FOUND
+      AddMapEncoder(new ProtoBufMapEncoder(em));
+#endif
+      AddMapEncoder(new RapidXMLMapEncoder(em));
 
-      mMapEncoder = new RapidXMLMapEncoder(em);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -283,7 +295,14 @@ namespace dtEntity
          return false;
       }
 
-      bool success = mMapEncoder->LoadSceneFromFile(path);
+      MapEncoder* enc = GetEncoderForScene(osgDB::getFileExtension(path));
+      if(!enc)
+      {
+         LOG_ERROR("Could not load scene: Loader not found for extension " << osgDB::getFileExtension(path));
+         return false;
+      }
+
+      bool success = enc->LoadSceneFromFile(path);
       
       SceneLoadedMessage msg;
       msg.SetSceneName(path);
@@ -308,7 +327,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::SaveScene(const std::string& path, bool saveAllMaps)
    {
-     bool success = mMapEncoder->SaveSceneToFile(path);
+      MapEncoder* enc = GetEncoderForScene(osgDB::getFileExtension(path));
+      if(!enc)
+      {
+         LOG_ERROR("Could not save scene: Loader not found for extension " << osgDB::getFileExtension(path));
+         return false;
+      }
+     bool success = enc->SaveSceneToFile(path);
 
       if(success && saveAllMaps)
       {
@@ -347,6 +372,13 @@ namespace dtEntity
          return false;
       }
 
+      MapEncoder* enc = GetEncoderForMap(osgDB::getFileExtension(path));
+      if(!enc)
+      {
+         LOG_ERROR("Could not load map: Loader not found for extension " << osgDB::getFileExtension(path));
+         return false;
+      }
+
       // get data path containing this map
       std::string mapdatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
@@ -370,7 +402,7 @@ namespace dtEntity
       msg.SetSaveOrder(mapsaveorder);
       GetEntityManager().EmitMessage(msg);
 
-      bool success = mMapEncoder->LoadMapFromFile(path);
+      bool success = enc->LoadMapFromFile(path);
       if(success)
       {
          mLoadedMaps.push_back(MapData(path, mapdatapath, mLoadedMaps.size()));
@@ -384,6 +416,7 @@ namespace dtEntity
       return success;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    MapSystem::SpawnerStorage GetChildren(MapSystem::SpawnerStorage& spawners, const std::string& spawnername)
    {
       MapSystem::SpawnerStorage ret;
@@ -540,6 +573,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::SaveMap(const std::string& mappath)
    {
+      MapEncoder* enc = GetEncoderForScene(osgDB::getFileExtension(mappath));
+      if(!enc)
+      {
+         LOG_ERROR("Could not save map: Loader not found for extension " << osgDB::getFileExtension(mappath));
+         return false;
+      }
+
       std::string datapath = "";
       for(LoadedMaps::const_iterator i = mLoadedMaps.begin(); i != mLoadedMaps.end(); ++i)
       {
@@ -557,7 +597,7 @@ namespace dtEntity
 
       std::ostringstream os;
       os << datapath << "/" << mappath;
-      bool success = mMapEncoder->SaveMapToFile(mappath, os.str());
+      bool success = enc->SaveMapToFile(mappath, os.str());
       
       return success;
    }
@@ -570,7 +610,15 @@ namespace dtEntity
          LOG_ERROR("Cannot save map as: No map of this name exists!");
          return false;
       }
-      bool success = mMapEncoder->SaveMapToFile(path, copypath);
+
+      MapEncoder* enc = GetEncoderForMap(osgDB::getFileExtension(copypath));
+      if(!enc)
+      {
+         LOG_ERROR("Could not save map: Loader not found for extension " << osgDB::getFileExtension(copypath));
+         return false;
+      }
+
+      bool success = enc->SaveMapToFile(path, copypath);
       
       return success;
    }
@@ -969,5 +1017,37 @@ namespace dtEntity
 
    return buffer;
 #endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void MapSystem::AddMapEncoder(MapEncoder* ec)
+   {
+      mMapEncoders.push_back(ec);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   MapEncoder* MapSystem::GetEncoderForMap(const std::string& extension) const
+   {
+      for(MapEncoders::const_iterator i = mMapEncoders.begin(); i != mMapEncoders.end(); ++i)
+      {
+         if((*i)->AcceptsMapExtension(extension))
+         {
+            return *i;
+         }
+      }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   MapEncoder* MapSystem::GetEncoderForScene(const std::string& extension) const
+   {
+      for(MapEncoders::const_iterator i = mMapEncoders.begin(); i != mMapEncoders.end(); ++i)
+      {
+         if((*i)->AcceptsSceneExtension(extension))
+         {
+            return *i;
+         }
+      }
+      return NULL;
    }
 }

@@ -1,0 +1,149 @@
+package dtProtoBuf;
+
+enum PropertyType {
+  NONE = 0;
+  ARRAY = 1;
+	BOOL = 2;
+	CHAR = 3;
+	DOUBLE = 4;
+	FLOAT = 5;        
+	GROUP = 6;
+	INT = 7;
+	MATRIX = 8;
+	QUAT = 9;
+	STRING = 10;
+	STRINGID = 11;
+	UINT = 12;
+	VEC2 = 13;
+	VEC3 = 14;
+	VEC4 = 15;
+	VEC2D = 16;
+	VEC3D = 17;
+	VEC4D = 18;
+}
+
+message Vec2 {
+	required float value_0 = 1;
+	required float value_1 = 2;
+}
+
+message Vec3 {
+	required float value_0 = 1;
+	required float value_1 = 2;
+	required float value_2 = 3;
+}
+
+message Vec4 {
+	required float value_0 = 1;
+	required float value_1 = 2;
+	required float value_2 = 3;
+	required float value_3 = 4;
+}
+
+message Vec2d {
+	required double value_0 = 1;
+	required double value_1 = 2;
+}
+
+message Vec3d {
+	required double value_0 = 1;
+	required double value_1 = 2;
+	required double value_2 = 3;
+}
+
+message Vec4d {
+	required double value_0 = 1;
+	required double value_1 = 2;
+	required double value_2 = 3;
+	required double value_3 = 4;
+}
+
+message Quat {
+	required double value_0 = 1;
+	required double value_1 = 2;
+	required double value_2 = 3;
+	required double value_3 = 4;
+}
+
+message Matrix {
+	required double value_0 = 1;
+	required double value_1 = 2;
+	required double value_2 = 3;
+	required double value_3 = 4;
+	required double value_4 = 5;
+	required double value_5 = 6;
+	required double value_6 = 7;
+	required double value_7 = 8;
+	required double value_8 = 9;
+	required double value_9 = 10;
+	required double value_10 = 11;
+	required double value_11 = 12;
+	required double value_12 = 13;
+	required double value_13 = 14;
+	required double value_14 = 15;
+	required double value_15 = 16;
+}
+	
+message Property {
+	
+  optional PropertyType type = 1 [default = NONE];
+  required uint32 property_name = 2;
+  repeated Property value_array = 3;
+  optional bool value_bool = 4;
+  optional int32 value_char = 5;
+  optional double value_double = 6;
+  optional float value_float = 7;
+  optional int32 value_int = 8;
+  optional Matrix value_matrix = 9;
+  optional Quat value_quat = 10;
+  optional string value_string = 11;
+  optional uint32 value_stringid = 12;
+  optional uint32 value_uint = 13;
+  optional Vec2 value_vec2 = 14;
+  optional Vec3 value_vec3 = 15;
+  optional Vec4 value_vec4 = 16;
+  optional Vec2d value_vec2d = 17;
+  optional Vec3d value_vec3d = 18;
+  optional Vec4d value_vec4d = 19;
+}
+
+message Message {
+	required uint32 message_type = 1;
+	repeated Property property = 2;
+}
+
+message Component {
+	required uint32 component_type = 1;
+	repeated Property property = 2;
+}
+
+message EntitySystem {
+	required uint32 component_type = 1;
+	repeated Property property = 2;
+}
+
+message Entity {
+  optional string spawner = 1;
+  repeated Component component = 2;
+}
+
+message Spawner {
+	repeated Component component = 1;
+	required string name = 2;
+	optional string parent = 3;
+	optional bool addToSpawnerStore = 4;
+	optional string guiCategory = 5;
+	optional string iconPath = 6;
+	
+}
+
+message Map {
+	repeated Spawner spawner = 1;
+	repeated Entity entity = 2;
+}
+
+message Scene {
+  repeated string libraries = 1;
+  repeated EntitySystem entitysystem = 2;
+  repeated string map = 3;
+}

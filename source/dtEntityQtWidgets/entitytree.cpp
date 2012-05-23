@@ -1103,7 +1103,7 @@ namespace dtEntityQtWidgets
          urls << QUrl::fromLocalFile(path);
       }
 
-      QFileDialog dialog(this, tr("Create Map"), currpath, tr("Maps (*.dtemap)"));
+      QFileDialog dialog(this, tr("Create Map"), currpath, tr("Maps (*.dtemap *.bmap)"));
       dialog.setSidebarUrls(urls);
       dialog.setFileMode(QFileDialog::AnyFile);
 
@@ -1146,6 +1146,7 @@ namespace dtEntityQtWidgets
          if(dir.exists())
          {
             entries += dir.entryList(QStringList("*.dtemap"), QDir::Files);
+            entries += dir.entryList(QStringList("*.bmap"), QDir::Files);
          }
       }
 
@@ -1308,7 +1309,7 @@ namespace dtEntityQtWidgets
          
          QString fileName = QFileDialog::getSaveFileName(this, tr("Save Map"),
                             QString(),
-                            tr("Maps (*.dtemap)"));
+                            tr("Maps (*.dtemap *.bmap)"));
 
          if (fileName != "")
          {
