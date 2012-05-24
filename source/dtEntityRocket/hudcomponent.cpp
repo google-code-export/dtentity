@@ -103,7 +103,7 @@ namespace dtEntityRocket
       {
          SetElementById(prop.StringValue());
       }
-      else if(propname == AlignmentId)
+      else if(propname == AlignmentId || propname == OffsetId)
       {
          CalculateRelPosition();
       }
