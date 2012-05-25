@@ -137,10 +137,6 @@ namespace dtEntity
 
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
 
-      if(!baseassets.empty() && (std::find(paths.begin(), paths.end(), baseassets) == paths.end())) 
-      {
-         paths.push_back(baseassets);
-      }
 
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
       const char separator = ';';
@@ -160,7 +156,12 @@ namespace dtEntity
             }
          }
       }
-      
+
+      if(!baseassets.empty() && (std::find(paths.begin(), paths.end(), baseassets) == paths.end()))
+      {
+         paths.push_back(baseassets);
+      }
+
       osgDB::setDataFilePathList(paths);
       return true;
 

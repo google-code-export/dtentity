@@ -147,4 +147,14 @@ namespace dtEntity
       return hash;
 #endif      
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int SIDToUInt(StringId v)
+   {
+#if DTENTITY_USE_STRINGS_AS_STRINGIDS
+      return StringIdManager::Hash(v);
+#else
+      return v;
+#endif
+   }
 }
