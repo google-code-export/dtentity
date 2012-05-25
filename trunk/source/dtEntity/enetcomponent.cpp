@@ -20,7 +20,7 @@
 
 #include <dtEntity/enetcomponent.h>
 
-#include <dtEntity/basemessages.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/mapcomponent.h>

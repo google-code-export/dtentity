@@ -71,4 +71,6 @@ namespace dtEntity
    */
    StringId DT_ENTITY_EXPORT SID(unsigned int hash);
 
+   unsigned int SIDToUInt(StringId);
+
 }

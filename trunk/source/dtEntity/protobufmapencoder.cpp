@@ -74,7 +74,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SerializeProperty(dtProtoBuf::Property& propertyobj, StringId propname, const Property& prop)
    {
-      propertyobj.set_property_name(propname);
+      propertyobj.set_property_name(SIDToUInt(propname));
       
       switch(prop.GetDataType())
       {
@@ -164,7 +164,7 @@ namespace dtEntity
          }
          break;
       }
-      case DataType::STRINGID:   propertyobj.set_value_stringid(prop.StringIdValue()); break;
+      case DataType::STRINGID:   propertyobj.set_value_stringid(SIDToUInt(prop.StringIdValue())); break;
       case DataType::UINT:       propertyobj.set_value_uint(prop.UIntValue()); break;
       case DataType::VEC2:       {
          dtProtoBuf::Vec2& v = *propertyobj.mutable_value_vec2();
@@ -220,7 +220,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SerializeComponent(dtProtoBuf::Component& componentobj, ComponentType ctype, const GroupProperty& props, const GroupProperty& defaults)
    {
-      componentobj.set_component_type(ctype);
+      componentobj.set_component_type(SIDToUInt(ctype));
       PropertyGroup::const_iterator i;
       for(i = props.Get().begin(); i != props.Get().end(); ++i)
       {
@@ -309,7 +309,7 @@ namespace dtEntity
    void SerializeEntitySystem(dtProtoBuf::EntitySystem& esobj, const EntitySystem* es)
    {
 
-      esobj.set_component_type(es->GetComponentType());
+      esobj.set_component_type(SIDToUInt(es->GetComponentType()));
 
       const PropertyGroup& p = es->Get();
 
@@ -351,7 +351,7 @@ namespace dtEntity
             Property* property = ParseProperty(propobj.value_array(i));
             if(property != NULL)
             {
-               p->Add(propobj.value_array(i).property_name(), property);
+               p->Add(SID(propobj.value_array(i).property_name()), property);
             }
          }
          return p;
@@ -393,7 +393,7 @@ namespace dtEntity
          }
          return new StringProperty(str);
       }
-      case dtProtoBuf::STRINGID: { return new StringIdProperty(propobj.value_stringid()); }
+      case dtProtoBuf::STRINGID: { return new StringIdProperty(SID(propobj.value_stringid())); }
       case dtProtoBuf::UINT:     { return new UIntProperty(propobj.value_uint()); }
       case dtProtoBuf::VEC2:     {
          const dtProtoBuf::Vec2& v = propobj.value_vec2();
@@ -426,6 +426,229 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool SetPropertyFrom(Property* prop, const dtProtoBuf::Property& propobj)
+   {
+      dtProtoBuf::PropertyType ptype = propobj.type();
+      switch(ptype)
+      {
+      case dtProtoBuf::ARRAY: {
+         if(prop->GetDataType() != DataType::ARRAY)
+         {
+            return false;
+         }
+
+         PropertyArray pa;
+         for(int i = 0; i < propobj.value_array_size(); ++i)
+         {
+            Property* property = ParseProperty(propobj.value_array(i));
+            if(property != NULL)
+            {
+               pa.push_back(property);
+            }
+         }
+         prop->SetArray(pa);
+         return true;
+      }
+      case dtProtoBuf::BOOL:
+      {
+         if(prop->GetDataType() != DataType::BOOL)
+         {
+            return false;
+         }
+         prop->SetBool(propobj.value_bool());
+         return true;
+      }
+      case dtProtoBuf::CHAR:
+      {
+         if(prop->GetDataType() != DataType::CHAR)
+         {
+            return false;
+         }
+         prop->SetChar(propobj.value_char());
+         return true;
+      }
+      case dtProtoBuf::DOUBLE:
+      {
+         if(prop->GetDataType() != DataType::DOUBLE)
+         {
+            return false;
+         }
+         prop->SetDouble(propobj.value_double());
+         return true;
+      }
+      case dtProtoBuf::FLOAT:
+      {
+         if(prop->GetDataType() != DataType::FLOAT)
+         {
+            return false;
+         }
+         prop->SetFloat(propobj.value_float());
+         return true;
+      }
+      case dtProtoBuf::GROUP:    {
+         if(prop->GetDataType() != DataType::GROUP)
+         {
+            return false;
+         }
+         PropertyGroup pg;
+
+         for(int i = 0; i < propobj.value_array_size(); ++i)
+         {
+            Property* property = ParseProperty(propobj.value_array(i));
+            if(property != NULL)
+            {
+               pg[SID(propobj.value_array(i).property_name())] = property;
+            }
+         }
+         prop->SetGroup(pg);
+         return true;
+      }
+      case dtProtoBuf::INT:
+      {
+         if(prop->GetDataType() != DataType::INT)
+         {
+            return false;
+         }
+         prop->SetInt(propobj.value_int());
+         return true;
+      }
+      case dtProtoBuf::MATRIX:   {
+
+         if(prop->GetDataType() != DataType::MATRIX)
+         {
+            return false;
+         }
+         const dtProtoBuf::Matrix& v = propobj.value_matrix();
+         osg::Matrix mat;
+         mat(0,0) = v.value_0();
+         mat(0,1) = v.value_1();
+         mat(0,2) = v.value_2();
+         mat(0,3) = v.value_3();
+         mat(1,0) = v.value_4();
+         mat(1,1) = v.value_5();
+         mat(1,2) = v.value_6();
+         mat(1,3) = v.value_7();
+         mat(2,0) = v.value_8();
+         mat(2,1) = v.value_9();
+         mat(2,2) = v.value_10();
+         mat(2,3) = v.value_11();
+         mat(3,0) = v.value_12();
+         mat(3,1) = v.value_13();
+         mat(3,2) = v.value_14();
+         mat(3,3) = v.value_15();
+         prop->SetMatrix(mat);
+      }
+
+
+      case dtProtoBuf::QUAT:     {
+         if(prop->GetDataType() != DataType::QUAT)
+         {
+            return false;
+         }
+         const dtProtoBuf::Quat& v = propobj.value_quat();
+
+         prop->SetQuat(osg::Quat(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return true;
+
+      }
+      case dtProtoBuf::STRING:   {
+         if(prop->GetDataType() != DataType::STRING)
+         {
+            return false;
+         }
+
+         std::string str = "";
+         if(propobj.has_value_string())
+         {
+            str = propobj.value_string();
+         }
+
+         prop->SetString(str);
+         return true;
+      }
+      case dtProtoBuf::STRINGID: {
+         if(prop->GetDataType() != DataType::STRINGID)
+         {
+            return false;
+         }
+         prop->SetStringId(SID(propobj.value_stringid()));
+         return true;
+      }
+      case dtProtoBuf::UINT:     {
+         if(prop->GetDataType() != DataType::UINT)
+         {
+            return false;
+         }
+         prop->SetUInt(propobj.value_uint());
+         return true;
+      }
+      case dtProtoBuf::VEC2:     {
+         if(prop->GetDataType() != DataType::VEC2)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec2& v = propobj.value_vec2();
+
+         prop->SetVec2(osg::Vec2(v.value_0(), v.value_1()));
+         return true;
+      }
+      case dtProtoBuf::VEC3:     {
+         if(prop->GetDataType() != DataType::VEC3)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec3& v = propobj.value_vec3();
+
+         prop->SetVec3(osg::Vec3(v.value_0(), v.value_1(), v.value_2()));
+         return true;
+      }
+      case dtProtoBuf::VEC4:     {
+         if(prop->GetDataType() != DataType::VEC4)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec4& v = propobj.value_vec4();
+
+         prop->SetVec4(osg::Vec4(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return true;
+      }
+      case dtProtoBuf::VEC2D:    {
+         if(prop->GetDataType() != DataType::VEC2D)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec2d& v = propobj.value_vec2d();
+
+         prop->SetVec2D(osg::Vec2d(v.value_0(), v.value_1()));
+         return true;
+      }
+      case dtProtoBuf::VEC3D:    {
+         if(prop->GetDataType() != DataType::VEC3D)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec3d& v = propobj.value_vec3d();
+
+         prop->SetVec3D(osg::Vec3d(v.value_0(), v.value_1(), v.value_2()));
+         return true;
+      }
+      case dtProtoBuf::VEC4D:    {
+         if(prop->GetDataType() != DataType::VEC4D)
+         {
+            return false;
+         }
+         const dtProtoBuf::Vec4d& v = propobj.value_vec4d();
+
+         prop->SetVec4D(osg::Vec4d(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return true;
+      }
+      default:
+         LOG_ERROR("Could not parse property, unknown type!");
+         return false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void AddComponentToSpawner(const dtProtoBuf::Component& compobj, Spawner& spawner)
    {
 
@@ -436,7 +659,7 @@ namespace dtEntity
          Property* property = ParseProperty(propobj);
          if(property != NULL)
          {
-            props.Add(propobj.type(), property);
+            props.Add(SID(propobj.type()), property);
          }
       }
    }
@@ -503,7 +726,7 @@ namespace dtEntity
    {
 
       Component* component;
-      ComponentType ctype = componentobj.component_type();
+      ComponentType ctype = SID(componentobj.component_type());
       bool found = em.GetComponent(entityId, ctype, component);
       if(!found)
       {
@@ -520,7 +743,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SetupComponent(EntityManager& em, const dtProtoBuf::Component& componentobj, EntityId entityId, const std::string& mapname)
    {
-      StringId componentType = componentobj.component_type();
+      StringId componentType = SID(componentobj.component_type());
 
       Component* component;
       bool found = em.GetComponent(entityId, componentType, component);
@@ -532,22 +755,21 @@ namespace dtEntity
       for(int i = 0; i < componentobj.property_size(); ++i)
       {
          const dtProtoBuf::Property& prop = componentobj.property(i);
-         Property* property = ParseProperty(prop);
-         if(property != NULL)
+         Property* toset = component->Get(SID(prop.property_name()));
+         if(toset == NULL)
          {
-            Property* toset = component->Get(prop.property_name());
-            if(toset == NULL)
+            LOG_WARNING("In Map " << mapname << ": Property " << GetStringFromSID(SID(prop.property_name()))
+           << " does not exist in component "
+           << GetStringFromSID(componentType));
+         }
+         else
+         {
+            bool success = SetPropertyFrom(toset, prop);
+            if(!success)
             {
-               LOG_WARNING("In Map " << mapname << ": Property " << GetStringFromSID(prop.property_name())
-              << " does not exist in component "
-              << GetStringFromSID(componentType));
+               LOG_ERROR("Property type mismatch!");
             }
-            else
-            {
-               toset->SetFrom(*property);
-               component->OnPropertyChanged(prop.property_name(), *toset);
-            }
-            delete property;
+            component->OnPropertyChanged(SID(prop.property_name()), *toset);
          }
       }
 
@@ -602,7 +824,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SetupEntitySystem(EntityManager& em, const dtProtoBuf::EntitySystem& esobj, const std::string& filename)
    {
-      StringId componentType = esobj.component_type();
+      StringId componentType = SID(esobj.component_type());
 
       if(!em.HasEntitySystem(componentType))
       {
@@ -619,21 +841,21 @@ namespace dtEntity
       for(int i = 0; i < esobj.property_size(); ++i)
       {
          const dtProtoBuf::Property& prop = esobj.property(i);
-         Property* property = ParseProperty(prop);
-         if(property != NULL)
+         Property* toset = es->Get(SID(prop.property_name()));
+         if(toset == NULL)
          {
-            Property* toset = es->Get(prop.property_name());
-            if(toset == NULL)
+            LOG_WARNING("In System " << filename << ": Property " << GetStringFromSID(SID(prop.property_name()))
+           << " does not exist in component "
+           << GetStringFromSID(componentType));
+         }
+         else
+         {
+            bool success = SetPropertyFrom(toset, prop);
+            if(!success)
             {
-               LOG_WARNING("Property " << GetStringFromSID(prop.property_name()) << " does not exist in entity system "
-                  << GetStringFromSID(componentType));
+               LOG_ERROR("Property type mismatch!");
             }
-            else
-            {
-               toset->SetFrom(*property);
-               es->OnPropertyChanged(prop.property_name(), *toset);
-            }
-            delete property;
+            es->OnPropertyChanged(SID(prop.property_name()), *toset);
          }
       }
 
@@ -864,7 +1086,7 @@ namespace dtEntity
    bool ProtoBufMapEncoder::EncodeMessage(const Message& m, std::iostream& stream)
    {
       dtProtoBuf::Message messageobj;
-      messageobj.set_message_type(m.GetType());
+      messageobj.set_message_type(SIDToUInt(m.GetType()));
       const PropertyGroup& props = m.Get();
       for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
       {
@@ -883,7 +1105,7 @@ namespace dtEntity
       }
 
       Message* msg;
-      bool success = MessageFactory::GetInstance().CreateMessage(messageobj.message_type(), msg);
+      bool success = MessageFactory::GetInstance().CreateMessage(SID(messageobj.message_type()), msg);
       if(!success)
       {
          LOG_ERROR("Message type not found!");
@@ -892,21 +1114,20 @@ namespace dtEntity
       for(int i = 0; i < messageobj.property_size(); ++i)
       {
          const dtProtoBuf::Property& prop = messageobj.property(i);
-         Property* property = ParseProperty(prop);
-         if(property != NULL)
+         Property* toset = msg->Get(SID(prop.property_name()));
+         if(toset == NULL)
          {
-            Property* toset = msg->Get(prop.property_name());
-            if(toset == NULL)
+            LOG_WARNING("Error decoding message : Property " << GetStringFromSID(SID(prop.property_name()))
+           << " does not exist in message "
+           << GetStringFromSID(SID(messageobj.message_type())) );
+         }
+         else
+         {
+            bool success = SetPropertyFrom(toset, prop);
+            if(!success)
             {
-               LOG_WARNING("Message property mismatch! Cannot decode message!");
-               delete property;
-               return NULL;
+               LOG_ERROR("Message Parsing: " << GetStringFromSID(SID(messageobj.message_type())) << " Property type mismatch!");
             }
-            else
-            {
-               toset->SetFrom(*property);
-            }
-            delete property;
          }
       }
       return msg;
