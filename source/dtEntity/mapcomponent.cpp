@@ -573,7 +573,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::SaveMap(const std::string& mappath)
    {
-      MapEncoder* enc = GetEncoderForScene(osgDB::getFileExtension(mappath));
+      MapEncoder* enc = GetEncoderForMap(osgDB::getFileExtension(mappath));
       if(!enc)
       {
          LOG_ERROR("Could not save map: Loader not found for extension " << osgDB::getFileExtension(mappath));
