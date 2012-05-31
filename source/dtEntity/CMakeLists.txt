@@ -84,7 +84,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemasks.h
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
-  ${HEADER_PATH}/osganimationcomponent.h  
+  ${HEADER_PATH}/osganimationcomponent.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
@@ -164,13 +164,13 @@ SET(DTENTITYLIBS      ${OPENSCENEGRAPH_LIBRARIES}
 
 
 IF(PROTOBUF_FOUND)
-	INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/gen)
-	LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/protobufmapencoder.h
-									gen/data.pb.h)
-	LIST(APPEND LIB_SOURCES		protobufmapencoder.cpp
-								gen/data.pb.cc)
-	LIST(APPEND DTENTITYLIBS   ${PROTOBUF_LIBRARIES})
+  INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/gen)
+  LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/protobufmapencoder.h
+                  gen/data.pb.h)
+  LIST(APPEND LIB_SOURCES		protobufmapencoder.cpp
+                gen/data.pb.cc)
+  LIST(APPEND DTENTITYLIBS   ${PROTOBUF_LIBRARIES})
 ENDIF(PROTOBUF_FOUND)
 
 IF(ENET_FOUND AND PROTOBUF_FOUND)
@@ -178,6 +178,11 @@ IF(ENET_FOUND AND PROTOBUF_FOUND)
   LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/enetcomponent.h)
   LIST(APPEND LIB_SOURCES	enetcomponent.cpp)
   LIST(APPEND DTENTITYLIBS ${ENET_LIBRARIES})
+
+   IF (WIN32)
+   LIST(APPEND DTENTITYLIBS ws2_32.lib winmm.lib)
+   ENDIF (WIN32)
+
 ENDIF(ENET_FOUND AND PROTOBUF_FOUND)
 
 
