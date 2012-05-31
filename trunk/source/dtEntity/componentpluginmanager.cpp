@@ -383,6 +383,10 @@ namespace dtEntity
             {
                LOG_ERROR("Could not cleanly remove entity system " << GetStringFromSID(ctype));
             }
+            else
+            {
+               delete es;
+            }
          }
       }
    }

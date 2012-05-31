@@ -63,8 +63,7 @@ namespace dtEntity
       /**
        * @return The type id of the component that this system handles
        */
-      virtual ComponentType GetComponentType() const { return StringId(); }
-
+      virtual ComponentType GetComponentType() const = 0;
       /**
        * @return If component class is derived from a base component type, give base
        *         type here

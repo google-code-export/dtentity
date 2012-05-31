@@ -351,7 +351,6 @@ namespace dtEntityRocket
             }
 
             dtEntity::EntityId id = j->first;
-            dtEntity::TransformComponent* tc;
             if(comp->mTransformComponent == NULL)
             {
                if(!GetEntityManager().GetComponent(id, comp->mTransformComponent, true))
@@ -374,7 +373,7 @@ namespace dtEntityRocket
             if(comp->GetHideWhenNormalPointsAway())
             {
                osg::Vec3 normal(0, 0, 1);
-               normal = tc->GetRotation() * normal;
+               normal = comp->mTransformComponent->GetRotation() * normal;
 
                osg::Vec4 camnormal = osg::Vec4(normal, 0) * matrix;
                if(camnormal[2] > 0)
