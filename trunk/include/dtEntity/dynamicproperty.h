@@ -28,6 +28,39 @@ namespace dtEntity
 {
 
    //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicBoolProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<bool, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<bool> GetValueCB;
+
+      DynamicBoolProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::BOOL; }
+
+      virtual bool BoolValue() const { return mGetValueCallback(); }
+      virtual void SetBool(bool v) { Set(v); }
+
+      virtual const std::string StringValue() const { BoolProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { BoolProperty p; p.SetString(v); Set(p.Get());}
+      bool Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new BoolProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.BoolValue() == Get(); }
+      void Set(bool v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.BoolValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT DynamicFloatProperty : public Property
    {
    public:
@@ -86,6 +119,39 @@ namespace dtEntity
       virtual bool operator==(const Property& other) const { return other.DoubleValue() == Get(); }
       void Set(double v) { mSetValueCallback(v); }
       virtual bool SetFrom(const Property& other) { Set(other.DoubleValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicIntProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<int, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<int> GetValueCB;
+
+      DynamicIntProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::INT; }
+
+      virtual int IntValue() const { return mGetValueCallback(); }
+      virtual void SetInt(int v) { Set(v); }
+
+      virtual const std::string StringValue() const { IntProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { IntProperty p; p.SetString(v); Set(p.Get());}
+      int Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new IntProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.IntValue() == Get(); }
+      void Set(int v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.IntValue()); return true; }
 
    private:
 
@@ -160,6 +226,73 @@ namespace dtEntity
    };
 
    //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicStringIdProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<StringId, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<StringId> GetValueCB;
+
+      DynamicStringIdProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::STRINGID; }
+
+      virtual StringId StringIdValue() const { return mGetValueCallback(); }
+      virtual void SetStringId(StringId v) { Set(v); }
+
+      virtual const std::string StringValue() const { StringIdProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { StringIdProperty p; p.SetString(v); Set(p.Get());}
+      StringId Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new StringIdProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.StringIdValue() == Get(); }
+      void Set(StringId v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.StringIdValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicVec2dProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1< const osg::Vec2d&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<osg::Vec2d> GetValueCB;
+
+      DynamicVec2dProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::VEC2D; }
+
+      virtual osg::Vec2f Vec2Value() const { return Get(); }
+      virtual void SetVec2(const osg::Vec2& v) { Set(v); }
+      virtual osg::Vec2d Vec2dValue() const { return Get(); }
+      virtual void SetVec2D(const osg::Vec2d& v) { Set(v); }
+      virtual const std::string StringValue() const { Vec2dProperty p(Get()); return p.StringValue(); }
+      osg::Vec2d Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new Vec2dProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.Vec2dValue() == Get(); }
+      void Set(const osg::Vec2d& v) { mSetValueCallback(v); }
+      virtual void SetString(const std::string& v) { Vec2dProperty p; p.SetString(v); Set(p.Get());}
+      virtual bool SetFrom(const Property& other) { Set(other.Vec2dValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT DynamicVec3dProperty : public Property
    {
    public:
@@ -186,6 +319,108 @@ namespace dtEntity
       void Set(const osg::Vec3d& v) { mSetValueCallback(v); }
       virtual void SetString(const std::string& v) { Vec3dProperty p; p.SetString(v); Set(p.Get());}
       virtual bool SetFrom(const Property& other) { Set(other.Vec3dValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicVec4dProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1< const osg::Vec4d&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<osg::Vec4d> GetValueCB;
+
+      DynamicVec4dProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::VEC4D; }
+
+      virtual osg::Vec4f Vec4Value() const { return Get(); }
+      virtual void SetVec4(const osg::Vec4& v) { Set(v); }
+      virtual osg::Vec4d Vec4dValue() const { return Get(); }
+      virtual void SetVec4D(const osg::Vec4d& v) { Set(v); }
+      virtual const std::string StringValue() const { Vec4dProperty p(Get()); return p.StringValue(); }
+      osg::Vec4d Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new Vec4dProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.Vec4dValue() == Get(); }
+      void Set(const osg::Vec4d& v) { mSetValueCallback(v); }
+      virtual void SetString(const std::string& v) { Vec4dProperty p; p.SetString(v); Set(p.Get());}
+      virtual bool SetFrom(const Property& other) { Set(other.Vec4dValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicVec2Property : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1< const osg::Vec2&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<osg::Vec2> GetValueCB;
+
+      DynamicVec2Property(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::VEC2; }
+
+      virtual osg::Vec2f Vec2Value() const { return Get(); }
+      virtual void SetVec2(const osg::Vec2& v) { Set(v); }
+      virtual osg::Vec2d Vec2dValue() const { return Get(); }
+      virtual void SetVec2D(const osg::Vec2d& v) { Set(v); }
+      virtual const std::string StringValue() const { Vec2Property p(Get()); return p.StringValue(); }
+      osg::Vec2 Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new Vec2Property(Get()); }
+      virtual bool operator==(const Property& other) const { return other.Vec2Value() == Get(); }
+      void Set(const osg::Vec2& v) { mSetValueCallback(v); }
+      virtual void SetString(const std::string& v) { Vec2Property p; p.SetString(v); Set(p.Get());}
+      virtual bool SetFrom(const Property& other) { Set(other.Vec2Value()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicVec3Property : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1< const osg::Vec3&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<osg::Vec3> GetValueCB;
+
+      DynamicVec3Property(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::VEC3; }
+
+      virtual osg::Vec3f Vec3Value() const { return Get(); }
+      virtual void SetVec3(const osg::Vec3& v) { Set(v); }
+      virtual osg::Vec3d Vec3dValue() const { return Get(); }
+      virtual void SetVec3D(const osg::Vec3d& v) { Set(v); }
+      virtual const std::string StringValue() const { Vec3Property p(Get()); return p.StringValue(); }
+      osg::Vec3 Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new Vec3Property(Get()); }
+      virtual bool operator==(const Property& other) const { return other.Vec3Value() == Get(); }
+      void Set(const osg::Vec3& v) { mSetValueCallback(v); }
+      virtual void SetString(const std::string& v) { Vec3Property p; p.SetString(v); Set(p.Get());}
+      virtual bool SetFrom(const Property& other) { Set(other.Vec3Value()); return true; }
 
    private:
 

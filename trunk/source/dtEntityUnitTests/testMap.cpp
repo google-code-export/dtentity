@@ -173,9 +173,11 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
 {
    std::string mapname = "TestData/testmap_generated.dtemap";
 
+   CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
+   std::string projectassets = getenv("DTENTITY_BASEASSETS");
+   std::string targetpath = projectassets + std::string("/") + mapname;
+
    {  
-      CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
-      std::string projectassets = getenv("DTENTITY_BASEASSETS");
       
       mMapSystem->AddEmptyMap(projectassets, mapname);
       dtEntity::Entity* entity;
@@ -198,7 +200,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       mapcomp->SetEntityName("TestEntityName");
       mapcomp->Finished();
       mMapSystem->AddToScene(entity->GetId());
-      mMapSystem->SaveMapAs(mapname, projectassets + std::string("/") + mapname);
+      mMapSystem->SaveMapAs(mapname, targetpath);
 
       mMapSystem->RemoveFromScene(entity->GetId());
       mEntityManager.KillEntity(entity->GetId());
@@ -228,15 +230,18 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
 
 
    }
+
+   std::remove(targetpath.c_str());
 }
 
 TEST_FIXTURE(MapFixture, SaveSpawner)
 {
    std::string mapname = "TestData/testmap_generated.dtemap";
-
+   CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
+   std::string projectassets = getenv("DTENTITY_BASEASSETS");
+   std::string targetpath = projectassets + std::string("/") + mapname;
+      
    {
-      CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
-      std::string projectassets = getenv("DTENTITY_BASEASSETS");
       mMapSystem->AddEmptyMap(projectassets, mapname);
 
       dtEntity::Spawner* spawner1 = new dtEntity::Spawner("TestSpawner1", mapname);
@@ -251,7 +256,7 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
 
       mMapSystem->AddSpawner(*spawner1);
 
-      mMapSystem->SaveMapAs(mapname, projectassets + std::string("/") + mapname);
+      mMapSystem->SaveMapAs(mapname, targetpath);
       mMapSystem->UnloadMap(mapname);
    }
    {
@@ -270,4 +275,5 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
       CHECK_EQUAL("StringPropValue1", props.Get(dtEntity::SID("StringProp1"))->StringValue());
       CHECK_EQUAL("StringPropValue2", props.Get(dtEntity::SID("StringProp2"))->StringValue());
    }
+   std::remove(targetpath.c_str());
 }
