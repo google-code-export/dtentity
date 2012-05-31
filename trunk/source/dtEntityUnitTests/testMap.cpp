@@ -39,6 +39,11 @@ struct MapFixture
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
 
+   ~MapFixture()
+   {
+      ComponentPluginManager::DestroyInstance();
+   }
+
    EntityManager mEntityManager;
    MapSystem* mMapSystem;
 };
@@ -168,9 +173,11 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
 {
    std::string mapname = "TestData/testmap_generated.dtemap";
 
-   {
-      assert(!osgDB::getDataFilePathList().empty());
-      mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(), mapname);
+   {  
+      CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
+      std::string projectassets = getenv("DTENTITY_BASEASSETS");
+      
+      mMapSystem->AddEmptyMap(projectassets, mapname);
       dtEntity::Entity* entity;
       mEntityManager.CreateEntity(entity);
       dtEntity::PositionAttitudeTransformComponent* transcomp;
@@ -191,10 +198,7 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       mapcomp->SetEntityName("TestEntityName");
       mapcomp->Finished();
       mMapSystem->AddToScene(entity->GetId());
-
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string path = paths.front() + std::string("/") + mapname;
-      mMapSystem->SaveMapAs(mapname, path);
+      mMapSystem->SaveMapAs(mapname, projectassets + std::string("/") + mapname);
 
       mMapSystem->RemoveFromScene(entity->GetId());
       mEntityManager.KillEntity(entity->GetId());
@@ -231,7 +235,9 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
    std::string mapname = "TestData/testmap_generated.dtemap";
 
    {
-      mMapSystem->AddEmptyMap(osgDB::getDataFilePathList().front(),mapname);
+      CHECK(getenv("DTENTITY_BASEASSETS") != NULL);   
+      std::string projectassets = getenv("DTENTITY_BASEASSETS");
+      mMapSystem->AddEmptyMap(projectassets, mapname);
 
       dtEntity::Spawner* spawner1 = new dtEntity::Spawner("TestSpawner1", mapname);
       spawner1->SetAddToSpawnerStore(true);
@@ -245,9 +251,7 @@ TEST_FIXTURE(MapFixture, SaveSpawner)
 
       mMapSystem->AddSpawner(*spawner1);
 
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string path = paths.front() + std::string("/") + mapname;
-      mMapSystem->SaveMapAs(mapname, path);
+      mMapSystem->SaveMapAs(mapname, projectassets + std::string("/") + mapname);
       mMapSystem->UnloadMap(mapname);
    }
    {
