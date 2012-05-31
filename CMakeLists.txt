@@ -7,11 +7,13 @@ IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX  "d")
 ENDIF (WIN32)
 
+# define _DEBUG as set on debug builds on linux
 IF(UNIX AND NOT WIN32)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 ENDIF()
 
+# append "64" to lib name if built for 64 bits
 IF(CMAKE_SIZEOF_VOID_P MATCHES "8")
     SET(SYSTEM_ARCHITECTURE "64bits")
     IF(UNIX AND NOT WIN32 AND NOT APPLE AND NOT DEFINED LIB_POSTFIX)
@@ -28,7 +30,7 @@ ELSE(CMAKE_SIZEOF_VOID_P MATCHES "8")
 ENDIF(CMAKE_SIZEOF_VOID_P MATCHES "8")
 MARK_AS_ADVANCED(LIB_POSTFIX)
 
-
+# where CMake should look for find modules
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/source/osgLibRocket/cmake;${CMAKE_MODULE_PATH}")
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -41,6 +43,7 @@ IF(WIN32)
   FIND_PACKAGE(DTENTITY_EXT_DEP REQUIRED)
 ENDIF(WIN32)
 
+# OSG is a required dependency
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
 FIND_PACKAGE(OpenThreads)
 
@@ -55,7 +58,7 @@ ELSE ()
     SET(DTENTITY_LIBS_DYNAMIC_OR_STATIC "SHARED")
 ENDIF()
 
-# all plugins link against these libraries
+# all plugins link against these libs
 SET(TARGET_COMMON_LIBRARIES
     ${OPENTHREADS_LIBRARIES}
     ${OPENSCENEGRAPH_LIBRARIES}
@@ -70,6 +73,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   ADD_DEFINITIONS(${CMAKE_CXX_FLAGS} "-Wno-deprecated")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
+#apple support
 if(APPLE) 
     if(NOT DTENTITY_CONFIG_HAS_BEEN_RUN_BEFORE)
         if ("${CMAKE_OSX_SYSROOT}" MATCHES ".*/Developer/SDKs/MacOSX10.7.sdk") 
@@ -80,8 +84,10 @@ if(APPLE)
      endif()
 endif()
 
+#should unit tests be built?
 OPTION(BUILD_TESTS "Build unit tests" OFF)
 
+# do a preprocessing step to replace all calls to function dtEntity::SID with the result of that function?
 OPTION(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR "Use a preprocessor to replace calls to dtEntity::SID with result of that operation (EXPERIMENTAL)" OFF)
 IF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
   add_executable(HashSids source/hash_sids/hash_sids.cpp source/dtEntity/hash.cpp)
@@ -91,6 +97,7 @@ ENDIF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
 ADD_SUBDIRECTORY(ext)
 ADD_SUBDIRECTORY(source)
 
+#should examples be built?
 OPTION(BUILD_EXAMPLES "Build examples" OFF)
 IF(BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(examples)
