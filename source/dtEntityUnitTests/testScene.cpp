@@ -40,6 +40,11 @@ struct SceneFixture
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
 
+   ~SceneFixture()
+   {
+      ComponentPluginManager::DestroyInstance();
+   }
+
    dtEntity::EntityManager mEntityManager;
    dtEntity::MapSystem* mMapSystem;
 };
