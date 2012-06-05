@@ -88,7 +88,6 @@ namespace dtEntity
 
       virtual void OnAddedToEntity(Entity& entity);
       virtual void OnRemovedFromEntity(Entity& entity);
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
 
       osg::Camera* GetCamera() const;
 
@@ -96,8 +95,8 @@ namespace dtEntity
 
       void FetchCamera();
 
-      void SetContextId(unsigned int id);
-      unsigned int GetContextId() const { return mContextId.Get(); }
+      void SetContextId(int id);
+      int GetContextId() const { return mContextIdVal; }
 
       void SetLayerAttachPoint(StringId id) { mLayerAttachPoint.Set(id); }
       StringId GetLayerAttachPoint() const { return mLayerAttachPoint.Get(); }
@@ -106,7 +105,7 @@ namespace dtEntity
 		StringId GetProjectionMode() const { return mProjectionMode.Get(); }
 
 		void SetCullingMode(StringId);
-		StringId GetCullingMode() const { return mCullingMode.Get(); }
+		StringId GetCullingMode() const { return mCullingModeVal; }
 
 	  /** Set up vector of camera. Call UpdateViewMatrix to apply changes. */
       void SetUp(const osg::Vec3d&);
@@ -178,10 +177,12 @@ namespace dtEntity
 
 
       
-      IntProperty mContextId;
+      DynamicIntProperty mContextId;
+      int mContextIdVal;
       StringIdProperty mLayerAttachPoint;
 
-      StringIdProperty mCullingMode;
+      DynamicStringIdProperty mCullingMode;
+      StringId mCullingModeVal;
       DynamicDoubleProperty mFieldOfView;
       DynamicDoubleProperty mAspectRatio;
       DynamicDoubleProperty mNearClip;

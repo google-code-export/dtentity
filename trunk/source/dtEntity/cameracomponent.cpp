@@ -72,6 +72,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
       : BaseClass(new osg::Camera())
+      , mContextId(
+           DynamicIntProperty::SetValueCB(this, &CameraComponent::SetContextId),
+           DynamicIntProperty::GetValueCB(this, &CameraComponent::GetContextId)
+        )
       , mFieldOfView(
            DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFieldOfView),
            DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFieldOfView)
@@ -99,6 +103,11 @@ namespace dtEntity
       , mCullMask (
            DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
            DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
+        )
+      , mContextIdVal(-1)
+      , mCullingMode (
+           DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
+           DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
         )
    {
 
@@ -143,8 +152,6 @@ namespace dtEntity
       mOrthoZNear.Set(-10000);
       mOrthoZFar.Set(10000);
 
-      mContextId.Set(-1);
-
       SetCullingMode(NoAutoNearFarCullingId);
       GetCamera()->setAllowEventFocus(true);
    }
@@ -172,9 +179,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::SetContextId(unsigned int id)
+   void CameraComponent::SetContextId(int id)
    {
-      mContextId.Set(id);
+      mContextIdVal = id;
       TryAssignContext();
    }
 
@@ -395,32 +402,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == PositionId || propname == EyeDirectionId || propname == UpId)
-      {
-         return;
-      }
-      if(propname == ContextIdId)
-      {
-         TryAssignContext();
-      }
-      else if(propname == CullingModeId)
-      {
-         SetCullingMode(prop.StringIdValue());
-      }
-      else if(propname == OrthoLeftId || propname == OrthoRightId ||
-         propname == OrthoBottomId || propname == OrthoTopId ||
-         propname == OrthoZNearId || propname == OrthoZFarId ||
-         propname == ProjectionModeId
-      )
-      {
-         UpdateProjectionMatrix();
-      }
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetClearColor(const osg::Vec4& v)
    {       
       GetCamera()->setClearColor(v);
@@ -442,7 +423,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetCullingMode(StringId v)
    {
-      mCullingMode.Set(v);
+      mCullingModeVal = v;
       if(v == NoAutoNearFarCullingId)
       {
          GetCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);

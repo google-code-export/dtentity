@@ -122,6 +122,10 @@ namespace dtEntity
    ApplicationSystem::ApplicationSystem(EntityManager& em)
       : EntitySystem(em)
       , mImpl(new ApplicationImpl())
+      , mTimeScale(
+           DynamicFloatProperty::SetValueCB(this, &ApplicationSystem::SetTimeScale),
+           DynamicFloatProperty::GetValueCB(this, &ApplicationSystem::GetTimeScale)
+        )
    {
 
       // generate a unique ID
@@ -161,15 +165,6 @@ namespace dtEntity
    ApplicationSystem::~ApplicationSystem()
    {
       delete mImpl;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::OnPropertyChanged(StringId propname, Property &prop)
-   {
-      if(propname == TimeScaleId)
-      {
-         SetTimeScale(mTimeScale.Get());
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -263,13 +258,12 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    float ApplicationSystem::GetTimeScale() const
    {
-      return mTimeScale.Get();
+      return mImpl->mUpdateCallback->mTimeScale;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetTimeScale(float v)
    {
-      mTimeScale.Set(v);
       mImpl->mUpdateCallback->mTimeScale = v;
    }
 

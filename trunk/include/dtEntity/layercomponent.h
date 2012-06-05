@@ -20,9 +20,10 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
-#include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
+#include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/dynamicproperty.h>
+#include <dtEntity/export.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
 
@@ -66,8 +67,7 @@ namespace dtEntity
       ComponentType GetAttachedComponent() const;
 
       virtual void OnAddedToEntity(Entity &entity);
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
-
+      
       void OnAddedToScene();
       void OnRemovedFromScene();
 
@@ -93,7 +93,6 @@ namespace dtEntity
        */
       bool IsAddedToScene() const { return mAddedToScene; }
 
-
       /**
        * Get OSG node of attached component
        */
@@ -101,12 +100,12 @@ namespace dtEntity
 
    private:
 
-      StringIdProperty mLayerProperty;
-      StringIdProperty mAttachedComponent;
-      StringId mCurrentlyAttachedComponent;
-      StringId mAttachPoint;
-      BoolProperty mVisible;
-      bool  mCurrentlyVisible;
+      DynamicStringIdProperty mLayer;
+      StringId mLayerVal;
+      DynamicStringIdProperty mAttachedComponent;
+      StringId mAttachedComponentVal;
+      DynamicBoolProperty mVisible;
+      bool mVisibleVal;
       bool mAddedToScene;
       Entity* mEntity;
    };
