@@ -20,9 +20,10 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/component.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/export.h>
 #include <dtEntity/entitysystem.h>
-#include <dtEntity/component.h>
 #include <dtEntity/message.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
@@ -70,8 +71,6 @@ namespace dtEntity
 
       ApplicationSystem(EntityManager& em);
       ~ApplicationSystem();
-
-      void OnPropertyChanged(StringId propname, Property &prop);
 
       ComponentType GetComponentType() const { return TYPE; }
 
@@ -125,7 +124,6 @@ namespace dtEntity
 
       void InstallUpdateCallback(osg::Node*);
 
-
       void SetWindowManager(WindowManager* wm);
       WindowManager* GetWindowManager() const;
 
@@ -160,7 +158,7 @@ namespace dtEntity
 
       ApplicationSystemInfo mApplicationSystemInfo;
 
-      FloatProperty mTimeScale;
+      DynamicFloatProperty mTimeScale;
       ArrayProperty mArgvArray;
 
       ApplicationImpl* mImpl;
