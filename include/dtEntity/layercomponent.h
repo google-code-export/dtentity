@@ -122,6 +122,7 @@ namespace dtEntity
       static const ComponentType TYPE;
 
       LayerSystem(EntityManager& em);
+      ~LayerSystem();
 
       void OnEnterWorld(const Message&);
       void OnLeaveWorld(const Message&);

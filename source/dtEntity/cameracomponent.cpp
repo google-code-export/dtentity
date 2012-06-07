@@ -542,6 +542,12 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   CameraSystem::~CameraSystem()
+   {
+      GetEntityManager().UnregisterForMessages(WindowCreatedMessage::TYPE, mWindowCreatedFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraSystem::OnWindowCreated(const Message& m)
    {
       const WindowCreatedMessage& msg = static_cast<const WindowCreatedMessage&>(m);

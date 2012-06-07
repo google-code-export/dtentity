@@ -392,6 +392,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   LayerSystem::~LayerSystem()
+   {
+      GetEntityManager().UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
+
+      GetEntityManager().UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
+
+      AddScriptedMethod("addVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
+      AddScriptedMethod("removeVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
+      AddScriptedMethod("removeAllBoundingBoxes", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveAllBoundingBoxes));
+      AddScriptedMethod("getBoundingSphere", ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void LayerSystem::OnEnterWorld(const Message& m)
    {
       const EntityAddedToSceneMessage& msg = static_cast<const EntityAddedToSceneMessage&>(m);

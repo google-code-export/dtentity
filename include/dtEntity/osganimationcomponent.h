@@ -85,6 +85,8 @@ namespace dtEntity
       static const StringId EnabledId;
 
       OSGAnimationSystem(EntityManager& em);
+      ~OSGAnimationSystem();
+
       void OnMeshChanged(const Message&);
       virtual void OnPropertyChanged(StringId propname, Property& prop);
 

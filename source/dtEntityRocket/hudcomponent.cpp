@@ -262,6 +262,8 @@ namespace dtEntityRocket
    void HUDSystem::OnRemoveFromEntityManager(dtEntity::EntityManager &em)
    {
       GetEntityManager().UnregisterForMessages(dtEntity::EndOfFrameMessage::TYPE, mTickFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::VisibilityChangedMessage::TYPE, mVisibilityChangedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::MeshChangedMessage::TYPE, mMeshChangedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////

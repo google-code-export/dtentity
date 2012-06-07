@@ -164,7 +164,13 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::~ApplicationSystem()
    {
+      GetEntityManager().UnregisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor);
+      GetEntityManager().UnregisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor);
+      GetEntityManager().UnregisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor);
+      GetEntityManager().UnregisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor);
+
       delete mImpl;
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
