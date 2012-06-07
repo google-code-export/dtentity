@@ -225,7 +225,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::OnResetSystem(const dtEntity::Message& msg)
    {
-      UnregisterJavaScriptFromMessages(this);
       SetupContext();
    }
 
