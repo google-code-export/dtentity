@@ -249,6 +249,8 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::closeImplementation()
    {
+     /*
+      QMetaObject::invokeMethod(this, "ApplyClose");
       if(this->thread() != QThread::currentThread())
       {
          QMetaObject::invokeMethod(this, "ApplyClose", Qt::BlockingQueuedConnection);
@@ -256,7 +258,7 @@ namespace dtEntityQtWidgets
       else
       {
          ApplyClose();
-      }
+      }*/
    }
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::ApplyClose()
@@ -272,7 +274,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    bool OSGGraphicsWindowQt::makeCurrentImplementation()
    {
-      if (mQWidget != NULL)
+      if (mQWidget != NULL && mQWidget->isValid())
       {
          mQWidget->makeCurrent();
          return true;

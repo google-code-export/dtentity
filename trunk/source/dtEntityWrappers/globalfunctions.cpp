@@ -142,10 +142,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RegisterGlobalFunctions(ScriptSystem* ss)
+   void RegisterGlobalFunctions(ScriptSystem* ss, Handle<Context> context)
    {
-      HandleScope handle_scope;
-      Handle<Context> context = ss->GetGlobalContext();
+      //HandleScope handle_scope;
       Context::Scope context_scope(context);
       context->Global()->Set(String::New("findDataFile"), FunctionTemplate::New(FindDataFile)->GetFunction());
       context->Global()->Set(String::New("include"), FunctionTemplate::New(Include)->GetFunction());
