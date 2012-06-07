@@ -46,14 +46,16 @@
 			<vec4property name="Position" x="-1.0000000000" y="1.0000000000" z="1.0000000000" w="0.0000000000"/>
 		</component>
 		<component type="Map">
-			<stringproperty name="EntityName">LightSource</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
 			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">Light</stringproperty>
 			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="0.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 	</entity>
 	<entity>
@@ -63,14 +65,17 @@
 		<component type="Map">
 			<stringproperty name="EntityName">Terrain</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 				<stringproperty name="1">All</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh">
 			<boolproperty name="IsTerrain" value="true"/>
@@ -84,6 +89,7 @@
 		<component type="Map">
 			<stringproperty name="EntityName">MyEntity</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">MyEntity</stringproperty>
 		</component>
 		<component type="Particle">
@@ -164,11 +170,13 @@
 			<vec2property name="SizeRange" x="1.0000000000" y="2.0000000000"/>
 		</component>
 		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<arrayproperty name="Children">
 				<stringproperty name="0">StaticMesh</stringproperty>
 				<stringproperty name="1">Particle</stringproperty>
 			</arrayproperty>
 			<vec3property name="Position" x="-3.8445142129" y="13.4544641271" z="-5.0817972993"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
 		</component>
 		<component type="StaticMesh"/>
 	</entity>
@@ -183,6 +191,7 @@
 		<component type="Map">
 			<stringproperty name="EntityName">SkyBox</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">SkyBox</stringproperty>
 		</component>
 		<component type="Shadow">
@@ -229,12 +238,18 @@
 			<doubleproperty name="AspectRatio" value="1.0709504685"/>
 			<vec4property name="ClearColor" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<intproperty name="ContextId" value="0"/>
+			<uintproperty name="CullMask" value="32"/>
 			<vec3property name="EyeDirection" x="0.8095554674" y="0.5433955807" z="-0.2221287645"/>
+			<doubleproperty name="FarClip" value="100000.0000003804"/>
+			<doubleproperty name="FieldOfView" value="45.0000000000"/>
+			<floatproperty name="LODScale" value="1.0000000000"/>
+			<doubleproperty name="NearClip" value="1.0000000000"/>
 			<vec3property name="Position" x="-79.8191609224" y="-42.7166744491" z="-5.9261016235"/>
 		</component>
 		<component type="Map">
 			<stringproperty name="EntityName">cam_0</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
 			<stringproperty name="UniqueId">cam_0</stringproperty>
 		</component>
 	</entity>

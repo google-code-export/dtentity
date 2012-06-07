@@ -23,6 +23,7 @@
 #include "eventlistener.h"
 #include "rocketcomponent.h"
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <Rocket/Core/Element.h>
 
 
@@ -32,7 +33,7 @@ using namespace dtEntityWrappers;
 namespace dtEntityRocket
 {
 
-   Persistent<FunctionTemplate> s_elementTemplate;
+   dtEntity::StringId s_elementWrapper = dtEntity::SID("ElementWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELToString(const Arguments& args)
@@ -55,7 +56,7 @@ namespace dtEntityRocket
          in_capture_phase = true;
       }
       EventListener* el = new EventListener(func);
-      Rocket::Core::Element* v = UnwrapElement(args.Holder());
+      Rocket::Core::Element* v = UnwrapElement(args.This());
       if(v == NULL)
       {
          return ThrowError("Not a valid Rocket Element!");
@@ -78,7 +79,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELAppendChild(const Arguments& args)
    {  
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());  
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       Rocket::Core::Element* child = UnwrapElement(args[0]);  
       if(!child) 
       {
@@ -96,14 +97,14 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetAddress(const Arguments& args)
    {
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       return String::New(element->GetAddress(args[0]->BooleanValue()).CString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELRemoveChild(const Arguments& args)
    {
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       Rocket::Core::Element* child = UnwrapElement(args[0]);
       if(!child)
       {
@@ -119,7 +120,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: getAttribute(string name)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       
       std::string name = ToStdString(args[0]);
       Rocket::Core::Variant* var = element->GetAttribute(name.c_str());
@@ -133,7 +134,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: getElementById(string name)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       
       Rocket::Core::Element* el = element->GetElementById(ToRocketString(args[0]));
       if(el == NULL)
@@ -142,14 +143,14 @@ namespace dtEntityRocket
       }
       else
       {
-         return WrapElement(args.Holder()->CreationContext(), el);
+         return WrapElement(args.This()->CreationContext(), el);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetId(const Arguments& args)
    {
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       return String::New(element->GetId().CString());
    }
 
@@ -160,7 +161,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: setId(string id)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       element->SetId(ToStdString(args[0]).c_str());
       return Undefined();
    }
@@ -168,7 +169,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetInnerRML(const Arguments& args)
    {  
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());  
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       Rocket::Core::String s;
       element->GetInnerRML(s);
       return String::New(s.CString());
@@ -177,8 +178,8 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELGetParentNode(const Arguments& args)
    {  
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());  
-      return WrapElement(args.Holder()->CreationContext(), element->GetParentNode());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
+      return WrapElement(args.This()->CreationContext(), element->GetParentNode());
    }
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +189,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: getProperty(string name)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       
       std::string name = ToStdString(args[0]);
 		const Rocket::Core::Property* prop = element->GetProperty(name.c_str());
@@ -203,7 +204,7 @@ namespace dtEntityRocket
    Handle<Value> ELUpdate(const Arguments& args)
    {
 
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       element->Update();
       return Undefined();
    }
@@ -215,7 +216,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: setAttribute(string name, value)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       
       std::string name = ToStdString(args[0]);
 
@@ -231,7 +232,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: setInnerRML(string val)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       std::string rml = ToStdString(args[0]);
       element->SetInnerRML(rml.c_str());
       return Undefined();
@@ -245,7 +246,7 @@ namespace dtEntityRocket
       {
          return ThrowError("Usage: setProperty(string name, value)");
       }
-      Rocket::Core::Element* element = UnwrapElement(args.Holder());
+      Rocket::Core::Element* element = UnwrapElement(args.This());
       
       std::string name = ToStdString(args[0]);
 		std::string val = ToStdString(args[1]);
@@ -279,7 +280,7 @@ namespace dtEntityRocket
             if(!ext.IsEmpty())
             {
                EventListener* el = static_cast<EventListener*>(ext->Value());
-               Rocket::Core::Element* v = UnwrapElement(args.Holder());
+               Rocket::Core::Element* v = UnwrapElement(args.This());
                v->RemoveEventListener(eventname.c_str(), el, in_capture_phase);
                return Undefined();
             }
@@ -448,12 +449,13 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    void CreateTemplate()
    {
-      if(s_elementTemplate.IsEmpty())
+      HandleScope scope;
+
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_elementWrapper);
+      if(templt.IsEmpty())
       {
-        v8::HandleScope handle_scope;
-        
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_elementTemplate = Persistent<FunctionTemplate>::New(templt);
+        templt = FunctionTemplate::New();
+
         templt->SetClassName(String::New("ElementDocument"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -485,6 +487,9 @@ namespace dtEntityRocket
            ELNamedPropertyDeleter,
            ELNamedPropertyEnumerator
         );
+
+        GetScriptSystem()->SetTemplateBySID(s_elementWrapper, templt);
+
       }
    }
 
@@ -492,7 +497,7 @@ namespace dtEntityRocket
    Handle<FunctionTemplate> GetElementTemplate()
    {
       CreateTemplate();
-      return s_elementTemplate;
+      return GetScriptSystem()->GetTemplateBySID(s_elementWrapper);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -502,7 +507,8 @@ namespace dtEntityRocket
       v8::Context::Scope context_scope(context);
 
       CreateTemplate();
-      Local<Object> instance = s_elementTemplate->GetFunction()->NewInstance();
+
+      Local<Object> instance = GetScriptSystem()->GetTemplateBySID(s_elementWrapper)->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       return handle_scope.Close(instance);
    }

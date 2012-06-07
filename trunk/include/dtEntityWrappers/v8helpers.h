@@ -78,6 +78,8 @@
 
 namespace dtEntityWrappers
 {
+   class ScriptSystem;
+   ScriptSystem* GetScriptSystem();
 
    inline v8::Handle<v8::Value> BYTESTORAGE_TO_JS(v8::Handle<v8::Context> context, ByteStorage * bs) {
       using namespace v8;

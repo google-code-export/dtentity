@@ -44,7 +44,7 @@ using namespace v8;
 namespace dtEntityWrappers
 {
 
-   Persistent<FunctionTemplate> s_entityManagerTemplate;
+   dtEntity::StringId s_entityManagerWrapper = dtEntity::SID("EntityManagerWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    class StringCache
@@ -152,14 +152,14 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMCloneEntity(const v8::Arguments& args)
    {
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       return Boolean::New(em->CloneEntity(args[0]->Uint32Value(), args[1]->Uint32Value()));
    }
    
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMCreateEntity(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       dtEntity::Entity* entity;
       bool success = em->CreateEntity(entity);
@@ -170,7 +170,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMGetEntityIds(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       std::vector<dtEntity::EntityId> ids;
       em->GetEntityIds(ids);
@@ -188,7 +188,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMHasEntity(const v8::Arguments& args)
    {
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       return Boolean::New(em->HasEntity(args[0]->Uint32Value()));
    }
 
@@ -219,7 +219,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMEmitMessage(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       std::string namestr = ToStdString(args[0]);
       dtEntity::StringId pname = dtEntity::SIDHash(namestr);
 
@@ -239,7 +239,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMEnqueueMessage(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       
       dtEntity::StringId pname = dtEntity::SIDHash(ToStdString(args[0]));
 
@@ -260,7 +260,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMKillEntity(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       bool success = em->KillEntity(args[0]->Int32Value());
       return success ? True() : False();
    }
@@ -287,7 +287,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMAddToScene(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       if(!args[0]->IsInt32()) return ThrowError("usage: addToScene(int32 entityId)");
       bool success = em->AddToScene(args[0]->Int32Value());
       return success ? True() : False();
@@ -314,10 +314,10 @@ namespace dtEntityWrappers
       
       MessageFunctorHolder* fh = new MessageFunctorHolder(dtEntity::SIDHash(msgname), func);
       
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       MessageFunctorStorage* storage;
-      GetInternal(args.Holder(), 1, storage);
+      GetInternal(args.This(), 1, storage);
       storage->mHolders.push_back(fh);
 
       unsigned int options = 0;
@@ -340,10 +340,10 @@ namespace dtEntityWrappers
       dtEntity::StringId msgnamesid = dtEntity::SIDHash(msgname);
       Handle<Function> func = Handle<Function>::Cast(args[1]);
       
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       MessageFunctorStorage* storage;
-      GetInternal(args.Holder(), 1, storage);
+      GetInternal(args.This(), 1, storage);
       std::list<MessageFunctorHolder*>::iterator i;
       for(i = storage->mHolders.begin(); i != storage->mHolders.end(); ++i)
       {
@@ -360,33 +360,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UnregisterJavaScriptFromMessages(ScriptSystem* scriptSystem)
-   {  
-      HandleScope scope;
-
-      Handle<Context> context = scriptSystem->GetGlobalContext();
-      Context::Scope context_scope(context);
-      Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
-
-      dtEntity::EntityManager* em = UnwrapEntityManager(emh);
-
-      MessageFunctorStorage* storage;
-      GetInternal(emh, 1, storage);
-      std::list<MessageFunctorHolder*>::iterator i;
-      for(i = storage->mHolders.begin(); i != storage->mHolders.end(); ++i)
-      {
-         MessageFunctorHolder* holder = *i;
-          
-         em->UnregisterForMessages(holder->mMessageType, holder->mFunctor);
-         delete holder;
-      }
-      storage->mHolders.clear();
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMRemoveFromScene(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       if(!args[0]->IsInt32()) return ThrowError("usage: removeFromScene(int32 entityId)");
       bool success = em->RemoveFromScene(args[0]->Int32Value());
       return success ? True() : False();
@@ -395,7 +371,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMHasEntitySystem(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       if(!args[0]->IsString()) return ThrowError("usage: hasEntitySystem(string)");
       dtEntity::ComponentType t = dtEntity::SIDHash(ToStdString(args[0]));
       if(em->HasEntitySystem(t))
@@ -420,7 +396,7 @@ namespace dtEntityWrappers
       {
          dtEntity::EntitySystem* es = UnwrapEntitySystem(args[0]);
 
-         dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+         dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
          em->AddEntitySystem(*es);
          return Undefined();
       }
@@ -435,7 +411,7 @@ namespace dtEntityWrappers
          obj->Has(String::New("getEntitiesInSystem"))
       )
       {
-         dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+         dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
          std::string compType = ToStdString(obj->Get(String::New("componentType")));
          dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SID(compType);
          EntitySystemJS* es = new EntitySystemJS(ct, *em, obj);
@@ -450,7 +426,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EMGetEntitySystem(const v8::Arguments& args)
    {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.Holder());
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       if(!args[0]->IsString()) return ThrowError("usage: getEntitySystem(string)");
       std::string str = ToStdString(args[0]);
       dtEntity::ComponentType t = dtEntity::SIDHash(str);
@@ -494,14 +470,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapEntityManager(ScriptSystem* ss, dtEntity::EntityManager* v)
    {
+      s_stringCache = StringCache();
 
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(ss->GetGlobalContext());
 
-      if(s_entityManagerTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_entityManagerWrapper);
+
+      if(templt.IsEmpty())
       {
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_entityManagerTemplate = Persistent<FunctionTemplate>::New(templt);
+        templt = FunctionTemplate::New();
         templt->SetClassName(String::New("EntityManager"));
         templt->InstanceTemplate()->SetInternalFieldCount(2);
 
@@ -523,8 +500,11 @@ namespace dtEntityWrappers
         proto->Set("unregisterForMessages", FunctionTemplate::New(EMUnregisterForMessages));
         proto->Set("removeFromScene", FunctionTemplate::New(EMRemoveFromScene));
         proto->Set("toString", FunctionTemplate::New(EMToString));
+
+        GetScriptSystem()->SetTemplateBySID(s_entityManagerWrapper, templt);
+
       }
-      Local<Object> instance = s_entityManagerTemplate->GetFunction()->NewInstance();
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       instance->SetInternalField(1, External::New(new MessageFunctorStorage()));
 

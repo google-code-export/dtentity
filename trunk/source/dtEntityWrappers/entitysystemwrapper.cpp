@@ -37,11 +37,11 @@ using namespace v8;
 
 namespace dtEntityWrappers
 {
-
-   Persistent<FunctionTemplate> s_entitySystemTemplate;
    
    typedef std::map<dtEntity::ComponentType, Persistent<FunctionTemplate> > SubWrapperMap;
    SubWrapperMap s_subWrapperMap;
+
+   dtEntity::StringId s_entitySystemWrapper = dtEntity::SID("EntitySystemWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESToString(const Arguments& args)
@@ -52,7 +52,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESHasComponent(const Arguments& args)
    {
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       
       if(!args[0]->IsUint32())
       {
@@ -76,8 +76,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESGetComponent(const Arguments& args)
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      ScriptSystem* ss = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       if(!args[0]->IsUint32())
       {
          return ThrowError("Usage: getComponent(int entityid, [bool getDerived])");
@@ -88,7 +88,7 @@ namespace dtEntityWrappers
       bool found = es->GetEntityManager().GetComponent(eid, es->GetComponentType(), comp, args[1]->BooleanValue());
       if(found)
       {
-         return WrapComponent(args.Holder(), ss, eid, comp);
+         return WrapComponent(args.This(), ss, eid, comp);
       }
       else
       {
@@ -100,7 +100,7 @@ namespace dtEntityWrappers
    Handle<Value> ESGetAllComponents(const Arguments& args)
    {
       ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       std::list<dtEntity::EntityId> eids;
       es->GetEntitiesInSystem(eids);
@@ -115,7 +115,7 @@ namespace dtEntityWrappers
          dtEntity::Component* comp;
          if(es->GetComponent(eid, comp))
          {
-            arr->Set(Integer::New(count++), WrapComponent(args.Holder(), ss, eid, comp));
+            arr->Set(Integer::New(count++), WrapComponent(args.This(), ss, eid, comp));
          }
       }
       return scope.Close(arr);
@@ -124,7 +124,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESGetEntitiesInSystem(const Arguments& args)
    {
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       std::list<dtEntity::EntityId> eids;
       es->GetEntitiesInSystem(eids);
@@ -143,7 +143,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESGetComponentType(const Arguments& args)
    {
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       return ToJSString(dtEntity::GetStringFromSID(es->GetComponentType()));
    }
 
@@ -152,7 +152,7 @@ namespace dtEntityWrappers
    {
       ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
 
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       if(!args[0]->IsUint32())
       {
          return ThrowError("Usage: createComponent(int)");
@@ -162,7 +162,7 @@ namespace dtEntityWrappers
       dtEntity::EntityId eid = args[0]->Uint32Value();
       if(es->CreateComponent(eid, component))
       {
-         return WrapComponent(args.Holder(), ss, eid, component);
+         return WrapComponent(args.This(), ss, eid, component);
       }
       else
       {
@@ -173,7 +173,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESDeleteComponent(const Arguments& args)
    {
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       if(!args[0]->IsUint32())
       {
@@ -193,28 +193,28 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESStoreComponentToMap(const Arguments& args)
    {
-      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
       return Boolean::New(sys->StoreComponentToMap((dtEntity::EntityId)args[0]->Uint32Value()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESAllowComponentCreationBySpawner(const Arguments& args)
    {
-      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
       return Boolean::New(sys->AllowComponentCreationBySpawner());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESStorePropertiesToScene(const Arguments& args)
    {
-      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
       return Boolean::New(sys->StorePropertiesToScene());
    }
    
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESFinished(const Arguments& args)
    {
-      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       es->Finished();
       return Undefined();
@@ -226,7 +226,7 @@ namespace dtEntityWrappers
    {  
       Handle<External> ext = Handle<External>::Cast(args[0]);
       dtEntity::EntitySystem* es = static_cast<dtEntity::EntitySystem*>(ext->Value());   
-      args.Holder()->SetInternalField(0, External::New(es));
+      args.This()->SetInternalField(0, External::New(es));
 
       return Undefined();
    }
@@ -338,7 +338,7 @@ namespace dtEntityWrappers
       }
       else
       {
-         dtEntity::EntitySystem* es = UnwrapEntitySystem(args.Holder());
+         dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       
          std::string name = ToStdString(args.Data());
       
@@ -348,7 +348,7 @@ namespace dtEntityWrappers
          Handle<Value> r = Null();
          if(ret != NULL)
          {
-            r = ConvertPropertyToValue(args.Holder()->CreationContext(), ret);
+            r = ConvertPropertyToValue(args.This()->CreationContext(), ret);
             delete ret;
          }
          return scope.Close(r);
@@ -427,13 +427,17 @@ namespace dtEntityWrappers
    void InitEntitySystemWrapper(ScriptSystem* scriptSystem)
    {
       
-      if(s_entitySystemTemplate.IsEmpty())
-      {
-        HandleScope handle_scope;
-        Context::Scope context_scope(scriptSystem->GetGlobalContext());
+      HandleScope handle_scope;
+      Handle<Context> context = scriptSystem->GetGlobalContext();
+      Context::Scope context_scope(context);
 
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_entitySystemTemplate = Persistent<FunctionTemplate>::New(templt);
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
+
+      if(templt.IsEmpty())
+      {
+
+        templt = FunctionTemplate::New();
+
         templt->SetClassName(String::New("EntitySystem"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -452,7 +456,7 @@ namespace dtEntityWrappers
         proto->Set("storeComponentToMap", FunctionTemplate::New(ESStoreComponentToMap));
         proto->Set("allowComponentCreationBySpawner", FunctionTemplate::New(ESAllowComponentCreationBySpawner));
         proto->Set("storePropertiesToScene", FunctionTemplate::New(ESStorePropertiesToScene));
-
+        GetScriptSystem()->SetTemplateBySID(s_entitySystemWrapper, templt);
       }
    }   
 
@@ -465,14 +469,17 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Context::Scope context_scope(scriptSystem->GetGlobalContext());
 
-      Handle<FunctionTemplate> tpl = s_entitySystemTemplate;
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
+
+      assert(!templt.IsEmpty());
+
       
       SubWrapperMap::iterator i = s_subWrapperMap.find(v->GetComponentType());
       if(i != s_subWrapperMap.end()) 
       {
-         tpl = i->second;
+         templt = i->second;
       }
-      Local<Object> instance = tpl->GetFunction()->NewInstance();
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
 
       const dtEntity::PropertyGroup& props = v->Get();
@@ -513,20 +520,25 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool IsEntitySystem(v8::Handle<v8::Value> val)
+   bool IsEntitySystem(v8::Handle<v8::Value> obj)
    {
-      if(s_entitySystemTemplate.IsEmpty())
-     {
-       return false;
-     }
-     return s_entitySystemTemplate->HasInstance(val);
-   }      
+      HandleScope scope;
+      Handle<FunctionTemplate> tpl = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
+      if(tpl.IsEmpty())
+      {
+         return false;
+      }
+      return tpl->HasInstance(obj);
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void RegisterEntitySystempWrapper(ScriptSystem* ss, dtEntity::ComponentType ctype, Handle<FunctionTemplate> ftpl)
    {
       InitEntitySystemWrapper(ss);
+
+      Handle<FunctionTemplate> tmplt = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
+      assert(!tmplt.IsEmpty());
       s_subWrapperMap[ctype] = Persistent<FunctionTemplate>::New(ftpl);
-      ftpl->Inherit(s_entitySystemTemplate);
+      ftpl->Inherit(tmplt);
    }
 }

@@ -42,6 +42,12 @@ namespace dtEntityWrappers
 
    using namespace v8;
 
+   ScriptSystem* GetScriptSystem()
+   {
+      ScriptSystem* ss = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
+      assert(ss != NULL);
+      return ss;
+   }
 
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -22,6 +22,7 @@
 #include <dtEntityWrappers/loggerwrapper.h>
 #include <dtEntity/log.h>
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <iostream>
 
@@ -30,7 +31,7 @@ using namespace v8;
 namespace dtEntityWrappers
 {
 
-   Persistent<FunctionTemplate> s_loggerTemplate;
+   dtEntity::StringId s_loggerWrapper = dtEntity::SID("LoggerWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> LogDebug(const Arguments& args)
@@ -162,12 +163,10 @@ namespace dtEntityWrappers
    v8::Handle<v8::Object> WrapLogger(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
-
-      if(s_loggerTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_loggerWrapper);
+      if(templt.IsEmpty())
       {
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_loggerTemplate = Persistent<FunctionTemplate>::New(templt);
+        templt = FunctionTemplate::New();
         templt->SetClassName(String::New("Log"));
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
@@ -178,9 +177,9 @@ namespace dtEntityWrappers
         proto->Set("info", FunctionTemplate::New(LogInfo));
         proto->Set("warning", FunctionTemplate::New(LogWarning));
         proto->Set("addLogListener", FunctionTemplate::New(LogAddListener));
-
+        GetScriptSystem()->SetTemplateBySID(s_loggerWrapper, templt);
       }
-      Local<Object> instance = s_loggerTemplate->GetFunction()->NewInstance();
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       return handle_scope.Close(instance);
    }
 

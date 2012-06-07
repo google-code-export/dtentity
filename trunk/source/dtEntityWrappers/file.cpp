@@ -110,7 +110,7 @@ namespace dtEntityWrappers
        data.insert(0, tmp, size);
        delete[] tmp;
      }
-     return JS_BUFFER(args.Holder()->CreationContext(), (char *) data.data(), size);
+     return JS_BUFFER(args.This()->CreationContext(), (char *) data.data(), size);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ namespace dtEntityWrappers
       }
 
       FILE * f = LOAD_PTR(1, FILE *);
-      if (IS_BUFFER(args.Holder()->CreationContext(), args[0])) {
+      if (IS_BUFFER(args.This()->CreationContext(), args[0])) {
          size_t size = 0;
          char * data = JS_BUFFER_TO_CHAR(args[0], &size);
          fwrite(data, sizeof(char), size, f);
