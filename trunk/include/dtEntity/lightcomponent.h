@@ -25,6 +25,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/nodecomponent.h>
 
 
@@ -58,7 +59,6 @@ namespace dtEntity
       static const dtEntity::StringId LinearAttenuationId;
       static const dtEntity::StringId QuadraticAttenuationId;
 
-      
       LightComponent();
       virtual ~LightComponent();
 
@@ -69,26 +69,28 @@ namespace dtEntity
          return (id == TYPE); 
       }      
 
-      virtual void Finished();
-
-      virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
-
       osg::Light* GetLight() { return mLight; }
 
    private:
 
+      osg::Vec4 GetLightPosition() const;
+      osg::Vec4 GetAmbient() const;
+      osg::Vec4 GetDiffuse() const;
+      osg::Vec4 GetSpecular() const;
+      osg::Vec3 GetDirection() const;
+
       osg::Light* mLight;
-      IntProperty mLightNum;
-      Vec4Property mAmbient;
-      Vec4Property mDiffuse;
-      Vec4Property mSpecular;
-      Vec4Property mPosition;
-      Vec3Property mDirection;
-      FloatProperty mConstantAttenuation;
-      FloatProperty mLinearAttenuation;
-      FloatProperty mQuadraticAttenuation;
-      FloatProperty mSpotExponent;
-      FloatProperty mSpotCutOff;
+      DynamicIntProperty mLightNum;
+      DynamicVec4Property mAmbient;
+      DynamicVec4Property mDiffuse;
+      DynamicVec4Property mSpecular;
+      DynamicVec4Property mPosition;
+      DynamicVec3Property mDirection;
+      DynamicFloatProperty mConstantAttenuation;
+      DynamicFloatProperty mLinearAttenuation;
+      DynamicFloatProperty mQuadraticAttenuation;
+      DynamicFloatProperty mSpotExponent;
+      DynamicFloatProperty mSpotCutOff;
    };
    
    
