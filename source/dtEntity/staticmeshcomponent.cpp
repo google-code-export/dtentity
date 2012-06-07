@@ -44,6 +44,8 @@ namespace dtEntity
    StaticMeshComponent::StaticMeshComponent()
       : BaseClass(new osg::Node())
       , mCacheHint(CacheNoneId)   
+      , mIsTerrain(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &StaticMeshComponent::SetIsTerrain),
+           DynamicBoolProperty::GetValueCB(this, &StaticMeshComponent::GetIsTerrain)))
    {
       Register(MeshId, &mMeshPathProperty);
       Register(CacheHintId, &mCacheHint);
@@ -65,26 +67,24 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshComponent::OnPropertyChanged(StringId propname, Property &prop)
-   {
-      if(propname == IsTerrainId)
-      {
-         if(prop.BoolValue())
-         {
-            SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
-         }
-         else
-         {
-            SetNodeMask(GetNode()->getNodeMask() & ~NodeMasks::TERRAIN);
-         }
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::Finished()
    {
       SetMesh(mMeshPathProperty.Get(), mCacheHint.Get());
       BaseClass::Finished();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void StaticMeshComponent::SetIsTerrain(bool v) 
+   { 
+      mIsTerrainVal = v; 
+      if(mIsTerrainVal)
+      {
+         SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
+      }
+      else
+      {
+         SetNodeMask(GetNode()->getNodeMask() & ~NodeMasks::TERRAIN);
+      }
    }
    
    ////////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ namespace dtEntity
       unsigned int nm = node->getNodeMask() |
             NodeMasks::VISIBLE | NodeMasks::PICKABLE |
              NodeMasks::CASTS_SHADOWS | NodeMasks::RECEIVES_SHADOWS;
-      if(mIsTerrain.Get())
+      if(mIsTerrainVal)
       {
          nm |= NodeMasks::TERRAIN;
       }
@@ -167,7 +167,7 @@ namespace dtEntity
       }
       node->setNodeMask(nm);
       SetNode(node);
-      OnPropertyChanged(IsTerrainId, mIsTerrain);
+      SetIsTerrain(mIsTerrainVal);
 
    }
 

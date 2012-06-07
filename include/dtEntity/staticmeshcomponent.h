@@ -59,7 +59,6 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property &prop);
       virtual void Finished();
 
       // set existing geometry as static mesh
@@ -81,8 +80,8 @@ namespace dtEntity
       bool GetOptimize() const { return mOptimize.Get(); }
       void SetOptimize(bool v) { mOptimize.Set(v); }
 
-      bool GetIsTerrain() const { return mIsTerrain.Get(); }
-      void SetIsTerrain(bool v) { mIsTerrain.Set(v); }
+      bool GetIsTerrain() const { return mIsTerrainVal; }
+      void SetIsTerrain(bool v);
 
    protected:
      
@@ -90,7 +89,8 @@ namespace dtEntity
       StringProperty mMeshPathProperty;
       StringIdProperty mCacheHint;
       BoolProperty mOptimize;
-      BoolProperty mIsTerrain;
+      DynamicBoolProperty mIsTerrain;
+      bool mIsTerrainVal;
       std::string mLoadedMesh;
    };
 

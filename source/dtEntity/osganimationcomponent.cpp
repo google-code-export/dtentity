@@ -239,9 +239,11 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationComponent::OSGAnimationComponent()
       : mEntity(NULL)
+      , mEnabledVal(true)
+      , mEnabled(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &OSGAnimationComponent::SetEnabled),
+           DynamicBoolProperty::GetValueCB(this, &OSGAnimationComponent::GetEnabled)))
    {
       Register(EnabledId, &mEnabled);
-      mEnabled.Set(true);
    }
 
 
@@ -258,15 +260,6 @@ namespace dtEntity
       if(mEntity->GetComponent(smc))
       {
          SetupMesh(smc->GetNode());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void OSGAnimationComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
       }
    }
 
@@ -378,7 +371,7 @@ namespace dtEntity
       mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
       SetupRigGeometry switcher(sys->GetVertexShader(), sys->GetFragmentShader());
       node->accept(switcher);     
-      SetEnabled(mEnabled.Get());
+      SetEnabled(mEnabledVal);
 
    }
 
@@ -392,7 +385,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationComponent::SetEnabled(bool v)
    {
-      mEnabled.Set(v);
+      mEnabledVal = v;
 
       if(mAnimationManager)
       {         
@@ -401,7 +394,7 @@ namespace dtEntity
          {
             OSGAnimationSystem* sys;
             mEntity->GetEntityManager().GetEntitySystem(TYPE, sys);
-            bool reallyEnabled = mEnabled.Get() && sys->GetEnabled();
+            bool reallyEnabled = mEnabledVal && sys->GetEnabled();
 
             if(reallyEnabled)
             {
@@ -418,7 +411,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationComponent::GetEnabled() const
    {
-      return mEnabled.Get();
+      return mEnabledVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -430,6 +423,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
      : DefaultEntitySystem<OSGAnimationComponent>(em)
+     , mEnabledVal(true)
+     , mEnabled(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &OSGAnimationSystem::SetEnabled),
+           DynamicBoolProperty::GetValueCB(this, &OSGAnimationSystem::GetEnabled)))
    {
       Register(VertexShaderId, &mVertexShader);
       Register(FragmentShaderId, &mFragmentShader);
@@ -437,7 +433,6 @@ namespace dtEntity
 
       mVertexShader.Set("shaders/osganimationskinning.vert");
       mFragmentShader.Set("shaders/osganimationskinning.frag");
-      mEnabled.Set(true);
 
       mMeshChangedFunctor = MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
       em.RegisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor,
@@ -459,18 +454,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void OSGAnimationSystem::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationSystem::SetEnabled(bool v)
    {
-      mEnabled.Set(v);
+      mEnabledVal = v;
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          OSGAnimationComponent* comp = i->second;
@@ -482,7 +468,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationSystem::GetEnabled() const
    {
-      return mEnabled.Get();
+      return mEnabledVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
