@@ -185,6 +185,12 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   StaticMeshSystem::~StaticMeshSystem()
+   {
+      GetEntityManager().UnregisterForMessages(ResourceChangedMessage::TYPE, mResourceChangedFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void StaticMeshSystem::OnResourceChanged(const Message& m)
    {
       const ResourceChangedMessage& msg = static_cast<const ResourceChangedMessage&>(m);

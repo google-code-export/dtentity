@@ -79,6 +79,7 @@ namespace dtEntity
       static const ComponentType TYPE;
 
       ShaderSystem(EntityManager& em);
+      ~ShaderSystem();
 
       virtual void OnPropertyChanged(StringId propname, Property &prop);
 

@@ -186,6 +186,10 @@ namespace dtEntity
       {
          delete *i;
       }
+
+      GetEntityManager().UnregisterForMessages(SpawnEntityMessage::TYPE, mSpawnEntityFunctor);
+      GetEntityManager().UnregisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor);
+      GetEntityManager().UnregisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////

@@ -427,6 +427,7 @@ namespace dtEntity
    const StringId OSGAnimationSystem::FragmentShaderId(dtEntity::SID("FragmentShader"));
    const StringId OSGAnimationSystem::EnabledId(dtEntity::SID("Enabled"));
    
+   ////////////////////////////////////////////////////////////////////////////
    OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
      : DefaultEntitySystem<OSGAnimationComponent>(em)
    {
@@ -451,6 +452,11 @@ namespace dtEntity
       AddScriptedMethod("removeAttachments", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptRemoveAttachments));
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   OSGAnimationSystem::~OSGAnimationSystem()
+   {
+      GetEntityManager().UnregisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor);
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationSystem::OnPropertyChanged(StringId propname, Property& prop)

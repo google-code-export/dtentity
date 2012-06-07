@@ -142,6 +142,12 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   ShaderSystem::~ShaderSystem()
+   {
+      GetEntityManager().UnregisterForMessages(MeshChangedMessage::TYPE, mChangedMeshFunctor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void ShaderSystem::OnPropertyChanged(StringId propname, Property &prop)
    {
    }

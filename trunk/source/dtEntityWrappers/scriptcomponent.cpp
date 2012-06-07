@@ -127,6 +127,12 @@ namespace dtEntityWrappers
       mTemplateMap.clear();
 
       mGlobalContext.Dispose();
+
+      GetEntityManager().UnregisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::ResetSystemMessage::TYPE, mResetSystemFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
+      GetEntityManager().UnregisterForMessages(ExecuteScriptMessage::TYPE, mLoadScriptFunctor);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
