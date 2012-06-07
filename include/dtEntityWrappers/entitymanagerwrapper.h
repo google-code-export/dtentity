@@ -37,6 +37,5 @@ namespace dtEntityWrappers
       (ScriptSystem*, dtEntity::EntityManager* v);
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapPriorities();
    DTENTITY_WRAPPERS_EXPORT dtEntity::EntityManager* UnwrapEntityManager(v8::Handle<v8::Value>);
-   DTENTITY_WRAPPERS_EXPORT void UnregisterJavaScriptFromMessages(ScriptSystem*);
    DTENTITY_WRAPPERS_EXPORT void ConvertJSToMessage(v8::Handle<v8::Value> val, dtEntity::Message* msg);
 }
