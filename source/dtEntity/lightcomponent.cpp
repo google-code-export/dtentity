@@ -43,7 +43,43 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    LightComponent::LightComponent()
       : dtEntity::NodeComponent(new osg::LightSource())
-   {
+   {      
+      mLight = new osg::Light();
+      osg::LightSource* lightSource = static_cast<osg::LightSource*>(GetNode());
+      lightSource->setLight(mLight);
+
+      mLightNum = DynamicIntProperty(DynamicIntProperty::SetValueCB(mLight, &osg::Light::setLightNum),
+           DynamicIntProperty::GetValueCB(mLight, &osg::Light::getLightNum));
+      
+      mPosition = DynamicVec4Property(DynamicVec4Property::SetValueCB(mLight, &osg::Light::setPosition),
+           DynamicVec4Property::GetValueCB(this, &LightComponent::GetLightPosition));
+
+      mAmbient = DynamicVec4Property(DynamicVec4Property::SetValueCB(mLight, &osg::Light::setAmbient),
+           DynamicVec4Property::GetValueCB(this, &LightComponent::GetAmbient));
+
+      mDiffuse = DynamicVec4Property(DynamicVec4Property::SetValueCB(mLight, &osg::Light::setDiffuse),
+           DynamicVec4Property::GetValueCB(this, &LightComponent::GetDiffuse));
+
+      mSpecular = DynamicVec4Property(DynamicVec4Property::SetValueCB(mLight, &osg::Light::setSpecular),
+           DynamicVec4Property::GetValueCB(this, &LightComponent::GetSpecular));
+
+      mSpotCutOff = DynamicFloatProperty(DynamicFloatProperty::SetValueCB(mLight, &osg::Light::setSpotCutoff),
+         DynamicFloatProperty::GetValueCB(mLight, &osg::Light::getSpotCutoff));
+
+      mSpotExponent = DynamicFloatProperty(DynamicFloatProperty::SetValueCB(mLight, &osg::Light::setSpotExponent),
+         DynamicFloatProperty::GetValueCB(mLight, &osg::Light::getSpotExponent));
+
+      mDirection = DynamicVec3Property(DynamicVec3Property::SetValueCB(mLight, &osg::Light::setDirection),
+           DynamicVec3Property::GetValueCB(this, &LightComponent::GetDirection));
+
+      mConstantAttenuation = DynamicFloatProperty(DynamicFloatProperty::SetValueCB(mLight, &osg::Light::setConstantAttenuation),
+         DynamicFloatProperty::GetValueCB(mLight, &osg::Light::getConstantAttenuation));
+
+      mLinearAttenuation = DynamicFloatProperty(DynamicFloatProperty::SetValueCB(mLight, &osg::Light::setLinearAttenuation),
+         DynamicFloatProperty::GetValueCB(mLight, &osg::Light::getLinearAttenuation));
+
+      mQuadraticAttenuation = DynamicFloatProperty(DynamicFloatProperty::SetValueCB(mLight, &osg::Light::setQuadraticAttenuation),
+         DynamicFloatProperty::GetValueCB(mLight, &osg::Light::getQuadraticAttenuation));
 
       Register(LightNumId, &mLightNum);
       Register(PositionId, &mPosition);
@@ -57,17 +93,12 @@ namespace dtEntity
       Register(LinearAttenuationId, &mLinearAttenuation);
       Register(QuadraticAttenuationId, &mQuadraticAttenuation);
 
-      mLight = new osg::Light();
-      osg::LightSource* lightSource = static_cast<osg::LightSource*>(GetNode());
-      lightSource->setLight(mLight);
-
       mLight->setLightNum(0);
       mLight->setPosition(osg::Vec4(1.0f,1.0f,1.0f,0.0f)); // directional light from above
       mLight->setAmbient(osg::Vec4(0.3f,0.3f,0.3f,1.0f));
       mLight->setDiffuse(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
       mLight->setSpecular(osg::Vec4(0.2f,0.2f,0.2f,1.0f));
 
-      mLightNum.Set(0);
       mAmbient.Set(mLight->getAmbient());
       mDiffuse.Set(mLight->getDiffuse());
       mSpecular.Set(mLight->getSpecular());
@@ -84,66 +115,34 @@ namespace dtEntity
    {
    }
 
- 
    ////////////////////////////////////////////////////////////////////////////
-   void LightComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
-   {      
-      if(propname == LightNumId)
-      {
-         mLight->setLightNum(prop.IntValue());
-      }
-      else if(propname == PositionId)
-      {
-         mLight->setPosition(prop.Vec4Value());
-      }
-      else if(propname == AmbientId)
-      {
-         mLight->setAmbient(prop.Vec4Value());
-      }
-      else if(propname == DiffuseId)
-      {
-         mLight->setDiffuse(prop.Vec4Value());
-      }
-      else if(propname == SpecularId)
-      {
-         mLight->setSpecular(prop.Vec4Value());
-      }
-      else if(propname == SpotCutoffId)
-      {
-         mLight->setSpotCutoff(prop.FloatValue());
-      }
-      else if(propname == SpotExponentId)
-      {
-         mLight->setSpotExponent(prop.FloatValue());
-      }
-      else if(propname == DirectionId)
-      {
-         mLight->setDirection(prop.Vec3Value());
-      }
-      else if(propname == ConstantAttenuationId)
-      {
-         mLight->setConstantAttenuation(prop.FloatValue());
-      }
-      else if(propname == LinearAttenuationId)
-      {
-         mLight->setLinearAttenuation(prop.FloatValue());
-      }
-      else if(propname == QuadraticAttenuationId)
-      {
-         mLight->setQuadraticAttenuation(prop.FloatValue());
-      }
-      else
-      {
-         BaseClass::OnPropertyChanged(propname, prop);
-      }
+   osg::Vec4 LightComponent::GetLightPosition() const 
+   { 
+      return mLight->getPosition(); 
    }
 
- 
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 LightComponent::GetAmbient() const 
+   { 
+      return mLight->getAmbient(); 
+   }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LightComponent::Finished()
-   {
-     
+   osg::Vec4 LightComponent::GetDiffuse() const 
+   { 
+      return mLight->getDiffuse(); 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 LightComponent::GetSpecular() const 
+   { 
+      return mLight->getSpecular(); 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 LightComponent::GetDirection() const 
+   { 
+      return mLight->getDirection(); 
    }
   
    ////////////////////////////////////////////////////////////////////////////

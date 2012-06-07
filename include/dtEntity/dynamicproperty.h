@@ -34,6 +34,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1<bool, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<bool> GetValueCB;
 
+      DynamicBoolProperty() {}
+
       DynamicBoolProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -66,6 +68,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1<float, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<float> GetValueCB;
+
+      DynamicFloatProperty() {}
 
       DynamicFloatProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -100,6 +104,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1<double, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<double> GetValueCB;
 
+      DynamicDoubleProperty() {}
+
       DynamicDoubleProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -132,6 +138,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1<int, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<int> GetValueCB;
+
+      DynamicIntProperty() {}
 
       DynamicIntProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -166,6 +174,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1<unsigned int, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<unsigned int> GetValueCB;
 
+      DynamicUIntProperty() {}
+
       DynamicUIntProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -198,6 +208,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1< const std::string&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<std::string> GetValueCB;
+
+      DynamicStringProperty() {}
 
       DynamicStringProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -232,6 +244,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1<StringId, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<StringId> GetValueCB;
 
+      DynamicStringIdProperty() {}
+
       DynamicStringIdProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -264,6 +278,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1< const osg::Vec2d&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec2d> GetValueCB;
+
+      DynamicVec2dProperty() {}
 
       DynamicVec2dProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -299,6 +315,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Vec3d&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec3d> GetValueCB;
 
+      DynamicVec3dProperty() {}
+
       DynamicVec3dProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -332,6 +350,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1< const osg::Vec4d&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec4d> GetValueCB;
+
+      DynamicVec4dProperty() {}
 
       DynamicVec4dProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -367,6 +387,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Vec2&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec2> GetValueCB;
 
+      DynamicVec2Property() {}
+
       DynamicVec2Property(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -401,6 +423,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate1< const osg::Vec3&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec3> GetValueCB;
 
+      DynamicVec3Property() {}
+
       DynamicVec3Property(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -434,6 +458,8 @@ namespace dtEntity
    public:
       typedef fastdelegate::FastDelegate1< const osg::Vec4&, void> SetValueCB;
       typedef fastdelegate::FastDelegate0<osg::Vec4> GetValueCB;
+
+      DynamicVec4Property() {}
 
       DynamicVec4Property(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
@@ -471,6 +497,8 @@ namespace dtEntity
 
       virtual DataType::e GetDataType() const { return DataType::QUAT; }
 
+      DynamicQuatProperty() {}
+
       DynamicQuatProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
          , mGetValueCallback(g)
@@ -502,6 +530,8 @@ namespace dtEntity
       typedef fastdelegate::FastDelegate0<osg::Matrix> GetValueCB;
 
       virtual DataType::e GetDataType() const { return DataType::MATRIX; }
+
+      DynamicMatrixProperty() {}
 
       DynamicMatrixProperty(const SetValueCB& s, const GetValueCB& g)
          : mSetValueCallback(s)
