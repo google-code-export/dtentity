@@ -78,9 +78,7 @@ namespace dtEntityWrappers
          return ThrowError("usage: include(string path)");
       }
       std::string path = ToStdString(args[0]);
-      void* data = External::Unwrap(args.Data());
-      ScriptSystem* ss = static_cast<ScriptSystem*>(data);
-      return ss->ExecuteFile(path);
+      return GetScriptSystem()->ExecuteFile(path);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -91,10 +89,8 @@ namespace dtEntityWrappers
          return ThrowError("usage: include_once(string path)");
       }
 
-      void* data = External::Unwrap(args.Data());
-      ScriptSystem* ss = static_cast<ScriptSystem*>(data);
       std::string path = ToStdString(args[0]);
-      ss->ExecuteFileOnce(path);
+      GetScriptSystem()->ExecuteFileOnce(path);
       return Undefined();
    }
 
@@ -151,10 +147,9 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Handle<Context> context = ss->GetGlobalContext();
       Context::Scope context_scope(context);
-      
       context->Global()->Set(String::New("findDataFile"), FunctionTemplate::New(FindDataFile)->GetFunction());
-      context->Global()->Set(String::New("include"), FunctionTemplate::New(Include, External::New(ss))->GetFunction());
-      context->Global()->Set(String::New("include_once"), FunctionTemplate::New(IncludeOnce, External::New(ss))->GetFunction());
+      context->Global()->Set(String::New("include"), FunctionTemplate::New(Include)->GetFunction());
+      context->Global()->Set(String::New("include_once"), FunctionTemplate::New(IncludeOnce)->GetFunction());
       context->Global()->Set(String::New("print"), FunctionTemplate::New(Print)->GetFunction());
       context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
       context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());

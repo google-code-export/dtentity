@@ -20,6 +20,7 @@
 
 #include "eventlistenerwrapper.h"
 
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <Rocket/Core/EventListener.h>
 
@@ -29,7 +30,7 @@ using namespace dtEntityWrappers;
 namespace dtEntityRocket
 {
 
-   Persistent<FunctionTemplate> s_eventListenerTemplate;
+   dtEntity::StringId s_eventListenerWrapper = dtEntity::SID("EventListenerWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ELIToString(const Arguments& args)
@@ -38,35 +39,29 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   /*Handle<Value> ELIShow(const Arguments& args)
-   {  
-      Rocket::Core::EventListener* v = UnwrapEventListener(args.Holder());
-       
-      return Undefined();      
-   }*/
-
-   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapEventListener(Handle<Context> context, Rocket::Core::EventListener* v)
    {      
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
 
-      if(s_eventListenerTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_eventListenerWrapper);
+
+      if(templt.IsEmpty())
       {
-        v8::HandleScope handle_scope;
-        
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_eventListenerTemplate = Persistent<FunctionTemplate>::New(templt);
+
+        templt = FunctionTemplate::New();
+
         templt->SetClassName(String::New("ElementDocument"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
         proto->Set("toString", FunctionTemplate::New(ELIToString));
-       // proto->Set("show", FunctionTemplate::New(ELIShow));
+
+        GetScriptSystem()->SetTemplateBySID(s_eventListenerWrapper, templt);
+
       }
 
-      Local<Object> instance = s_eventListenerTemplate->GetFunction()->NewInstance();
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       return handle_scope.Close(instance);
 

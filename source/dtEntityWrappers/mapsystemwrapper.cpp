@@ -318,7 +318,7 @@ namespace dtEntityWrappers
          {
             std::string propname = dtEntity::GetStringFromSID(j->first);
             const dtEntity::Property* prop = j->second;
-            jscomp->Set(ToJSString(propname), ConvertPropertyToValue(args.Holder()->CreationContext(), prop));
+            jscomp->Set(ToJSString(propname), ConvertPropertyToValue(args.This()->CreationContext(), prop));
          }
          
          comps->Set(ToJSString(compname), jscomp);
@@ -390,7 +390,7 @@ namespace dtEntityWrappers
    {  
       Handle<External> ext = Handle<External>::Cast(args[0]);
       dtEntity::MapSystem* ls = static_cast<dtEntity::MapSystem*>(ext->Value());   
-      args.Holder()->SetInternalField(0, External::New(ls));
+      args.This()->SetInternalField(0, External::New(ls));
     
       return Undefined();
    }

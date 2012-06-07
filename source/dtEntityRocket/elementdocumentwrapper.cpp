@@ -22,6 +22,7 @@
 
 #include "elementwrapper.h"
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <Rocket/Core/ElementDocument.h>
 
 using namespace v8;
@@ -30,7 +31,7 @@ using namespace dtEntityWrappers;
 namespace dtEntityRocket
 {
 
-   Persistent<FunctionTemplate> s_elementDocumentTemplate;
+   dtEntity::StringId s_elementDocumentWrapper = dtEntity::SID("ElementDocumentWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDToString(const Arguments& args)
@@ -41,7 +42,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDShow(const Arguments& args)
    {  
-      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.This());
       v->Show();   
       return Undefined();      
    }
@@ -49,7 +50,7 @@ namespace dtEntityRocket
 	////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDHide(const Arguments& args)
    {  
-      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.This());
       v->Hide();   
       return Undefined();      
    }
@@ -57,7 +58,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> EDClose(const Arguments& args)
    {
-      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.Holder());
+      Rocket::Core::ElementDocument* v = UnwrapElementDocument(args.This());
       v->Close();
       return Undefined();
    }
@@ -67,13 +68,13 @@ namespace dtEntityRocket
    {
       
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
 
-      if(s_elementDocumentTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_elementDocumentWrapper);
+      if(templt.IsEmpty())
       {
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
+
+        templt = FunctionTemplate::New();
         templt->Inherit(GetElementTemplate());
-        s_elementDocumentTemplate = Persistent<FunctionTemplate>::New(templt);
         templt->SetClassName(String::New("ElementDocument"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 		  templt->InstanceTemplate()->SetNamedPropertyHandler(
@@ -91,8 +92,11 @@ namespace dtEntityRocket
         proto->Set("show", FunctionTemplate::New(EDShow));
         proto->Set("hide", FunctionTemplate::New(EDHide));
         proto->Set("close", FunctionTemplate::New(EDClose));
+
+        GetScriptSystem()->SetTemplateBySID(s_elementDocumentWrapper, templt);
+
       }
-      Local<Object> instance = s_elementDocumentTemplate->GetFunction()->NewInstance();
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       return handle_scope.Close(instance);
 

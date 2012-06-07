@@ -103,6 +103,9 @@ namespace dtEntityWrappers
       v8::Handle<v8::String> GetEntityIdString() const { return mEntityIdString; }
       v8::Handle<v8::String> GetPropertyNamesString() const { return mPropertyNamesString; }
 
+      v8::Handle<v8::FunctionTemplate> GetTemplateBySID(dtEntity::StringId) const;
+      void SetTemplateBySID(dtEntity::StringId, v8::Handle<v8::FunctionTemplate>);
+
    private:
       void SetupContext();
       void FetchGlobalTickFunction();
@@ -125,6 +128,10 @@ namespace dtEntityWrappers
       ComponentMap mComponentMap;
       v8::Persistent<v8::String> mEntityIdString;
       v8::Persistent<v8::String> mPropertyNamesString;
+
+      typedef std::map<dtEntity::StringId, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
+      TemplateMap mTemplateMap;
    };
 
 }
+

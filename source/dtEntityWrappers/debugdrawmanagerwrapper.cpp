@@ -23,6 +23,7 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntity/debugdrawmanager.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <iostream>
 #include <sstream>
@@ -32,8 +33,8 @@ using namespace v8;
 
 namespace dtEntityWrappers
 {
-   ////////////////////////////////////////////////////////////////////////////////
-   Persistent<FunctionTemplate> s_debugDrawManagerTemplate;
+
+   dtEntity::StringId s_debugDrawWrapper = dtEntity::SID("DebugDrawWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerToString(const Arguments& args)
@@ -439,7 +440,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
 	Handle<Value> DebugDrawManager_create(const Arguments& args) {
       v8::HandleScope handle_scope;
-      Handle<Context> context = args.Holder()->CreationContext();
+      Handle<Context> context = args.This()->CreationContext();
      
 		Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
       dtEntity::EntityManager* em = UnwrapEntityManager(emh);
@@ -451,12 +452,12 @@ namespace dtEntityWrappers
    v8::Handle<v8::Function> CreateDebugDrawManager(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
 
-      if(s_debugDrawManagerTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_debugDrawWrapper);
+      if(templt.IsEmpty())
       {
-        Handle<FunctionTemplate> templt = FunctionTemplate::New(DebugDrawManager_create);
-        s_debugDrawManagerTemplate = Persistent<FunctionTemplate>::New(templt);
+
+        templt = FunctionTemplate::New(DebugDrawManager_create);
         templt->SetClassName(String::New("DebugDrawManager"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -475,8 +476,9 @@ namespace dtEntityWrappers
         proto->Set("setEnabled", FunctionTemplate::New(DebugDrawManagerSetEnabled));
         proto->Set("toString", FunctionTemplate::New(DebugDrawManagerToString));
         
+        GetScriptSystem()->SetTemplateBySID(s_debugDrawWrapper, templt);
       }
-      return handle_scope.Close(s_debugDrawManagerTemplate->GetFunction());
+      return handle_scope.Close(templt->GetFunction());
    }
 }
 

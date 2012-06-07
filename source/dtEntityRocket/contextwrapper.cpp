@@ -23,6 +23,7 @@
 #include "elementdocumentwrapper.h"
 
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <Rocket/Core/Context.h>
 #include <Rocket/Core/ElementDocument.h>
 
@@ -31,8 +32,7 @@ using namespace dtEntityWrappers;
 
 namespace dtEntityRocket
 {
-
-   Persistent<FunctionTemplate> s_contextTemplate;
+   dtEntity::StringId s_contextWrapper = dtEntity::SID("ContextWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> RCToString(const Arguments& args)
@@ -47,9 +47,9 @@ namespace dtEntityRocket
       {
          std::string path = ToStdString(args[0]);
 
-         Rocket::Core::Context* rs = UnwrapContext(args.Holder());
+         Rocket::Core::Context* rs = UnwrapContext(args.This());
          Rocket::Core::ElementDocument* doc = rs->LoadMouseCursor(path.c_str());
-         return WrapElementDocument(args.Holder()->CreationContext(), doc);
+         return WrapElementDocument(args.This()->CreationContext(), doc);
       }
       return Undefined();      
    }
@@ -61,11 +61,11 @@ namespace dtEntityRocket
       {
          std::string path = ToStdString(args[0]);
 
-         Rocket::Core::Context* rs = UnwrapContext(args.Holder());
+         Rocket::Core::Context* rs = UnwrapContext(args.This());
          Rocket::Core::ElementDocument* doc = rs->LoadDocument(path.c_str());
          if(doc != NULL)
          {
-            return WrapElementDocument(args.Holder()->CreationContext(), doc);
+            return WrapElementDocument(args.This()->CreationContext(), doc);
          }
       }
       return Null();
@@ -82,7 +82,7 @@ namespace dtEntityRocket
 				return ThrowError("Cannot unload document: not a document!");
 			}
          
-         Rocket::Core::Context* rs = UnwrapContext(args.Holder());
+         Rocket::Core::Context* rs = UnwrapContext(args.This());
          rs->UnloadDocument(doc);
       }
       return Undefined();      
@@ -92,12 +92,13 @@ namespace dtEntityRocket
    {
       
       v8::HandleScope handle_scope;
-      v8::Context::Scope context_scope(context);
 
-      if(s_contextTemplate.IsEmpty())
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_contextWrapper);
+      if(templt.IsEmpty())
       {
-        Handle<FunctionTemplate> templt = FunctionTemplate::New();
-        s_contextTemplate = Persistent<FunctionTemplate>::New(templt);
+
+        templt = FunctionTemplate::New();
+
         templt->SetClassName(String::New("RocketContext"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -107,8 +108,11 @@ namespace dtEntityRocket
         proto->Set("loadMouseCursor", FunctionTemplate::New(RCLoadMouseCursor));
         proto->Set("loadDocument", FunctionTemplate::New(RCLoadDocument));
 		  proto->Set("unloadDocument", FunctionTemplate::New(RCUnloadDocument));
+
+        GetScriptSystem()->SetTemplateBySID(s_contextWrapper, templt);
       }
-      Local<Object> instance = s_contextTemplate->GetFunction()->NewInstance();
+
+      Local<Object> instance = templt->GetFunction()->NewInstance();
       instance->SetInternalField(0, External::New(v));
       return handle_scope.Close(instance);
 

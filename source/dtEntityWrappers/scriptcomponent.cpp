@@ -119,6 +119,13 @@ namespace dtEntityWrappers
          i->second.Dispose();
       }
       mComponentMap.clear();
+
+      for(TemplateMap::iterator i = mTemplateMap.begin(); i != mTemplateMap.end(); ++i)
+      {
+         i->second.Dispose();
+      }
+      mTemplateMap.clear();
+
       mGlobalContext.Dispose();
    }
 
@@ -137,8 +144,11 @@ namespace dtEntityWrappers
       // create persistent global context
       mGlobalContext = Persistent<Context>::New(Context::New(NULL, global));
 
+      // store pointer to script system into isolate data to have it globally available in javascript
+      Isolate::GetCurrent()->SetData(this);
+
       RegisterGlobalFunctions(this);
-      
+
       InitializeAllWrappers(GetEntityManager());
 
       Handle<Context> context = GetGlobalContext();
@@ -162,6 +172,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());
+
 
    }
 
@@ -430,7 +441,7 @@ namespace dtEntityWrappers
       dtEntity::Component* component = UnwrapComponent(v);
       if(component != NULL)
       {
-         ScriptSystem* scriptsys = static_cast<ScriptSystem*>(scriptsysnull);
+         ScriptSystem* scriptsys = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
          HandleScope scope;
          Handle<Object> o = Handle<Object>::Cast(v);
          assert(!o.IsEmpty());
@@ -489,5 +500,22 @@ namespace dtEntityWrappers
    void ScriptSystem::ComponentDeleted(dtEntity::ComponentType t, dtEntity::EntityId id)
    {
       RemoveFromComponentMap(t, id);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   Handle<FunctionTemplate> ScriptSystem::GetTemplateBySID(dtEntity::StringId v) const
+   {
+      TemplateMap::const_iterator i = mTemplateMap.find(v);
+      if(i == mTemplateMap.end())
+      {
+         return Handle<FunctionTemplate>();
+      }
+      return i->second;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ScriptSystem::SetTemplateBySID(dtEntity::StringId v, v8::Handle<v8::FunctionTemplate> tpl)
+   {
+      mTemplateMap[v] = Persistent<FunctionTemplate>::New(tpl);
    }
 }

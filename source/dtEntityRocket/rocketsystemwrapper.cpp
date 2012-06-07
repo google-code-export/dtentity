@@ -34,9 +34,7 @@ using namespace dtEntityWrappers;
 namespace dtEntityRocket
 {
 
-   Persistent<FunctionTemplate> s_rocketSystemTemplate;
-
-
+   dtEntity::StringId s_rocketSystemWrapper = dtEntity::SID("RocketSystemWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> RSToString(const Arguments& args)
@@ -50,11 +48,11 @@ namespace dtEntityRocket
       if(args.Length() > 0)
       {
          dtEntity::EntityId id = args[0]->Uint32Value();
-         RocketSystem* rs = UnwrapRocketSystem(args.Holder());
+         RocketSystem* rs = UnwrapRocketSystem(args.This());
          RocketComponent* rc = rs->GetComponent(id);
          if(rc && rc->GetRocketContext() != NULL)
          {
-            return WrapContext(args.Holder()->CreationContext(), rc->GetRocketContext());
+            return WrapContext(args.This()->CreationContext(), rc->GetRocketContext());
          }
       }
       return Null();      
@@ -67,7 +65,11 @@ namespace dtEntityRocket
       v8::HandleScope handle_scope;
       v8::Context::Scope context_scope(context);
 
-      Local<Object> instance = s_rocketSystemTemplate->GetFunction()->NewInstance();
+      Handle<String> funcname = String::New("RocketElementWrapper");
+      Handle<Function> func = Handle<Function>::Cast(context->Global()->GetHiddenValue(funcname));
+      assert(!func.IsEmpty());
+
+      Local<Object> instance = func->NewInstance();
       instance->SetInternalField(0, External::New(v));
 
       return handle_scope.Close(instance);
@@ -131,7 +133,7 @@ namespace dtEntityRocket
          }
          else
          {
-            return WrapElement(args.Holder()->CreationContext(), el);
+            return WrapElement(args.This()->CreationContext(), el);
          }
       }
       return Undefined();      
@@ -142,16 +144,25 @@ namespace dtEntityRocket
    {
       v8::HandleScope handle_scope;
       v8::Context::Scope context_scope(ss->GetGlobalContext());
-      Handle<FunctionTemplate> templt = FunctionTemplate::New();
-      s_rocketSystemTemplate = Persistent<FunctionTemplate>::New(templt);
-      templt->SetClassName(String::New("Rocket"));
-      templt->InstanceTemplate()->SetInternalFieldCount(1);
 
-      Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
-      proto->Set("toString", FunctionTemplate::New(RSToString));
-      proto->Set("getContext", FunctionTemplate::New(RSGetContext));
-      proto->Set("instanceElement", FunctionTemplate::New(RSInstanceElement));
-      proto->Set("loadFontFace", FunctionTemplate::New(RSLoadFontFace));
-      dtEntityWrappers::RegisterEntitySystempWrapper(ss, RocketComponent::TYPE, templt);
+      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_rocketSystemWrapper);
+
+      if(templt.IsEmpty())
+      {
+
+         templt = FunctionTemplate::New();
+
+         templt->SetClassName(String::New("Rocket"));
+         templt->InstanceTemplate()->SetInternalFieldCount(1);
+
+         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
+         proto->Set("toString", FunctionTemplate::New(RSToString));
+         proto->Set("getContext", FunctionTemplate::New(RSGetContext));
+         proto->Set("instanceElement", FunctionTemplate::New(RSInstanceElement));
+         proto->Set("loadFontFace", FunctionTemplate::New(RSLoadFontFace));
+         dtEntityWrappers::RegisterEntitySystempWrapper(ss, RocketComponent::TYPE, templt);
+
+         GetScriptSystem()->SetTemplateBySID(s_rocketSystemWrapper, templt);
+      }
    }
 }
