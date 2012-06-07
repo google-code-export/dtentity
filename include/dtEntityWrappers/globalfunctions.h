@@ -25,5 +25,5 @@
 namespace dtEntityWrappers
 {
    class ScriptSystem;
-   void RegisterGlobalFunctions(ScriptSystem*);
+   void RegisterGlobalFunctions(ScriptSystem*, v8::Handle<v8::Context> context);
 }

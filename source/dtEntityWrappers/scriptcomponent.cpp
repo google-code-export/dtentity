@@ -147,7 +147,7 @@ namespace dtEntityWrappers
       // store pointer to script system into isolate data to have it globally available in javascript
       Isolate::GetCurrent()->SetData(this);
 
-      RegisterGlobalFunctions(this);
+      RegisterGlobalFunctions(this, mGlobalContext);
 
       InitializeAllWrappers(GetEntityManager());
 
