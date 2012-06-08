@@ -25,6 +25,37 @@
 using namespace UnitTest;
 using namespace dtEntity;
 
+#define TOLERANCE 0.001
+
+
+TEST(ReinterpretCastsV3f)
+{
+   float values[3] = {3.0f, -234.234f, 0.0f};
+   const osg::Vec3f& casted = reinterpret_cast<const osg::Vec3f&>(values);
+   CHECK_EQUAL(values[0], casted[0]);
+   CHECK_EQUAL(values[1], casted[1]);
+   CHECK_EQUAL(values[2], casted[2]);
+}
+
+TEST(ReinterpretCastsV4d)
+{
+   double values[4] = {3.0f, -234.234f, 0.0f, 3254325.235325};
+   const osg::Vec4d& casted = reinterpret_cast<const osg::Vec4d&>(values);
+   CHECK_EQUAL(values[0], casted[0]);
+   CHECK_EQUAL(values[1], casted[1]);
+   CHECK_EQUAL(values[2], casted[2]);
+   CHECK_EQUAL(values[3], casted[3]);
+}
+
+TEST(ReinterpretCastsQuat)
+{
+   double values[4] = {3.0f, -234.234f, 0.0f, 3254325.235325};
+   const osg::Quat& casted = reinterpret_cast<const osg::Quat&>(values);
+   CHECK_EQUAL(values[0], casted[0]);
+   CHECK_EQUAL(values[1], casted[1]);
+   CHECK_EQUAL(values[2], casted[2]);
+   CHECK_EQUAL(values[3], casted[3]);
+}
 
 TEST(SetValuesVec2)
 {
@@ -290,7 +321,199 @@ TEST(CloneBool)
 }
 
 
+TEST(FromToStringVec2)
+{
 
+   Vec2Property v(6, -7.4);
+   Vec2Property v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+}
+
+TEST(FromToStringVec3)
+{
+
+   Vec3Property v(6, -7.4, 8);
+   Vec3Property v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+   CHECK_CLOSE(v.Get()[2], v2.Get()[2], TOLERANCE);
+}
+
+TEST(FromToStringVec4)
+{
+
+   Vec4Property v(6, -7.4, 8, 245.23456246);
+   Vec4Property v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+   CHECK_CLOSE(v.Get()[2], v2.Get()[2], TOLERANCE);
+   CHECK_CLOSE(v.Get()[3], v2.Get()[3], TOLERANCE);
+}
+
+TEST(FromToStringVec2d)
+{
+
+   Vec2dProperty v(6, -7.4);
+   Vec2dProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+}
+
+TEST(FromToStringVec3d)
+{
+
+   Vec3dProperty v(6, -7.4, 8);
+   Vec3dProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+   CHECK_CLOSE(v.Get()[2], v2.Get()[2], TOLERANCE);
+}
+
+TEST(FromToStringVec4d)
+{
+
+   Vec4dProperty v(6, -7.4, 8, 245.23456246);
+   Vec4dProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+   CHECK_CLOSE(v.Get()[2], v2.Get()[2], TOLERANCE);
+   CHECK_CLOSE(v.Get()[3], v2.Get()[3], TOLERANCE);
+}
+
+TEST(FromToStringBool)
+{
+
+   BoolProperty v1(true);
+   BoolProperty v2;
+   v2.SetString(v1.StringValue());
+   CHECK_EQUAL(v2.Get(), true);
+
+   BoolProperty v3(false);
+   BoolProperty v4;
+   v4.SetString(v3.StringValue());
+   CHECK_EQUAL(v4.Get(), false);
+}
+
+TEST(FromToStringDouble)
+{
+
+   DoubleProperty v1(2351235.1341345);
+   DoubleProperty v2;
+   v2.SetString(v1.StringValue());
+   CHECK_CLOSE(v2.Get(), v1.Get(), TOLERANCE);
+
+}
+
+TEST(FromToStringFloat)
+{
+
+   FloatProperty v1(2351235.1341345f);
+   FloatProperty v2;
+   v2.SetString(v1.StringValue());
+   CHECK_CLOSE(v2.Get(), v1.Get(), TOLERANCE);
+
+}
+
+TEST(FromToStringInt)
+{
+
+   {
+      IntProperty v1(2351235);
+      IntProperty v2;
+      v2.SetString(v1.StringValue());
+      CHECK_EQUAL(v2.Get(), v1.Get());
+   }
+
+   {
+      IntProperty v1(-2351235);
+      IntProperty v2;
+      v2.SetString(v1.StringValue());
+      CHECK_EQUAL(v2.Get(), v1.Get());
+   }
+
+}
+
+TEST(FromToStringMatrix)
+{
+
+   osg::Matrix m(0, -1234.1234, 1, 2
+                 , 1234124, 21.245, 2, 2
+                 , 52, 246, 21346, 2346
+                 , 0, 3, -3, 5);
+
+   MatrixProperty v1(m);
+   MatrixProperty v2;
+   v2.SetString(v1.StringValue());
+   CHECK_CLOSE(v2.Get()(0, 0), v1.Get()(0, 0), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(0, 1), v1.Get()(0, 1), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(0, 2), v1.Get()(0, 2), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(0, 3), v1.Get()(0, 3), TOLERANCE);
+
+   CHECK_CLOSE(v2.Get()(1, 0), v1.Get()(1, 0), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(1, 1), v1.Get()(1, 1), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(1, 2), v1.Get()(1, 2), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(1, 3), v1.Get()(1, 3), TOLERANCE);
+
+   CHECK_CLOSE(v2.Get()(2, 0), v1.Get()(2, 0), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(2, 1), v1.Get()(2, 1), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(2, 2), v1.Get()(2, 2), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(2, 3), v1.Get()(2, 3), TOLERANCE);
+
+   CHECK_CLOSE(v2.Get()(3, 0), v1.Get()(3, 0), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(3, 1), v1.Get()(3, 1), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(3, 2), v1.Get()(3, 2), TOLERANCE);
+   CHECK_CLOSE(v2.Get()(3, 3), v1.Get()(3, 3), TOLERANCE);
+
+}
+
+TEST(FromToStringQuat)
+{
+
+   QuatProperty v(6, -7.4, 8, 245.23456246);
+   QuatProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
+   CHECK_CLOSE(v.Get()[1], v2.Get()[1], TOLERANCE);
+   CHECK_CLOSE(v.Get()[2], v2.Get()[2], TOLERANCE);
+   CHECK_CLOSE(v.Get()[3], v2.Get()[3], TOLERANCE);
+}
+
+TEST(FromToStringString)
+{
+
+   StringProperty v("äöü123ß#+*\\/&<>");
+   StringProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_EQUAL(v.Get(), v2.Get());
+
+}
+
+TEST(FromToStringStringId)
+{
+
+   StringIdProperty v(SID("äöü123ß#+*\\/&<>"));
+   StringIdProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_EQUAL(v.Get(), v2.Get());
+
+}
+
+TEST(FromToStringUInt)
+{
+
+   UIntProperty v(123523456);
+   UIntProperty v2;
+   v2.SetString(v.StringValue());
+   CHECK_EQUAL(v.Get(), v2.Get());
+
+}
 
 int main()
 {

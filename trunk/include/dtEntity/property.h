@@ -22,6 +22,7 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/entityid.h>
+#include <dtEntity/log.h>
 #include <dtEntity/stringid.h>
 #include <string>
 #include <osg/Matrix>
@@ -34,6 +35,16 @@
 
 namespace dtEntity
 {
+
+   typedef osg::Vec2f Vec2f;
+   typedef osg::Vec3f Vec3f;
+   typedef osg::Vec4f Vec4f;
+   typedef osg::Vec2d Vec2d;
+   typedef osg::Vec3d Vec3d;
+   typedef osg::Vec4d Vec4d;
+   typedef osg::Quat Quat;
+   typedef osg::Matrix Matrix;
+
    /**
     * dtEntity::Property class is an abstract base class. Each implementation
     * is a wrapper for a (more or less) primitive data type like int, string, bool.
@@ -121,52 +132,204 @@ namespace dtEntity
       virtual bool operator==(const Property& other) const = 0;
 
       /**
-       * Get value of property interpreted as various types.
-       * These default implementations cause an assertion error in debug mode
-       * and return a null value in release mode.
-       */
-      virtual PropertyArray ArrayValue() const { assert(!"Not a bool property!"); return PropertyArray(); }
-      virtual bool BoolValue() const { assert(!"Not a bool property!"); return false; }
-      virtual char CharValue() const { assert(!"Not a char property!"); return 0; }
-      virtual double DoubleValue() const { assert(!"Not a double property!"); return 0.0; }
-      virtual float FloatValue() const { assert(!"Not a float property!"); return 0.0f; }
-      virtual PropertyGroup GroupValue() const { return PropertyGroup(); }
-      virtual int IntValue() const {assert(!"Not an int property!"); return 0; }
-      virtual osg::Matrix MatrixValue() const {assert(!"Not a matrix property!"); return osg::Matrix(); }
-      virtual osg::Quat QuatValue() const { assert(!"Not a quat property!"); return osg::Quat(); }
-      virtual StringId StringIdValue() const { assert(!"Not a string id property!"); return 0; }
-      virtual unsigned int UIntValue() const {assert(!"Not an unsigned int property!"); return 0; }
-      virtual osg::Vec2f Vec2Value() const { assert(!"Not a vec2 property!"); return osg::Vec2f(); }
-      virtual osg::Vec3f Vec3Value() const { assert(!"Not a vec3 property!"); return osg::Vec3f(); }
-      virtual osg::Vec4f Vec4Value() const { assert(!"Not a vec4 property!"); return osg::Vec4f(); }
-      virtual osg::Vec2d Vec2dValue() const { assert(!"Not a vec2d property!"); return osg::Vec2d(); }
-      virtual osg::Vec3d Vec3dValue() const { assert(!"Not a vec3d property!"); return osg::Vec3d(); }
-      virtual osg::Vec4d Vec4dValue() const { assert(!"Not a vec4d property!"); return osg::Vec4d(); }
-      
-      /**
        * To and from string have to be supplied for the editor gui and
        * possibly for map saving
        */
       virtual const std::string StringValue() const = 0;
       virtual void SetString(const std::string&) = 0;
 
-      virtual void SetArray(const PropertyArray&) { assert(!"Not an array property!"); }
-      virtual void SetBool(bool) { assert(!"Not a bool property!"); }
-      virtual void SetChar(char) { assert(!"Not a char property!"); }
-      virtual void SetDouble(double) { assert(!"Not a double property!"); }
-      virtual void SetFloat(float) { assert(!"Not a float property!"); }
-      virtual void SetGroup(const PropertyGroup&) { assert(!"Not a group property!"); }
-      virtual void SetInt(int) { assert(!"Not an int property!"); }
-      virtual void SetMatrix(const osg::Matrix&) { assert(!"Not a matrix property!"); }
-      virtual void SetQuat(const osg::Quat&) { assert(!"Not a quat property!"); }
-      virtual void SetStringId(dtEntity::StringId) { assert(!"Not a stringid property!"); }
-      virtual void SetUInt(unsigned int) { assert(!"Not a uint property!"); }
-      virtual void SetVec2(const osg::Vec2&) { assert(!"Not a vec2 property!"); }
-      virtual void SetVec3(const osg::Vec3&) { assert(!"Not a vec3 property!"); }
-      virtual void SetVec4(const osg::Vec4&) { assert(!"Not a vec4 property!"); }
-      virtual void SetVec2D(const osg::Vec2d&) { assert(!"Not a vec2D property!"); }
-      virtual void SetVec3D(const osg::Vec3d&) { assert(!"Not a vec3D property!"); }
-      virtual void SetVec4D(const osg::Vec4d&) { assert(!"Not a vec4D property!"); }
+      /**
+       * Get value of property interpreted as various types.
+       * These default implementations cause an assertion error in debug mode
+       * and return a null value in release mode.
+       */
+      virtual PropertyArray ArrayValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to an array value!");
+         return PropertyArray();
+      }
+
+      virtual bool BoolValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a bool value!");
+         return false;
+      }
+
+      virtual char CharValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a char value!");
+         return 0;
+      }
+
+      virtual double DoubleValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a double value!");
+         return 0.0;
+      }
+
+      virtual float FloatValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a float value!");
+         return 0.0f;
+      }
+
+      virtual PropertyGroup GroupValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a group value!");
+         return PropertyGroup();
+      }
+
+      virtual int IntValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to an int value!");
+         return 0;
+      }
+
+      virtual Matrix MatrixValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a matrix value!");
+         return Matrix();
+      }
+
+      virtual Quat QuatValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a quat value!");
+         return Quat();
+      }
+
+      virtual StringId StringIdValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a StringId value!");
+         return 0;
+      }
+
+      virtual unsigned int UIntValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a UInt value!");
+         return 0;
+      }
+
+      virtual Vec2f Vec2Value() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec2 value!");
+         return Vec2f();
+      }
+
+      virtual Vec3f Vec3Value() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec3 value!");
+         return Vec3f();
+      }
+
+      virtual Vec4f Vec4Value() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec4 value!");
+         return Vec4f();
+      }
+
+      virtual Vec2d Vec2dValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec2d value!");
+         return Vec2d();
+      }
+
+      virtual Vec3d Vec3dValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec3d value!");
+         return Vec3d();
+      }
+
+      virtual Vec4d Vec4dValue() const
+      {
+         LOG_ERROR("Cannot convert " << DataType::ToString(GetDataType()) << " to a vec4d value!");
+         return Vec4d();
+      }
+      
+
+      virtual void SetArray(const PropertyArray&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to an array value!");
+      }
+
+      virtual void SetBool(bool)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to an bool value!");
+      }
+
+      virtual void SetChar(char)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a char value!");
+      }
+
+      virtual void SetDouble(double)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a double value!");
+      }
+
+      virtual void SetFloat(float)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a float value!");
+      }
+
+      virtual void SetGroup(const PropertyGroup&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a group value!");
+      }
+
+      virtual void SetInt(int)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to an int value!");
+      }
+
+      virtual void SetMatrix(const Matrix&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a matrix value!");
+      }
+
+      virtual void SetQuat(const Quat&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a quat value!");
+      }
+
+      virtual void SetStringId(dtEntity::StringId)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a StringId value!");
+      }
+
+      virtual void SetUInt(unsigned int)
+      {
+        LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a uint value!");
+      }
+
+      virtual void SetVec2(const Vec2f&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec2 value!");
+      }
+
+      virtual void SetVec3(const Vec3f&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec3 value!");
+      }
+
+      virtual void SetVec4(const Vec4f&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec4 value!");
+      }
+
+      virtual void SetVec2D(const Vec2d&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec2d value!");
+      }
+
+      virtual void SetVec3D(const Vec3d&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec3d value!");
+      }
+
+      virtual void SetVec4D(const Vec4d&)
+      {
+         LOG_ERROR("Cannot set " << DataType::ToString(GetDataType()) << " to a vec4d value!");
+      }
 
    };
 
@@ -189,17 +352,16 @@ namespace dtEntity
       virtual PropertyArray ArrayValue() const;
       virtual void SetArray(const PropertyArray& v) { Set(v); }
       virtual const std::string StringValue() const;
-      virtual osg::Vec2f Vec2Value() const;
-      virtual osg::Vec3f Vec3Value() const;
-      virtual osg::Vec4f Vec4Value() const;
-      virtual osg::Vec2d Vec2dValue() const;
-      virtual osg::Vec3d Vec3dValue() const;
-      virtual osg::Vec4d Vec4dValue() const;
-      virtual osg::Quat QuatValue() const;
-      virtual osg::Matrix MatrixValue() const;
-      
-   
-      PropertyArray Get() const { return mValue; }
+      virtual Vec2f Vec2Value() const;
+      virtual Vec3f Vec3Value() const;
+      virtual Vec4f Vec4Value() const;
+      virtual Vec2d Vec2dValue() const;
+      virtual Vec3d Vec3dValue() const;
+      virtual Vec4d Vec4dValue() const;
+      virtual Quat QuatValue() const;
+      virtual Matrix MatrixValue() const;
+
+      const PropertyArray& Get() const { return mValue; }
 
       virtual Property* Clone() const ;
       virtual bool operator==(const Property& other) const;
@@ -208,12 +370,12 @@ namespace dtEntity
 
       // causes an assertion failure when called
       virtual void SetString(const std::string&);
-      virtual void SetVec2(const osg::Vec2&);
-      virtual void SetVec3(const osg::Vec3&);
-      virtual void SetVec4(const osg::Vec4&);
-      virtual void SetVec2D(const osg::Vec2d&);
-      virtual void SetVec3D(const osg::Vec3d&);
-      virtual void SetVec4D(const osg::Vec4d&);
+      virtual void SetVec2(const Vec2f&);
+      virtual void SetVec3(const Vec3f&);
+      virtual void SetVec4(const Vec4f&);
+      virtual void SetVec2D(const Vec2d&);
+      virtual void SetVec3D(const Vec3d&);
+      virtual void SetVec4D(const Vec4d&);
 
       virtual bool SetFrom(const Property& other);
 
@@ -246,7 +408,10 @@ namespace dtEntity
        */
       void Clear();
 
-      unsigned int Size() const { return mValue.size(); }
+      unsigned int Size() const
+      {
+         return mValue.size();
+      }
 
    private:
       
@@ -372,7 +537,7 @@ namespace dtEntity
       virtual PropertyGroup GroupValue() const;
       virtual void SetGroup(const PropertyGroup& v) { Set(v); }
       virtual const std::string StringValue() const;
-      PropertyGroup& Get() { return mValue; }
+
       const PropertyGroup& Get() const { return mValue; }
 
       // add prop and take ownership
@@ -426,49 +591,70 @@ namespace dtEntity
    class DT_ENTITY_EXPORT MatrixProperty : public Property
    {
    public:
-      MatrixProperty(const osg::Matrix& v = osg::Matrix());
+      MatrixProperty(const Matrix& v = Matrix());
 
       virtual DataType::e GetDataType() const { return DataType::MATRIX; }
 
-      virtual osg::Matrix MatrixValue() const;
-      virtual void SetMatrix(const osg::Matrix& v) { Set(v); }
+      virtual Matrix MatrixValue() const;
+      virtual void SetMatrix(const Matrix& v) { Set(v); }
       virtual const std::string StringValue() const;
-      osg::Matrix Get() const { return mValue; }
+      Matrix Get() const { return mValue; }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Matrix& v) { mValue = v; }
+      void Set(const Matrix& v) { mValue = v; }
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
    private:
 
-      osg::Matrix mValue;
+      Matrix mValue;
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT QuatProperty : public Property
    {
    public:
-      QuatProperty(const osg::Quat& v = osg::Quat(0, 0, 0, 1));
+      QuatProperty();
+      QuatProperty(const Quat& v);
       QuatProperty(double x, double y, double z, double w);
+      QuatProperty(const double* v);
 
       virtual DataType::e GetDataType() const { return DataType::QUAT; }
 
-      virtual osg::Quat QuatValue() const;
+      virtual Quat QuatValue() const;
       virtual const std::string StringValue() const;
-      virtual void SetQuat(const osg::Quat& v) { Set(v); }
-      osg::Quat Get() const { return mValue; }
+      virtual void SetQuat(const Quat& v) { Set(v); }
+
+      const Quat& Get() const { return reinterpret_cast<const Quat&>(*mValues); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Quat& v) { mValue = v; }
+
+      void Set(const Quat& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
+      void Set(const double* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
+      const double* GetValues() const { return mValues; }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
    private:
 
-      osg::Quat mValue;
+      double mValues[4];
    };
 
    //////////////////////////////////////////////////////////////////
@@ -552,176 +738,283 @@ namespace dtEntity
    {
    public:
 
-      Vec2Property(const osg::Vec2f& v = osg::Vec2f());
+      Vec2Property();
+      Vec2Property(const Vec2f& v);
       Vec2Property(float x, float y);
+      Vec2Property(const float* vals);
 
       virtual DataType::e GetDataType() const { return DataType::VEC2; }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual void SetVec2(const osg::Vec2& v) { Set(v); }
-      virtual osg::Vec2d Vec2dValue() const;
-      virtual void SetVec2D(const osg::Vec2d& v) { Set(v); }
+      virtual Vec2f Vec2Value() const;
+      virtual void SetVec2(const Vec2f& v) { Set(v); }
+      virtual Vec2d Vec2dValue() const;
+      virtual void SetVec2D(const Vec2d& v) { Set(v); }
       
       virtual const std::string StringValue() const;
-      osg::Vec2f Get() const { return mValue; }
+      const Vec2f& Get() const { return reinterpret_cast<const Vec2f&>(*mValues); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec2f& v) { mValue = v; }
+
+      void Set(const Vec2f& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+      }
+
+      void Set(const float* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const float* GetValues() const { return mValues; }
+
    private:
 
-      osg::Vec2f mValue;
+      float mValues[2];
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT Vec3Property : public Property
    {
    public:
-      Vec3Property(const osg::Vec3f& v = osg::Vec3f());
+      Vec3Property();
+      Vec3Property(const Vec3f& v);
       Vec3Property(float x, float y, float z);
+      Vec3Property(const float* vals);
 
       virtual DataType::e GetDataType() const { return DataType::VEC3; }
       
-      virtual osg::Vec3f Vec3Value() const;
-      virtual void SetVec3(const osg::Vec3& v) { Set(v); }
-      virtual osg::Vec3d Vec3dValue() const;
-      virtual void SetVec3D(const osg::Vec3d& v) { Set(v); }
+      virtual Vec3f Vec3Value() const;
+      virtual void SetVec3(const Vec3f& v) { Set(v); }
+      virtual Vec3d Vec3dValue() const;
+      virtual void SetVec3D(const Vec3d& v) { Set(v); }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual osg::Vec2d Vec2dValue() const;
+      virtual Vec2f Vec2Value() const;
+      virtual Vec2d Vec2dValue() const;
       virtual const std::string StringValue() const;
-      osg::Vec3f Get() const { return mValue; }
+      const Vec3f& Get() const { return reinterpret_cast<const Vec3f&>(*mValues); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec3f& v) { mValue = v; }
+      void Set(const Vec3f& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+      }
+
+      void Set(const float* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const float* GetValues() const { return mValues; }
+
+
    private:
-      osg::Vec3f mValue;
+      float mValues[3];
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT Vec4Property : public Property
    {
    public:
-      Vec4Property(const osg::Vec4f& v = osg::Vec4f());
+      Vec4Property();
+      Vec4Property(const Vec4f& v);
       Vec4Property(float x, float y, float z, float w);
+      Vec4Property(const float* vals);
 
       virtual DataType::e GetDataType() const { return DataType::VEC4; }
 
-      virtual osg::Vec4f Vec4Value() const;
-      virtual void SetVec4(const osg::Vec4& v) { Set(v); }
-      virtual osg::Vec4d Vec4dValue() const;
-      virtual void SetVec4D(const osg::Vec4d& v) { Set(v); }
+      virtual Vec4f Vec4Value() const;
+      virtual void SetVec4(const Vec4f& v) { Set(v); }
+      virtual Vec4d Vec4dValue() const;
+      virtual void SetVec4D(const Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      osg::Vec4f Get() const { return mValue; }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual osg::Vec2d Vec2dValue() const;
-      virtual osg::Vec3f Vec3Value() const;
-      virtual osg::Vec3d Vec3dValue() const;
+      const Vec4f& Get() const { return reinterpret_cast<const Vec4f&>(*mValues); }
+
+      virtual Vec2f Vec2Value() const;
+      virtual Vec2d Vec2dValue() const;
+      virtual Vec3f Vec3Value() const;
+      virtual Vec3d Vec3dValue() const;
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec4f& v) { mValue = v; }
+      void Set(const Vec4f& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
+      void Set(const float* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const float* GetValues() const { return mValues; }
+
    private:
-      osg::Vec4f mValue;
+      float mValues[4];
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT Vec2dProperty : public Property
    {
    public:
-      Vec2dProperty(const osg::Vec2d& v = osg::Vec2d());
 
+      Vec2dProperty();
+      Vec2dProperty(const Vec2d& v);
       Vec2dProperty(double x, double y);
+      Vec2dProperty(const double* v);
 
       virtual DataType::e GetDataType() const { return DataType::VEC2D; }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual void SetVec2(const osg::Vec2& v) { Set(v); }
-      virtual osg::Vec2d Vec2dValue() const;
-      virtual void SetVec2D(const osg::Vec2d& v) { Set(v); }
+      virtual Vec2f Vec2Value() const;
+      virtual void SetVec2(const Vec2f& v) { Set(v); }
+      virtual Vec2d Vec2dValue() const;
+      virtual void SetVec2D(const Vec2d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      osg::Vec2d Get() const { return mValue; }
+      const Vec2d& Get() const { return reinterpret_cast<const Vec2d&>(*mValues); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec2d& v) { mValue = v; }
+      void Set(const Vec2d& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+      }
+
+      void Set(const double* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const double* GetValues() const { return mValues; }
+
    private:
 
-      osg::Vec2d mValue;
+      double mValues[2];
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT Vec3dProperty : public Property
    {
    public:
-      Vec3dProperty(const osg::Vec3d& v = osg::Vec3d());
+
+      Vec3dProperty();
+      Vec3dProperty(const Vec3d& v);
       Vec3dProperty(double x, double y, double z);
+      Vec3dProperty(const double* v);
 
       virtual DataType::e GetDataType() const { return DataType::VEC3D; }
 
-      virtual osg::Vec3f Vec3Value() const;
-      virtual void SetVec3(const osg::Vec3& v) { Set(v); }
-      virtual osg::Vec3d Vec3dValue() const;
-      virtual void SetVec3D(const osg::Vec3d& v) { Set(v); }
+      virtual Vec3f Vec3Value() const;
+      virtual void SetVec3(const Vec3f& v) { Set(v); }
+      virtual Vec3d Vec3dValue() const;
+      virtual void SetVec3D(const Vec3d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      osg::Vec3d Get() const { return mValue; }
+      const Vec3d& Get() const { return reinterpret_cast<const Vec3d&>(*mValues); }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual osg::Vec2d Vec2dValue() const;
+      virtual Vec2f Vec2Value() const;
+      virtual Vec2d Vec2dValue() const;
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec3d& v) { mValue = v; }
+      void Set(const Vec3d& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+      }
+
+      void Set(const double* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const double* GetValues() const { return mValues; }
+
    private:
-      osg::Vec3d mValue;
+      double mValues[3];
    };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT Vec4dProperty : public Property
    {
    public:
-      Vec4dProperty(const osg::Vec4d& v = osg::Vec4d());
+
+      Vec4dProperty();
+      Vec4dProperty(const Vec4d& v);
       Vec4dProperty(double x, double y, double z, double w);
+      Vec4dProperty(const double* v);
 
       virtual DataType::e GetDataType() const { return DataType::VEC4D; }
 
-      virtual osg::Vec4f Vec4Value() const;
-      virtual void SetVec4(const osg::Vec4& v) { Set(v); }
-      virtual osg::Vec4d Vec4dValue() const;
-      virtual void SetVec4D(const osg::Vec4d& v) { Set(v); }
+      virtual Vec4f Vec4Value() const;
+      virtual void SetVec4(const Vec4f& v) { Set(v); }
+      virtual Vec4d Vec4dValue() const;
+      virtual void SetVec4D(const Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      osg::Vec4d Get() const { return mValue; }
+      const Vec4d& Get() const { return reinterpret_cast<const Vec4d&>(*mValues); }
 
-      virtual osg::Vec2f Vec2Value() const;
-      virtual osg::Vec2d Vec2dValue() const;
-      virtual osg::Vec3f Vec3Value() const;
-      virtual osg::Vec3d Vec3dValue() const;
+      virtual Vec2f Vec2Value() const;
+      virtual Vec2d Vec2dValue() const;
+      virtual Vec3f Vec3Value() const;
+      virtual Vec3d Vec3dValue() const;
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
-      void Set(const osg::Vec4d& v) { mValue = v; }
+      void Set(const Vec4d& v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
+      void Set(const double* v)
+      {
+         mValues[0] = v[0];
+         mValues[1] = v[1];
+         mValues[2] = v[2];
+         mValues[3] = v[3];
+      }
+
       virtual void SetString(const std::string&);
       virtual bool SetFrom(const Property& other);
 
+      const double* GetValues() const { return mValues; }
+
    private:
-      osg::Vec4d mValue;
+      double mValues[4];
    };
 
 }
