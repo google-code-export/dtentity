@@ -50,8 +50,7 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    LayerComponent::LayerComponent()
-      : mAddedToScene(false)
-      , mEntity(NULL)
+      : mEntity(NULL)
       , mVisible(
            DynamicBoolProperty::SetValueCB(this, &LayerComponent::SetVisible),
            DynamicBoolProperty::GetValueCB(this, &LayerComponent::IsVisible)
@@ -67,6 +66,7 @@ namespace dtEntity
            DynamicStringIdProperty::GetValueCB(this, &LayerComponent::GetAttachedComponent)
         )
       , mAttachedComponentVal(StringId())
+      , mAddedToScene(false)
    {
       Register(LayerId, &mLayer);
       Register(AttachedComponentId, &mAttachedComponent);            

@@ -29,7 +29,6 @@
 #include <osg/Vec2>
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <assert.h>
 #include <vector>
 #include <map>
 

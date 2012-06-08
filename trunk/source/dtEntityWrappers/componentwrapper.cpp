@@ -195,8 +195,6 @@ namespace dtEntityWrappers
          return wrapped;
       }
 
-      Handle<Context> context = scriptsys->GetGlobalContext();
-
       Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_componentWrapper);
       if(templt.IsEmpty())
       {

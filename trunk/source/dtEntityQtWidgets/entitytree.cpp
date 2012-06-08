@@ -1327,7 +1327,6 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void EntityTreeView::EntityWasSelected(const QModelIndex& idx)
    {
-      EntityTreeItem* item = GetInternal(idx);
       mTreeView->selectionModel()->select(idx, QItemSelectionModel::Select | QItemSelectionModel::Rows);
    }
 

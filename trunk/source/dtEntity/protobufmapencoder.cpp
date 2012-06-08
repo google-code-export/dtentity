@@ -96,6 +96,7 @@ namespace dtEntity
       case DataType::VEC2D:      propertyobj.set_type(dtProtoBuf::VEC2D); break;
       case DataType::VEC3D:      propertyobj.set_type(dtProtoBuf::VEC3D); break;
       case DataType::VEC4D:      propertyobj.set_type(dtProtoBuf::VEC4D); break;
+      default: assert(false);
       }
 
       switch(prop.GetDataType())
@@ -214,6 +215,7 @@ namespace dtEntity
          v.set_value_3(vec[3]);
          break;
       }
+      default: assert(false);
       }
    }
 
