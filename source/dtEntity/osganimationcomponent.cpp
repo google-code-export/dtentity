@@ -239,9 +239,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationComponent::OSGAnimationComponent()
       : mEntity(NULL)
-      , mEnabledVal(true)
       , mEnabled(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &OSGAnimationComponent::SetEnabled),
            DynamicBoolProperty::GetValueCB(this, &OSGAnimationComponent::GetEnabled)))
+      , mEnabledVal(true)
+
    {
       Register(EnabledId, &mEnabled);
    }

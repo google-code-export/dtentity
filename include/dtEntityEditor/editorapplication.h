@@ -140,7 +140,8 @@ namespace dtEntityEditor
       osg::ref_ptr<osgViewer::Viewer> mViewer;
       std::vector<std::string> mPluginPaths;
       osg::Timer_t mStartOfFrameTick;
-      QFileSystemWatcher* mFileSystemWatcher;
       double mTimeScale;
+      QFileSystemWatcher* mFileSystemWatcher;
+
     };
 }

@@ -100,14 +100,15 @@ namespace dtEntity
 
    private:
 
+      Entity* mEntity;
+      DynamicBoolProperty mVisible;
+      bool mVisibleVal;
       DynamicStringIdProperty mLayer;
       StringId mLayerVal;
       DynamicStringIdProperty mAttachedComponent;
       StringId mAttachedComponentVal;
-      DynamicBoolProperty mVisible;
-      bool mVisibleVal;
       bool mAddedToScene;
-      Entity* mEntity;
+
    };
 
    

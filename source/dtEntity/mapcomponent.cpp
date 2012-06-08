@@ -60,17 +60,17 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    MapComponent::MapComponent()
-      : mSpawnerNameProp(
+      : mEntityName(
+        DynamicStringProperty::SetValueCB(this, &MapComponent::SetEntityName),
+        DynamicStringProperty::GetValueCB(this, &MapComponent::GetEntityName)
+        )
+      , mSpawnerNameProp(
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetSpawnerName),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetSpawnerName)
         )
       , mUniqueId(
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetUniqueId),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetUniqueId)
-        )
-      , mEntityName(
-           DynamicStringProperty::SetValueCB(this, &MapComponent::SetEntityName),
-           DynamicStringProperty::GetValueCB(this, &MapComponent::GetEntityName)
         )
       , mSpawner(NULL)
       , mOwner(NULL)

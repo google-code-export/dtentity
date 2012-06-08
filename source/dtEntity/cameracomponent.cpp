@@ -76,6 +76,11 @@ namespace dtEntity
            DynamicIntProperty::SetValueCB(this, &CameraComponent::SetContextId),
            DynamicIntProperty::GetValueCB(this, &CameraComponent::GetContextId)
         )
+      , mContextIdVal(-1)
+      , mCullingMode (
+           DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
+           DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
+        )
       , mFieldOfView(
            DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFieldOfView),
            DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFieldOfView)
@@ -91,7 +96,7 @@ namespace dtEntity
       , mFarClip (
            DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFarClip),
            DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFarClip)
-        )
+        )      
       , mClearColor (
            DynamicVec4Property::SetValueCB(this, &CameraComponent::SetClearColor),
            DynamicVec4Property::GetValueCB(this, &CameraComponent::GetClearColor)
@@ -103,11 +108,6 @@ namespace dtEntity
       , mCullMask (
            DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
            DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
-        )
-      , mContextIdVal(-1)
-      , mCullingMode (
-           DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
-           DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
         )
    {
 
@@ -559,7 +559,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   EntityId CameraSystem::GetCameraEntityByContextId(unsigned int id)
+   EntityId CameraSystem::GetCameraEntityByContextId(int id)
    {
 
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)

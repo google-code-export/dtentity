@@ -216,7 +216,7 @@ namespace dtEntity
       CameraSystem(EntityManager& em);
       ~CameraSystem();
 
-      EntityId GetCameraEntityByContextId(unsigned int id);
+      EntityId GetCameraEntityByContextId(int id);
 
       void OnWindowCreated(const Message& msg);
 

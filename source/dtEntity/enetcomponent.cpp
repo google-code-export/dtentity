@@ -126,6 +126,7 @@ namespace dtEntity
 
       GetEntityManager().RegisterForMessages(TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_LATE, "ENetSystem::Tick");
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -188,7 +189,11 @@ namespace dtEntity
 
             /* Reset the peer's client information. */
             event.peer -> data = NULL;
+            break;
+
+         case ENET_EVENT_TYPE_NONE: break;
          }
+
       }
    }
 

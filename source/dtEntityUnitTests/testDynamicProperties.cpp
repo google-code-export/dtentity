@@ -80,7 +80,7 @@ TEST(SetValuesDynamicUInt)
 {
    DynamicUIntProperty prop = DynamicUIntProperty(DynamicUIntProperty::SetValueCB(SetUInt), DynamicUIntProperty::GetValueCB(GetUInt));
    prop.Set(333);
-   CHECK_EQUAL(prop.Get(), 333);
+   CHECK_EQUAL(prop.Get(), (unsigned int)333);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

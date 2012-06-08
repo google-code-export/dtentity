@@ -158,10 +158,11 @@ namespace dtEntity
 
       ApplicationSystemInfo mApplicationSystemInfo;
 
-      DynamicFloatProperty mTimeScale;
       ArrayProperty mArgvArray;
 
       ApplicationImpl* mImpl;
+
+      DynamicFloatProperty mTimeScale;
 
       Property* ScriptGetTimeScale(const PropertyArgs& args)
       {

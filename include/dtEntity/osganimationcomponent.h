@@ -64,9 +64,9 @@ namespace dtEntity
    private:
 
       osg::ref_ptr<osgAnimation::BasicAnimationManager> mAnimationManager;
-      dtEntity::DynamicBoolProperty mEnabled;
-      bool mEnabledVal;
       Entity* mEntity;
+      DynamicBoolProperty mEnabled;
+      bool mEnabledVal;      
  
    };
 
@@ -114,7 +114,7 @@ namespace dtEntity
       MessageFunctor mMeshChangedFunctor;
       StringProperty mVertexShader;
       StringProperty mFragmentShader;
-      dtEntity::DynamicBoolProperty mEnabled;
       bool mEnabledVal;
+      dtEntity::DynamicBoolProperty mEnabled;
    };
 }
