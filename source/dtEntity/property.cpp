@@ -443,28 +443,28 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    CharProperty::CharProperty(char v)
       : mValue(v)
-   {         
+   {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    char CharProperty::CharValue() const
-   { 
-      return Get(); 
+   {
+      return Get();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const std::string CharProperty::StringValue() const 
-   { 
+   const std::string CharProperty::StringValue() const
+   {
       char str[2];
       str[0] = mValue;
-      str[1] = '\0';      
-      return str; 
+      str[1] = '\0';
+      return str;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* CharProperty::Clone() const
-   { 
-      return new CharProperty(mValue); 
+   {
+      return new CharProperty(mValue);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1009,15 +1009,33 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
+   QuatProperty::QuatProperty()
+   {
+      mValues[0] = 0;
+      mValues[1] = 1;
+      mValues[2] = 2;
+      mValues[3] = 3;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    QuatProperty::QuatProperty(const osg::Quat& v)
-      : mValue(v)
    {         
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QuatProperty::QuatProperty(double x, double y, double z, double w)
-      : mValue(osg::Quat(x, y, z, w))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+      mValues[2] = z;
+      mValues[3] = w;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   QuatProperty::QuatProperty(const double* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1031,14 +1049,14 @@ namespace dtEntity
    { 
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1] << " "<< mValue[2] << " "<< mValue[3];
+      os << std::fixed << mValues[0] << " " << mValues[1] << " "<< mValues[2] << " "<< mValues[3];
       return os.str(); 
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* QuatProperty::Clone() const 
    { 
-      return new QuatProperty(mValue); 
+      return new QuatProperty(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1049,7 +1067,10 @@ namespace dtEntity
          return false;
       }
       const QuatProperty& aother = static_cast<const QuatProperty&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1] &&
+              aother.mValues[2] == mValues[2] &&
+              aother.mValues[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1058,12 +1079,10 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 4)
       {
-         float v0, v1, v2, v3;
-         fromString<float>(v0, l[0], std::dec);
-         fromString<float>(v1, l[1], std::dec);
-         fromString<float>(v2, l[2], std::dec);
-         fromString<float>(v3, l[3], std::dec);
-         mValue = osg::Quat(v0, v1, v2, v3);
+         fromString<double>(mValues[0], l[0], std::dec);
+         fromString<double>(mValues[1], l[1], std::dec);
+         fromString<double>(mValues[2], l[2], std::dec);
+         fromString<double>(mValues[3], l[3], std::dec);
       }
    }
 
@@ -1217,15 +1236,29 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
+   Vec2Property::Vec2Property()
+   {
+      mValues[0] = 0;
+      mValues[1] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    Vec2Property::Vec2Property(const osg::Vec2& v)
-      : mValue(v)
    {         
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec2Property::Vec2Property(float x, float y)
-      : mValue(osg::Vec2(x, y))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec2Property::Vec2Property(const float* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1237,7 +1270,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2d Vec2Property::Vec2dValue() const
    {
-      return osg::Vec2d(mValue[0], mValue[1]);
+      return osg::Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1245,14 +1278,14 @@ namespace dtEntity
    { 
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1];
+      os << std::fixed << mValues[0] << " " << mValues[1];
       return os.str(); 
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec2Property::Clone() const 
    { 
-      return new Vec2Property(mValue); 
+      return new Vec2Property(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1263,7 +1296,8 @@ namespace dtEntity
          return false;
       }
       const Vec2Property& aother = static_cast<const Vec2Property&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1272,10 +1306,8 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 2)
       {
-         float v0, v1;
-         fromString<float>(v0, l[0], std::dec);
-         fromString<float>(v1, l[1], std::dec);
-         mValue = osg::Vec2(v0, v1);
+         fromString<float>(mValues[0], l[0], std::dec);
+         fromString<float>(mValues[1], l[1], std::dec);
       }
    }
 
@@ -1287,39 +1319,55 @@ namespace dtEntity
    }
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
+   Vec3Property::Vec3Property()
+   {
+      mValues[0] = 0;
+      mValues[1] = 0;
+      mValues[2] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    Vec3Property::Vec3Property(const osg::Vec3& v)
-      : mValue(v)
-   {         
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec3Property::Vec3Property(float x, float y, float z)
-      : mValue(osg::Vec3(x, y, z))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+      mValues[2] = z;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec3Property::Vec3Property(const float* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 Vec3Property::Vec3Value() const
    { 
-      return Get();
+      return osg::Vec3(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3d Vec3Property::Vec3dValue() const
    {
-      return osg::Vec3d(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec3Property::Vec2Value() const
    {
-      return osg::Vec2f(mValue[0], mValue[1]);
+      return osg::Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2d Vec3Property::Vec2dValue() const
-      {
-      return osg::Vec2d(mValue[0], mValue[1]);
+   {
+      return osg::Vec2d(mValues[0], mValues[1]);
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -1327,14 +1375,14 @@ namespace dtEntity
    { 
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1] << " "<< mValue[2];
+      os << std::fixed << mValues[0] << " " << mValues[1] << " "<< mValues[2];
       return os.str(); 
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec3Property::Clone() const 
    { 
-      return new Vec3Property(mValue); 
+      return new Vec3Property(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1345,7 +1393,9 @@ namespace dtEntity
          return false;
       }
       const Vec3Property& aother = static_cast<const Vec3Property&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1] &&
+              aother.mValues[2] == mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1354,11 +1404,9 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 3)
       {
-         float v0, v1, v2;
-         fromString<float>(v0, l[0], std::dec);
-         fromString<float>(v1, l[1], std::dec);
-         fromString<float>(v2, l[2], std::dec);
-         mValue = osg::Vec3(v0, v1, v2);
+         fromString<float>(mValues[0], l[0], std::dec);
+         fromString<float>(mValues[1], l[1], std::dec);
+         fromString<float>(mValues[2], l[2], std::dec);
       }
    }
 
@@ -1371,15 +1419,33 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
+   Vec4Property::Vec4Property()
+   {
+      mValues[0] = 0;
+      mValues[1] = 0;
+      mValues[2] = 0;
+      mValues[3] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    Vec4Property::Vec4Property(const osg::Vec4& v)
-      : mValue(v)
    {         
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec4Property::Vec4Property(float x, float y, float z, float w)
-      : mValue(osg::Vec4(x, y, z, w))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+      mValues[2] = z;
+      mValues[3] = w;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec4Property::Vec4Property(const float* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1391,31 +1457,31 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec4d Vec4Property::Vec4dValue() const
    {
-      return osg::Vec4d(mValue[0], mValue[1], mValue[2], mValue[3]);
+      return osg::Vec4d(mValues[0], mValues[1], mValues[2], mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec4Property::Vec2Value() const
    {
-      return osg::Vec2f(mValue[0], mValue[1]);
+      return osg::Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2d Vec4Property::Vec2dValue() const
    {
-      return osg::Vec2d(mValue[0], mValue[1]);
+      return osg::Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3f Vec4Property::Vec3Value() const
    {
-      return osg::Vec3f(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3d Vec4Property::Vec3dValue() const
    {
-      return osg::Vec3d(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1423,14 +1489,14 @@ namespace dtEntity
    { 
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1] << " "<< mValue[2] << " "<< mValue[3];
+      os << std::fixed << mValues[0] << " " << mValues[1] << " "<< mValues[2] << " "<< mValues[3];
       return os.str(); 
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec4Property::Clone() const 
    { 
-      return new Vec4Property(mValue); 
+      return new Vec4Property(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1441,7 +1507,10 @@ namespace dtEntity
          return false;
       }
       const Vec4Property& aother = static_cast<const Vec4Property&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1] &&
+              aother.mValues[2] == mValues[2] &&
+              aother.mValues[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1450,12 +1519,10 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 4)
       {
-         float v0, v1, v2, v3;
-         fromString<float>(v0, l[0], std::dec);
-         fromString<float>(v1, l[1], std::dec);
-         fromString<float>(v2, l[2], std::dec);
-         fromString<float>(v3, l[3], std::dec);
-         mValue = osg::Vec4(v0, v1, v2, v3);
+         fromString<float>(mValues[0], l[0], std::dec);
+         fromString<float>(mValues[1], l[1], std::dec);
+         fromString<float>(mValues[2], l[2], std::dec);
+         fromString<float>(mValues[3], l[3], std::dec);
       }
    }
 
@@ -1468,21 +1535,35 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-   Vec2dProperty::Vec2dProperty(const osg::Vec2d& v)
-      : mValue(v)
+   Vec2dProperty::Vec2dProperty()
    {
+      mValues[0] = 0;
+      mValues[1] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec2dProperty::Vec2dProperty(const osg::Vec2d& v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec2dProperty::Vec2dProperty(double x, double y)
-      : mValue(osg::Vec2d(x, y))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec2dProperty::Vec2dProperty(const double* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec2dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValue[0], mValue[1]);
+      return osg::Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1496,14 +1577,14 @@ namespace dtEntity
    {
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1];
+      os << std::fixed << mValues[0] << " " << mValues[1];
       return os.str();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec2dProperty::Clone() const
    {
-      return new Vec2dProperty(mValue);
+      return new Vec2dProperty(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1514,7 +1595,8 @@ namespace dtEntity
          return false;
       }
       const Vec2dProperty& aother = static_cast<const Vec2dProperty&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1522,11 +1604,9 @@ namespace dtEntity
    {
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 2)
-      {
-         double v0, v1;
-         fromString<double>(v0, l[0], std::dec);
-         fromString<double>(v1, l[1], std::dec);
-         mValue = osg::Vec2d(v0, v1);
+      {         
+         fromString<double>(mValues[0], l[0], std::dec);
+         fromString<double>(mValues[1], l[1], std::dec);
       }
    }
 
@@ -1538,21 +1618,37 @@ namespace dtEntity
    }
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-   Vec3dProperty::Vec3dProperty(const osg::Vec3d& v)
-      : mValue(v)
+   Vec3dProperty::Vec3dProperty()
    {
+      mValues[0] = 0;
+      mValues[1] = 0;
+      mValues[2] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec3dProperty::Vec3dProperty(const osg::Vec3d& v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec3dProperty::Vec3dProperty(double x, double y, double z)
-      : mValue(osg::Vec3d(x, y, z))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+      mValues[2] = z;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec3dProperty::Vec3dProperty(const double* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3f Vec3dProperty::Vec3Value() const
    {
-      return osg::Vec3f(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1564,13 +1660,13 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec3dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValue[0], mValue[1]);
+      return osg::Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2d Vec3dProperty::Vec2dValue() const
    {
-      return osg::Vec2d(mValue[0], mValue[1]);
+      return osg::Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1578,14 +1674,14 @@ namespace dtEntity
    {
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1] << " "<< mValue[2];
+      os << std::fixed << mValues[0] << " " << mValues[1] << " "<< mValues[2];
       return os.str();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec3dProperty::Clone() const
    {
-      return new Vec3dProperty(mValue);
+      return new Vec3dProperty(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1596,7 +1692,9 @@ namespace dtEntity
          return false;
       }
       const Vec3dProperty& aother = static_cast<const Vec3dProperty&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1] &&
+              aother.mValues[2] == mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1605,11 +1703,9 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 3)
       {
-         double v0, v1, v2;
-         fromString<double>(v0, l[0], std::dec);
-         fromString<double>(v1, l[1], std::dec);
-         fromString<double>(v2, l[2], std::dec);
-         mValue = osg::Vec3d(v0, v1, v2);
+         fromString<double>(mValues[0], l[0], std::dec);
+         fromString<double>(mValues[1], l[1], std::dec);
+         fromString<double>(mValues[2], l[2], std::dec);
       }
    }
 
@@ -1622,21 +1718,39 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-   Vec4dProperty::Vec4dProperty(const osg::Vec4d& v)
-      : mValue(v)
+   Vec4dProperty::Vec4dProperty()
    {
+      mValues[0] = 0;
+      mValues[1] = 0;
+      mValues[2] = 0;
+      mValues[3] = 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec4dProperty::Vec4dProperty(const osg::Vec4d& v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Vec4dProperty::Vec4dProperty(double x, double y, double z, double w)
-      : mValue(osg::Vec4d(x, y, z, w))
    {
+      mValues[0] = x;
+      mValues[1] = y;
+      mValues[2] = z;
+      mValues[3] = w;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   Vec4dProperty::Vec4dProperty(const double* v)
+   {
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec4f Vec4dProperty::Vec4Value() const
    {
-      return osg::Vec4f(mValue[0], mValue[1], mValue[2], mValue[3]);
+      return osg::Vec4f(mValues[0], mValues[1], mValues[2], mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1648,25 +1762,25 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2f Vec4dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValue[0], mValue[1]);
+      return osg::Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec2d Vec4dProperty::Vec2dValue() const
    {
-      return osg::Vec2d(mValue[0], mValue[1]);
+      return osg::Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3f Vec4dProperty::Vec3Value() const
    {
-      return osg::Vec3f(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    osg::Vec3d Vec4dProperty::Vec3dValue() const
    {
-      return osg::Vec3d(mValue[0], mValue[1], mValue[2]);
+      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1674,14 +1788,14 @@ namespace dtEntity
    {
       std::ostringstream os;
       os.precision(10);
-      os << std::fixed << mValue[0] << " " << mValue[1] << " "<< mValue[2] << " "<< mValue[3];
+      os << std::fixed << mValues[0] << " " << mValues[1] << " "<< mValues[2] << " "<< mValues[3];
       return os.str();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    Property* Vec4dProperty::Clone() const
    {
-      return new Vec4dProperty(mValue);
+      return new Vec4dProperty(mValues);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1692,7 +1806,10 @@ namespace dtEntity
          return false;
       }
       const Vec4dProperty& aother = static_cast<const Vec4dProperty&>(other);
-      return (aother.mValue == mValue);
+      return (aother.mValues[0] == mValues[0] &&
+              aother.mValues[1] == mValues[1] &&
+              aother.mValues[2] == mValues[2] &&
+              aother.mValues[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1701,12 +1818,10 @@ namespace dtEntity
       std::vector<std::string> l = split(s, ' ');
       if(l.size() >= 4)
       {
-         double v0, v1, v2, v3;
-         fromString<double>(v0, l[0], std::dec);
-         fromString<double>(v1, l[1], std::dec);
-         fromString<double>(v2, l[2], std::dec);
-         fromString<double>(v3, l[3], std::dec);
-         mValue = osg::Vec4d(v0, v1, v2, v3);
+         fromString<double>(mValues[0], l[0], std::dec);
+         fromString<double>(mValues[1], l[1], std::dec);
+         fromString<double>(mValues[2], l[2], std::dec);
+         fromString<double>(mValues[3], l[3], std::dec);
       }
    }
 
