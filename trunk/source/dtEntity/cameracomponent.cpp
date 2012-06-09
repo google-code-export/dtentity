@@ -451,6 +451,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::Finished()
    {
+      BaseClass::Finished();
       UpdateViewMatrix();
    }
 

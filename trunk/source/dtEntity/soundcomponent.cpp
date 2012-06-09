@@ -71,6 +71,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundComponent::Finished()
    {
+      BaseClass::Finished();
       FreeSound();
            
       if(mSoundPath.Get() == "")
@@ -206,6 +207,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::Finished()
    {
+      BaseClass::Finished();
       if (mListenerLinkToCamera.Get())
       {
          CopyCamTransformToListener();

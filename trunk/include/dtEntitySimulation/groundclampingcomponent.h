@@ -41,6 +41,7 @@ namespace dtEntitySimulation
 
    class GroundClampingComponent : public dtEntity::Component
    {
+      typedef dtEntity::Component BaseClass;
 
    public:
       

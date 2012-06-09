@@ -34,15 +34,28 @@ namespace dtEntity
    GroupComponent::GroupComponent()
       : BaseClass(new osg::Group())
    {
-      GetNode()->setName("GroupComponent");
-      Register(ChildrenId, &mChildren);
+      // keep this constructor empty to prevent redundancy
+      Init();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    GroupComponent::GroupComponent(osg::Group* group)
       : BaseClass(group)
    {
-       Register(ChildrenId, &mChildren);
+      // keep this constructor empty to prevent redundancy
+       Init();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void GroupComponent::Init()
+   {
+      mChildren = DynamicArrayProperty(
+           DynamicArrayProperty::SetValueCB(this, &GroupComponent::SetChildren),
+           DynamicArrayProperty::GetValueCB(this, &GroupComponent::GetChildren)
+        );
+   
+      GetNode()->setName("GroupComponent");
+      Register(ChildrenId, &mChildren);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -67,7 +80,7 @@ namespace dtEntity
       NodeComponent* nc = static_cast<NodeComponent*>(component);
       GetAttachmentGroup()->addChild(nc->GetNode());
       nc->SetParentComponent(this->GetType());
-      mChildren.Add(new StringIdProperty(ct));
+      mChildrenVal.Add(new StringIdProperty(ct));
       return true;
    }
 
@@ -83,12 +96,11 @@ namespace dtEntity
       GetAttachmentGroup()->removeChild(nc->GetNode());
       nc->SetParentComponent(StringId());
 
-      PropertyArray children = mChildren.Get();
-      for(PropertyArray::iterator i = children.begin(); i != children.end(); ++i)
+      for(PropertyArray::const_iterator i = mChildrenVal.Get().begin(); i != mChildrenVal.Get().end(); ++i)
       {
          if((*i)->StringIdValue() == ct)
          {
-            mChildren.Remove(*i);
+            mChildrenVal.Remove(*i);
             return true;
          }
       }
@@ -98,19 +110,12 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void GroupComponent::SetChildren(const PropertyArray& arr)
    {
-      mChildren.Set(arr);
-      this->OnPropertyChanged(ChildrenId, mChildren);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void GroupComponent::Finished()
-   {
-      BaseClass::Finished();
+      mChildrenVal.Set(arr);
+      
       assert(mEntity != NULL && "Please add group component to entity before adding children!");
 
       GetAttachmentGroup()->removeChild(0, GetAttachmentGroup()->getNumChildren());
 
-      PropertyArray arr = mChildren.Get();
       PropertyArray::const_iterator it;
       for(it = arr.begin(); it != arr.end(); ++it)
       {

@@ -224,6 +224,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ParticleComponent::Finished()
    {
+      BaseClass::Finished();
       if(mEnabled.Get())
       {
          mModularEmitter->setNodeMask(dtEntity::NodeMasks::VISIBLE);

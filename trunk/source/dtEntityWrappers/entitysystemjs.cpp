@@ -149,6 +149,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentJS::Finished()
    {
+      BaseClass::Finished();
       HandleScope scope;
 
       Handle<String> strfin = String::New("finished");
@@ -312,6 +313,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void EntitySystemJS::Finished()
    {
+      BaseClass::Finished();
       HandleScope scope;
 
       Handle<Value> cb = mSystem->Get(mStringFinished);

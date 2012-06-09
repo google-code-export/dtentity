@@ -151,6 +151,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void TextLabelComponent::Finished()
    {
+      BaseClass::Finished();
       for(unsigned int j = 0; j < GetNumTexts(); ++j)
       {
          SetVisible(j, mTextLabelSystem->GetEnabled());

@@ -65,6 +65,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void PathComponent::Finished()
    {
+      BaseClass::Finished();
       osg::Geode* geode = static_cast<osg::Geode*>(GetNode());
       geode->setNodeMask(dtEntity::NodeMasks::VISIBLE);
 

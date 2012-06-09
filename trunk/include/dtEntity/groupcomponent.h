@@ -63,8 +63,6 @@ namespace dtEntity
          return TYPE; 
       }
 
-      virtual void Finished();
-
       virtual osg::Group* GetGroup() const;
       
       // return group to attach children to
@@ -78,11 +76,15 @@ namespace dtEntity
        * of children. These will be attached.
        */
       void SetChildren(const PropertyArray& arr);
-      PropertyArray GetChildren() const { return mChildren.Get(); }
+      PropertyArray GetChildren() const { return mChildrenVal.Get(); }
 
    private:
-      
-      ArrayProperty mChildren;
+
+      // to prevent redundant code in constructors
+      void Init();
+
+      DynamicArrayProperty mChildren;
+      ArrayProperty mChildrenVal;
    };
 
 

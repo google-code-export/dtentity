@@ -78,6 +78,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void GroundClampingComponent::Finished()
    {
+      BaseClass::Finished();
       assert(mEntity != NULL);
       bool success = mEntity->GetEntityManager().GetComponent(mEntity->GetId(), mTransformComponent, true);
       if(!success)

@@ -44,7 +44,6 @@ namespace dtEntity
 
       static const ComponentType TYPE;
 
-      TransformComponent();
       TransformComponent(osg::Transform* trans);
 
       virtual ~TransformComponent();

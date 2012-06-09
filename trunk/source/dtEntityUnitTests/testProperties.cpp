@@ -324,7 +324,7 @@ TEST(CloneBool)
 TEST(FromToStringVec2)
 {
 
-   Vec2Property v(6, -7.4);
+   Vec2Property v(6.0f, -7.4f);
    Vec2Property v2;
    v2.SetString(v.StringValue());
    CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
@@ -334,7 +334,7 @@ TEST(FromToStringVec2)
 TEST(FromToStringVec3)
 {
 
-   Vec3Property v(6, -7.4, 8);
+   Vec3Property v(6.0f, -7.4f, 8.0f);
    Vec3Property v2;
    v2.SetString(v.StringValue());
    CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
@@ -345,7 +345,7 @@ TEST(FromToStringVec3)
 TEST(FromToStringVec4)
 {
 
-   Vec4Property v(6, -7.4, 8, 245.23456246);
+   Vec4Property v(6.0f, -7.0f, 8.0f, 245.23456246f);
    Vec4Property v2;
    v2.SetString(v.StringValue());
    CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
@@ -357,7 +357,7 @@ TEST(FromToStringVec4)
 TEST(FromToStringVec2d)
 {
 
-   Vec2dProperty v(6, -7.4);
+   Vec2dProperty v(6.0f, -7.4f);
    Vec2dProperty v2;
    v2.SetString(v.StringValue());
    CHECK_CLOSE(v.Get()[0], v2.Get()[0], TOLERANCE);
