@@ -51,7 +51,7 @@ namespace dtEntity
       SkyBoxComponent();
       virtual ~SkyBoxComponent();
 
-      virtual void OnPropertyChanged(StringId, Property&);
+      virtual void Finished();
 
       virtual ComponentType GetType() const { return TYPE; }
 
