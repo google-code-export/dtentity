@@ -100,12 +100,12 @@ namespace dtEntity
       ShadowSystem(EntityManager& em);
       virtual ~ShadowSystem();
 
-      virtual void OnPropertyChanged(StringId propname, Property &prop);
       void SetEnabled(bool);
-      bool GetEnabled() const { return mEnabled.Get(); }
+      bool GetEnabled() const { return mEnabledVal; }
 
    private:
-      BoolProperty mEnabled;
+      DynamicBoolProperty mEnabled;
+      bool mEnabledVal;
    };
 
 }

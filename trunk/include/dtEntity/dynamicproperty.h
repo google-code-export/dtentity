@@ -26,6 +26,40 @@
 
 namespace dtEntity
 {
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicArrayProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<const PropertyArray&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<PropertyArray> GetValueCB;
+
+      DynamicArrayProperty() {}
+
+      DynamicArrayProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::ARRAY; }
+
+      virtual PropertyArray ArrayValue() const { return mGetValueCallback(); }
+      virtual void SetArray(const PropertyArray& v) { Set(v); }
+
+      virtual const std::string StringValue() const { ArrayProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { ArrayProperty p; p.SetString(v); Set(p.Get());}
+      PropertyArray Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new ArrayProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.ArrayValue() == Get(); }
+      void Set(const PropertyArray& v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.ArrayValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
 
    //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT DynamicBoolProperty : public Property

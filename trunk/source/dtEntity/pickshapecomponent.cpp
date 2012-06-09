@@ -39,14 +39,26 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    PickShapeComponent::PickShapeComponent()
       : BaseClass(new osg::Geode())
-      , mBox(new osg::Box())
+      , mMinBounds(
+           DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMinBounds),
+           DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMinBounds)
+        )
+      , mMaxBounds(
+           DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMaxBounds),
+           DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMaxBounds)
+        )
+      , mVisible(
+           DynamicBoolProperty::SetValueCB(this, &PickShapeComponent::SetVisible),
+           DynamicBoolProperty::GetValueCB(this, &PickShapeComponent::GetVisible)
+        )
+      , mBox(new osg::Box())      
+      , mMinBoundsVal(osg::Vec3(-0.5f, -0.5f, -0.5f))
+      , mMaxBoundsVal(osg::Vec3(0.5f, 0.5f, 0.5f))
    {
       Register(MinBoundsId, &mMinBounds);
       Register(MaxBoundsId, &mMaxBounds);
       Register(VisibleId, &mVisible);
-
-      mMinBounds.Set(osg::Vec3(-0.5f, -0.5f, -0.5f));
-      mMaxBounds.Set(osg::Vec3(0.5f, 0.5f, 0.5f));
+      
       mVisible.Set(false);
 
       osg::Geode* geode = static_cast<osg::Geode*>(GetNode());
@@ -62,43 +74,24 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PickShapeComponent::OnPropertyChanged(StringId propname, Property& prop)
-   {
-      BaseClass::OnPropertyChanged(propname, prop);
-
-      if(propname == MinBoundsId)
-      {
-         SetMinBounds(prop.Vec3Value());
-      }
-      else if(propname == MaxBoundsId)
-      {
-         SetMaxBounds(prop.Vec3Value());
-      }
-      else if(propname == VisibleId)
-      {
-         SetVisible(prop.BoolValue());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void PickShapeComponent::SetMinBounds(const osg::Vec3& v)
    {
-      mMinBounds.Set(v);
+      mMinBoundsVal = v;
       UpdatePickShape();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void PickShapeComponent::SetMaxBounds(const osg::Vec3& v)
    {
-      mMaxBounds.Set(v);
+      mMaxBoundsVal = v;
       UpdatePickShape();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void PickShapeComponent::UpdatePickShape()
    {
-      osg::Vec3 min = mMinBounds.Get();
-      osg::Vec3 max = mMaxBounds.Get();
+      const osg::Vec3& min = mMinBoundsVal;
+      const osg::Vec3& max = mMaxBoundsVal;
       osg::Vec3 dif = max - min;
       mBox->setCenter((max + min) * 0.5f);
       mBox->setHalfLengths(dif * 0.5f);
@@ -145,9 +138,4 @@ namespace dtEntity
    {
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void PickShapeSystem::OnPropertyChanged(StringId propname, Property& prop)
-   {
-
-   }
 }

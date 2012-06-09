@@ -23,6 +23,7 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
@@ -57,14 +58,11 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
-
       void SetMinBounds(const osg::Vec3& v);
-      osg::Vec3 GetMinBounds() const { return mMinBounds.Get(); }
+      osg::Vec3 GetMinBounds() const { return mMinBoundsVal; }
 
       void SetMaxBounds(const osg::Vec3& v);
-      osg::Vec3 GetMaxBounds() const { return mMaxBounds.Get(); }
+      osg::Vec3 GetMaxBounds() const { return mMaxBoundsVal; }
 
       void SetVisible(bool v);
       bool GetVisible() const;
@@ -75,10 +73,12 @@ namespace dtEntity
 
       // path to loaded script file
       StringProperty mMeshPathProperty;
-      Vec3Property mMinBounds;
-      Vec3Property mMaxBounds;
-      BoolProperty mVisible;
+      DynamicVec3Property mMinBounds;
+      DynamicVec3Property mMaxBounds;
+      DynamicBoolProperty mVisible;
       osg::ref_ptr<osg::Box> mBox;
+      osg::Vec3 mMinBoundsVal;
+      osg::Vec3 mMaxBoundsVal;
 
    };
 
@@ -94,8 +94,6 @@ namespace dtEntity
 
       PickShapeSystem(EntityManager& em);
       ~PickShapeSystem();
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
-
    private:
    };
 

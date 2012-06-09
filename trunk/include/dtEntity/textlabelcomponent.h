@@ -24,6 +24,7 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/scriptaccessor.h>
 #include <osgText/Text>
 
@@ -62,7 +63,6 @@ namespace dtEntity
          return (id == TYPE); 
       }      
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
       virtual void Finished();
 
       void OnAddedToEntity(Entity& entity);
@@ -103,13 +103,17 @@ namespace dtEntity
       void SetAlignment(unsigned int textid, const std::string& str);
       std::string GetAlignment(unsigned int textid) const;
 
-      bool GetAlwaysOnTop() const { return mAlwaysOnTop.Get(); }
+      bool GetAlwaysOnTop() const { return mAlwaysOnTopVal; }
       void SetAlwaysOnTop(bool v);
 
    private:
 
-      ArrayProperty mTexts;
-      BoolProperty mAlwaysOnTop;
+      void SetTexts(const PropertyArray& texts);
+      PropertyArray GetTexts() const;
+      DynamicArrayProperty mTexts;
+      ArrayProperty mTextsVal;
+      DynamicBoolProperty mAlwaysOnTop;
+      bool mAlwaysOnTopVal;
       typedef std::vector<osg::ref_ptr<osgText::Text> > TextEntries;
       TextEntries mTextEntries;
       TextLabelSystem* mTextLabelSystem;

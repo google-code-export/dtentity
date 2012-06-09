@@ -218,10 +218,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    ShadowSystem::ShadowSystem(EntityManager& em)
       : DefaultEntitySystem<ShadowComponent>(em)
+      , mEnabledVal(true)
    {
       Register(EnabledId, &mEnabled);
-
-      mEnabled.Set(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -230,17 +229,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShadowSystem::OnPropertyChanged(StringId propname, Property &prop)
-   {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void ShadowSystem::SetEnabled(bool v)
    {
+      mEnabledVal = v;
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          i->second->SetEnabled(v);

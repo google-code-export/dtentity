@@ -61,6 +61,15 @@ namespace dtEntity
    TextLabelComponent::TextLabelComponent()
       : dtEntity::NodeComponent(new osg::Geode())
       , mTextLabelSystem(NULL)
+      , mTexts(
+           DynamicArrayProperty::SetValueCB(this, &TextLabelComponent::SetTexts),
+           DynamicArrayProperty::GetValueCB(this, &TextLabelComponent::GetTexts)
+        )
+      , mAlwaysOnTop(
+         DynamicBoolProperty::SetValueCB(this, &TextLabelComponent::SetAlwaysOnTop),
+         DynamicBoolProperty::GetValueCB(this, &TextLabelComponent::GetAlwaysOnTop)
+        )
+      , mAlwaysOnTopVal(true)
    {
       GetNode()->setName("TextLabelComponent");
       GetNode()->setNodeMask(dtEntity::NodeMasks::VISIBLE);
@@ -75,7 +84,6 @@ namespace dtEntity
       ss->setMode(GL_FOG, osg::StateAttribute::OFF);
       GetNode()->setInitialBound(osg::BoundingBox(osg::Vec3(-1, -1, -1), osg::Vec3(1, 1, 1)));
       GetNode()->setCullingActive(false);
-      mAlwaysOnTop.Set(true);
    }
     
    ////////////////////////////////////////////////////////////////////////////
@@ -91,56 +99,53 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
+   void TextLabelComponent::SetTexts(const PropertyArray& texts)
    {
-      if(propname == TextsId)
+      mTextsVal.Set(texts);
+
+      ClearAll();
+      unsigned int count = 0;
+      const dtEntity::PropertyArray& grps = mTextsVal.Get();
+      dtEntity::PropertyArray::const_iterator i;
+      for(i = grps.begin(); i != grps.end(); ++i)
       {
-         ClearAll();
-         unsigned int count = 0;
-         const dtEntity::PropertyArray grps = prop.ArrayValue();
-         dtEntity::PropertyArray::const_iterator i;
-         for(i = grps.begin(); i != grps.end(); ++i)
-         {
-            dtEntity::PropertyGroup props = (*i)->GroupValue();
-            Create(count);
+         dtEntity::PropertyGroup props = (*i)->GroupValue();
+         Create(count);
 
-            std::string text = props[TextId]->StringValue();
-            SetText(count, text);
+         std::string text = props[TextId]->StringValue();
+         SetText(count, text);
 
-            osg::Vec4 color = props[ColorId]->Vec4Value();
-            SetColor(count, color);
+         osg::Vec4 color = props[ColorId]->Vec4Value();
+         SetColor(count, color);
 
-            osg::Vec4 bgcolor = props[BackdropColorId]->Vec4Value();
-            SetBackdropColor(count, bgcolor);
+         osg::Vec4 bgcolor = props[BackdropColorId]->Vec4Value();
+         SetBackdropColor(count, bgcolor);
 
-            bool visible = props[VisibleId]->BoolValue();
-            SetVisible(count, visible);
+         bool visible = props[VisibleId]->BoolValue();
+         SetVisible(count, visible);
 
-            bool highlighted = props[HighlightedId]->BoolValue();
-            SetHighlighted(count, highlighted);
+         bool highlighted = props[HighlightedId]->BoolValue();
+         SetHighlighted(count, highlighted);
 
-            osg::Vec3 offset = props[OffsetId]->Vec3Value();
-            SetOffset(count, offset);
+         osg::Vec3 offset = props[OffsetId]->Vec3Value();
+         SetOffset(count, offset);
 
-            float charheight = props[CharacterHeightId]->FloatValue();
-            SetCharacterHeight(count, charheight);
+         float charheight = props[CharacterHeightId]->FloatValue();
+         SetCharacterHeight(count, charheight);
 
-            std::string font = props[FontId]->StringValue();
-            SetFont(count, font);
+         std::string font = props[FontId]->StringValue();
+         SetFont(count, font);
 
-            std::string align = props[AlignmentId]->StringValue();
-            SetAlignment(count, align);
-            ++count;
-         }
+         std::string align = props[AlignmentId]->StringValue();
+         SetAlignment(count, align);
+         ++count;
       }
-      else if(propname == AlwaysOnTopId)
-      {
-         SetAlwaysOnTop(prop.BoolValue());
-      }
-      else
-      {
-         BaseClass::OnPropertyChanged(propname, prop);
-      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   PropertyArray TextLabelComponent::GetTexts() const
+   {
+      return mTextsVal.Get();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -195,8 +200,7 @@ namespace dtEntity
          geode->addDrawable(text);
       }
 
-      dtEntity::PropertyArray arr = mTexts.Get();
-      while(arr.size() < textid + 1)
+      while(mTextsVal.Get().size() < textid + 1)
       {
          dtEntity::PropertyGroup props;
          dtEntity::StringProperty text(""); 
@@ -227,8 +231,7 @@ namespace dtEntity
          props[AlignmentId] = &alignment;
 
          dtEntity::GroupProperty* grp = new dtEntity::GroupProperty(props);
-         mTexts.Add(grp);
-         arr = mTexts.Get();
+         mTextsVal.Add(grp);
       }
    }
 
@@ -591,7 +594,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void TextLabelComponent::SetAlwaysOnTop(bool v)
    { 
-      mAlwaysOnTop.Set(v);
+      mAlwaysOnTopVal = v;
       osg::StateSet* ss = GetNode()->getOrCreateStateSet();
       ss->setMode(GL_DEPTH_TEST, v ? osg::StateAttribute::OFF : osg::StateAttribute::ON);
    }
