@@ -81,8 +81,6 @@ namespace dtEntity
       ShaderSystem(EntityManager& em);
       ~ShaderSystem();
 
-      virtual void OnPropertyChanged(StringId propname, Property &prop);
-
       void AddProgram(const std::string& name, osg::Program* prg);
       osg::Program* GetProgram(const std::string& name) const;
 

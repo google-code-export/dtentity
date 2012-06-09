@@ -148,11 +148,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShaderSystem::OnPropertyChanged(StringId propname, Property &prop)
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    bool ShaderSystem::CreateComponent(EntityId eid, Component*& component)
    {
       bool success = BaseClass::CreateComponent(eid, component);

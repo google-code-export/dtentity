@@ -53,7 +53,7 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void OnPropertyChanged(StringId propname, Property& prop);
+      virtual void Finished();
 
       virtual osg::Group* GetAttachmentGroup() const { return mDrawables; }
    
