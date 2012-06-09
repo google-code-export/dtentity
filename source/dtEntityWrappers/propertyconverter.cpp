@@ -222,8 +222,8 @@ namespace dtEntityWrappers
       case dtEntity::DataType::ARRAY:
       {
 
-         dtEntity::ArrayProperty* arrayprop = static_cast<dtEntity::ArrayProperty*>(prop);
-         arrayprop->Clear();
+         dtEntity::ArrayProperty a;
+         
          dtEntity::PropertyArray vals;
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
@@ -238,8 +238,9 @@ namespace dtEntityWrappers
             {
                return ThrowError("Unknown array datatype encountered!");
             }
-            arrayprop->Add(newprop);
+            a.Add(newprop);
          }
+         prop->SetFrom(a);
          break;
       }
       case dtEntity::DataType::BOOL:
@@ -251,8 +252,7 @@ namespace dtEntityWrappers
       case dtEntity::DataType::GROUP:
       {
 
-         dtEntity::GroupProperty* groupprop = static_cast<dtEntity::GroupProperty*>(prop);
-         groupprop->Clear();
+         dtEntity::GroupProperty g;
          Handle<Object> obj = Handle<Object>::Cast(val);
          if(obj.IsEmpty())
          {
@@ -270,8 +270,9 @@ namespace dtEntityWrappers
             {
                return ThrowError("Unknown datatype encountered!");
             }
-            groupprop->Add(dtEntity::SID(kname), newprop);
+            g.Add(dtEntity::SID(kname), newprop);
          }
+         prop->SetFrom(g);
 
          break;
       }
@@ -372,31 +373,30 @@ namespace dtEntityWrappers
       {
       case dtEntity::DataType::ARRAY:
       {
-         dtEntity::ArrayProperty* arrayprop = static_cast<dtEntity::ArrayProperty*>(prop);
-
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
             return ThrowError("array property expects an array!");
          }
 
-         while(arr->Length() > arrayprop->Size())
+         PropertyArray arrayprop = prop->ArrayValue();
+         while(arr->Length() > arrayprop.size())
          {
             arr->Delete(arr->Length() - 1);
          }
 
-         for(unsigned int i = 0; i < arrayprop->Size(); ++i)
+         for(unsigned int i = 0; i < arrayprop.size(); ++i)
          {
-            const Property* prp = arrayprop->Get(i);
+            const Property* prp = arrayprop[i];
             arr->Set(i, ConvertPropertyToValue(arr->CreationContext(), prp));
          }
+         
          break;
       }
       case dtEntity::DataType::GROUP:
       {
 
-
-         dtEntity::GroupProperty* groupprop = static_cast<dtEntity::GroupProperty*>(prop);
+         dtEntity::PropertyGroup vals = prop->GroupValue();
 
          Handle<Object> obj = Handle<Object>::Cast(val);
          if(obj.IsEmpty())
@@ -409,7 +409,6 @@ namespace dtEntityWrappers
             obj->Delete(0);
          }
 
-         dtEntity::PropertyGroup vals = groupprop->Get();
          for(dtEntity::PropertyGroup::const_iterator i = vals.begin(); i != vals.end(); ++i)
          {
             obj->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), ConvertPropertyToValue(obj->CreationContext(), i->second));

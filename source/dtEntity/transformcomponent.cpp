@@ -29,12 +29,6 @@ namespace dtEntity
    const StringId TransformComponent::TYPE(dtEntity::SID("Transform"));
 
    ////////////////////////////////////////////////////////////////////////////
-   TransformComponent::TransformComponent()
-      : BaseClass()
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    TransformComponent::TransformComponent(osg::Transform* t)
       : BaseClass(t)
    {

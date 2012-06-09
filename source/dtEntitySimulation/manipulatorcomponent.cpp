@@ -491,6 +491,8 @@ namespace dtEntitySimulation
    void ManipulatorComponent::Finished()
    {
 
+      BaseClass::Finished();
+
       osgManipulator::Dragger* dragger = GetDragger();
       if(dragger != NULL && mDraggerCallback != NULL)
       {

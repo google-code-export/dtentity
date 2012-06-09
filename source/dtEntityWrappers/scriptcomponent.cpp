@@ -185,6 +185,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::Finished()
    {
+      BaseClass::Finished();
       if(mDebugEnabled.Get() && !mDebugPortOpened)
       {
          mDebugPortOpened = true;

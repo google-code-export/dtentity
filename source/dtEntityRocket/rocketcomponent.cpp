@@ -231,6 +231,8 @@ namespace dtEntityRocket
    void RocketComponent::Finished()
    {
 
+     BaseClass::Finished();
+
      // GuiNode is responsible for rendering the LibRocket GUI to OSG
      osgLibRocket::GuiNode* gui = new osgLibRocket::GuiNode(mContextName.Get(), mDebug.Get());
      SetNode(gui);

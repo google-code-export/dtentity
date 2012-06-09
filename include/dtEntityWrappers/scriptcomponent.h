@@ -41,6 +41,8 @@ namespace dtEntityWrappers
       static const dtEntity::StringId DebugPortId;
       static const dtEntity::StringId DebugEnabledId;
       
+      typedef dtEntity::EntitySystem BaseClass;
+
    public:
 
       static const dtEntity::ComponentType TYPE;

@@ -41,7 +41,7 @@ namespace dtEntity
    {
    
       friend class SoundSystem;
-
+      typedef NodeComponent BaseClass;
    public:
 
       static const ComponentType TYPE;
@@ -108,10 +108,12 @@ namespace dtEntity
    */
    class DT_ENTITY_EXPORT SoundSystem : public DefaultEntitySystem<SoundComponent>
    {
+      typedef DefaultEntitySystem<SoundComponent> BaseClass;
+
    public:
 
       static const ComponentType TYPE;
-
+      
       SoundSystem(EntityManager& em);
       ~SoundSystem();
 

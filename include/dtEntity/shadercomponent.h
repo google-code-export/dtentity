@@ -51,8 +51,6 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      virtual void Finished();
-
       std::string GetMaterialNamePrefix() const { return mMaterialNamePrefix.Get(); }
       void SetMaterialNamePrefix(const std::string& s) { mMaterialNamePrefix.Set(s); }
 

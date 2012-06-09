@@ -118,15 +118,21 @@ function createEntity(proto) {
       continue;
     }
     var component = entitySystem.createComponent(entityId);
+    comps.push([properties, component]);
+
+  }
+  
+  for(var k in comps) {
+  
+    var properties = comps[k][0];
+    var component = comps[k][1];
     for(var prop in properties) {
       component[prop] = properties[prop];
     }
-    comps.push(component);
-
   }
 
-  for(k in comps) {
-     comps[k].finished();
+  for(var k in comps) {
+     comps[k][1].finished();
   }
 
   return entityId;

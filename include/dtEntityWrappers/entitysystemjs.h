@@ -37,6 +37,9 @@ namespace dtEntityWrappers
    class DTENTITY_WRAPPERS_EXPORT ComponentJS
       : public dtEntity::Component
    {
+
+      typedef dtEntity::Component BaseClass;
+
    public:
       ComponentJS(dtEntity::ComponentType componentType, v8::Handle<v8::Object> obj);
       ~ComponentJS();
