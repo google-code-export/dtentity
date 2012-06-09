@@ -283,14 +283,27 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void SkyBoxComponent::Finished()
+   void SkyBoxComponent::OnPropertyChanged(StringId propname, Property& prop)
    {
-      osg::StateSet* stateset = mSkyboxGeode->getOrCreateStateSet();
-      osg::TextureCubeMap* skymap = readCubeMap(this);
-      if(skymap)
+      if(propname == TextureUpId ||
+         propname == TextureDownId ||
+         propname == TextureNorthId ||
+         propname == TextureSouthId ||
+         propname == TextureEastId ||
+         propname == TextureWestId)
       {
-         stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
-      }      
+
+         osg::StateSet* stateset = mSkyboxGeode->getOrCreateStateSet();
+         osg::TextureCubeMap* skymap = readCubeMap(this);
+         if(skymap)
+         {
+            stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+         }      
+      }
+      else
+      {
+         BaseClass::OnPropertyChanged(propname, prop);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
