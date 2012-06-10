@@ -135,7 +135,6 @@ TEST_FIXTURE(MapFixture, SpawnerPropertyValuesCorrect)
    CHECK(Equals(compprops, "StringProperty", "StringValue"));
    CHECK(Equals(compprops, "BoolTrue", "true"));
    CHECK(Equals(compprops, "BoolFalse", "false"));
-   CHECK(Equals(compprops, "CharProperty", "x"));
    CHECK(Equals(compprops, "DoubleProperty", "12345.6789000000"));
    CHECK(Equals(compprops, "IntProperty", "-12345"));
    CHECK(Equals(compprops, "UIntProperty", "12345"));

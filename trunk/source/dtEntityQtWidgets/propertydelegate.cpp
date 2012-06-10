@@ -177,49 +177,6 @@ namespace dtEntityQtWidgets
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   CharPropertyDelegate::CharPropertyDelegate(QObject *parent)
-     : PropertySubDelegate(parent)
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   QWidget* CharPropertyDelegate::createEditor(QWidget* parent,
-     const QStyleOptionViewItem&/* option */,
-     const QModelIndex& index) const
-   {
-     QLineEdit* editor = new QLineEdit(parent);
-     editor->setMaxLength(1);
-     return editor;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CharPropertyDelegate::setEditorData(QWidget *editor,
-                                     const QModelIndex &index) const
-   {
-      QString value = index.model()->data(index, Qt::EditRole).toString();
-      QLineEdit * e = static_cast<QLineEdit*>(editor);
-      e->setText(value);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CharPropertyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                    const QModelIndex &index) const
-   {
-      QLineEdit* e = static_cast<QLineEdit*>(editor);
-
-      QString value = e->text();
-      model->setData(index, value, Qt::EditRole);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void CharPropertyDelegate::updateEditorGeometry(QWidget *editor,
-     const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
-   {
-     editor->setGeometry(option.rect);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
    FloatPropertyDelegate::FloatPropertyDelegate(QObject *parent)
      : PropertySubDelegate(parent)
    {

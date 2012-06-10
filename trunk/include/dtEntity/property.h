@@ -62,7 +62,6 @@ namespace dtEntity
          UNKNOWN_ID = 0,
          ARRAY,
          BOOL,
-         CHAR,
          DOUBLE,
          FLOAT,         
          GROUP,
@@ -440,31 +439,6 @@ namespace dtEntity
    private:
 
       bool mValue;
-   };
-
-   //////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT CharProperty : public Property
-   {
-   public:
-
-      CharProperty(char v = '0');
-
-      virtual DataType::e GetDataType() const { return DataType::CHAR; }
-
-      virtual char CharValue() const;
-      virtual void SetChar(char v) { Set(v); }
-      virtual const std::string StringValue() const;
-
-      char Get() const { return mValue; }
-
-      virtual Property* Clone() const;
-      virtual bool operator==(const Property& other) const;
-      void Set(char v) { mValue = v; }
-      virtual void SetString(const std::string&);
-      virtual bool SetFrom(const Property& other);
-
-   private:
-      char mValue;
    };
 
    //////////////////////////////////////////////////////////////////

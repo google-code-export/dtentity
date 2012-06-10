@@ -97,41 +97,6 @@ namespace dtEntity
    };
 
    //////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT DynamicFloatProperty : public Property
-   {
-   public:
-      typedef fastdelegate::FastDelegate1<float, void> SetValueCB;
-      typedef fastdelegate::FastDelegate0<float> GetValueCB;
-
-      DynamicFloatProperty() {}
-
-      DynamicFloatProperty(const SetValueCB& s, const GetValueCB& g)
-         : mSetValueCallback(s)
-         , mGetValueCallback(g)
-      {
-      }
-
-      virtual DataType::e GetDataType() const { return DataType::FLOAT; }
-
-      virtual float FloatValue() const { return mGetValueCallback(); }
-      virtual void SetFloat(float v) { Set(v); }
-
-      virtual const std::string StringValue() const { FloatProperty p(Get()); return p.StringValue(); }
-      virtual void SetString(const std::string& v) { FloatProperty p; p.SetString(v); Set(p.Get());}
-      float Get() const { return mGetValueCallback(); }
-
-      virtual Property* Clone() const { return new FloatProperty(Get()); }
-      virtual bool operator==(const Property& other) const { return other.FloatValue() == Get(); }
-      void Set(float v) { mSetValueCallback(v); }
-      virtual bool SetFrom(const Property& other) { Set(other.FloatValue()); return true; }
-
-   private:
-
-      SetValueCB mSetValueCallback;
-      GetValueCB mGetValueCallback;
-   };
-
-   //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT DynamicDoubleProperty : public Property
    {
    public:
@@ -167,6 +132,76 @@ namespace dtEntity
    };
 
    //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicFloatProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<float, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<float> GetValueCB;
+
+      DynamicFloatProperty() {}
+
+      DynamicFloatProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::FLOAT; }
+
+      virtual float FloatValue() const { return mGetValueCallback(); }
+      virtual void SetFloat(float v) { Set(v); }
+
+      virtual const std::string StringValue() const { FloatProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { FloatProperty p; p.SetString(v); Set(p.Get());}
+      float Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new FloatProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.FloatValue() == Get(); }
+      void Set(float v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.FloatValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicGroupProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<const PropertyGroup&, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<PropertyGroup> GetValueCB;
+
+      DynamicGroupProperty() {}
+
+      DynamicGroupProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::GROUP; }
+
+      virtual PropertyGroup GroupValue() const { return mGetValueCallback(); }
+      virtual void SetGroup(const PropertyGroup& v) { Set(v); }
+
+      virtual const std::string StringValue() const { GroupProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { GroupProperty p; p.SetString(v); Set(p.Get());}
+      PropertyGroup Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new GroupProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.GroupValue() == Get(); }
+      void Set(const PropertyGroup& v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.GroupValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
    class DT_ENTITY_EXPORT DynamicIntProperty : public Property
    {
    public:
@@ -194,41 +229,6 @@ namespace dtEntity
       virtual bool operator==(const Property& other) const { return other.IntValue() == Get(); }
       void Set(int v) { mSetValueCallback(v); }
       virtual bool SetFrom(const Property& other) { Set(other.IntValue()); return true; }
-
-   private:
-
-      SetValueCB mSetValueCallback;
-      GetValueCB mGetValueCallback;
-   };
-
-   //////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT DynamicUIntProperty : public Property
-   {
-   public:
-      typedef fastdelegate::FastDelegate1<unsigned int, void> SetValueCB;
-      typedef fastdelegate::FastDelegate0<unsigned int> GetValueCB;
-
-      DynamicUIntProperty() {}
-
-      DynamicUIntProperty(const SetValueCB& s, const GetValueCB& g)
-         : mSetValueCallback(s)
-         , mGetValueCallback(g)
-      {
-      }
-
-      virtual DataType::e GetDataType() const { return DataType::UINT; }
-
-      virtual unsigned int UIntValue() const { return mGetValueCallback(); }
-      virtual void SetUInt(unsigned int v) { Set(v); }
-
-      virtual const std::string StringValue() const { UIntProperty p(Get()); return p.StringValue(); }
-      virtual void SetString(const std::string& v) { UIntProperty p; p.SetString(v); Set(p.Get());}
-      unsigned int Get() const { return mGetValueCallback(); }
-
-      virtual Property* Clone() const { return new UIntProperty(Get()); }
-      virtual bool operator==(const Property& other) const { return other.UIntValue() == Get(); }
-      void Set(unsigned int v) { mSetValueCallback(v); }
-      virtual bool SetFrom(const Property& other) { Set(other.UIntValue()); return true; }
 
    private:
 
@@ -299,6 +299,41 @@ namespace dtEntity
       virtual bool operator==(const Property& other) const { return other.StringIdValue() == Get(); }
       void Set(StringId v) { mSetValueCallback(v); }
       virtual bool SetFrom(const Property& other) { Set(other.StringIdValue()); return true; }
+
+   private:
+
+      SetValueCB mSetValueCallback;
+      GetValueCB mGetValueCallback;
+   };
+
+   //////////////////////////////////////////////////////////////////
+   class DT_ENTITY_EXPORT DynamicUIntProperty : public Property
+   {
+   public:
+      typedef fastdelegate::FastDelegate1<unsigned int, void> SetValueCB;
+      typedef fastdelegate::FastDelegate0<unsigned int> GetValueCB;
+
+      DynamicUIntProperty() {}
+
+      DynamicUIntProperty(const SetValueCB& s, const GetValueCB& g)
+         : mSetValueCallback(s)
+         , mGetValueCallback(g)
+      {
+      }
+
+      virtual DataType::e GetDataType() const { return DataType::UINT; }
+
+      virtual unsigned int UIntValue() const { return mGetValueCallback(); }
+      virtual void SetUInt(unsigned int v) { Set(v); }
+
+      virtual const std::string StringValue() const { UIntProperty p(Get()); return p.StringValue(); }
+      virtual void SetString(const std::string& v) { UIntProperty p; p.SetString(v); Set(p.Get());}
+      unsigned int Get() const { return mGetValueCallback(); }
+
+      virtual Property* Clone() const { return new UIntProperty(Get()); }
+      virtual bool operator==(const Property& other) const { return other.UIntValue() == Get(); }
+      void Set(unsigned int v) { mSetValueCallback(v); }
+      virtual bool SetFrom(const Property& other) { Set(other.UIntValue()); return true; }
 
    private:
 

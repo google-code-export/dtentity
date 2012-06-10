@@ -37,7 +37,6 @@ namespace dtEntity
          {
          case ARRAY:       return "ARRAY";
          case BOOL:        return "BOOL";
-         case CHAR:        return "CHAR";
          case DOUBLE:      return "DOUBLE";
          case FLOAT:       return "FLOAT";
          case GROUP:       return "GROUP";
@@ -62,7 +61,6 @@ namespace dtEntity
       {
          if(s == "ARRAY")        return ARRAY;
          if(s == "BOOL")         return BOOL;
-         if(s == "CHAR")         return CHAR;
          if(s == "DOUBLE")       return DOUBLE;
          if(s == "FLOAT")        return FLOAT;
          if(s == "GROUP")        return GROUP;
@@ -436,58 +434,6 @@ namespace dtEntity
    bool BoolProperty::SetFrom(const Property& other)
    {
       this->Set(other.BoolValue());
-      return true;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   /////////////////////////////////////////////////////////////////////////////////
-   CharProperty::CharProperty(char v)
-      : mValue(v)
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   char CharProperty::CharValue() const
-   {
-      return Get();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const std::string CharProperty::StringValue() const
-   {
-      char str[2];
-      str[0] = mValue;
-      str[1] = '\0';
-      return str;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   Property* CharProperty::Clone() const
-   {
-      return new CharProperty(mValue);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool CharProperty::operator==(const Property& other) const
-   {
-      if(other.GetDataType() != GetDataType())
-      {
-         return false;
-      }
-      const CharProperty& aother = static_cast<const CharProperty&>(other);
-      return (aother.mValue == mValue);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void CharProperty::SetString(const std::string& s)
-   {
-      mValue = s.c_str()[0];
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool CharProperty::SetFrom(const Property& other)
-   {
-      this->Set(other.CharValue());
       return true;
    }
 
