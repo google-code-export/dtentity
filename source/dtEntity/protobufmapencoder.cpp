@@ -80,7 +80,6 @@ namespace dtEntity
       {
       case DataType::ARRAY:      propertyobj.set_type(dtProtoBuf::ARRAY); break;
       case DataType::BOOL:       propertyobj.set_type(dtProtoBuf::BOOL); break;
-      case DataType::CHAR:       propertyobj.set_type(dtProtoBuf::CHAR); break;
       case DataType::DOUBLE:     propertyobj.set_type(dtProtoBuf::DOUBLE); break;
       case DataType::FLOAT:      propertyobj.set_type(dtProtoBuf::FLOAT); break;
       case DataType::GROUP:      propertyobj.set_type(dtProtoBuf::GROUP); break;
@@ -114,7 +113,6 @@ namespace dtEntity
          break;
       }
       case DataType::BOOL:       propertyobj.set_value_bool(prop.BoolValue()); break;
-      case DataType::CHAR:       propertyobj.set_value_int(prop.CharValue()); break;
       case DataType::DOUBLE:     propertyobj.set_value_double(prop.DoubleValue()); break;
       case DataType::FLOAT:      propertyobj.set_value_float(prop.FloatValue()); break;
       case DataType::GROUP:      {
@@ -342,7 +340,6 @@ namespace dtEntity
          return p;
       }
       case dtProtoBuf::BOOL:     { return new BoolProperty(propobj.value_bool()); }
-      case dtProtoBuf::CHAR:     { return new CharProperty(propobj.value_char()); }
       case dtProtoBuf::DOUBLE:   { return new DoubleProperty(propobj.value_double()); }
       case dtProtoBuf::FLOAT:    { return new FloatProperty(propobj.value_float()); }
       case dtProtoBuf::GROUP:    {
@@ -458,15 +455,6 @@ namespace dtEntity
             return false;
          }
          prop->SetBool(propobj.value_bool());
-         return true;
-      }
-      case dtProtoBuf::CHAR:
-      {
-         if(prop->GetDataType() != DataType::CHAR)
-         {
-            return false;
-         }
-         prop->SetChar(propobj.value_char());
          return true;
       }
       case dtProtoBuf::DOUBLE:

@@ -106,21 +106,6 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   CharProperty* ParseCharProperty(xml_node<>* element)
-   {
-      CharProperty* p = new CharProperty();
-      for(xml_attribute<>* attr = element->first_attribute();
-           attr; attr = attr->next_attribute())
-      {
-         if(strcmp(attr->name(), "value") == 0)
-         {
-            p->SetString(attr->value());
-         }
-      }
-      return p;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    IntProperty* ParseIntProperty(xml_node<>* element)
    {
       IntProperty* p = new IntProperty();
@@ -348,10 +333,6 @@ namespace dtEntity
       else if(strncmp("bool", name, 4) == 0)
       {
          return ParseBoolProperty(element);
-      }
-      else if(strncmp("char", name, 4) == 0)
-      {
-         return ParseCharProperty(element);
       }
       else if(strncmp("double", name, 6) == 0)
       {
@@ -883,7 +864,6 @@ namespace dtEntity
          mValue = doc.allocate_string("value");
 
          mBoolProperty = doc.allocate_string("boolproperty");
-         mCharProperty = doc.allocate_string("charproperty");
          mIntProperty = doc.allocate_string("intproperty");
          mUIntProperty = doc.allocate_string("uintproperty");
          mDoubleProperty = doc.allocate_string("doubleproperty");
@@ -929,7 +909,6 @@ namespace dtEntity
       char* mW;
 
       char* mBoolProperty;
-      char* mCharProperty;
       char* mIntProperty;
       char* mUIntProperty;
       char* mDoubleProperty;
@@ -1065,7 +1044,6 @@ namespace dtEntity
       switch(prop->GetDataType())
       {
       case DataType::BOOL: propelem = SerializePropertyFromString(doc, names, names.mBoolProperty, prop); break;
-      case DataType::CHAR: propelem = SerializePropertyFromString(doc, names, names.mCharProperty, prop); break;
       case DataType::INT: propelem = SerializePropertyFromString(doc, names, names.mIntProperty, prop); break;
       case DataType::UINT: propelem = SerializePropertyFromString(doc, names, names.mUIntProperty, prop); break;
       case DataType::DOUBLE: propelem = SerializePropertyFromString(doc, names, names.mDoubleProperty, prop); break;

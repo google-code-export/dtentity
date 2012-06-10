@@ -58,7 +58,6 @@ namespace dtEntityRocket
       switch(value.GetType())
       {
       case Rocket::Core::Variant::BYTE: return new dtEntity::IntProperty(value.Get<int>());break;
-      case Rocket::Core::Variant::CHAR: return new dtEntity::CharProperty(value.Get<char>());
       case Rocket::Core::Variant::FLOAT: return new dtEntity::FloatProperty(value.Get<float>());
       case Rocket::Core::Variant::INT: return new dtEntity::IntProperty(value.Get<int>());
       case Rocket::Core::Variant::STRING: return new dtEntity::StringProperty(value.Get<Rocket::Core::String>().CString());

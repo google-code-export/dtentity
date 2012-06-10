@@ -92,7 +92,6 @@ namespace dtEntityQtWidgets
    {
       switch(dtype)
       {
-      case dtEntity::DataType::CHAR:      return new CharPropertyDelegate();
       case dtEntity::DataType::FLOAT:     return new FloatPropertyDelegate();
       case dtEntity::DataType::STRING:    return new StringPropertyDelegate();      
       case dtEntity::DataType::ARRAY:     return new ArrayPropertyDelegate(NULL);      
