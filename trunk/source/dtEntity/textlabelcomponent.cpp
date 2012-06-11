@@ -59,8 +59,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    TextLabelComponent::TextLabelComponent()
-      : dtEntity::NodeComponent(new osg::Geode())
-      , mTextLabelSystem(NULL)
+      : dtEntity::NodeComponent(new osg::Geode())      
       , mTexts(
            DynamicArrayProperty::SetValueCB(this, &TextLabelComponent::SetTexts),
            DynamicArrayProperty::GetValueCB(this, &TextLabelComponent::GetTexts)
@@ -70,6 +69,7 @@ namespace dtEntity
          DynamicBoolProperty::GetValueCB(this, &TextLabelComponent::GetAlwaysOnTop)
         )
       , mAlwaysOnTopVal(true)
+      , mTextLabelSystem(NULL)
    {
       GetNode()->setName("TextLabelComponent");
       GetNode()->setNodeMask(dtEntity::NodeMasks::VISIBLE);
