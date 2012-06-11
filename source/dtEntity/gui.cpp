@@ -23,7 +23,7 @@
 #include <dtEntity/resourceprovider.h>
 #include <dtEntity/log.h>
 #include <osgDB/FileUtils>
-#include <dtEntity/basemessages.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntity/entitymanager.h>
 #include <osg/Drawable>
 #include <osg/StateSet>
