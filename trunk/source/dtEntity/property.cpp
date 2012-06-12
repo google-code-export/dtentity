@@ -252,8 +252,8 @@ namespace dtEntity
       {
          return false;
       }
-      const ArrayProperty& aother = static_cast<const ArrayProperty&>(other);
-      return (aother.mValue == mValue);
+
+      return (mValue == other.ArrayValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -417,8 +417,8 @@ namespace dtEntity
       {
          return false;
       }
-      const BoolProperty& aother = static_cast<const BoolProperty&>(other);
-      return (aother.mValue == mValue);
+
+      return (mValue == other.BoolValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -478,8 +478,8 @@ namespace dtEntity
       {
          return false;
       }
-      const FloatProperty& aother = static_cast<const FloatProperty&>(other);
-      return (aother.mValue == mValue);
+
+      return (mValue == other.FloatValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -542,8 +542,8 @@ namespace dtEntity
       {
          return false;
       }
-      const DoubleProperty& aother = static_cast<const DoubleProperty&>(other);
-      return (aother.mValue == mValue);
+
+      return (mValue == other.DoubleValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -615,8 +615,7 @@ namespace dtEntity
       {
          return false;
       }
-      const GroupProperty& aother = static_cast<const GroupProperty&>(other);
-      return (aother.mValue == mValue);
+      return (mValue == other.GroupValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -770,8 +769,7 @@ namespace dtEntity
       {
          return false;
       }
-      const UIntProperty& aother = static_cast<const UIntProperty&>(other);
-      return (aother.mValue == mValue);
+      return (mValue == other.UIntValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -842,8 +840,7 @@ namespace dtEntity
       {
          return false;
       }
-      const MatrixProperty& aother = static_cast<const MatrixProperty&>(other);
-      return (aother.mValue == mValue);
+      return (mValue == other.MatrixValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -925,8 +922,7 @@ namespace dtEntity
          }
          return false;
       }
-      const StringProperty& aother = static_cast<const StringProperty&>(other);
-      return (aother.mValue == mValue);
+      return (mValue == other.StringValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1012,11 +1008,11 @@ namespace dtEntity
       {
          return false;
       }
-      const QuatProperty& aother = static_cast<const QuatProperty&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1] &&
-              aother.mValues[2] == mValues[2] &&
-              aother.mValues[3] == mValues[3]);
+      osg::Quat q = other.QuatValue();
+      return (q[0] == mValues[0] &&
+              q[1] == mValues[1] &&
+              q[2] == mValues[2] &&
+              q[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1076,8 +1072,8 @@ namespace dtEntity
          }
          return false;
       }
-      const StringIdProperty& aother = static_cast<const StringIdProperty&>(other);
-      return (aother.mValue == mValue);
+
+      return (mValue == other.StringIdValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1150,8 +1146,7 @@ namespace dtEntity
       {
          return false;
       }
-      const IntProperty& aother = static_cast<const IntProperty&>(other);
-      return (aother.mValue == mValue);
+      return (mValue == other.IntValue());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1241,9 +1236,9 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec2Property& aother = static_cast<const Vec2Property&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1]);
+      Vec2f v = other.Vec2Value();
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1338,10 +1333,10 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec3Property& aother = static_cast<const Vec3Property&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1] &&
-              aother.mValues[2] == mValues[2]);
+      Vec3f v = other.Vec3Value();
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1] &&
+              v[2] == mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1452,11 +1447,12 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec4Property& aother = static_cast<const Vec4Property&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1] &&
-              aother.mValues[2] == mValues[2] &&
-              aother.mValues[3] == mValues[3]);
+      Vec4f v = other.Vec4Value();
+
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1] &&
+              v[2] == mValues[2] &&
+              v[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1540,9 +1536,10 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec2dProperty& aother = static_cast<const Vec2dProperty&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1]);
+      Vec2d v = other.Vec2dValue();
+
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1637,10 +1634,10 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec3dProperty& aother = static_cast<const Vec3dProperty&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1] &&
-              aother.mValues[2] == mValues[2]);
+      Vec3d v = other.Vec3dValue();
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1] &&
+              v[2] == mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1751,11 +1748,11 @@ namespace dtEntity
       {
          return false;
       }
-      const Vec4dProperty& aother = static_cast<const Vec4dProperty&>(other);
-      return (aother.mValues[0] == mValues[0] &&
-              aother.mValues[1] == mValues[1] &&
-              aother.mValues[2] == mValues[2] &&
-              aother.mValues[3] == mValues[3]);
+      Vec4d v = other.Vec4dValue();
+      return (v[0] == mValues[0] &&
+              v[1] == mValues[1] &&
+              v[2] == mValues[2] &&
+              v[3] == mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
