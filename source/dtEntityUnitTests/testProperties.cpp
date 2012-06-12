@@ -81,6 +81,31 @@ TEST(SetValuesVec4)
    CHECK_EQUAL(v4prop.Vec4Value()[3], 4.0f);
 }
 
+
+TEST(SetValuesVecRe2)
+{
+   Vec2Property v2prop(osg::Vec2(1,2));
+   CHECK_EQUAL(v2prop.Get()[0], 1.0f);
+   CHECK_EQUAL(v2prop.Get()[1], 2.0f);
+}
+
+TEST(SetValuesVecRe3)
+{
+   Vec3Property v3prop(osg::Vec3(1,2,3));
+   CHECK_EQUAL(v3prop.Get()[0], 1.0f);
+   CHECK_EQUAL(v3prop.Get()[1], 2.0f);
+   CHECK_EQUAL(v3prop.Get()[2], 3.0f);
+}
+
+TEST(SetValuesVecRe4)
+{
+   Vec4Property v4prop(osg::Vec4(1,2,3,4));
+   CHECK_EQUAL(v4prop.Get()[0], 1.0f);
+   CHECK_EQUAL(v4prop.Get()[1], 2.0f);
+   CHECK_EQUAL(v4prop.Get()[2], 3.0f);
+   CHECK_EQUAL(v4prop.Get()[3], 4.0f);
+}
+
 TEST(SetValuesPropertyArray)
 {
    IntProperty iprop(666);

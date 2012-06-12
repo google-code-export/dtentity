@@ -1001,11 +1001,11 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeArrayProperty(xml_document<>& doc, const Names& names, const ArrayProperty* prop)
+   xml_node<>* SerializeArrayProperty(xml_document<>& doc, const Names& names, const Property* prop)
    {
       xml_node<>* entity = doc.allocate_node(node_element, names.mArrayProperty);
 
-      PropertyArray arr = prop->Get();
+      PropertyArray arr = prop->ArrayValue();
 
       for(unsigned int i = 0; i < arr.size(); ++i)
       {
@@ -1017,12 +1017,12 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeGroupProperty(xml_document<>& doc, const Names& names,const GroupProperty* prop)
+   xml_node<>* SerializeGroupProperty(xml_document<>& doc, const Names& names,const Property* prop)
    {
 
       xml_node<>* entity = doc.allocate_node(node_element, names.mGroupProperty);
 
-      const PropertyGroup& grp = prop->Get();
+      PropertyGroup grp = prop->GroupValue();
 
       std::map<std::string, const Property*> sorted;
       for(PropertyGroup::const_iterator i = grp.begin(); i != grp.end(); ++i)
@@ -1058,8 +1058,8 @@ namespace dtEntity
       case DataType::QUAT: propelem = SerializeQuatProperty(doc, names, prop->QuatValue()); break;
       case DataType::STRING:
       case DataType::STRINGID: propelem = SerializeStringProperty(doc, names, prop->StringValue()); break;
-      case DataType::ARRAY: propelem = SerializeArrayProperty(doc, names, static_cast<const ArrayProperty*>(prop)); break;
-      case DataType::GROUP: propelem = SerializeGroupProperty(doc, names, static_cast<const GroupProperty*>(prop)); break;
+      case DataType::ARRAY: propelem = SerializeArrayProperty(doc, names, prop); break;
+      case DataType::GROUP: propelem = SerializeGroupProperty(doc, names, prop); break;
       default:
          {
             LOG_ERROR("Unknown property type, cannot serialize");
