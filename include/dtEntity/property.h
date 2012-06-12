@@ -599,7 +599,7 @@ namespace dtEntity
       virtual const std::string StringValue() const;
       virtual void SetQuat(const Quat& v) { Set(v); }
 
-      const Quat& Get() const { return reinterpret_cast<const Quat&>(*mValues); }
+      const Quat Get() const { return Quat(mValues[0], mValues[1], mValues[2], mValues[3]); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -724,7 +724,7 @@ namespace dtEntity
       virtual void SetVec2D(const Vec2d& v) { Set(v); }
       
       virtual const std::string StringValue() const;
-      const Vec2f& Get() const { return reinterpret_cast<const Vec2f&>(*mValues); }
+      const Vec2f Get() const { return Vec2f(mValues[0], mValues[1]); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -770,7 +770,7 @@ namespace dtEntity
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
       virtual const std::string StringValue() const;
-      const Vec3f& Get() const { return reinterpret_cast<const Vec3f&>(*mValues); }
+      const Vec3f Get() const { return osg::Vec3f(mValues[0], mValues[1], mValues[2]); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -815,7 +815,7 @@ namespace dtEntity
       virtual void SetVec4D(const Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const;
 
-      const Vec4f& Get() const { return reinterpret_cast<const Vec4f&>(*mValues); }
+      const Vec4f Get() const { return Vec4f(mValues[0], mValues[1], mValues[2], mValues[3]); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
@@ -866,7 +866,7 @@ namespace dtEntity
       virtual Vec2d Vec2dValue() const;
       virtual void SetVec2D(const Vec2d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      const Vec2d& Get() const { return reinterpret_cast<const Vec2d&>(*mValues); }
+      const Vec2d Get() const { return Vec2d(mValues[0], mValues[1]); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -909,7 +909,7 @@ namespace dtEntity
       virtual Vec3d Vec3dValue() const;
       virtual void SetVec3D(const Vec3d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      const Vec3d& Get() const { return reinterpret_cast<const Vec3d&>(*mValues); }
+      const Vec3d Get() const { return osg::Vec3d(mValues[0], mValues[1], mValues[2]); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
@@ -956,7 +956,7 @@ namespace dtEntity
       virtual Vec4d Vec4dValue() const;
       virtual void SetVec4D(const Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      const Vec4d& Get() const { return reinterpret_cast<const Vec4d&>(*mValues); }
+      const Vec4d Get() const { return Vec4d(mValues[0], mValues[1], mValues[2], mValues[3]); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
