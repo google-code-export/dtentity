@@ -77,7 +77,12 @@ namespace dtEntityWrappers
       }
 
      String::Utf8Value trace(try_catch->StackTrace());
-	  std::string tracestr = *trace;
+     std::string tracestr;
+
+     if(trace.length() != 0)
+     {
+         tracestr = *trace;
+     }
      
 	  std::ostringstream os;
      os << std::endl << sourceline_string << std::endl;	  
