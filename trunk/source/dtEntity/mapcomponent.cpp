@@ -20,6 +20,7 @@
 
 #include <dtEntity/mapcomponent.h>
 
+#include <dtEntity/uniqueid.h>
 #include <dtEntity/rapidxmlmapencoder.h>
 
 #include <dtEntity/systemmessages.h>
@@ -37,15 +38,6 @@
 #include <dtEntity/protobufmapencoder.h>
 #endif
 
-#ifdef WIN32
-   #include <Rpc.h>
-   #include <Rpcdce.h>
-#else
-#include <uuid/uuid.h>
-   #include <sys/stat.h>
-   #include <sys/types.h>
-
-#endif
 
 namespace dtEntity
 {
@@ -84,7 +76,7 @@ namespace dtEntity
       mSaveWithMap.Set(true);
       mVisibleInEntityList.Set(true);
 
-      mUniqueIdStr = MapSystem::CreateUniqueIdString();
+      mUniqueIdStr = CreateUniqueIdString();
 
    }
     
@@ -980,47 +972,6 @@ namespace dtEntity
       {
          return false;
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   std::string MapSystem::CreateUniqueIdString()
-   {
-#ifdef WIN32
-   GUID guid;
-
-   if( UuidCreate( &guid ) == RPC_S_OK )
-   {
-      unsigned char* guidChar;
-
-      if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
-      {
-         std::string str = reinterpret_cast<const char*>(guidChar);
-         if(RpcStringFree(&guidChar) != RPC_S_OK)
-         {
-            LOG_ERROR("Could not free memory.");
-         }
-         return str;
-      }
-      else
-      {
-         LOG_WARNING("Could not convert UniqueId to std::string." );
-         return "ERROR";
-      }
-   }
-   else
-   {
-      LOG_WARNING("Could not generate UniqueId." );
-      return "ERROR";
-   }
-#else
-   uuid_t uuid;
-   uuid_generate( uuid );
-
-   char buffer[37];
-   uuid_unparse(uuid, buffer);
-
-   return buffer;
-#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////

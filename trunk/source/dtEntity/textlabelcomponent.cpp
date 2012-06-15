@@ -608,9 +608,13 @@ namespace dtEntity
    ///////////////
    TextLabelSystem::TextLabelSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<TextLabelComponent>(em)
+      , mEnabled(
+           DynamicBoolProperty::SetValueCB(this, &TextLabelSystem::SetEnabled),
+           DynamicBoolProperty::GetValueCB(this, &TextLabelSystem::GetEnabled)
+        )
+      , mEnabledVal(true)
    {
       Register(EnabledId, &mEnabled);
-      mEnabled.Set(true);
 
       AddScriptedMethod("create", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptCreate));
       AddScriptedMethod("destroy", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptDestroy));
@@ -622,18 +626,16 @@ namespace dtEntity
       AddScriptedMethod("setHighlighted", dtEntity::ScriptMethodFunctor(this, &TextLabelSystem::ScriptSetHighlighted));
    }  
 
-    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
+   ////////////////////////////////////////////////////////////////////////////
+   bool TextLabelSystem::GetEnabled() const
    {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
-      }
+      return mEnabledVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void TextLabelSystem::SetEnabled(bool v)
    {
+      mEnabledVal = v;
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          for(unsigned int j = 0; j < i->second->GetNumTexts(); ++j)

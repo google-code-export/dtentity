@@ -264,11 +264,6 @@ int main(int argc, char** argv)
    
    osg::Group* root = new osg::Group();
 
-   osg::Sphere* sphere = new osg::Sphere(osg::Vec3(), 5);
-   osg::ShapeDrawable* drawable = new osg::ShapeDrawable(sphere);
-   osg::Geode* geode = new osg::Geode();
-   geode->addDrawable(drawable);
-   root->addChild(geode);
    if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
    {
       LOG_ERROR("Error setting up dtEntity!");

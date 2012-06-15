@@ -6,7 +6,6 @@ ENDIF (WIN32)
 
 FIND_PACKAGE(OpenThreads REQUIRED)
 FIND_PACKAGE(ProtoBuf)
-FIND_PACKAGE(ENet)
 
 OPTION(DTENTITY_USE_STRINGS_AS_STRINGIDS "Use std::string instead of hashed strings (for debugging)" OFF)
 
@@ -58,6 +57,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/hash.h
   ${HEADER_PATH}/debugdrawmanager.h
   ${HEADER_PATH}/defaultentitysystem.h
+  ${HEADER_PATH}/dynamicscomponent.h
   ${HEADER_PATH}/dynamicproperty.h
   ${HEADER_PATH}/entity.h
   ${HEADER_PATH}/entityid.h
@@ -105,6 +105,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/texturelabelcomponent.h
   ${HEADER_PATH}/threadsafequeue.h
   ${HEADER_PATH}/transformcomponent.h
+  ${HEADER_PATH}/uniqueid.h
   ${HEADER_PATH}/windowmanager.h
   ${DTENTITY_CONFIG_HEADER}
 
@@ -114,6 +115,7 @@ SET(LIB_REPLACE
   applicationcomponent.cpp
   cameracomponent.cpp
   commandmessages.cpp
+  dynamicscomponent.cpp
   groupcomponent.cpp
   inputhandler.cpp
   layerattachpointcomponent.cpp
@@ -139,10 +141,11 @@ SET(LIB_REPLACE
 SET(LIB_SOURCES
   componentfactories.cpp
   componentpluginmanager.cpp
-  hash.cpp
   debugdrawmanager.cpp
+  dynamicscomponent.cpp
   entity.cpp
   entitymanager.cpp
+  hash.cpp
   initosgviewer.cpp
   logmanager.cpp
   messagefactory.cpp
@@ -154,6 +157,7 @@ SET(LIB_SOURCES
   scriptaccessor.cpp
   spawner.cpp
   stringid.cpp
+  uniqueid.cpp
   windowmanager.cpp
 
 )
@@ -172,18 +176,6 @@ IF(PROTOBUF_FOUND)
                 gen/data.pb.cc)
   LIST(APPEND DTENTITYLIBS   ${PROTOBUF_LIBRARIES})
 ENDIF(PROTOBUF_FOUND)
-
-IF(ENET_FOUND AND PROTOBUF_FOUND)
-  INCLUDE_DIRECTORIES(${ENET_INCLUDE_DIR})
-  LIST(APPEND LIB_PUBLIC_HEADERS ${HEADER_PATH}/enetcomponent.h)
-  LIST(APPEND LIB_SOURCES	enetcomponent.cpp)
-  LIST(APPEND DTENTITYLIBS ${ENET_LIBRARIES})
-
-   IF (WIN32)
-   LIST(APPEND DTENTITYLIBS ws2_32.lib winmm.lib)
-   ENDIF (WIN32)
-
-ENDIF(ENET_FOUND AND PROTOBUF_FOUND)
 
 
 IF(BUILD_OPENAL)
