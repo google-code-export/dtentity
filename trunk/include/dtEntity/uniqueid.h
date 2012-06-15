@@ -24,5 +24,5 @@
 
 namespace dtEntity
 { 
-   DT_ENTITY_EXPORT std::string CreateUniqueIdString();
+   std::string DT_ENTITY_EXPORT CreateUniqueIdString();
 }

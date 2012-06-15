@@ -18,6 +18,7 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/log.h>
 #include <string>
 #ifdef WIN32
    #include <Rpc.h>

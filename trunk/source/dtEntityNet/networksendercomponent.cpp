@@ -107,8 +107,8 @@ namespace dtEntityNet
       Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
 
       mMinUpdateInterval.Set(10.0f);
-      mMaxPositionDeviation.Set(0.01);
-      mMaxOrientationDeviation.Set(0.01);
+      mMaxPositionDeviation.Set(0.01f);
+      mMaxOrientationDeviation.Set(0.01f);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
