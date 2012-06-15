@@ -323,8 +323,6 @@ namespace dtEntity
       // implementation of EntityManager::EntitySystemRequestCallback interface
       virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
 
-      static std::string CreateUniqueIdString();
-
       void AddMapEncoder(MapEncoder* ec);
 
       MapEncoder* GetEncoderForMap(const std::string& extension) const;

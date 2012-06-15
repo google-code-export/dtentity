@@ -24,7 +24,7 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
-#include <dtEntity/property.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/scriptaccessor.h>
 #include <osgUtil/IntersectionVisitor>
 #include <osgUtil/LineSegmentIntersector>
@@ -132,8 +132,6 @@ namespace dtEntitySimulation
       GroundClampingSystem(dtEntity::EntityManager& em);
       ~GroundClampingSystem();
 
-      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop);
-
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
 
       void Tick(const dtEntity::Message& msg);
@@ -144,11 +142,13 @@ namespace dtEntitySimulation
       bool ClampToTerrain(osg::Vec3d& position, int voffset = 10000);
 
       void SetIntersectLayer(dtEntity::StringId);
-      dtEntity::StringId GetIntersectLayer() const { return  mIntersectLayer.Get(); }
+      dtEntity::StringId GetIntersectLayer() const;
 
 
       virtual bool StorePropertiesToScene() const { return true; }
 
+      void SetEnabled(bool v);
+      bool GetEnabled() const;
    private:
 
       dtEntity::Property* ScriptGetTerrainHeight(const dtEntity::PropertyArgs& args);
@@ -166,8 +166,10 @@ namespace dtEntitySimulation
       osg::observer_ptr<osg::Node> mRootNode;
       osg::ref_ptr<osgUtil::IntersectorGroup> mIntersectorGroup;
 
-      dtEntity::BoolProperty mEnabled;
-      dtEntity::StringIdProperty mIntersectLayer;
+      dtEntity::DynamicBoolProperty mEnabled;
+      bool mEnabledVal;
+      dtEntity::DynamicStringIdProperty mIntersectLayer;
+      dtEntity::StringId mIntersectLayerVal;
       dtEntity::BoolProperty mFetchLODs;
 
       osgSim::LineOfSight mLos;

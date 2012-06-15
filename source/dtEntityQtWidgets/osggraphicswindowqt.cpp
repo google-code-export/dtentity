@@ -304,7 +304,7 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::swapBuffersImplementation()
    {
-      if (mQWidget != NULL)
+      if (mQWidget != NULL && mQWidget->isValid())
       {
          mQWidget->swapBuffers();
       }

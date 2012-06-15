@@ -100,13 +100,21 @@ namespace dtEntitySimulation
       : BaseClass(em)
       , mRootNode(NULL)
       , mIntersectorGroup(new osgUtil::IntersectorGroup())
+      , mEnabled(
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &GroundClampingSystem::SetEnabled),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &GroundClampingSystem::GetEnabled)
+        )
+      , mEnabledVal(true)
+      , mIntersectLayer(
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &GroundClampingSystem::SetIntersectLayer),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &GroundClampingSystem::GetIntersectLayer)
+        )
       , mCamera(NULL)
    {
 
       Register(EnabledId, &mEnabled);
       Register(IntersectLayerId, &mIntersectLayer);
       Register(FetchLODsId, &mFetchLODs);
-      mEnabled.Set(true);
       mFetchLODs.Set(true);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &GroundClampingSystem::Tick);
@@ -157,16 +165,19 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroundClampingSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop)
+   void GroundClampingSystem::SetEnabled(bool v)
    {
-      if(propname == IntersectLayerId)
-      {
-         SetIntersectLayer(prop.StringIdValue());
-      }
-      else if(propname == EnabledId && prop.BoolValue() == true)
+      mEnabledVal = v;
+      if(v)
       {
          DirtyAll();
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool GroundClampingSystem::GetEnabled() const
+   {
+      return mEnabledVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -190,9 +201,15 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   dtEntity::StringId GroundClampingSystem::GetIntersectLayer() const
+   {
+      return mIntersectLayerVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void GroundClampingSystem::SetIntersectLayer(dtEntity::StringId layername)
    {
-      mIntersectLayer.Set(layername);
+      mIntersectLayerVal = layername;
       dtEntity::LayerAttachPointSystem* layersys;
       GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
       dtEntity::LayerAttachPointComponent* c;

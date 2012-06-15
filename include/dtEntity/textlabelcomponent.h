@@ -135,22 +135,21 @@ namespace dtEntity
 
       TextLabelSystem(dtEntity::EntityManager& em);
 
-      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
-
       void SetEnabled(bool v);
-      bool GetEnabled() const { return mEnabled.Get(); }
+      bool GetEnabled() const;
 
    private:
-      dtEntity::BoolProperty mEnabled;
 
-      dtEntity::Property* ScriptCreate(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptDestroy(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetText(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetOffset(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetAlignment(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetColor(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetBackdropColor(const dtEntity::PropertyArgs& args);
-      dtEntity::Property* ScriptSetHighlighted(const dtEntity::PropertyArgs& args);
+      DynamicBoolProperty mEnabled;
+      bool mEnabledVal;
+      Property* ScriptCreate(const PropertyArgs& args);
+      Property* ScriptDestroy(const PropertyArgs& args);
+      Property* ScriptSetText(const PropertyArgs& args);
+      Property* ScriptSetOffset(const PropertyArgs& args);
+      Property* ScriptSetAlignment(const PropertyArgs& args);
+      Property* ScriptSetColor(const PropertyArgs& args);
+      Property* ScriptSetBackdropColor(const PropertyArgs& args);
+      Property* ScriptSetHighlighted(const PropertyArgs& args);
 
    };
 }

@@ -1,10 +1,13 @@
 
-SET(TARGET_H ../../include/dtEntitySimulation/groundclampingcomponent.h
-			 ../../include/dtEntitySimulation/manipulatorcomponent.h
-			 ../../include/dtEntitySimulation/manipulators.h
-			 ../../include/dtEntitySimulation/particlecomponent.h
-			 ../../include/dtEntitySimulation/pathcomponent.h
-			 ../../include/dtEntitySimulation/quattools.h
+SET(HEADER_DIR ../../include/dtEntitySimulation)
+
+SET(TARGET_H
+  ${HEADER_DIR}/groundclampingcomponent.h
+  ${HEADER_DIR}/manipulatorcomponent.h
+  ${HEADER_DIR}/manipulators.h
+  ${HEADER_DIR}/particlecomponent.h
+  ${HEADER_DIR}/pathcomponent.h
+  ${HEADER_DIR}/quattools.h
 )			 
 			 
 SET(TARGET_SRC_ADD

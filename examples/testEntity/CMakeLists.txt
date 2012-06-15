@@ -23,7 +23,6 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
 						dtEntity
             ${OPENSCENEGRAPH_LIBRARIES}
 						${OPENTHREADS_LIBRARIES}
-						${DTUTIL_LIBRARIES}
 )
                      
 INCLUDE(ModuleInstall OPTIONAL)

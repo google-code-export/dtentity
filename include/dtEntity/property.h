@@ -571,7 +571,7 @@ namespace dtEntity
       virtual Matrix MatrixValue() const;
       virtual void SetMatrix(const Matrix& v) { Set(v); }
       virtual const std::string StringValue() const;
-      Matrix Get() const { return mValue; }
+      const Matrix& Get() const { return mValue; }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -600,6 +600,9 @@ namespace dtEntity
       virtual void SetQuat(const Quat& v) { Set(v); }
 
       const Quat Get() const { return Quat(mValues[0], mValues[1], mValues[2], mValues[3]); }
+
+      // warning: not sure if this is safe on all platforms
+      const Quat& GetAsQuat() const { return reinterpret_cast<const Quat&>(mValues); }
 
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
@@ -726,6 +729,9 @@ namespace dtEntity
       virtual const std::string StringValue() const;
       const Vec2f Get() const { return Vec2f(mValues[0], mValues[1]); }
 
+      // warning: not sure if this is safe on all platforms
+      const Vec2f& GetAsVec2() const { return reinterpret_cast<const Vec2f&>(mValues); }
+
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
 
@@ -772,6 +778,9 @@ namespace dtEntity
       virtual const std::string StringValue() const;
       const Vec3f Get() const { return osg::Vec3f(mValues[0], mValues[1], mValues[2]); }
 
+      // warning: not sure if this is safe on all platforms
+      const Vec3f& GetAsVec3() const { return reinterpret_cast<const Vec3f&>(mValues); }
+
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
       void Set(const Vec3f& v)
@@ -816,6 +825,9 @@ namespace dtEntity
       virtual const std::string StringValue() const;
 
       const Vec4f Get() const { return Vec4f(mValues[0], mValues[1], mValues[2], mValues[3]); }
+
+      // warning: not sure if this is safe on all platforms
+      const Vec4f& GetAsVec4() const { return reinterpret_cast<const Vec4f&>(mValues); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
@@ -868,6 +880,9 @@ namespace dtEntity
       virtual const std::string StringValue() const;
       const Vec2d Get() const { return Vec2d(mValues[0], mValues[1]); }
 
+      // warning: not sure if this is safe on all platforms
+      const Vec2d& GetAsVec2d() const { return reinterpret_cast<const Vec2d&>(mValues); }
+
       virtual Property* Clone() const;
       virtual bool operator==(const Property& other) const;
       void Set(const Vec2d& v)
@@ -910,6 +925,9 @@ namespace dtEntity
       virtual void SetVec3D(const Vec3d& v) { Set(v); }
       virtual const std::string StringValue() const;
       const Vec3d Get() const { return osg::Vec3d(mValues[0], mValues[1], mValues[2]); }
+
+      // warning: not sure if this is safe on all platforms
+      const Vec3d& GetAsVec3d() const { return reinterpret_cast<const Vec3d&>(mValues); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
@@ -957,6 +975,9 @@ namespace dtEntity
       virtual void SetVec4D(const Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const;
       const Vec4d Get() const { return Vec4d(mValues[0], mValues[1], mValues[2], mValues[3]); }
+
+      // warning: not sure if this is safe on all platforms
+      const Vec4d& GetAsVec2d() const { return reinterpret_cast<const Vec4d&>(mValues); }
 
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;

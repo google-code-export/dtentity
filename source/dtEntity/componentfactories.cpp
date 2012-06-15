@@ -24,6 +24,7 @@
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
+#include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/lightcomponent.h>
@@ -52,6 +53,7 @@ namespace dtEntity
 
 	void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
+      pluginManager.AddFactory(new ComponentPluginFactoryImpl<DynamicsSystem>("Dynamics"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<SkyBoxSystem>("SkyBox"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<ShadowSystem>("Shadow"));

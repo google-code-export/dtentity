@@ -165,16 +165,29 @@ namespace dtEntityWrappers
       tmplt->SetClassName(String::New("ScriptSystem"));
 
       dtEntity::ApplicationSystem* as;
-      GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as);
-      osgViewer::GraphicsWindow* window = as->GetPrimaryWindow();
+      if(GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as))
+      {
+         osgViewer::GraphicsWindow* window = as->GetPrimaryWindow();
 
-      dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
+         if(window)
+         {
+            context->Global()->Set(String::New("Screen"), WrapScreen(this, as->GetPrimaryView(), window));
+         }
 
-      context->Global()->Set(String::New("Axis"), WrapAxes(input));
-      context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));
-      context->Global()->Set(String::New("Key"), WrapKeys(input));
+         if(as->GetWindowManager())
+         {
+            dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
+            if(input)
+            {
+               context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));
+               context->Global()->Set(String::New("Axis"), WrapAxes(input));
+               context->Global()->Set(String::New("Key"), WrapKeys(input));
+            }
+         }
+      }
+
+
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
-      context->Global()->Set(String::New("Screen"), WrapScreen(this, as->GetPrimaryView(), window));
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());

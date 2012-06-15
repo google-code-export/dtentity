@@ -21,12 +21,14 @@
 #include <dtEntity/applicationcomponent.h>
 
 #include <dtEntity/cameracomponent.h>
-#include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/mapcomponent.h>
+#include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/mapcomponent.h>
+#include <dtEntity/uniqueid.h>
 #include <dtEntity/windowmanager.h>
-#include <dtEntity/commandmessages.h>
+
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
 
@@ -129,7 +131,7 @@ namespace dtEntity
    {
 
       // generate a unique ID
-      mApplicationSystemInfo.mUniqueID = MapSystem::CreateUniqueIdString();
+      mApplicationSystemInfo.mUniqueID = CreateUniqueIdString();
 
       mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
 
@@ -232,6 +234,10 @@ namespace dtEntity
    //////////////////////////////////////////////////////////////////////////////
    osgViewer::GraphicsWindow* ApplicationSystem::GetPrimaryWindow() const
    {
+      if(!mImpl->mViewer)
+      {
+         return NULL;
+      }
       osgViewer::ViewerBase::Windows wins;
       mImpl->mViewer->getWindows(wins, false);
       return wins.front();
