@@ -8,6 +8,7 @@ AssertException::AssertException(char const* description, char const* filename, 
 {
 	using namespace std;
 
+    #pragma warning(disable:4996)
     strcpy(m_description, description);
     strcpy(m_filename, filename);
 }

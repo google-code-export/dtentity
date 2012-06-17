@@ -31,6 +31,14 @@
 #include <dtEntityNet/networksendercomponent.h>
 #include <dtEntityNet/networkreceivercomponent.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#define SLEEPFUN Sleep
+#else
+#define SLEEPFUN sleep
+#endif
+
+
 int main()
 {
    using namespace dtEntity;
@@ -55,7 +63,7 @@ int main()
    {
       em.EmitQueuedMessages(1.0f);
       em.EmitMessage(tickmsg);
-      sleep(1);
+      SLEEPFUN(1);
    }
 
    return 0;
