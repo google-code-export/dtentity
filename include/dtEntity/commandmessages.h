@@ -39,7 +39,7 @@ namespace dtEntity
    /**
     * Adds all messages to message factory
 	*/
-	void RegisterCommandMessages(MessageFactory&);
+	void DT_ENTITY_EXPORT RegisterCommandMessages(MessageFactory&);
 
 
    ////////////////////////////////////////////////////////////////////////////////

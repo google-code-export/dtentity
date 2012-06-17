@@ -30,6 +30,12 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityNet/networkreceivercomponent.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+
 int main()
 {
    using namespace dtEntity;
@@ -53,7 +59,7 @@ int main()
       em.EmitMessage(tickmsg);
       enetsys->SendToServer(tickmsg);
       enetsys->Flush();
-      sleep(1);
+      Sleep(1);
    }
 
    return 0;

@@ -68,8 +68,5 @@ namespace dtEntity
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<SoundSystem>("Sound"));
 #endif
 
-#if ENET_FOUND && PROTOBUF_FOUND
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<ENetSystem>("ENet"));
-#endif
    }
 }

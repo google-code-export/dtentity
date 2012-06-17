@@ -22,6 +22,8 @@
 
 #include <dtEntity/export.h>
 
+#include <string>
+
 namespace dtEntity
 { 
    std::string DT_ENTITY_EXPORT CreateUniqueIdString();

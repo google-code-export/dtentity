@@ -6,6 +6,7 @@ ENDIF (WIN32)
 
 FIND_PACKAGE(OpenThreads REQUIRED)
 FIND_PACKAGE(ProtoBuf)
+FIND_PACKAGE(ENet)
 
 OPTION(DTENTITY_USE_STRINGS_AS_STRINGIDS "Use std::string instead of hashed strings (for debugging)" OFF)
 

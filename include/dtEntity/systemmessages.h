@@ -41,7 +41,7 @@ namespace dtEntity
    /**
     * Adds all messages to message factory
    */
-   void RegisterSystemMessages(MessageFactory&);
+   void DT_ENTITY_EXPORT RegisterSystemMessages(MessageFactory&);
 
    ////////////////////////////////////////////////////////////////////////////////
    /**

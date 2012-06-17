@@ -18,8 +18,9 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/uniqueid.h>
+
 #include <dtEntity/log.h>
-#include <string>
 #ifdef WIN32
    #include <Rpc.h>
    #include <Rpcdce.h>
@@ -31,7 +32,6 @@
 
 namespace dtEntity
 {
-
    std::string CreateUniqueIdString()
    {
 #ifdef WIN32
