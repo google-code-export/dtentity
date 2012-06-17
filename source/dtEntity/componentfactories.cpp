@@ -45,9 +45,6 @@
   #include <dtEntity/animationcomponent.h>
 #endif
 
-#if ENET_FOUND && PROTOBUF_FOUND
-  #include <dtEntity/enetcomponent.h>
-#endif
 namespace dtEntity
 {
 
