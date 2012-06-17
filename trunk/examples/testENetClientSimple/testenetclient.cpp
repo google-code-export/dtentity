@@ -23,7 +23,6 @@
 */
 
 
-#include <dtEntity/enetcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
