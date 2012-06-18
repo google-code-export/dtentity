@@ -38,6 +38,15 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId NetworkReceiverComponent::TYPE(dtEntity::SID("NetworkReceiver"));
 
+   ////////////////////////////////////////////////////////////////////////////
+   NetworkReceiverComponent::NetworkReceiverComponent()
+      : mTransformComponent(NULL)
+      , mDynamicsComponent(NULL)
+      , mTimeLastReceive(0)
+      , mDeadRecAlg(DeadReckoningAlgorithm::DISABLED)
+   {
+
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId NetworkReceiverSystem::TYPE(dtEntity::SID("NetworkReceiver"));
@@ -47,6 +56,8 @@ namespace dtEntityNet
 
    NetworkReceiverSystem::NetworkReceiverSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
+      , mApplicationSystem(NULL)
+      , mMapSystem(NULL)
       , mHost(NULL)
       , mPeer(NULL)
    {
@@ -63,11 +74,16 @@ namespace dtEntityNet
          dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnUpdateTransform),
                                    dtEntity::FilterOptions::ORDER_LATE, "UpdateTransformMessage::OnUpdateTransform");
 
-      bool success = em.GetES(mMapSystem);
-      assert(success);
 
-      success = em.GetES(mApplicationSystem);
-            assert(success);
+      mIncoming.RegisterForMessages(JoinMessage::TYPE,
+         dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnJoin), dtEntity::FilterOptions::ORDER_DEFAULT, "UpdateTransformMessage::OnJoin");
+
+      mIncoming.RegisterForMessages(ResignMessage::TYPE,
+         dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnResign), dtEntity::FilterOptions::ORDER_DEFAULT, "UpdateTransformMessage::OnResign");
+
+      em.GetES(mMapSystem);
+      em.GetES(mApplicationSystem);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -106,6 +122,7 @@ namespace dtEntityNet
 
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_LATE, "NetworkReceiverSystem::Tick");
+
       return true;
    }
 
@@ -185,15 +202,16 @@ namespace dtEntityNet
             mConnectedClients.push_back(event.peer);
 
             NetworkSenderSystem* sender;
-            GetEntityManager().GetES(sender);
-            sender->SendEntitiesToClient(event.peer, this);
+            if(GetEntityManager().GetES(sender))
+            {
+               sender->SendEntitiesToClient(event.peer, this);
+            }
 
             break;
          }
          case ENET_EVENT_TYPE_RECEIVE:
          {
-            LOG_ALWAYS("A packet of length " << event.packet->dataLength << " containing " <<
-                    event.packet->data << " was received from " <<
+            LOG_ALWAYS("A packet of length " << event.packet->dataLength << " was received from " <<
                     event.peer->data << " on channel " << (int)event.channelID << "\n");
 
             //std::istringstream is(reinterpret_cast<char*>(event.packet->data), std::ios_base::in | std::ios_base::binary);
@@ -208,6 +226,7 @@ namespace dtEntityNet
             }
             else
             {
+               LOG_ALWAYS("Received message of type " << dtEntity::GetStringFromSID(msg->GetType()));
                mIncoming.EmitMessage(*msg);
             }
             delete msg;
@@ -223,6 +242,7 @@ namespace dtEntityNet
                if(*i == event.peer)
                {
                   mConnectedClients.erase(i);
+                  break;
                }
             }
 
@@ -260,7 +280,7 @@ namespace dtEntityNet
             bool success = GetEntityManager().GetComponent(id, comp->mDynamicsComponent, true);
             if(!success)
             {
-               LOG_ERROR("NetworSender Component expects a Dynamics Component!");
+               LOG_ERROR("NetworkReceiver Component expects a Dynamics Component!");
                return;
             }
          }
@@ -295,7 +315,7 @@ namespace dtEntityNet
                comp->mTransformComponent->SetRotation(smoothr);
                break;
             }
-            default: assert(false);
+            default: assert(false && "Unimplemented dead reckoning algorithm used");
          }
       }
    }
@@ -308,6 +328,7 @@ namespace dtEntityNet
       bool success = dtEntity::ProtoBufMapEncoder::EncodeMessage(msg, buf);
       if(success)
       {
+         LOG_ALWAYS("Sending to clients: " << dtEntity::GetStringFromSID(msg.GetType()));
          const std::string byteArray = buf.str();
          ENetPacket* packet = enet_packet_create (byteArray.c_str(), byteArray.size(),
                                               ENET_PACKET_FLAG_RELIABLE);
@@ -343,6 +364,7 @@ namespace dtEntityNet
       bool success = dtEntity::ProtoBufMapEncoder::EncodeMessage(msg, buf);
       if(success)
       {
+         LOG_ALWAYS("Sending to peer: " << dtEntity::GetStringFromSID(msg.GetType()));
          const std::string byteArray = buf.str();
          ENetPacket* packet = enet_packet_create (byteArray.c_str(), byteArray.size(),
                                               ENET_PACKET_FLAG_RELIABLE);
@@ -364,9 +386,60 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void NetworkReceiverSystem::OnJoin(const dtEntity::Message& m)
+   {
+      const JoinMessage& msg = static_cast<const JoinMessage&>(m);
+
+      std::string entitytype = msg.GetEntityType();
+      std::string uniqueid = msg.GetUniqueId();
+
+      dtEntity::Entity* entity;
+      GetEntityManager().CreateEntity(entity);
+      dtEntity::MapComponent* mapcomp;
+      entity->CreateComponent(mapcomp);
+      mapcomp->SetUniqueId(uniqueid);
+
+      dtEntity::MapSystem* mapsys;
+      GetEntityManager().GetES(mapsys);
+
+      dtEntity::Spawner* spawner;
+      if(!mapsys->GetSpawner(entitytype, spawner))
+      {
+         LOG_ERROR("Cannot instantiate remote entity, spawner not found: " << entitytype);
+         return;
+      }
+
+      spawner->Spawn(*entity);
+      NetworkReceiverComponent* rc;
+      entity->CreateComponent(rc);
+      rc->mUniqueId = msg.GetUniqueId();
+
+      mapsys->AddToScene(entity->GetId());
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void NetworkReceiverSystem::OnResign(const dtEntity::Message& m)
+   {
+      const ResignMessage& msg = static_cast<const ResignMessage&>(m);
+      dtEntity::MapSystem* mapsys;
+      GetEntityManager().GetES(mapsys);
+      dtEntity::Entity* entity;
+      if(!mapsys->GetEntityByUniqueId(msg.GetUniqueId(), entity))
+      {
+         LOG_ERROR("Cannot resign: Entity not found with unique id " << msg.GetUniqueId());
+         return;
+      }
+      mapsys->RemoveFromScene(entity->GetId());
+      GetEntityManager().KillEntity(entity->GetId());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void NetworkReceiverSystem::OnUpdateTransform(const dtEntity::Message& m)
    {
       const UpdateTransformMessage& msg = static_cast<const UpdateTransformMessage&>(m);
+
+      assert(mMapSystem != NULL);
       dtEntity::EntityId id = mMapSystem->GetEntityIdByUniqueId(msg.GetUniqueId());
       if(id == 0)
       {
@@ -380,7 +453,7 @@ namespace dtEntityNet
          return;
       }
 
-
+      assert(mApplicationSystem != NULL);
       comp->mTimeLastReceive = mApplicationSystem->GetSimulationTime();
       comp->mPosition = msg.GetPosition();
       comp->mOrientation = msg.GetOrientation();

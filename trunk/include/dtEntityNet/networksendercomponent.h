@@ -98,6 +98,7 @@ namespace dtEntityNet
 
       static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId MinUpdateIntervalId;
+      static const dtEntity::StringId MaxUpdateIntervalId;
       static const dtEntity::StringId MaxPositionDeviationId;
       static const dtEntity::StringId MaxOrientationDeviationId;
 
@@ -108,6 +109,9 @@ namespace dtEntityNet
 
       float GetMinUpdateInterval() const { return mMinUpdateInterval.Get(); }
       void SetMinUpdateInterval(float v) { mMinUpdateInterval.Set(v); }
+
+      float GetMaxUpdateInterval() const { return mMaxUpdateInterval.Get(); }
+      void SetMaxUpdateInterval(float v) { mMaxUpdateInterval.Set(v); }
 
       float GetMaxPositionDeviation() const { return mMaxPositionDeviation.Get(); }
       void SetMaxPositionDeviation(float v) { mMaxPositionDeviation.Set(v); }
@@ -123,6 +127,7 @@ namespace dtEntityNet
 
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::FloatProperty mMinUpdateInterval;
+      dtEntity::FloatProperty mMaxUpdateInterval;
       dtEntity::FloatProperty mMaxPositionDeviation;
       dtEntity::FloatProperty mMaxOrientationDeviation;
       NetworkReceiverSystem* mNetworkReceiverSystem;

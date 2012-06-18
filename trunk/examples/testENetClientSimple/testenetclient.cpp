@@ -30,6 +30,7 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/messages.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -37,6 +38,8 @@
 #else
 #define SLEEPFUN sleep
 #endif
+
+#define PORT_NUMBER 6789
 
 int main()
 {
@@ -47,11 +50,12 @@ int main()
    EntityManager em;
    RegisterCommandMessages(MessageFactory::GetInstance());
    RegisterSystemMessages(MessageFactory::GetInstance());
+   dtEntityNet::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
 
    dtEntityNet::NetworkReceiverSystem* enetsys = new dtEntityNet::NetworkReceiverSystem(em);
    em.AddEntitySystem(*enetsys);
 
-   enetsys->Connect("127.0.0.1", 6666);
+   enetsys->Connect("127.0.0.1", PORT_NUMBER);
 
    TickMessage tickmsg;
 
