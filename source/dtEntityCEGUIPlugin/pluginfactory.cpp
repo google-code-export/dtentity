@@ -18,19 +18,16 @@
 * Martin Scheffler
 */
 
-#include <dtEntityNet/messages.h>
-#include <dtEntityNet/networkreceivercomponent.h>
-#include <dtEntityNet/networksendercomponent.h>
+#include <dtEntityCEGUI/ceguicomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityNetPlugin(dtEntity::MessageFactory& mf)
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityCEGUIPlugin(dtEntity::MessageFactory& mf)
 {
-   dtEntityNet::RegisterMessageTypes(mf);
+   
 }
 
-REGISTER_DTENTITYPLUGIN(dtEntityNetPlugin, 2,
-   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkSenderSystem>("NetworkSender"),
-   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkReceiverSystem>("NetworkReceiver")
+REGISTER_DTENTITYPLUGIN(dtEntityCEGUIPlugin, 1,
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityCEGUI::CEGUISystem>("CEGUI")
 )
