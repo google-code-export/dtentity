@@ -108,10 +108,10 @@ function initRocket() {
 
 	var currentStopCB = null;
 
-	/*demo_list.onSelectionChanged = function() {
+	demo_list.onSelectionChanged = function() {
 	  for(i = 0; i < demo_items.length; ++i) {
 		var item = demo_items[i];
-		if(item.widget.Selected == "True") { 
+		if(ceguiSystem.getWidgetProperty(item.name, "Selected") == "True") { 
 		  
 		  if(currentStopCB != null) {
 			currentStopCB();
@@ -126,32 +126,33 @@ function initRocket() {
 
 
 	addDemo = function(demoname, startfunc, stopfunc) {
-	  var widgt = ceguiSystem.createWidget(demo_list, "WindowsLook/ListboxItem", demoname);
-	  widgt.Text = demoname;
-	  widgt.Visible = true;
-	  demo_items.push({name : demoname, widget : widgt, startCB : startfunc, stopCB : stopfunc});  
+	  ceguiSystem.createWidget("itemlist", "WindowsLook/ListboxItem", demoname);
+	  ceguiSystem.setWidgetProperty(demoname, "Text", demoname);
+	  ceguiSystem.setWidgetProperty(demoname, "Visible", "true");
+	  demo_items.push({name : demoname, startCB : startfunc, stopCB : stopfunc});  
 	}
 
-	var helpWidget = null;
+	var helpWidget = false;
 
-	showHelp = function(text) {
-	  if(helpWidget != null)  {
+	var showHelp = function(text) {
+	  if(helpWidget)  {
 		hideHelp();
 	  }
-	  helpWidget = ceguiSystem.createWidget("Root", "WindowsLook/StaticText", "helpWidget");
-	  helpWidget.Text = text;
-	  helpWidget.UnifiedAreaRect = "{{0.02,0},{0.7,0},{0.98,0},{0.98,0}}";
-	  helpWidget.FrameEnabled = "False";
-	  helpWidget.Alpha = "0.7";
-	  helpWidget.Font = "DejaVuSans-10";
-	  helpWidget.VertFormatting = "TopAligned";
-	  helpWidget.MousePassThroughEnabled = "True";
+	  helpWidget = true;
+	  ceguiSystem.createWidget("Root", "WindowsLook/StaticText", "helpWidget");
+	  ceguiSystem.setWidgetProperty("helpWidget", "Text", text);
+	  ceguiSystem.setWidgetProperty("helpWidget", "UnifiedAreaRect", "{{0.02,0},{0.7,0},{0.98,0},{0.98,0}}");
+	  ceguiSystem.setWidgetProperty("helpWidget", "FrameEnabled", "False");
+	  ceguiSystem.setWidgetProperty("helpWidget", "Alpha", "0.7");
+	  ceguiSystem.setWidgetProperty("helpWidget", "Font", "DejaVuSans-10");
+	  ceguiSystem.setWidgetProperty("helpWidget", "VertFormatting", "TopAligned");
+	  ceguiSystem.setWidgetProperty("helpWidget", "MousePassThroughEnabled", "True");
 	}
 
 	hideHelp = function() {
-	  ceguiSystem.destroyWidget(helpWidget);
-	  helpWidget = null;
+	  ceguiSystem.destroyWidget("helpWidget");
+	  helpWidget = false;
 	}
-	*/	
+		
 	return true;
 }
