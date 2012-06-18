@@ -93,6 +93,7 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId NetworkSenderSystem::TYPE(dtEntity::SID("NetworkSender"));
+   const dtEntity::StringId NetworkSenderSystem::MaxUpdateIntervalId(dtEntity::SID("MaxUpdateInterval"));
    const dtEntity::StringId NetworkSenderSystem::MinUpdateIntervalId(dtEntity::SID("MinUpdateInterval"));
    const dtEntity::StringId NetworkSenderSystem::MaxPositionDeviationId(dtEntity::SID("MaxPositionDeviation"));
    const dtEntity::StringId NetworkSenderSystem::MaxOrientationDeviationId(dtEntity::SID("MaxOrientationDeviation"));
@@ -102,11 +103,13 @@ namespace dtEntityNet
       : BaseClass(em)
       , mNetworkReceiverSystem(NULL)
    {
+      Register(MaxUpdateIntervalId, &mMaxUpdateInterval);
       Register(MinUpdateIntervalId, &mMinUpdateInterval);
       Register(MaxPositionDeviationId, &mMaxPositionDeviation);
       Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
 
-      mMinUpdateInterval.Set(10.0f);
+      mMinUpdateInterval.Set(0.1f);
+      mMaxUpdateInterval.Set(10.0f);
       mMaxPositionDeviation.Set(0.01f);
       mMaxOrientationDeviation.Set(0.01f);
 
@@ -132,7 +135,6 @@ namespace dtEntityNet
       const dtEntity::TickMessage& msg = static_cast<const dtEntity::TickMessage&>(m);
 
       double simtime = msg.GetSimulationTime();
-      double sendTime = simtime - GetMinUpdateInterval();
 
       osg::Vec3d newpos;
       osg::Vec3 newori;
@@ -162,12 +164,22 @@ namespace dtEntityNet
          const osg::Vec3 currentAtt = QuatToEuler(comp->mTransformComponent->GetRotation());
 
          bool resend = false;
-         if(comp->mTimeLastSend < sendTime)
+
+
+         if(simtime < comp->mTimeLastSend + GetMinUpdateInterval())
          {
+            // don't resend if not at least MinUpdateInterval seconds have passed since last send
+            resend = false;
+         }
+         else if(simtime > comp->mTimeLastSend + GetMaxUpdateInterval())
+         {
+            // always resend when no position was sent for MaxUpdateInterval seconds
             resend = true;
          }
          else
          {
+            // resend if dead reckoned position significantly deviates from actual position
+
             switch(comp->GetDeadReckoningAlgorithm())
             {
             case DeadReckoningAlgorithm::FPW:

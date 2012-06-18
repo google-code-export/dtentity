@@ -16,6 +16,7 @@
 		<component type="StaticMesh">
 			<stringproperty name="Mesh">StaticMeshes/physics_crate.ive</stringproperty>
 		</component>
+    <component type="Dynamics" />
 	</spawner>
 	<spawner name="Earth" guicategory="default" addtospawnerstore="true" iconpath="StaticMeshes/earth.png">
 		<component type="Layer">

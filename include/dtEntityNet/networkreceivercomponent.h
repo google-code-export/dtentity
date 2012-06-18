@@ -53,6 +53,9 @@ namespace dtEntityNet
 
    public:
       static const dtEntity::ComponentType TYPE;
+
+      NetworkReceiverComponent();
+
       dtEntity::ComponentType GetType() const { return TYPE; }
 
       virtual bool IsInstanceOf(dtEntity::ComponentType id) const
@@ -105,6 +108,8 @@ namespace dtEntityNet
       void Flush();
 
       void OnUpdateTransform(const dtEntity::Message& msg);
+      void OnJoin(const dtEntity::Message& msg);
+      void OnResign(const dtEntity::Message& msg);
 
    private:
 
@@ -120,5 +125,6 @@ namespace dtEntityNet
       _ENetPeer* mPeer;
       typedef std::vector<_ENetPeer*> Clients;
       Clients mConnectedClients;
+
    };
 }

@@ -23,45 +23,92 @@
 */
 
 
+#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/logmanager.h>
 #include <dtEntity/initosgviewer.h>
+#include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
+#include <dtEntityNet/messages.h>
 #include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/networksendercomponent.h>
+#include <osgGA/TrackballManipulator>
+#include <osgViewer/CompositeViewer>
+#include <osgViewer/ViewerEventHandlers>
 
 #ifdef _WIN32
 #include <windows.h>
+#define SLEEPFUN Sleep
+#else
+#define SLEEPFUN sleep
 #endif
 
+#define PORT_NUMBER 6789
 
-int main()
+void Joined(const dtEntity::Message& m)
 {
-   using namespace dtEntity;
+   const dtEntityNet::JoinMessage& msg = static_cast<const dtEntityNet::JoinMessage&>(m);
+   LOG_ALWAYS("JoinedMessage EntityType " << msg.GetEntityType() << " uid " << msg.GetUniqueId());
+}
 
-   LogManager::GetInstance().AddListener(new ConsoleLogHandler());
+int main(int argc, char** argv)
+{
+   osg::ArgumentParser arguments(&argc,argv);
+   osgViewer::Viewer viewer(arguments);
+   dtEntity::EntityManager em;
 
-   EntityManager em;
-   RegisterCommandMessages(MessageFactory::GetInstance());
-   RegisterSystemMessages(MessageFactory::GetInstance());
+   dtEntityNet::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
+   osg::Group* root = new osg::Group();
 
-   dtEntityNet::NetworkReceiverSystem* enetsys = new dtEntityNet::NetworkReceiverSystem(em);
-   em.AddEntitySystem(*enetsys);
-
-   enetsys->Connect("127.0.0.1", 6666);
-
-   TickMessage tickmsg;
-
-   while(true)
+   if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
    {
-      em.EmitQueuedMessages(1.0f);
-      em.EmitMessage(tickmsg);
-      enetsys->SendToServer(tickmsg);
-      enetsys->Flush();
-      Sleep(1);
+      LOG_ERROR("Error setting up dtEntity!");
+      return 0;
    }
 
-   return 0;
+   dtEntity::ApplicationSystem* appsys;
+   em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+
+   dtEntity::MapSystem* mSystem;
+   em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
+
+   em.AddEntitySystem(*new dtEntityNet::NetworkSenderSystem(em));
+   em.AddEntitySystem(*new dtEntityNet::NetworkReceiverSystem(em));
+
+   dtEntityNet::NetworkReceiverSystem* enetrsys;
+   em.GetES(enetrsys);
+   enetrsys->Connect("127.0.0.1", PORT_NUMBER);
+
+   std::string path = "Scenes/boids.dtescene";
+   bool success = mSystem->LoadScene(path);
+   if(!success)
+   {
+      LOG_ERROR("Could not load scene " + path);
+   }
+
+   // make sure these component systems are started
+   dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
+   pm.StartEntitySystem(em, dtEntity::SIDHash("StaticMesh"));
+   pm.StartEntitySystem(em, dtEntity::SIDHash("PositionAttitudeTransform"));
+
+   // create spawner for entity
+
+
+   // skybox screws up OSG initial position, set manually
+   appsys->GetPrimaryView()->setCameraManipulator(new osgGA::TrackballManipulator());
+   appsys->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
+   appsys->GetPrimaryView()->getCameraManipulator()->home(0);
+
+
+   while (!viewer.done())
+   {
+      viewer.advance(DBL_MAX);
+      viewer.eventTraversal();
+      appsys->EmitTickMessagesAndQueuedMessages();
+      viewer.updateTraversal();
+      viewer.renderingTraversals();
+   }
 
 }

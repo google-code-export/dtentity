@@ -39,14 +39,16 @@
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
-#include <osg/ShapeDrawable>
+
 #include <iostream>
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntityNet/networksendercomponent.h>
 #include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/messages.h>
 
 #define NUMBER_OF_ENTITIES 5
 #define PORT_NUMBER 6789
+
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -56,6 +58,7 @@ int main(int argc, char** argv)
    osgViewer::Viewer viewer(arguments);
    dtEntity::EntityManager em;
 
+   dtEntityNet::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
    osg::Group* root = new osg::Group();
 
    if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
@@ -116,7 +119,7 @@ int main(int argc, char** argv)
       trans->SetPosition(osg::Vec3(i * 3, 0.0f, 0.5f));
 
       dtEntity::DynamicsComponent* dynamics;
-      em.CreateComponent(spawned->GetId(), dynamics);
+      em.GetComponent(spawned->GetId(), dynamics);
       dynamics->SetVelocity(osg::Vec3((float)sin(i / 10.0f), (float)cos(i / 10.0f), 0) * 5);
       dynamics->SetAngularVelocity(osg::Quat(0.3 * i, osg::Vec3(0,0,1)));
 
