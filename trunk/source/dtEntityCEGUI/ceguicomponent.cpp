@@ -1327,7 +1327,7 @@ namespace dtEntityCEGUI
    {
       if(args.size() < 1) 
       {
-         LOG_ERROR("usage: loadScheme(fileName, [resourceGroup]");
+         LOG_ERROR("usage: loadScheme(fileName, [resourceGroup])");
          return NULL;
       }
       if(args.size() == 1)
@@ -1346,7 +1346,7 @@ namespace dtEntityCEGUI
    {
       if(args.size() < 2) 
       {
-         LOG_ERROR("usage: setMouseCursor(imageSetName, [imageName]");
+         LOG_ERROR("usage: setMouseCursor(imageSetName, [imageName])");
          return NULL;
       }
       this->SetMouseCursor(args[0]->StringValue(), args[1]->StringValue());
@@ -1372,7 +1372,7 @@ namespace dtEntityCEGUI
    {
       if(args.size() < 2) 
       {
-         LOG_ERROR("usage: createWidget(parentWidgetName, typename, name");
+         LOG_ERROR("usage: createWidget(parentWidgetName, typename, name)");
          return NULL;
       }
       std::string parent = args[0]->StringValue();
@@ -1401,7 +1401,7 @@ namespace dtEntityCEGUI
    {
       if(args.size() < 1) 
       {
-         LOG_ERROR("usage: destroyWidget(name");
+         LOG_ERROR("usage: destroyWidget(name)");
          return NULL;
       }
       std::string wname = args[0]->StringValue();
@@ -1421,7 +1421,7 @@ namespace dtEntityCEGUI
    {
       if(args.size() < 3) 
       {
-         LOG_ERROR("usage: setWidgetProperty(widgetname, propertyname, value");
+         LOG_ERROR("usage: setWidgetProperty(widgetname, propertyname, value)");
          return NULL;
       }
       std::string wname = args[0]->StringValue();
@@ -1435,6 +1435,47 @@ namespace dtEntityCEGUI
       }
       w->setProperty(pname, pval);
       
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::Property* CEGUISystem::ScriptSetCallback(const dtEntity::PropertyArgs& args)
+   {
+      dtEntityCEGUI::ScriptModule* sm;
+
+      CEGUI::ScriptModule* cgsm = CEGUI::System::getSingleton().getScriptingModule();
+      if(cgsm == NULL)
+      {
+         sm = new ScriptModule();
+         CEGUI::System::getSingleton().setScriptingModule(sm);
+      }
+      else
+      {
+         sm = dynamic_cast<ScriptModule*>(cgsm);
+         assert(sm != NULL);
+      }
+
+      if(args.size() < 3) 
+      {
+         LOG_ERROR("usage: setCallback(widgetname, callbackname, jscallbackfunctionname)");
+         return NULL;
+      }
+      std::string wname = args[0]->StringValue();
+      std::string cname = args[1]->StringValue();
+      std::string jsfunval  = args[2]->StringValue();
+      Widget* w = GetWidget(wname);
+      if(w == NULL)
+      {
+         LOG_ERROR("Cannot get widget in setCallback with parent name " << wname);
+         return NULL;
+      }
+      
+      /*CEGUI::SubscriberSlot slot(&CEGUISystem::onEvent, this);
+      sm->AddCallback(cname, slot);
+      CEGUI::String evtname = e->GetEventName();
+      CEGUI::Event::Connection connection = sm->subscribeEvent(w, cname, 0, cname);
+      SetConnection(connection);
+      */
       return NULL;
    }
 }

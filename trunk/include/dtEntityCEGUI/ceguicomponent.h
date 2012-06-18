@@ -412,7 +412,8 @@ namespace dtEntityCEGUI
       dtEntity::Property* ScriptHideCursor(const dtEntity::PropertyArgs& args);     
       dtEntity::Property* ScriptCreateWidget(const dtEntity::PropertyArgs& args);      
       dtEntity::Property* ScriptDestroyWidget(const dtEntity::PropertyArgs& args);   
-      dtEntity::Property* ScriptSetWidgetProperty(const dtEntity::PropertyArgs& args);      
+      dtEntity::Property* ScriptSetWidgetProperty(const dtEntity::PropertyArgs& args);  
+      dtEntity::Property* ScriptSetCallback(const dtEntity::PropertyArgs& args);
 
       static void _SetupSystemAndRenderer();
       static bool SystemAndRendererCreatedByHUD;
