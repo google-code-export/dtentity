@@ -20,18 +20,12 @@
 * Martin Scheffler
 */
 
-#include <dtEntityWrappers/export.h>
-#include <v8.h>
-
-namespace dtEntity
-{
-   class GUI;
-}
-
-namespace dtEntityWrappers
-{
-   class ScriptSystem;
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Object> WrapGui(ScriptSystem* ss, dtEntity::GUI* v);
-   DTENTITY_WRAPPERS_EXPORT dtEntity::GUI* UnwrapGui(v8::Handle<v8::Value>);
-   DTENTITY_WRAPPERS_EXPORT bool IsGui(v8::Handle<v8::Value>);
-}
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#   ifdef DTENTITY_CEGUI_LIBRARY
+#      define DTENTITY_CEGUI_EXPORT __declspec(dllexport)
+#   else
+#      define DTENTITY_CEGUI_EXPORT __declspec(dllimport)
+#   endif 
+#else
+#   define DTENTITY_CEGUI_EXPORT
+#endif

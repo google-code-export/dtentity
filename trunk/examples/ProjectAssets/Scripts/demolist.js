@@ -13,11 +13,12 @@ if(rocketSystem !== null) {
   println("Starting libRocket demo gui");
   initRocket();
   demolist_initialized = true;
-} else
-if(typeof GUI != "undefined") {
-   println("Starting CEGUI demo gui");
-   initCegui();
-	demolist_initialized = true;
+} else {
+  var ceguiSystem = getEntitySystem("CEGUI");
+  if(ceguiSystem != null) {
+    println("Starting CEGUI demo gui");
+    initCegui();
+    demolist_initialized = true;
 }
 else {
 	Log.error("No GUI library found! Please compile dtEntity with either libRocket or CEGUI support!");
@@ -91,15 +92,15 @@ function initRocket() {
  ////////////////////////////////////// Setup CEGUI /////////////////////////////////////
 
 	
-	GUI.loadScheme("WindowsLook.scheme");
-	var rootWidget = GUI.getWidget("Root");
-	GUI.setMouseCursor("WindowsLook", "MouseMoveCursor");
-	GUI.showCursor();
+	ceguiSystem.loadScheme("WindowsLook.scheme");
+	var rootWidget = ceguiSystem.getWidget("Root");
+	ceguiSystem.setMouseCursor("WindowsLook", "MouseMoveCursor");
+	ceguiSystem.showCursor();
 	
 	////////////////////////////////////// Demo manager /////////////////////////////////////
 	var demo_items = [];
 
-	var demo_list = GUI.createWidget(rootWidget, "WindowsLook/ItemListbox", "itemlist");
+	var demo_list = ceguiSystem.createWidget(rootWidget, "WindowsLook/ItemListbox", "itemlist");
 	demo_list.UnifiedAreaRect = "{{0,20},{0,20},{0,150},{0,150}}";
 	demo_list.Visible = true;
 
@@ -123,7 +124,7 @@ function initRocket() {
 
 
 	addDemo = function(demoname, startfunc, stopfunc) {
-	  var widgt = GUI.createWidget(demo_list, "WindowsLook/ListboxItem", demoname);
+	  var widgt = ceguiSystem.createWidget(demo_list, "WindowsLook/ListboxItem", demoname);
 	  widgt.Text = demoname;
 	  widgt.Visible = true;
 	  demo_items.push({name : demoname, widget : widgt, startCB : startfunc, stopCB : stopfunc});  
@@ -135,7 +136,7 @@ function initRocket() {
 	  if(helpWidget != null)  {
 		hideHelp();
 	  }
-	  helpWidget = GUI.createWidget(rootWidget, "WindowsLook/StaticText", "helpWidget");
+	  helpWidget = ceguiSystem.createWidget(rootWidget, "WindowsLook/StaticText", "helpWidget");
 	  helpWidget.Text = text;
 	  helpWidget.UnifiedAreaRect = "{{0.02,0},{0.7,0},{0.98,0},{0.98,0}}";
 	  helpWidget.FrameEnabled = "False";
@@ -146,7 +147,7 @@ function initRocket() {
 	}
 
 	hideHelp = function() {
-	  GUI.destroyWidget(helpWidget);
+	  ceguiSystem.destroyWidget(helpWidget);
 	  helpWidget = null;
 	}
 	

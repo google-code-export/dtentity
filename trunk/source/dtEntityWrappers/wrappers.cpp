@@ -41,13 +41,6 @@
   #include <dtEntityWrappers/animationsystemwrapper.h>
 #endif
 
-#if BUILD_CEGUI
-  #include <dtEntity/gui.h>
-  #include <dtEntityWrappers/guiwrapper.h>
-  #include <osgViewer/View>
-#endif
-
-
 #if BUILD_OPENAL
   #include <dtEntityWrappers/soundsystemwrapper.h>
 #endif
@@ -106,13 +99,13 @@ namespace dtEntityWrappers
       Handle<Context> context = scriptsystem->GetGlobalContext();      
       Context::Scope context_scope(context);
       
-#if BUILD_CEGUI
+/*#if BUILD_CEGUI
       
       as->GetViewer()->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
       // make main view gl context current before creating gui
       dtEntity::GUI* gui = new dtEntity::GUI(em, as->GetPrimaryCamera());
       context->Global()->Set(String::New("GUI"), WrapGui(scriptsystem, gui));
-#endif
+#endif*/
 
       context->Global()->Set(String::New("DebugDrawManager"), CreateDebugDrawManager(context));
       //context->Global()->Set(String::New("Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
