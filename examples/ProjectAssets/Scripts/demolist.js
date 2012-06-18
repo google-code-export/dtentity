@@ -108,7 +108,7 @@ function initRocket() {
 
 	var currentStopCB = null;
 
-	demo_list.onSelectionChanged = function() {
+	var onSelectionChangedCB = function() {
 	  for(i = 0; i < demo_items.length; ++i) {
 		var item = demo_items[i];
 		if(ceguiSystem.getWidgetProperty(item.name, "Selected") == "True") { 
@@ -123,7 +123,7 @@ function initRocket() {
 		}
 	  }
 	};
-
+	ceguiSystem.setCallback("itemlist", "onSelectionChanged", "onSelectionChangedCB");
 
 	addDemo = function(demoname, startfunc, stopfunc) {
 	  ceguiSystem.createWidget("itemlist", "WindowsLook/ListboxItem", demoname);
