@@ -406,6 +406,14 @@ namespace dtEntityCEGUI
       void _SetupInternalGraph();
       void _SetupDefaultUI();
 
+      dtEntity::Property* ScriptLoadScheme(const dtEntity::PropertyArgs& args);      
+      dtEntity::Property* ScriptSetMouseCursor(const dtEntity::PropertyArgs& args);      
+      dtEntity::Property* ScriptShowCursor(const dtEntity::PropertyArgs& args);      
+      dtEntity::Property* ScriptHideCursor(const dtEntity::PropertyArgs& args);     
+      dtEntity::Property* ScriptCreateWidget(const dtEntity::PropertyArgs& args);      
+      dtEntity::Property* ScriptDestroyWidget(const dtEntity::PropertyArgs& args);   
+      dtEntity::Property* ScriptSetWidgetProperty(const dtEntity::PropertyArgs& args);      
+
       static void _SetupSystemAndRenderer();
       static bool SystemAndRendererCreatedByHUD;
 

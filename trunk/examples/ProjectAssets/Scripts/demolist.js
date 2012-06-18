@@ -19,10 +19,12 @@ if(rocketSystem !== null) {
     println("Starting CEGUI demo gui");
     initCegui();
     demolist_initialized = true;
-}
-else {
+  }
+  else {
 	Log.error("No GUI library found! Please compile dtEntity with either libRocket or CEGUI support!");
+  }
 }
+
 
 var window;
 
@@ -93,20 +95,20 @@ function initRocket() {
 
 	
 	ceguiSystem.loadScheme("WindowsLook.scheme");
-	var rootWidget = ceguiSystem.getWidget("Root");
+	//var rootWidget = ceguiSystem.getWidget("Root");
 	ceguiSystem.setMouseCursor("WindowsLook", "MouseMoveCursor");
 	ceguiSystem.showCursor();
 	
 	////////////////////////////////////// Demo manager /////////////////////////////////////
 	var demo_items = [];
 
-	var demo_list = ceguiSystem.createWidget(rootWidget, "WindowsLook/ItemListbox", "itemlist");
-	demo_list.UnifiedAreaRect = "{{0,20},{0,20},{0,150},{0,150}}";
-	demo_list.Visible = true;
+	ceguiSystem.createWidget("Root", "WindowsLook/ItemListbox", "itemlist");
+	ceguiSystem.setWidgetProperty("itemlist", "UnifiedAreaRect", "{{0,20},{0,20},{0,150},{0,150}}");
+	ceguiSystem.setWidgetProperty("itemlist", "Visible", "true");
 
 	var currentStopCB = null;
 
-	demo_list.onSelectionChanged = function() {
+	/*demo_list.onSelectionChanged = function() {
 	  for(i = 0; i < demo_items.length; ++i) {
 		var item = demo_items[i];
 		if(item.widget.Selected == "True") { 
@@ -136,7 +138,7 @@ function initRocket() {
 	  if(helpWidget != null)  {
 		hideHelp();
 	  }
-	  helpWidget = ceguiSystem.createWidget(rootWidget, "WindowsLook/StaticText", "helpWidget");
+	  helpWidget = ceguiSystem.createWidget("Root", "WindowsLook/StaticText", "helpWidget");
 	  helpWidget.Text = text;
 	  helpWidget.UnifiedAreaRect = "{{0.02,0},{0.7,0},{0.98,0},{0.98,0}}";
 	  helpWidget.FrameEnabled = "False";
@@ -150,6 +152,6 @@ function initRocket() {
 	  ceguiSystem.destroyWidget(helpWidget);
 	  helpWidget = null;
 	}
-	
+	*/	
 	return true;
 }

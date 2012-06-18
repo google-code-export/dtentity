@@ -3,6 +3,7 @@ include_once("Scripts/motionmodel.js");
 include_once("Scripts/editormotionmodel.js");
 
 EntityManager.addPlugin("plugins", "dtEntityRocket");
+EntityManager.addPlugin("plugins", "dtEntityCEGUIPlugin");
 
 var camid = createEntity({
   Camera : {
