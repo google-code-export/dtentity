@@ -35,9 +35,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    EntityManager::EntityManager()
       : mNextAvailableId(0)
-      , mMessagePump(new MessagePump())
    {     
-      ;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -50,8 +48,6 @@ namespace dtEntity
       StopSystemMessage msg;
       EmitMessage(msg);
 
-      delete mMessagePump;
-      mMessagePump = NULL;
 
       for(EntitySystemStore::iterator i = mEntitySystemStore.begin();
          i != mEntitySystemStore.end(); ++i)
@@ -487,16 +483,6 @@ namespace dtEntity
       }
       es->DeleteComponent(eid);
       return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void EntityManager::SetMessagePump(MessagePump& p)
-   {
-      if(mMessagePump != NULL)
-      {
-         delete mMessagePump;
-      }
-      mMessagePump = &p;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

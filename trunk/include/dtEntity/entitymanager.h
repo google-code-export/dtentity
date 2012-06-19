@@ -270,52 +270,46 @@ namespace dtEntity
 	  /**
 	   * @return default message pump for inter-system communication
 	   */
-      MessagePump& GetMessagePump() const 
-	  {
-	     return *mMessagePump; 
+      MessagePump& GetMessagePump()
+      {
+        return mMessagePump;
       }
       
-	  /**
-	   * @param p Set this as default message pump for inter-system communication.
-	   * Warning: Old message pump is overwritten, queued messages may get lost.
-	   */
-	  void SetMessagePump(MessagePump& p);
 
       // See messagepump.h for documentation
       inline void RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, unsigned int options = FilterOptions::DEFAULT, const std::string& funcname = "")
       {
-         if(mMessagePump) mMessagePump->RegisterForMessages(msgtype, ftr, options, funcname);
+         mMessagePump.RegisterForMessages(msgtype, ftr, options, funcname);
       }
 
       // See messagepump.h for documentation
       inline void RegisterForMessages(MessageType msgtype, MessageFunctor& ftr, const std::string& funcname)
       {
-         if(mMessagePump) mMessagePump->RegisterForMessages(msgtype, ftr, FilterOptions::DEFAULT, funcname);
+         mMessagePump.RegisterForMessages(msgtype, ftr, FilterOptions::DEFAULT, funcname);
       }
 
       // See messagepump.h for documentation
       inline bool UnregisterForMessages(MessageType msgtype, MessageFunctor& ftr)
       {
-         if(!mMessagePump) return false;
-         return mMessagePump->UnregisterForMessages(msgtype, ftr);
+         return mMessagePump.UnregisterForMessages(msgtype, ftr);
       }
 
       // See messagepump.h for documentation
       inline void EmitMessage(const Message& msg)
       {
-         if(mMessagePump) mMessagePump->EmitMessage(msg);
+         mMessagePump.EmitMessage(msg);
       }
 
       // See messagepump.h for documentation
       inline void EnqueueMessage(const Message& msg, double time = 0)
       {
-         if(mMessagePump) mMessagePump->EnqueueMessage(msg, time);
+         mMessagePump.EnqueueMessage(msg, time);
       }
 
       // See messagepump.h for documentation
       void EmitQueuedMessages(double simtime)
       {
-         if(mMessagePump) mMessagePump->EmitQueuedMessages(simtime);
+         mMessagePump.EmitQueuedMessages(simtime);
       }
 
       void AddDeletedCallback(ComponentDeletedCallback* cb);
@@ -353,7 +347,7 @@ namespace dtEntity
       TypeHierarchyMap mTypeHierarchy;
 
 	  // for publish-subscribe of messages
-      MessagePump* mMessagePump;
+      MessagePump mMessagePump;
 
       ComponentDeletedCallbacks mDeletedCallbacks;
 

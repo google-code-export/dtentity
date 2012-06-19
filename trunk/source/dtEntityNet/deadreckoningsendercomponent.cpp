@@ -112,7 +112,7 @@ namespace dtEntityNet
       Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
 
       mTickFunctor = dtEntity::MessageFunctor(this, &DeadReckoningSenderSystem::Tick);
-      GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
+      em.RegisterForMessages(dtEntity::TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningSenderSystem::Tick");
 
       mEnterWorldFunctor = dtEntity::MessageFunctor(this, &DeadReckoningSenderSystem::OnAddedToScene);
@@ -134,7 +134,6 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningSenderSystem::Tick(const dtEntity::Message& m)
    {
-
       if(mComponents.empty())
       {
          return;
