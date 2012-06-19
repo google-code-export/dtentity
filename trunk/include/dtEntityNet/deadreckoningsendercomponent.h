@@ -121,7 +121,7 @@ namespace dtEntityNet
       float GetMaxOrientationDeviation() const { return mMaxOrientationDeviation.Get(); }
       void SetMaxOrientationDeviation(float v) { mMaxOrientationDeviation.Set(v); }
 
-      void SendEntitiesToClient(dtEntity::MessagePump& pump);
+      dtEntity::MessagePump& GetOutgoingMessagePump() { return mOutgoing; }
 
    private:
 
@@ -137,5 +137,7 @@ namespace dtEntityNet
       dtEntity::FloatProperty mMaxUpdateInterval;
       dtEntity::FloatProperty mMaxPositionDeviation;
       dtEntity::FloatProperty mMaxOrientationDeviation;
+
+      dtEntity::MessagePump mOutgoing;
    };
 }

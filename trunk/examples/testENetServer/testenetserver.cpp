@@ -74,9 +74,10 @@ int main(int argc, char** argv)
    dtEntity::MapSystem* mSystem;
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
 
-   em.AddEntitySystem(*new dtEntityNet::ENetSystem(em));
    em.AddEntitySystem(*new dtEntityNet::DeadReckoningSenderSystem(em));
    em.AddEntitySystem(*new dtEntityNet::DeadReckoningReceiverSystem(em));
+   em.AddEntitySystem(*new dtEntityNet::ENetSystem(em));
+
 
    dtEntityNet::ENetSystem* enetsys;
    em.GetES(enetsys);

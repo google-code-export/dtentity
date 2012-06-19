@@ -21,8 +21,6 @@
 #include <dtEntityNet/deadreckoningreceivercomponent.h>
 
 #include <dtEntityNet/messages.h>
-#include <dtEntityNet/enetcomponent.h>
-
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
@@ -75,27 +73,8 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningReceiverSystem::OnAddedToEntityManager(dtEntity::EntityManager &em)
    {
-      ENetSystem* es;
-      bool enetSystemInEntityManager = em.GetES(es);
-      assert(enetSystemInEntityManager);
-      dtEntity::MessagePump& incoming = es->GetIncomingMessagePump();
-
-      incoming.RegisterForMessages(UpdateTransformMessage::TYPE,
-         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnUpdateTransform),
-                                   dtEntity::FilterOptions::ORDER_LATE, "DeadReckoningReceiverSystem::OnUpdateTransform");
-
-
-      incoming.RegisterForMessages(JoinMessage::TYPE,
-         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnJoin),
-                                   dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::OnJoin");
-
-      incoming.RegisterForMessages(ResignMessage::TYPE,
-         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnResign),
-                                   dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::OnResign");
-
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::Tick");
-
 
    }
 
