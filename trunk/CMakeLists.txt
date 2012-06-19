@@ -41,7 +41,15 @@ INCLUDE(DTEntityMacroUtils)
 #on windows, try to use provided dtEntity external dependency folder
 IF(WIN32)
   FIND_PACKAGE(DTENTITY_EXT_DEP REQUIRED)
+  if(MSVC)
+    if(${MSVC_VERSION} STREQUAL 1600 OR ${MSVC_VERSION} STRGREATER 1600)
+      message("Visual Studio 2010 (${MSVC_VERSION}) build fix at play (/FORCE:MULTIPLE)")
+      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /FORCE:MULTIPLE")
+    endif()
+  endif() 
 ENDIF(WIN32)
+
+
 
 # OSG is a required dependency
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgAnimation osgDB osgGA osgParticle osgShadow osgSim osgText osgUtil osgViewer osgManipulator)
