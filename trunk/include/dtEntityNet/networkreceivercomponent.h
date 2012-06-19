@@ -29,9 +29,6 @@
 #include <dtEntityNet/export.h>
 #include <osg/Timer>
 
-struct _ENetHost;
-struct _ENetPeer;
-
 namespace dtEntity
 {
    class ApplicationSystem;
@@ -90,22 +87,8 @@ namespace dtEntityNet
       NetworkReceiverSystem(dtEntity::EntityManager& em);
       ~NetworkReceiverSystem();
 
-      dtEntity::ComponentType GetComponentType() const { return TYPE; }
-
-      dtEntity::MessagePump& GetIncomingMessagePump() { return mIncoming; }
-
-      bool InitializeServer(unsigned int port);
-      bool Connect(const std::string& address, unsigned int port);
-
-      bool IsConnected() const;
-
-      void Disconnect();
-
-      void SendToClients(const dtEntity::Message&);
-      void SendToServer(const dtEntity::Message&);
-      void SendToPeer(const dtEntity::Message&, _ENetPeer* peer);
-
-      void Flush();
+      void OnAddedToEntityManager(dtEntity::EntityManager&);
+      void OnRemovedFromEntityManager(dtEntity::EntityManager&);
 
       void OnUpdateTransform(const dtEntity::Message& msg);
       void OnJoin(const dtEntity::Message& msg);
@@ -119,12 +102,7 @@ namespace dtEntityNet
 
       dtEntity::ApplicationSystem* mApplicationSystem;
       dtEntity::MapSystem* mMapSystem;
-      dtEntity::MessagePump mIncoming;
       dtEntity::MessageFunctor mTickFunctor;
-      _ENetHost* mHost;
-      _ENetPeer* mPeer;
-      typedef std::vector<_ENetPeer*> Clients;
-      Clients mConnectedClients;
 
    };
 }

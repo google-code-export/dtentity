@@ -18,6 +18,7 @@
 * Martin Scheffler
 */
 
+#include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/messages.h>
 #include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/networksendercomponent.h>
@@ -30,7 +31,8 @@ extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityNetPlugin(dtEntity::Me
    dtEntityNet::RegisterMessageTypes(mf);
 }
 
-REGISTER_DTENTITYPLUGIN(dtEntityNetPlugin, 2,
+REGISTER_DTENTITYPLUGIN(dtEntityNetPlugin, 3,
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::ENetSystem>("ENet"),
    new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkSenderSystem>("NetworkSender"),
    new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkReceiverSystem>("NetworkReceiver")
 )

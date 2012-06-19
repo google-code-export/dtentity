@@ -29,6 +29,7 @@
 #include <dtEntity/logmanager.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/messagefactory.h>
+#include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/messages.h>
 
@@ -52,7 +53,7 @@ int main()
    RegisterSystemMessages(MessageFactory::GetInstance());
    dtEntityNet::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
 
-   dtEntityNet::NetworkReceiverSystem* enetsys = new dtEntityNet::NetworkReceiverSystem(em);
+   dtEntityNet::ENetSystem* enetsys = new dtEntityNet::ENetSystem(em);
    em.AddEntitySystem(*enetsys);
 
    enetsys->Connect("127.0.0.1", PORT_NUMBER);

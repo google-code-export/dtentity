@@ -32,8 +32,10 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityNet/messages.h>
+#include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/networksendercomponent.h>
+#include <dtEntityNet/enetcomponent.h>
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -74,12 +76,13 @@ int main(int argc, char** argv)
    dtEntity::MapSystem* mSystem;
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
 
+   em.AddEntitySystem(*new dtEntityNet::ENetSystem(em));
    em.AddEntitySystem(*new dtEntityNet::NetworkSenderSystem(em));
    em.AddEntitySystem(*new dtEntityNet::NetworkReceiverSystem(em));
 
-   dtEntityNet::NetworkReceiverSystem* enetrsys;
-   em.GetES(enetrsys);
-   enetrsys->Connect("127.0.0.1", PORT_NUMBER);
+   dtEntityNet::ENetSystem* enetsys;
+   em.GetES(enetsys);
+   enetsys->Connect("127.0.0.1", PORT_NUMBER);
 
    std::string path = "Scenes/boids.dtescene";
    bool success = mSystem->LoadScene(path);
