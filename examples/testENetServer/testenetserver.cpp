@@ -43,8 +43,8 @@
 #include <iostream>
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntityNet/enetcomponent.h>
-#include <dtEntityNet/networksendercomponent.h>
-#include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/deadreckoningsendercomponent.h>
+#include <dtEntityNet/deadreckoningreceivercomponent.h>
 #include <dtEntityNet/messages.h>
 
 #define NUMBER_OF_ENTITIES 5
@@ -75,8 +75,8 @@ int main(int argc, char** argv)
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
 
    em.AddEntitySystem(*new dtEntityNet::ENetSystem(em));
-   em.AddEntitySystem(*new dtEntityNet::NetworkSenderSystem(em));
-   em.AddEntitySystem(*new dtEntityNet::NetworkReceiverSystem(em));
+   em.AddEntitySystem(*new dtEntityNet::DeadReckoningSenderSystem(em));
+   em.AddEntitySystem(*new dtEntityNet::DeadReckoningReceiverSystem(em));
 
    dtEntityNet::ENetSystem* enetsys;
    em.GetES(enetsys);
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
       dynamics->SetVelocity(osg::Vec3((float)sin(i / 10.0f), (float)cos(i / 10.0f), 0) * 5);
       dynamics->SetAngularVelocity(osg::Quat(0.3 * i, osg::Vec3(0,0,1)));
 
-      dtEntityNet::NetworkSenderComponent* sender;
+      dtEntityNet::DeadReckoningSenderComponent* sender;
       success = em.CreateComponent(spawned->GetId(), sender);
       sender->SetDeadReckoningAlgorithm(dtEntityNet::DeadReckoningAlgorithm::FPW);
       sender->SetEntityType("Boids");

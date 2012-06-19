@@ -36,20 +36,20 @@ struct _ENetPeer;
 namespace dtEntityNet
 {
 
-   class NetworkSenderSystem;
+   class DeadReckoningSenderSystem;
    class UpdateTransformMessage;
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_NET_EXPORT NetworkSenderComponent
+   class DTENTITY_NET_EXPORT DeadReckoningSenderComponent
          : public dtEntity::Component
    {
-      friend class NetworkSenderSystem;
+      friend class DeadReckoningSenderSystem;
 
    public:
       static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId DeadReckoningAlgorithmId;
 
-      NetworkSenderComponent();
+      DeadReckoningSenderComponent();
 
       dtEntity::ComponentType GetType() const { return TYPE; }
 
@@ -91,10 +91,10 @@ namespace dtEntityNet
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_NET_EXPORT NetworkSenderSystem
-      : public dtEntity::DefaultEntitySystem<NetworkSenderComponent>
+   class DTENTITY_NET_EXPORT DeadReckoningSenderSystem
+      : public dtEntity::DefaultEntitySystem<DeadReckoningSenderComponent>
    {
-      typedef dtEntity::DefaultEntitySystem<NetworkSenderComponent> BaseClass;
+      typedef dtEntity::DefaultEntitySystem<DeadReckoningSenderComponent> BaseClass;
 
    public:
 
@@ -104,8 +104,8 @@ namespace dtEntityNet
       static const dtEntity::StringId MaxPositionDeviationId;
       static const dtEntity::StringId MaxOrientationDeviationId;
 
-      NetworkSenderSystem(dtEntity::EntityManager& em);
-      ~NetworkSenderSystem();
+      DeadReckoningSenderSystem(dtEntity::EntityManager& em);
+      ~DeadReckoningSenderSystem();
 
       dtEntity::ComponentType GetComponentType() const { return TYPE; }  
 

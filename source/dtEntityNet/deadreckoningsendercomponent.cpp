@@ -18,10 +18,9 @@
 * Martin Scheffler
 */
 
-#include <dtEntityNet/networksendercomponent.h>
+#include <dtEntityNet/deadreckoningsendercomponent.h>
 
 #include <dtEntityNet/messages.h>
-#include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/enetcomponent.h>
 
 #include <dtEntity/dynamicscomponent.h>
@@ -36,13 +35,13 @@ namespace dtEntityNet
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId NetworkSenderComponent::TYPE(dtEntity::SID("NetworkSender"));
-   const dtEntity::StringId NetworkSenderComponent::DeadReckoningAlgorithmId(dtEntity::SID("DeadReckoningAlgorithm"));
+   const dtEntity::StringId DeadReckoningSenderComponent::TYPE(dtEntity::SID("DeadReckoningSender"));
+   const dtEntity::StringId DeadReckoningSenderComponent::DeadReckoningAlgorithmId(dtEntity::SID("DeadReckoningAlgorithm"));
 
-   NetworkSenderComponent::NetworkSenderComponent()
+   DeadReckoningSenderComponent::DeadReckoningSenderComponent()
       : mDeadReckoningAlgorithm (
-           dtEntity::DynamicStringProperty::SetValueCB(this, &NetworkSenderComponent::SetDeadReckoningAlgorithmString),
-           dtEntity::DynamicStringProperty::GetValueCB(this, &NetworkSenderComponent::GetDeadReckoningAlgorithmString)
+           dtEntity::DynamicStringProperty::SetValueCB(this, &DeadReckoningSenderComponent::SetDeadReckoningAlgorithmString),
+           dtEntity::DynamicStringProperty::GetValueCB(this, &DeadReckoningSenderComponent::GetDeadReckoningAlgorithmString)
         )
       , mDeadReck(DeadReckoningAlgorithm::DISABLED)
       , mTransformComponent(NULL)
@@ -55,31 +54,31 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderComponent::SetDeadReckoningAlgorithmString(const std::string& v)
+   void DeadReckoningSenderComponent::SetDeadReckoningAlgorithmString(const std::string& v)
    {
       mDeadReck = DeadReckoningAlgorithm::fromString(v);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   std::string NetworkSenderComponent::GetDeadReckoningAlgorithmString() const
+   std::string DeadReckoningSenderComponent::GetDeadReckoningAlgorithmString() const
    {
       return DeadReckoningAlgorithm::toString(mDeadReck);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderComponent::SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::e v)
+   void DeadReckoningSenderComponent::SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::e v)
    {
       mDeadReck = v;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   DeadReckoningAlgorithm::e NetworkSenderComponent::GetDeadReckoningAlgorithm() const
+   DeadReckoningAlgorithm::e DeadReckoningSenderComponent::GetDeadReckoningAlgorithm() const
    {
       return mDeadReck;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderComponent::FillMessage(UpdateTransformMessage& msg)
+   void DeadReckoningSenderComponent::FillMessage(UpdateTransformMessage& msg)
    {
       msg.SetUniqueId(mUniqueId);
       msg.SetPosition(mLastPosition);
@@ -93,14 +92,14 @@ namespace dtEntityNet
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId NetworkSenderSystem::TYPE(dtEntity::SID("NetworkSender"));
-   const dtEntity::StringId NetworkSenderSystem::MaxUpdateIntervalId(dtEntity::SID("MaxUpdateInterval"));
-   const dtEntity::StringId NetworkSenderSystem::MinUpdateIntervalId(dtEntity::SID("MinUpdateInterval"));
-   const dtEntity::StringId NetworkSenderSystem::MaxPositionDeviationId(dtEntity::SID("MaxPositionDeviation"));
-   const dtEntity::StringId NetworkSenderSystem::MaxOrientationDeviationId(dtEntity::SID("MaxOrientationDeviation"));
+   const dtEntity::StringId DeadReckoningSenderSystem::TYPE(dtEntity::SID("DeadReckoningSender"));
+   const dtEntity::StringId DeadReckoningSenderSystem::MaxUpdateIntervalId(dtEntity::SID("MaxUpdateInterval"));
+   const dtEntity::StringId DeadReckoningSenderSystem::MinUpdateIntervalId(dtEntity::SID("MinUpdateInterval"));
+   const dtEntity::StringId DeadReckoningSenderSystem::MaxPositionDeviationId(dtEntity::SID("MaxPositionDeviation"));
+   const dtEntity::StringId DeadReckoningSenderSystem::MaxOrientationDeviationId(dtEntity::SID("MaxOrientationDeviation"));
 
    ////////////////////////////////////////////////////////////////////////////
-   NetworkSenderSystem::NetworkSenderSystem(dtEntity::EntityManager& em)
+   DeadReckoningSenderSystem::DeadReckoningSenderSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
    {
       mMinUpdateInterval.Set(0.1f);
@@ -113,20 +112,20 @@ namespace dtEntityNet
       Register(MaxPositionDeviationId, &mMaxPositionDeviation);
       Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
 
-      mTickFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::Tick);
+      mTickFunctor = dtEntity::MessageFunctor(this, &DeadReckoningSenderSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
-         mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "NetworkSenderSystem::Tick");
+         mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningSenderSystem::Tick");
 
-      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::OnAddedToScene);
-      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "NetworkSenderSystem::OnAddedToScene");
+      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &DeadReckoningSenderSystem::OnAddedToScene);
+      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "DeadReckoningSenderSystem::OnAddedToScene");
 
-      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::OnRemovedFromScene);
-      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "NetworkSenderSystem::OnRemovedFromScene");
+      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &DeadReckoningSenderSystem::OnRemovedFromScene);
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "DeadReckoningSenderSystem::OnRemovedFromScene");
 
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   NetworkSenderSystem::~NetworkSenderSystem()
+   DeadReckoningSenderSystem::~DeadReckoningSenderSystem()
    {
       GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
       GetEntityManager().UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
@@ -134,7 +133,7 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderSystem::Tick(const dtEntity::Message& m)
+   void DeadReckoningSenderSystem::Tick(const dtEntity::Message& m)
    {
 
       if(mComponents.empty())
@@ -152,7 +151,7 @@ namespace dtEntityNet
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          dtEntity::EntityId id = i->first;
-         NetworkSenderComponent* comp = i->second;
+         DeadReckoningSenderComponent* comp = i->second;
 
          if(comp->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::DISABLED ||
             comp->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
@@ -248,13 +247,13 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderSystem::OnAddedToScene(const dtEntity::Message& m)
+   void DeadReckoningSenderSystem::OnAddedToScene(const dtEntity::Message& m)
    {
       const dtEntity::EntityAddedToSceneMessage&  msg =
             static_cast<const dtEntity::EntityAddedToSceneMessage&>(m);
 
 
-      NetworkSenderComponent* comp;
+      DeadReckoningSenderComponent* comp;
       if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), comp))
       {
          comp->mIsInScene = true;
@@ -276,12 +275,12 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderSystem::OnRemovedFromScene(const dtEntity::Message& m)
+   void DeadReckoningSenderSystem::OnRemovedFromScene(const dtEntity::Message& m)
    {
       const dtEntity::EntityRemovedFromSceneMessage&  msg =
             static_cast<const dtEntity::EntityRemovedFromSceneMessage&>(m);
 
-      NetworkSenderComponent* comp;
+      DeadReckoningSenderComponent* comp;
       if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), comp))
       {
          comp->mIsInScene = false;
@@ -298,13 +297,13 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderSystem::SendEntitiesToClient(dtEntity::MessagePump& pump)
+   void DeadReckoningSenderSystem::SendEntitiesToClient(dtEntity::MessagePump& pump)
    {
       JoinMessage joinmsg;
 
       for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         NetworkSenderComponent* comp = i->second;
+         DeadReckoningSenderComponent* comp = i->second;
          if(comp->mIsInScene)
          {
             joinmsg.SetUniqueId(comp->GetUniqueId());
@@ -316,7 +315,7 @@ namespace dtEntityNet
       UpdateTransformMessage transmsg;
       for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         NetworkSenderComponent* comp = i->second;
+         DeadReckoningSenderComponent* comp = i->second;
          if(comp->mIsInScene)
          {
             comp->FillMessage(transmsg);
