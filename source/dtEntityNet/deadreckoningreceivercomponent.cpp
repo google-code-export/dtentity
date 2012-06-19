@@ -161,14 +161,11 @@ namespace dtEntityNet
       std::string entitytype = msg.GetEntityType();
       std::string uniqueid = msg.GetUniqueId();
 
-      dtEntity::Entity* entity;
-      GetEntityManager().CreateEntity(entity);
-      dtEntity::MapComponent* mapcomp;
-      entity->CreateComponent(mapcomp);
-      mapcomp->SetUniqueId(uniqueid);
-
       dtEntity::MapSystem* mapsys;
       GetEntityManager().GetES(mapsys);
+
+      dtEntity::Entity* entity;
+      GetEntityManager().CreateEntity(entity);
 
       dtEntity::Spawner* spawner;
       if(!mapsys->GetSpawner(entitytype, spawner))
@@ -178,6 +175,14 @@ namespace dtEntityNet
       }
 
       spawner->Spawn(*entity);
+
+      dtEntity::MapComponent* mapcomp;
+      entity->GetComponent(mapcomp);
+      mapcomp->SetUniqueId(uniqueid);
+
+      dtEntity::DynamicsComponent* dc;
+      entity->CreateComponent(dc);
+
       DeadReckoningReceiverComponent* rc;
       entity->CreateComponent(rc);
       rc->mUniqueId = msg.GetUniqueId();

@@ -125,6 +125,11 @@ namespace dtEntity
       virtual bool UnregisterForMessages(MessageType msgtype, MessageFunctor& ftr);
 
       /**
+      * returns true if functor is registered to message
+      */
+      virtual bool IsRegistered(MessageType msgtype, const MessageFunctor& ftr);
+
+      /**
       * Immediately send a message to all registered functors
       * Warning: beware of circular dependencies!
       * @param msg The message to send
