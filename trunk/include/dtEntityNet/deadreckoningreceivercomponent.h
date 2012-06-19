@@ -40,18 +40,18 @@ namespace dtEntity
 namespace dtEntityNet
 {
    class UpdateTransformMessage;
-   class NetworkReceiverSystem;
+   class DeadReckoningReceiverSystem;
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_NET_EXPORT NetworkReceiverComponent
+   class DTENTITY_NET_EXPORT DeadReckoningReceiverComponent
          : public dtEntity::Component
    {
-      friend class NetworkReceiverSystem;
+      friend class DeadReckoningReceiverSystem;
 
    public:
       static const dtEntity::ComponentType TYPE;
 
-      NetworkReceiverComponent();
+      DeadReckoningReceiverComponent();
 
       dtEntity::ComponentType GetType() const { return TYPE; }
 
@@ -74,18 +74,18 @@ namespace dtEntityNet
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_NET_EXPORT NetworkReceiverSystem
-      : public dtEntity::DefaultEntitySystem<NetworkReceiverComponent>
+   class DTENTITY_NET_EXPORT DeadReckoningReceiverSystem
+      : public dtEntity::DefaultEntitySystem<DeadReckoningReceiverComponent>
       , public dtEntity::ScriptAccessor
    {
-      typedef dtEntity::DefaultEntitySystem<NetworkReceiverComponent> BaseClass;
+      typedef dtEntity::DefaultEntitySystem<DeadReckoningReceiverComponent> BaseClass;
 
    public:
 
       static const dtEntity::ComponentType TYPE;
 
-      NetworkReceiverSystem(dtEntity::EntityManager& em);
-      ~NetworkReceiverSystem();
+      DeadReckoningReceiverSystem(dtEntity::EntityManager& em);
+      ~DeadReckoningReceiverSystem();
 
       void OnAddedToEntityManager(dtEntity::EntityManager&);
       void OnRemovedFromEntityManager(dtEntity::EntityManager&);

@@ -9,24 +9,25 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/deadreckoning.h
+  ${HEADER_PATH}/deadreckoningreceivercomponent.h
+  ${HEADER_PATH}/deadreckoningsendercomponent.h
   ${HEADER_PATH}/enetcomponent.h
   ${HEADER_PATH}/export.h
-  ${HEADER_PATH}/messages.h
-  ${HEADER_PATH}/networkreceivercomponent.h
-  ${HEADER_PATH}/networksendercomponent.h
+  ${HEADER_PATH}/messages.h 
 )
 
 SET(LIB_SOURCES
   deadreckoning.cpp
+  deadreckoningreceivercomponent.cpp
+  deadreckoningsendercomponent.cpp
   enetcomponent.cpp
-  messages.cpp
-  networkreceivercomponent.cpp
-  networksendercomponent.cpp
+  messages.cpp  
 )
 
 SET(LIB_SOURCES_REPLACE
-  networkreceivercomponent.cpp
-  networksendercomponent.cpp
+  deadreckoningreceivercomponent.cpp
+  deadreckoningsendercomponent.cpp
+  enetcomponent.cpp
 )
 
 

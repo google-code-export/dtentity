@@ -20,8 +20,8 @@
 
 #include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/messages.h>
-#include <dtEntityNet/networkreceivercomponent.h>
-#include <dtEntityNet/networksendercomponent.h>
+#include <dtEntityNet/deadreckoningreceivercomponent.h>
+#include <dtEntityNet/deadreckoningsendercomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 
@@ -33,6 +33,6 @@ extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityNetPlugin(dtEntity::Me
 
 REGISTER_DTENTITYPLUGIN(dtEntityNetPlugin, 3,
    new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::ENetSystem>("ENet"),
-   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkSenderSystem>("NetworkSender"),
-   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::NetworkReceiverSystem>("NetworkReceiver")
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::DeadReckoningSenderSystem>("DeadReckoningSender"),
+   new dtEntity::ComponentPluginFactoryImpl<dtEntityNet::DeadReckoningReceiverSystem>("DeadReckoningReceiver")
 )

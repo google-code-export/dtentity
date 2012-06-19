@@ -30,7 +30,6 @@
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityNet/enetcomponent.h>
-#include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/messages.h>
 
 #ifdef _WIN32

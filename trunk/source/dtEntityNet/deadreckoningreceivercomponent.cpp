@@ -18,28 +18,29 @@
 * Martin Scheffler
 */
 
-#include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/deadreckoningreceivercomponent.h>
 
-#include <dtEntityNet/networksendercomponent.h>
 #include <dtEntityNet/messages.h>
 #include <dtEntityNet/enetcomponent.h>
 
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/protobufmapencoder.h>
 #include <dtEntity/systemmessages.h>
+#include <dtEntity/transformcomponent.h>
 #include <dtEntity/uniqueid.h>
 
 namespace dtEntityNet
 {
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId NetworkReceiverComponent::TYPE(dtEntity::SID("NetworkReceiver"));
+   const dtEntity::StringId DeadReckoningReceiverComponent::TYPE(dtEntity::SID("DeadReckoningReceiver"));
 
    ////////////////////////////////////////////////////////////////////////////
-   NetworkReceiverComponent::NetworkReceiverComponent()
+   DeadReckoningReceiverComponent::DeadReckoningReceiverComponent()
       : mTransformComponent(NULL)
       , mDynamicsComponent(NULL)
       , mTimeLastReceive(0)
@@ -49,17 +50,17 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId NetworkReceiverSystem::TYPE(dtEntity::SID("NetworkReceiver"));
+   const dtEntity::StringId DeadReckoningReceiverSystem::TYPE(dtEntity::SID("DeadReckoningReceiver"));
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
 
-   NetworkReceiverSystem::NetworkReceiverSystem(dtEntity::EntityManager& em)
+   DeadReckoningReceiverSystem::DeadReckoningReceiverSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
       , mApplicationSystem(NULL)
       , mMapSystem(NULL)
    {
-      mTickFunctor = dtEntity::MessageFunctor(this, &NetworkReceiverSystem::Tick);
+      mTickFunctor = dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::Tick);
 
       em.GetES(mMapSystem);
       em.GetES(mApplicationSystem);
@@ -67,12 +68,12 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   NetworkReceiverSystem::~NetworkReceiverSystem()
+   DeadReckoningReceiverSystem::~DeadReckoningReceiverSystem()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::OnAddedToEntityManager(dtEntity::EntityManager &em)
+   void DeadReckoningReceiverSystem::OnAddedToEntityManager(dtEntity::EntityManager &em)
    {
       ENetSystem* es;
       bool enetSystemInEntityManager = em.GetES(es);
@@ -80,39 +81,39 @@ namespace dtEntityNet
       dtEntity::MessagePump& incoming = es->GetIncomingMessagePump();
 
       incoming.RegisterForMessages(UpdateTransformMessage::TYPE,
-         dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnUpdateTransform),
-                                   dtEntity::FilterOptions::ORDER_LATE, "UpdateTransformMessage::OnUpdateTransform");
+         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnUpdateTransform),
+                                   dtEntity::FilterOptions::ORDER_LATE, "DeadReckoningReceiverSystem::OnUpdateTransform");
 
 
       incoming.RegisterForMessages(JoinMessage::TYPE,
-         dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnJoin),
-                                   dtEntity::FilterOptions::ORDER_DEFAULT, "UpdateTransformMessage::OnJoin");
+         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnJoin),
+                                   dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::OnJoin");
 
       incoming.RegisterForMessages(ResignMessage::TYPE,
-         dtEntity::MessageFunctor(this, &NetworkReceiverSystem::OnResign),
-                                   dtEntity::FilterOptions::ORDER_DEFAULT, "UpdateTransformMessage::OnResign");
+         dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::OnResign),
+                                   dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::OnResign");
 
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
-         mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "NetworkReceiverSystem::Tick");
+         mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "DeadReckoningReceiverSystem::Tick");
 
 
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::OnRemovedFromEntityManager(dtEntity::EntityManager &em)
+   void DeadReckoningReceiverSystem::OnRemovedFromEntityManager(dtEntity::EntityManager &em)
    {
       GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::Tick(const dtEntity::Message& m)
+   void DeadReckoningReceiverSystem::Tick(const dtEntity::Message& m)
    {
       const dtEntity::TickMessage& msg = static_cast<const dtEntity::TickMessage&>(m);
 
       for(ComponentStore::iterator i = mComponents.begin();i != mComponents.end(); ++i)
       {
          dtEntity::EntityId id = i->first;
-         NetworkReceiverComponent* comp = i->second;
+         DeadReckoningReceiverComponent* comp = i->second;
          if(comp->mDeadRecAlg == DeadReckoningAlgorithm::DISABLED)
          {
             continue;
@@ -132,7 +133,7 @@ namespace dtEntityNet
             bool success = GetEntityManager().GetComponent(id, comp->mDynamicsComponent, true);
             if(!success)
             {
-               LOG_ERROR("NetworkReceiver Component expects a Dynamics Component!");
+               LOG_ERROR("DeadReckoningReceiver Component expects a Dynamics Component!");
                return;
             }
          }
@@ -174,7 +175,7 @@ namespace dtEntityNet
 
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::OnJoin(const dtEntity::Message& m)
+   void DeadReckoningReceiverSystem::OnJoin(const dtEntity::Message& m)
    {
       const JoinMessage& msg = static_cast<const JoinMessage&>(m);
 
@@ -198,7 +199,7 @@ namespace dtEntityNet
       }
 
       spawner->Spawn(*entity);
-      NetworkReceiverComponent* rc;
+      DeadReckoningReceiverComponent* rc;
       entity->CreateComponent(rc);
       rc->mUniqueId = msg.GetUniqueId();
 
@@ -207,7 +208,7 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::OnResign(const dtEntity::Message& m)
+   void DeadReckoningReceiverSystem::OnResign(const dtEntity::Message& m)
    {
       const ResignMessage& msg = static_cast<const ResignMessage&>(m);
       dtEntity::MapSystem* mapsys;
@@ -223,7 +224,7 @@ namespace dtEntityNet
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkReceiverSystem::OnUpdateTransform(const dtEntity::Message& m)
+   void DeadReckoningReceiverSystem::OnUpdateTransform(const dtEntity::Message& m)
    {
       const UpdateTransformMessage& msg = static_cast<const UpdateTransformMessage&>(m);
 
@@ -234,7 +235,7 @@ namespace dtEntityNet
          LOG_ERROR("Got transform for an entity that has not yet joined!?!");
          return;
       }
-      NetworkReceiverComponent* comp = GetComponent(id);
+      DeadReckoningReceiverComponent * comp = GetComponent(id);
       if(!comp)
       {
          LOG_ERROR("Received transform, entity exists but has no receiver component!");
