@@ -42,6 +42,7 @@
 
 #include <iostream>
 #include <dtEntity/dynamicscomponent.h>
+#include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/networksendercomponent.h>
 #include <dtEntityNet/networkreceivercomponent.h>
 #include <dtEntityNet/messages.h>
@@ -73,12 +74,13 @@ int main(int argc, char** argv)
    dtEntity::MapSystem* mSystem;
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
 
+   em.AddEntitySystem(*new dtEntityNet::ENetSystem(em));
    em.AddEntitySystem(*new dtEntityNet::NetworkSenderSystem(em));
    em.AddEntitySystem(*new dtEntityNet::NetworkReceiverSystem(em));
 
-   dtEntityNet::NetworkReceiverSystem* netReceiverSys;
-   em.GetES(netReceiverSys);
-   netReceiverSys->InitializeServer(PORT_NUMBER);
+   dtEntityNet::ENetSystem* enetsys;
+   em.GetES(enetsys);
+   enetsys->InitializeServer(PORT_NUMBER);
 
    std::string path = "Scenes/boids.dtescene";
    bool success = mSystem->LoadScene(path);
@@ -103,7 +105,7 @@ int main(int argc, char** argv)
    std::vector<unsigned int> entityids;
    // Now create a large number of moving entities
    // store id of last entity to make each entity follow its predecessor
-  for(unsigned int i = 0; i < NUMBER_OF_ENTITIES; ++i)
+   for(unsigned int i = 0; i < NUMBER_OF_ENTITIES; ++i)
    {
       dtEntity::Entity* spawned;
       em.CreateEntity(spawned);

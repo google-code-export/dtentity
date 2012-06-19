@@ -22,6 +22,7 @@
 
 #include <dtEntityNet/messages.h>
 #include <dtEntityNet/networkreceivercomponent.h>
+#include <dtEntityNet/enetcomponent.h>
 
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
@@ -29,7 +30,6 @@
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/protobufmapencoder.h>
-#include <enet/enet.h>
 
 namespace dtEntityNet
 {
@@ -49,6 +49,7 @@ namespace dtEntityNet
       , mDynamicsComponent(NULL)
       , mTimeLastSend(-1)
       , mUniqueId(dtEntity::CreateUniqueIdString())
+      , mIsInScene(false)
    {
       Register(DeadReckoningAlgorithmId, &mDeadReckoningAlgorithm);
    }
@@ -101,26 +102,35 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    NetworkSenderSystem::NetworkSenderSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
-      , mNetworkReceiverSystem(NULL)
    {
-      Register(MaxUpdateIntervalId, &mMaxUpdateInterval);
-      Register(MinUpdateIntervalId, &mMinUpdateInterval);
-      Register(MaxPositionDeviationId, &mMaxPositionDeviation);
-      Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
-
       mMinUpdateInterval.Set(0.1f);
       mMaxUpdateInterval.Set(10.0f);
       mMaxPositionDeviation.Set(0.01f);
       mMaxOrientationDeviation.Set(0.01f);
 
+      Register(MaxUpdateIntervalId, &mMaxUpdateInterval);
+      Register(MinUpdateIntervalId, &mMinUpdateInterval);
+      Register(MaxPositionDeviationId, &mMaxPositionDeviation);
+      Register(MaxOrientationDeviationId, &mMaxOrientationDeviation);
+
       mTickFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_DEFAULT, "NetworkSenderSystem::Tick");
+
+      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::OnAddedToScene);
+      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "NetworkSenderSystem::OnAddedToScene");
+
+      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &NetworkSenderSystem::OnRemovedFromScene);
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "NetworkSenderSystem::OnRemovedFromScene");
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
    NetworkSenderSystem::~NetworkSenderSystem()
    {
+      GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -219,47 +229,99 @@ namespace dtEntityNet
                }
             }
 
-            if(mNetworkReceiverSystem == NULL)
-            {
-               bool success = GetEntityManager().GetES(mNetworkReceiverSystem);
-               assert(success);
-            }
-
             comp->mLastPosition = currentTrans;
             comp->mLastOrientation = currentAtt;
             comp->mLastVelocity = comp->mDynamicsComponent->GetVelocity();
             comp->mLastAngularVelocity = QuatToEuler(comp->mDynamicsComponent->GetAngularVelocity());
             comp->mTimeLastSend = simtime;
 
-
-            if(mNetworkReceiverSystem->IsConnected())
+            ENetSystem* es;
+            GetEntityManager().GetES(es);
+            if(es->IsConnected())
             {
                UpdateTransformMessage msg;
                comp->FillMessage(msg);
-               mNetworkReceiverSystem->SendToClients(msg);
+               es->SendToClients(msg);
             }
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NetworkSenderSystem::SendEntitiesToClient(_ENetPeer* peer, NetworkReceiverSystem* rcvrsys)
+   void NetworkSenderSystem::OnAddedToScene(const dtEntity::Message& m)
+   {
+      const dtEntity::EntityAddedToSceneMessage&  msg =
+            static_cast<const dtEntity::EntityAddedToSceneMessage&>(m);
+
+
+      NetworkSenderComponent* comp;
+      if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), comp))
+      {
+         comp->mIsInScene = true;
+
+         ENetSystem* enetsys;
+         if(!GetEntityManager().GetES(enetsys))
+         {
+            return;
+         }
+         JoinMessage msg;
+         msg.SetUniqueId(comp->GetUniqueId());
+         msg.SetEntityType(comp->GetEntityType());
+         enetsys->SendToClients(msg);
+
+         UpdateTransformMessage transmsg;
+         comp->FillMessage(transmsg);
+         enetsys->SendToClients(transmsg);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void NetworkSenderSystem::OnRemovedFromScene(const dtEntity::Message& m)
+   {
+      const dtEntity::EntityRemovedFromSceneMessage&  msg =
+            static_cast<const dtEntity::EntityRemovedFromSceneMessage&>(m);
+
+      NetworkSenderComponent* comp;
+      if(GetEntityManager().GetComponent(msg.GetAboutEntityId(), comp))
+      {
+         comp->mIsInScene = false;
+
+         ENetSystem* enetsys;
+         if(!GetEntityManager().GetES(enetsys))
+         {
+            return;
+         }
+         ResignMessage msg;
+         msg.SetUniqueId(comp->GetUniqueId());
+         enetsys->SendToClients(msg);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void NetworkSenderSystem::SendEntitiesToClient(dtEntity::MessagePump& pump)
    {
       JoinMessage joinmsg;
 
       for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          NetworkSenderComponent* comp = i->second;
-         joinmsg.SetUniqueId(comp->GetUniqueId());
-         joinmsg.SetEntityType(comp->GetEntityType());
-         rcvrsys->SendToPeer(joinmsg, peer);
+         if(comp->mIsInScene)
+         {
+            joinmsg.SetUniqueId(comp->GetUniqueId());
+            joinmsg.SetEntityType(comp->GetEntityType());
+            pump.EmitMessage(joinmsg);
+         }
       }
 
       UpdateTransformMessage transmsg;
       for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
-         i->second->FillMessage(transmsg);
-         rcvrsys->SendToPeer(transmsg, peer);
+         NetworkSenderComponent* comp = i->second;
+         if(comp->mIsInScene)
+         {
+            comp->FillMessage(transmsg);
+         }
+         pump.EmitMessage(transmsg);
       }
    }
 }

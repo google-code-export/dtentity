@@ -9,6 +9,7 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/deadreckoning.h
+  ${HEADER_PATH}/enetcomponent.h
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/messages.h
   ${HEADER_PATH}/networkreceivercomponent.h
@@ -17,6 +18,7 @@ SET(LIB_PUBLIC_HEADERS
 
 SET(LIB_SOURCES
   deadreckoning.cpp
+  enetcomponent.cpp
   messages.cpp
   networkreceivercomponent.cpp
   networksendercomponent.cpp

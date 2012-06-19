@@ -36,7 +36,6 @@ struct _ENetPeer;
 namespace dtEntityNet
 {
 
-   class NetworkReceiverSystem;
    class NetworkSenderSystem;
    class UpdateTransformMessage;
 
@@ -73,6 +72,8 @@ namespace dtEntityNet
 
       void FillMessage(UpdateTransformMessage& msg);
 
+      bool IsInScene() const { return mIsInScene; }
+
    private:
       dtEntity::DynamicStringProperty mDeadReckoningAlgorithm;
       DeadReckoningAlgorithm::e mDeadReck;
@@ -85,6 +86,7 @@ namespace dtEntityNet
       osg::Vec3 mLastAngularVelocity;
       std::string mEntityType;
       std::string mUniqueId;
+      bool mIsInScene;
 
    };
 
@@ -119,17 +121,21 @@ namespace dtEntityNet
       float GetMaxOrientationDeviation() const { return mMaxOrientationDeviation.Get(); }
       void SetMaxOrientationDeviation(float v) { mMaxOrientationDeviation.Set(v); }
 
-      void SendEntitiesToClient(_ENetPeer*, NetworkReceiverSystem* rcvrsys);
+      void SendEntitiesToClient(dtEntity::MessagePump& pump);
 
    private:
 
       void Tick(const dtEntity::Message& m);
+      void OnAddedToScene(const dtEntity::Message& m);
+      void OnRemovedFromScene(const dtEntity::Message& m);
 
       dtEntity::MessageFunctor mTickFunctor;
+      dtEntity::MessageFunctor mEnterWorldFunctor;
+      dtEntity::MessageFunctor mLeaveWorldFunctor;
+
       dtEntity::FloatProperty mMinUpdateInterval;
       dtEntity::FloatProperty mMaxUpdateInterval;
       dtEntity::FloatProperty mMaxPositionDeviation;
       dtEntity::FloatProperty mMaxOrientationDeviation;
-      NetworkReceiverSystem* mNetworkReceiverSystem;
    };
 }
