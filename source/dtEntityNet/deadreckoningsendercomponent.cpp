@@ -21,7 +21,6 @@
 #include <dtEntityNet/deadreckoningsendercomponent.h>
 
 #include <dtEntityNet/messages.h>
-#include <dtEntityNet/enetcomponent.h>
 
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
@@ -234,14 +233,9 @@ namespace dtEntityNet
             comp->mLastAngularVelocity = QuatToEuler(comp->mDynamicsComponent->GetAngularVelocity());
             comp->mTimeLastSend = simtime;
 
-            ENetSystem* es;
-            GetEntityManager().GetES(es);
-            if(es->IsConnected())
-            {
-               UpdateTransformMessage msg;
-               comp->FillMessage(msg);
-               es->SendToClients(msg);
-            }
+            UpdateTransformMessage msg;
+            comp->FillMessage(msg);
+            mOutgoing.EmitMessage(msg);
          }
       }
    }
@@ -258,19 +252,14 @@ namespace dtEntityNet
       {
          comp->mIsInScene = true;
 
-         ENetSystem* enetsys;
-         if(!GetEntityManager().GetES(enetsys))
-         {
-            return;
-         }
          JoinMessage msg;
          msg.SetUniqueId(comp->GetUniqueId());
          msg.SetEntityType(comp->GetEntityType());
-         enetsys->SendToClients(msg);
+         mOutgoing.EmitMessage(msg);
 
          UpdateTransformMessage transmsg;
          comp->FillMessage(transmsg);
-         enetsys->SendToClients(transmsg);
+         mOutgoing.EmitMessage(transmsg);
       }
    }
 
@@ -285,42 +274,9 @@ namespace dtEntityNet
       {
          comp->mIsInScene = false;
 
-         ENetSystem* enetsys;
-         if(!GetEntityManager().GetES(enetsys))
-         {
-            return;
-         }
          ResignMessage msg;
          msg.SetUniqueId(comp->GetUniqueId());
-         enetsys->SendToClients(msg);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningSenderSystem::SendEntitiesToClient(dtEntity::MessagePump& pump)
-   {
-      JoinMessage joinmsg;
-
-      for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
-      {
-         DeadReckoningSenderComponent* comp = i->second;
-         if(comp->mIsInScene)
-         {
-            joinmsg.SetUniqueId(comp->GetUniqueId());
-            joinmsg.SetEntityType(comp->GetEntityType());
-            pump.EmitMessage(joinmsg);
-         }
-      }
-
-      UpdateTransformMessage transmsg;
-      for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
-      {
-         DeadReckoningSenderComponent* comp = i->second;
-         if(comp->mIsInScene)
-         {
-            comp->FillMessage(transmsg);
-         }
-         pump.EmitMessage(transmsg);
+         mOutgoing.EmitMessage(msg);
       }
    }
 }
