@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <dtEntity/crc32.h>
+#include <dtEntity/hash.h>
 
 
 int main (int argc, char *argv[])
@@ -120,7 +120,6 @@ int main (int argc, char *argv[])
   if(!found_sid)
   {
      std::cout << "No call to SID function in " << argv[1] << std::endl;
-     return 0;
   }
 
   std::ofstream outstr(argv[2]);
