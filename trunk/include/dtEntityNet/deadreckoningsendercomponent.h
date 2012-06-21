@@ -33,6 +33,7 @@
 struct _ENetHost;
 struct _ENetPeer;
 
+
 namespace dtEntityNet
 {
 
@@ -122,6 +123,8 @@ namespace dtEntityNet
       void SetMaxOrientationDeviation(float v) { mMaxOrientationDeviation.Set(v); }
 
       dtEntity::MessagePump& GetOutgoingMessagePump() { return mOutgoing; }
+
+      void ResendJoinMessages(dtEntity::MessageReceiver& rcvr);
 
    private:
 

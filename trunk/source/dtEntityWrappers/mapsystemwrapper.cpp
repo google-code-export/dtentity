@@ -63,6 +63,21 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> MSAddToScene(const Arguments& args)
+   {
+      dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
+      bool success = ms->AddToScene(args[0]->Uint32Value());
+      if(success)
+      {
+         return Undefined();
+      }
+      else
+      {
+         return ThrowError("Could not add to scene: " + ToStdString(args[0]));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> MSGetEntityIdByUniqueId(const Arguments& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
@@ -98,6 +113,21 @@ namespace dtEntityWrappers
       else
       {
          return ThrowError("Could not load scene " + ToStdString(args[0]));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> MSRemoveFromScene(const Arguments& args)
+   {
+      dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
+      bool success = ms->RemoveFromScene(args[0]->Uint32Value());
+      if(success)
+      {
+         return Undefined();
+      }
+      else
+      {
+         return ThrowError("Could not remove from scene: " + ToStdString(args[0]));
       }
    }
 
@@ -420,11 +450,13 @@ namespace dtEntityWrappers
       proto->Set("spawn", FunctionTemplate::New(MSSpawn));
       proto->Set("deleteEntitiesByMap", FunctionTemplate::New(MSDeleteEntitiesByMap));
       proto->Set("addSpawner", FunctionTemplate::New(MSAddSpawner));
+      proto->Set("addToScene", FunctionTemplate::New(MSAddToScene));
       proto->Set("deleteSpawner", FunctionTemplate::New(MSDeleteSpawner));
       proto->Set("getSpawner", FunctionTemplate::New(MSGetSpawner));
       proto->Set("getSpawnerCreatedEntities", FunctionTemplate::New(MSGetSpawnerCreatedEntities));
       proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
       proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
+      proto->Set("removeFromScene", FunctionTemplate::New(MSRemoveFromScene));
       
       RegisterEntitySystempWrapper(ss, dtEntity::MapComponent::TYPE, templt);
    }
