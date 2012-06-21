@@ -125,7 +125,6 @@ SET(LIB_REPLACE
   osganimationcomponent.cpp
   pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
-  resourcemanager.cpp
   shadercomponent.cpp
   shadowcomponent.cpp
   staticmeshcomponent.cpp
@@ -152,6 +151,7 @@ SET(LIB_SOURCES
   property.cpp
   propertycontainer.cpp
   rapidxmlmapencoder.cpp
+  resourcemanager.cpp
   scriptaccessor.cpp
   spawner.cpp
   stringid.cpp
