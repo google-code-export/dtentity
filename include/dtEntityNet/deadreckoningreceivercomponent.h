@@ -50,6 +50,7 @@ namespace dtEntityNet
 
    public:
       static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId UniqueIdId;
 
       DeadReckoningReceiverComponent();
 
@@ -69,7 +70,7 @@ namespace dtEntityNet
       osg::Vec3 mVelocity;
       osg::Vec3 mAngularVelocity;
       std::string mEntityType;
-      std::string mUniqueId;
+      dtEntity::StringProperty mUniqueId;
       DeadReckoningAlgorithm::e mDeadRecAlg;
    };
 
@@ -83,6 +84,7 @@ namespace dtEntityNet
    public:
 
       static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId SpawnFromEntityTypeId;
 
       DeadReckoningReceiverSystem(dtEntity::EntityManager& em);
       ~DeadReckoningReceiverSystem();
@@ -94,6 +96,16 @@ namespace dtEntityNet
       void OnJoin(const dtEntity::Message& msg);
       void OnResign(const dtEntity::Message& msg);
 
+      /**
+        * if set to true (default):
+        * on receive JoinMessage: look for a spawner with the name of the entity type.
+        * Spawn entity from that, add a dynamics component and set map
+        * component unique id to passed unique id
+        * If set to false: Do nothing, user has to handle JoinMessage, ResignMessage
+        */
+      void SetSpawnFromEntityType(bool v) { mSpawnFromEntityType.Set(v); }
+      bool GetSpawnFromEntityType() const { return mSpawnFromEntityType.Get(); }
+
    private:
 
       dtEntity::Property* ScriptConnect(const dtEntity::PropertyArgs& args);
@@ -103,6 +115,7 @@ namespace dtEntityNet
       dtEntity::ApplicationSystem* mApplicationSystem;
       dtEntity::MapSystem* mMapSystem;
       dtEntity::MessageFunctor mTickFunctor;
+      dtEntity::BoolProperty mSpawnFromEntityType;
 
    };
 }

@@ -24,6 +24,7 @@
 
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/messagepump.h>
 #include <dtEntity/uniqueid.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/messagefactory.h>
@@ -276,6 +277,35 @@ namespace dtEntityNet
          ResignMessage msg;
          msg.SetUniqueId(comp->GetUniqueId());
          mOutgoing.EmitMessage(msg);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningSenderSystem::ResendJoinMessages(dtEntity::MessageReceiver& rcvr)
+   {
+      JoinMessage joinmsg;
+
+      for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         DeadReckoningSenderComponent* comp = i->second;
+         if(comp->IsInScene())
+         {
+            joinmsg.SetUniqueId(comp->GetUniqueId());
+            joinmsg.SetEntityType(comp->GetEntityType());
+            rcvr.Receive(joinmsg);
+         }
+      }
+
+      UpdateTransformMessage transmsg;
+
+      for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+      {
+         DeadReckoningSenderComponent* comp = i->second;
+         if(comp->IsInScene())
+         {
+            comp->FillMessage(transmsg);
+            rcvr.Receive(transmsg);
+         }
       }
    }
 }

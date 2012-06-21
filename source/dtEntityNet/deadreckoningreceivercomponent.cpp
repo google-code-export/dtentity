@@ -36,6 +36,7 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId DeadReckoningReceiverComponent::TYPE(dtEntity::SID("DeadReckoningReceiver"));
+   const dtEntity::StringId DeadReckoningReceiverComponent::UniqueIdId(dtEntity::SID("UniqueId"));
 
    ////////////////////////////////////////////////////////////////////////////
    DeadReckoningReceiverComponent::DeadReckoningReceiverComponent()
@@ -44,11 +45,12 @@ namespace dtEntityNet
       , mTimeLastReceive(0)
       , mDeadRecAlg(DeadReckoningAlgorithm::DISABLED)
    {
-
+      Register(UniqueIdId, &mUniqueId);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId DeadReckoningReceiverSystem::TYPE(dtEntity::SID("DeadReckoningReceiver"));
+   const dtEntity::StringId DeadReckoningReceiverSystem::SpawnFromEntityTypeId(dtEntity::SID("SpawnFromEntityType"));
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
@@ -62,6 +64,9 @@ namespace dtEntityNet
 
       em.GetES(mMapSystem);
       em.GetES(mApplicationSystem);
+
+      Register(SpawnFromEntityTypeId, &mSpawnFromEntityType);
+      mSpawnFromEntityType.Set(true);
 
    }
 
@@ -156,55 +161,62 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningReceiverSystem::OnJoin(const dtEntity::Message& m)
    {
-      const JoinMessage& msg = static_cast<const JoinMessage&>(m);
 
-      std::string entitytype = msg.GetEntityType();
-      std::string uniqueid = msg.GetUniqueId();
-
-      dtEntity::MapSystem* mapsys;
-      GetEntityManager().GetES(mapsys);
-
-      dtEntity::Entity* entity;
-      GetEntityManager().CreateEntity(entity);
-
-      dtEntity::Spawner* spawner;
-      if(!mapsys->GetSpawner(entitytype, spawner))
+      if(GetSpawnFromEntityType())
       {
-         LOG_ERROR("Cannot instantiate remote entity, spawner not found: " << entitytype);
-         return;
+         const JoinMessage& msg = static_cast<const JoinMessage&>(m);
+         std::string entitytype = msg.GetEntityType();
+         std::string uniqueid = msg.GetUniqueId();
+
+         dtEntity::MapSystem* mapsys;
+         GetEntityManager().GetES(mapsys);
+
+         dtEntity::Entity* entity;
+         GetEntityManager().CreateEntity(entity);
+
+         dtEntity::Spawner* spawner;
+         if(!mapsys->GetSpawner(entitytype, spawner))
+         {
+            LOG_ERROR("Cannot instantiate remote entity, spawner not found: " << entitytype);
+            return;
+         }
+
+         spawner->Spawn(*entity);
+
+         dtEntity::MapComponent* mapcomp;
+         entity->GetComponent(mapcomp);
+         mapcomp->SetUniqueId(uniqueid);
+
+         dtEntity::DynamicsComponent* dc;
+         entity->CreateComponent(dc);
+
+         DeadReckoningReceiverComponent* rc;
+         entity->CreateComponent(rc);
+         rc->mUniqueId = msg.GetUniqueId();
+
+         mapsys->AddToScene(entity->GetId());
       }
 
-      spawner->Spawn(*entity);
-
-      dtEntity::MapComponent* mapcomp;
-      entity->GetComponent(mapcomp);
-      mapcomp->SetUniqueId(uniqueid);
-
-      dtEntity::DynamicsComponent* dc;
-      entity->CreateComponent(dc);
-
-      DeadReckoningReceiverComponent* rc;
-      entity->CreateComponent(rc);
-      rc->mUniqueId = msg.GetUniqueId();
-
-      mapsys->AddToScene(entity->GetId());
 
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningReceiverSystem::OnResign(const dtEntity::Message& m)
    {
-      const ResignMessage& msg = static_cast<const ResignMessage&>(m);
-      dtEntity::MapSystem* mapsys;
-      GetEntityManager().GetES(mapsys);
-      dtEntity::Entity* entity;
-      if(!mapsys->GetEntityByUniqueId(msg.GetUniqueId(), entity))
+      if(GetSpawnFromEntityType())
       {
-         LOG_ERROR("Cannot resign: Entity not found with unique id " << msg.GetUniqueId());
-         return;
+         const ResignMessage& msg = static_cast<const ResignMessage&>(m);
+         dtEntity::MapSystem* mapsys;
+         GetEntityManager().GetES(mapsys);
+         dtEntity::Entity* entity;
+         if(!mapsys->GetEntityByUniqueId(msg.GetUniqueId(), entity))
+         {
+            LOG_ERROR("Cannot resign: Entity not found with unique id " << msg.GetUniqueId());
+            return;
+         }
+         mapsys->RemoveFromScene(entity->GetId());
+         GetEntityManager().KillEntity(entity->GetId());
       }
-      mapsys->RemoveFromScene(entity->GetId());
-      GetEntityManager().KillEntity(entity->GetId());
    }
 
    ////////////////////////////////////////////////////////////////////////////

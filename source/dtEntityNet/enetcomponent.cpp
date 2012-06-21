@@ -36,6 +36,27 @@
 namespace dtEntityNet
 {
 
+   ////////////////////////////////////////////////////////////////////////////
+   class PeerReceiver : public dtEntity::MessageReceiver
+   {
+      ENetSystem* mENetSystem;
+      _ENetPeer* mPeer;
+
+
+   public:
+
+      PeerReceiver(ENetSystem* sys, _ENetPeer* peer)
+         : mENetSystem(sys)
+         , mPeer(peer)
+      {
+      }
+
+      void Receive(const dtEntity::Message &msg)
+      {
+         mENetSystem->SendToPeer(msg, mPeer);
+      }
+
+   };
 
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId ENetSystem::TYPE(dtEntity::SID("ENet"));
@@ -206,34 +227,8 @@ namespace dtEntityNet
             DeadReckoningSenderSystem* sender;
             if(GetEntityManager().GetES(sender))
             {
-               //sender->SendEntitiesToClient(event.peer, this);
-               JoinMessage joinmsg;
-               std::list<dtEntity::EntityId> ids;
-               sender->GetEntitiesInSystem(ids);
-
-               for(std::list<dtEntity::EntityId>::const_iterator i = ids.begin(); i != ids.end(); ++i)
-               {
-                  DeadReckoningSenderComponent* comp;
-                  GetEntityManager().GetComponent(*i, comp);
-                  if(comp->IsInScene())
-                  {
-                     joinmsg.SetUniqueId(comp->GetUniqueId());
-                     joinmsg.SetEntityType(comp->GetEntityType());
-                     SendToPeer(joinmsg, event.peer);
-                  }
-               }
-
-               UpdateTransformMessage transmsg;
-               for(std::list<dtEntity::EntityId>::const_iterator i = ids.begin(); i != ids.end(); ++i)
-               {
-                  DeadReckoningSenderComponent* comp;
-                  GetEntityManager().GetComponent(*i, comp);
-                  if(comp->IsInScene())
-                  {
-                     comp->FillMessage(transmsg);
-                  }
-                  SendToPeer(transmsg, event.peer);
-               }
+               PeerReceiver peerrcvr(this, event.peer);
+               sender->ResendJoinMessages(peerrcvr);
             }
 
             break;
