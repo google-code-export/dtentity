@@ -33,7 +33,11 @@ namespace dtEntity
       for(PropertyGroup::const_iterator i = other.mValue.begin(); i != other.mValue.end(); ++i)
       {
          Property* own = Get(i->first);
-         if(own != NULL)
+         if(own == NULL)
+         {
+            LOG_ERROR("Error in InitFrom: PropertyContainer has no property named " << GetStringFromSID(i->first));
+         }
+         else
          {
             own->SetFrom(*i->second);
          }
