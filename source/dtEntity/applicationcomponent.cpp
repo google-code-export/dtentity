@@ -153,10 +153,6 @@ namespace dtEntity
       mSetSystemPropertiesFunctor = MessageFunctor(this, &ApplicationSystem::OnSetSystemProperties);
       em.RegisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor, "ApplicationSystem::OnSetSystemPropertie");
 
-      mResetSystemFunctor = MessageFunctor(this, &ApplicationSystem::OnResetSystem);
-      em.RegisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor,
-                             FilterOptions::ORDER_DEFAULT, "ApplicationSystem::OnResetSystem");
-
       mCameraAddedFunctor = MessageFunctor(this, &ApplicationSystem::OnCameraAdded);
       em.RegisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor, "ApplicationSystem::OnCameraAdded");
 
@@ -168,7 +164,6 @@ namespace dtEntity
    {
       GetEntityManager().UnregisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor);
       GetEntityManager().UnregisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor);
-      GetEntityManager().UnregisterForMessages(ResetSystemMessage::TYPE, mResetSystemFunctor);
       GetEntityManager().UnregisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor);
 
       delete mImpl;
@@ -461,35 +456,6 @@ namespace dtEntity
       
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::OnResetSystem(const Message& msg)
-   {
-      const ResetSystemMessage& m = static_cast<const ResetSystemMessage&>(msg);
-
-      MapSystem* mapsys;
-
-      EntityManager& em = GetEntityManager();
-      em.GetEntitySystem(MapComponent::TYPE, mapsys);
-      mapsys->UnloadScene();
-
-      std::vector<EntityId> ids;
-      em.GetEntityIds(ids);
-      for(std::vector<EntityId>::iterator i = ids.begin(); i != ids.end(); ++i)
-      {
-         mapsys->RemoveFromScene(*i);
-         em.KillEntity(*i);
-      }
-
-      em.GetMessagePump().ClearQueue();
-      //GetEntityManager().GetMessagePump().UnregisterAll();
-      
-      ComponentPluginManager::GetInstance().UnloadAllPlugins(GetEntityManager());      
-
-      if(m.GetSceneName() != "")
-      {
-         mapsys->LoadScene(m.GetSceneName());
-      }
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::OnCameraAdded(const Message& m)

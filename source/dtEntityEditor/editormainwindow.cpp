@@ -198,9 +198,6 @@ namespace dtEntityEditor
       mAddPluginAct = new QAction(tr("Add Plugin/Library..."), this);
       connect(mAddPluginAct, SIGNAL(triggered()), this, SLOT(OnAddPlugin()));
 
-      mResetSystemAct = new QAction(tr("Reset System"), this);
-      connect(mResetSystemAct , SIGNAL(triggered()), this, SLOT(OnResetSystem()));
-
       mExitAct = new QAction(tr("E&xit"), this);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
@@ -226,7 +223,6 @@ namespace dtEntityEditor
       mFileMenu->addSeparator();
       mFileMenu->addAction(mAddPluginAct);
       mFileMenu->addSeparator();
-      mFileMenu->addAction(mResetSystemAct);
       mFileMenu->addAction(mExitAct);
 
       //mEditMenu = menuBar()->addMenu(tr("&Edit"));
@@ -595,16 +591,6 @@ namespace dtEntityEditor
          OnSaveScene();
       }
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::OnResetSystem()
-   {
-      dtEntity::ResetSystemMessage msg;
-      msg.SetSceneName(mCurrentScene.toStdString());
-      mApplication->GetEntityManager().EnqueueMessage(msg);
-      QTimer::singleShot(10, mApplication, SLOT(InitializeScripting()));
-   }
-
 
    ////////////////////////////////////////////////////////////////////////////////
    void RecursiveSearch(QDir dir, QSet<QString>& entries, const QString& extension, const QString relDir = "")

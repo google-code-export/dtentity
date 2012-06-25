@@ -35,7 +35,6 @@ namespace dtEntity
       em.RegisterMessageType<RequestEntityDeselectMessage>(RequestEntityDeselectMessage::TYPE);
       em.RegisterMessageType<RequestEntitySelectMessage>(RequestEntitySelectMessage::TYPE);
       em.RegisterMessageType<RequestToggleEntitySelectionMessage>(RequestToggleEntitySelectionMessage::TYPE);
-      em.RegisterMessageType<ResetSystemMessage>(ResetSystemMessage::TYPE);
       em.RegisterMessageType<SetComponentPropertiesMessage>(SetComponentPropertiesMessage::TYPE);
       em.RegisterMessageType<SetSystemPropertiesMessage>(SetSystemPropertiesMessage::TYPE);
       em.RegisterMessageType<SpawnEntityMessage>(SpawnEntityMessage::TYPE);
@@ -110,16 +109,6 @@ namespace dtEntity
    {
       this->Register(AboutEntityId, &mAboutEntityId);
       this->Register(AnimationNameId, &mAnimationName);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const MessageType ResetSystemMessage::TYPE(dtEntity::SID("ResetSystemMessage"));
-   const StringId ResetSystemMessage::SceneNameId(dtEntity::SID("SceneName"));
-
-   ResetSystemMessage::ResetSystemMessage()
-      : Message(TYPE)
-   {
-      Register(SceneNameId, &mSceneName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

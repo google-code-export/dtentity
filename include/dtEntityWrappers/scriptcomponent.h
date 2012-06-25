@@ -58,7 +58,6 @@ namespace dtEntityWrappers
       virtual void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
       
       void OnSceneLoaded(const dtEntity::Message& msg);
-      void OnResetSystem(const dtEntity::Message& msg);
       void OnLoadScript(const dtEntity::Message& msg);
       void Tick(const dtEntity::Message& msg);
 
@@ -113,7 +112,6 @@ namespace dtEntityWrappers
       void FetchGlobalTickFunction();
       
       dtEntity::MessageFunctor mSceneLoadedFunctor;
-      dtEntity::MessageFunctor mResetSystemFunctor;
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mLoadScriptFunctor;
       
