@@ -46,6 +46,7 @@ namespace dtEntity
       , mCacheHint(CacheNoneId)   
       , mIsTerrain(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &StaticMeshComponent::SetIsTerrain),
            DynamicBoolProperty::GetValueCB(this, &StaticMeshComponent::GetIsTerrain)))
+      , mIsTerrainVal(false)
    {
       Register(MeshId, &mMeshPathProperty);
       Register(CacheHintId, &mCacheHint);

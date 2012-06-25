@@ -200,7 +200,7 @@ function doSelection(context) {
    var mouseY = Input.getAxis(Axis.MouseYRaw);
    
    var pick = Screen.pickEntity(mouseX, mouseY, NodeMasks.PICKABLE, context);
-  println("Pick: " + pick);
+
    if (pick === null || typeof(pick) == "undefined") {
      return false;
    }
