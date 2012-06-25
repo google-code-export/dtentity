@@ -279,30 +279,6 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
-    * Cause all maps and scripts to be unloaded
-    */
-   class DT_ENTITY_EXPORT ResetSystemMessage
-      : public Message
-   {
-      static const StringId SceneNameId;
-   public:
-
-      static const MessageType TYPE;
-
-      ResetSystemMessage();
-
-      virtual Message* Clone() const { return CloneContainer<ResetSystemMessage>(); }
-
-      std::string GetSceneName() const { return mSceneName.Get(); }
-      void SetSceneName(const std::string& v){ mSceneName.Set(v); }
-
-   private:
-
-      StringProperty mSceneName;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   /**
     * Application system reacts to this message by retrieving a component of type t
    * from entity identified by id and applying the property values of mProperty
    * to the component.

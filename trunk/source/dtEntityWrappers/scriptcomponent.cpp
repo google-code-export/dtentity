@@ -93,10 +93,6 @@ namespace dtEntityWrappers
       mSceneLoadedFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnSceneLoaded);
       GetEntityManager().RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor, "ScriptSystem::OnSceneLoaded");
 
-      mResetSystemFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnResetSystem);
-      GetEntityManager().RegisterForMessages(dtEntity::ResetSystemMessage::TYPE, mResetSystemFunctor,
-                             dtEntity::FilterOptions::ORDER_EARLY, "ScriptSystem::OnResetSystem");
-
       mTickFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::Tick);
       em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "ScriptSystem::Tick");
 
@@ -129,7 +125,6 @@ namespace dtEntityWrappers
       mGlobalContext.Dispose();
 
       GetEntityManager().UnregisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor);
-      GetEntityManager().UnregisterForMessages(dtEntity::ResetSystemMessage::TYPE, mResetSystemFunctor);
       GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
       GetEntityManager().UnregisterForMessages(ExecuteScriptMessage::TYPE, mLoadScriptFunctor);
 
@@ -234,12 +229,6 @@ namespace dtEntityWrappers
          v8::HandleScope scope;
          ExecuteFile(script);
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::OnResetSystem(const dtEntity::Message& msg)
-   {
-      SetupContext();
    }
 
    ////////////////////////////////////////////////////////////////////////////

@@ -76,6 +76,7 @@ namespace dtEntityEditor
    signals:      
 
       void LoadScene(const QString& path);
+      void UnloadScene();
       void NewScene();
       void Closed(bool);
       void ViewResized(const QSize& size);
@@ -120,7 +121,6 @@ namespace dtEntityEditor
       void OnSaveScene();
       void OnSaveSceneAs();
       void OnAddPlugin();
-      void OnResetSystem();
       void EmitQueuedMessages();
 
    protected:
@@ -149,7 +149,6 @@ namespace dtEntityEditor
       QAction* mSaveSceneAct;
       QAction* mSaveSceneAsAct;
       QAction* mAddPluginAct;
-      QAction* mResetSystemAct;
       QAction* mExitAct;
 
       // line edit for jump line in tool box

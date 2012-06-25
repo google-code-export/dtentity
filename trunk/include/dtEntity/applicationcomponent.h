@@ -116,9 +116,6 @@ namespace dtEntity
 	  /** Functor reacting to SetSystemPropertiesMessageandling is not perfect; the  */
       void OnSetSystemProperties(const Message& msg);
 
-      /** reacts to ResetSystemMessage */
-      void OnResetSystem(const Message& msg);
-      
       /** adds input callback to cameras */
       void OnCameraAdded(const Message& msg);      
 
