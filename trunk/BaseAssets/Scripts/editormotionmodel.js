@@ -17,7 +17,9 @@ function EditorMotionComponent(eid) {
   var toRight = [0,0,0];
   var tempvec = [0,0,0];
   var zoom = 100;
+  
   var pivot = [0,0,0];
+
   var last3dEyeDirection = [0,1,0];
 
   var self = this;
@@ -102,16 +104,16 @@ function EditorMotionComponent(eid) {
          Screen.lockCursor = true;
          var mouseX = Input.getAxis(Axis.MouseXRaw);
          var mouseY = Input.getAxis(Axis.MouseYRaw);
-         var pick = Screen.pickEntity(mouseX, mouseY);
-
-         if (pick === null) {
-
-            pivot = osg.Vec3.add(camera.Position,
-                                 osg.Vec3.mult(Screen.getPickRay(Input.getAxis(Axis.MouseX),
-                                                                 Input.getAxis(Axis.MouseY)), 100));
+         var pickray = Screen.getPickRay(Input.getAxis(Axis.MouseX), Input.getAxis(Axis.MouseY));
+                                                                 
+         var isects = Screen.intersect(camera.Position, osg.Vec3.add(camera.Position, osg.Vec3.mult(pickray, 10000)));
+         if (isects.length === 0) {
+            pivot = osg.Vec3.add(camera.Position, osg.Vec3.mult(pickray, 100));
+                                                               
          } else {
-            pivot = pick.Position;
+           pivot = isects[0].Position;
          }
+
          return true;
       }
    }
@@ -344,8 +346,6 @@ function EditorMotionComponent(eid) {
 
     camera.Up = up;
     camera.finished();
-
-    println("Pos: " + camera.Position + " up: " + camera.Up + " dir: " + camera.EyeDirection);
 
   }
 }
