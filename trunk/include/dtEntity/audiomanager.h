@@ -122,10 +122,10 @@ namespace dtEntity
          const char*  file;
          
          BufferData()
-            : buf(0L)
-            , file("")
-            , loop(AL_FALSE)
+            : loop(AL_FALSE)
+            , buf(0L)
             , use(0L)
+            , file("")
          {}
       };
 
