@@ -55,18 +55,25 @@ namespace dtEntity
    class ComponentStoreMap
       : public std::tr1::unordered_map<EntityId, T*>
    {
+   public:
+      typedef typename std::tr1::unordered_map<EntityId, T*>::size_type size_type;
+
    };
 #elif defined(__GNUG__)
    template<class T>
    class ComponentStoreMap
       : public __gnu_cxx::hash_map<EntityId, T*>
    {
+   public:
+      typedef __gnu_cxx::hash_map<EntityId, T*>::size_type size_type;
    };
 #else
    template<class T>
    class ComponentStoreMap
       : public std::map<EntityId, T*>
    {
+   public:
+      typedef std::map<EntityId, T*>::size_type size_type;
    };
 #endif
 
@@ -139,6 +146,7 @@ namespace dtEntity
    public:
 
       typedef ComponentStoreMap<T> ComponentStore;
+      typedef typename ComponentStoreMap<T>::size_type size_type;
 
       DefaultEntitySystem(EntityManager& em, ComponentType baseType = StringId())
          : EntitySystem(em, baseType)
@@ -166,7 +174,7 @@ namespace dtEntity
 
       virtual void GetEntitiesInSystem(std::list<EntityId>& toFill) const;
 
-      unsigned int GetNumComponents() const;
+      size_type GetNumComponents() const;
 
       virtual GroupProperty GetComponentProperties() const;
 
@@ -310,7 +318,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    template<typename T, template<class> class MemAllocPolicy>
-      unsigned int DefaultEntitySystem<T, MemAllocPolicy>::GetNumComponents() const
+   typename DefaultEntitySystem<T, MemAllocPolicy>::size_type DefaultEntitySystem<T, MemAllocPolicy>::GetNumComponents() const
    {
       return mComponents.size();
    }

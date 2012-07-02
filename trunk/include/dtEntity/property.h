@@ -342,8 +342,9 @@ namespace dtEntity
    {
    public:
       ArrayProperty(const PropertyArray& v = PropertyArray());
+     ~ArrayProperty();
 
-      ~ArrayProperty();
+     typedef PropertyArray::size_type size_type;
 
       virtual DataType::e GetDataType() const { return DataType::ARRAY; }
 
@@ -387,13 +388,13 @@ namespace dtEntity
        * Insert into array at given index. Ownership is taken by ArrayProperty -
        * property is deleted in destructor
        */
-      void Insert(unsigned int index, Property* prop);
+      void Insert(size_type index, Property* prop);
 
       /**
        * @return property at given index
        */
-      Property* Get(unsigned int index);
-      const Property* Get(unsigned int index) const;
+      Property* Get(size_type index);
+      const Property* Get(size_type index) const;
 
       /**
        * Remove from array and delete prop
@@ -406,7 +407,7 @@ namespace dtEntity
        */
       void Clear();
 
-      unsigned int Size() const
+      size_type Size() const
       {
          return mValue.size();
       }
@@ -476,7 +477,7 @@ namespace dtEntity
       virtual float FloatValue() const;
       virtual double DoubleValue() const;
       virtual void SetFloat(float v) { Set(v); }
-      virtual void SetDouble(double v) { Set((float)v); }
+      virtual void SetDouble(double v) { Set(static_cast<float>(v)); }
       virtual const std::string StringValue() const;
       float Get() const { return mValue; }
 
@@ -499,7 +500,6 @@ namespace dtEntity
    {
    public:
       GroupProperty(const PropertyGroup& v = PropertyGroup());
-
       ~GroupProperty();
       GroupProperty(const GroupProperty&);
 
@@ -542,7 +542,7 @@ namespace dtEntity
       virtual int IntValue() const;
       virtual void SetInt(int v) { Set(v); }
       virtual unsigned int UIntValue() const;
-      virtual void SetUInt(unsigned int v) { Set((int)v); }
+      virtual void SetUInt(unsigned int v) { Set(static_cast<int>(v)); }
 
       virtual float FloatValue() const;
       virtual double DoubleValue() const;

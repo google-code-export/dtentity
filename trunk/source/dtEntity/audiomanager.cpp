@@ -136,7 +136,7 @@ namespace dtEntity
          unsigned int ulzipFileLength = fin.tellg();
          fin.seekg(0,std::ios_base::beg);
 
-         char* memBuffer = new (std::nothrow) char [ulzipFileLength];
+         char* memBuffer = static_cast<char*>(new (std::nothrow) char [ulzipFileLength]);
          if (memBuffer == NULL)
          {
             return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
@@ -150,8 +150,8 @@ namespace dtEntity
          // NON-DEPRECATED version for ALUT >= 1.0.0
          ALfloat freq(0);
          userData->mRawData = alutLoadMemoryFromFileImage(
-            memBuffer, ALsizei(ulzipFileLength), &bf.format, &bf.size, &freq);
-         bf.freq = ALsizei(freq);
+            memBuffer, static_cast<ALsizei>(ulzipFileLength), &bf.format, &bf.size, &freq);
+         bf.freq = static_cast<ALsizei>(freq);
          Sound::CheckForError("data = alutLoadMemoryFromFileImage", __FUNCTION__, __LINE__);
          delete [] memBuffer;
          
@@ -194,7 +194,7 @@ namespace dtEntity
 
       // delete the buffers
       BufferData* bd(NULL);
-      for (BUF_MAP::iterator iter(mBufferMap.begin()); iter != mBufferMap.end(); iter++)
+      for (BUF_MAP::iterator iter(mBufferMap.begin()); iter != mBufferMap.end(); ++iter)
       {
          if ((bd = iter->second) == NULL)
          {
@@ -416,7 +416,7 @@ namespace dtEntity
       if (file.empty())
       {
          // no file name, bail...
-         return false;
+         return AL_FALSE;
       }
 
       std::string filename;

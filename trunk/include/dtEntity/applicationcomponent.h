@@ -136,8 +136,8 @@ namespace dtEntity
          mArgvArray.Add(new StringProperty(arg));
       }
 
-      int GetNumCmdLineArgs() const { return  mArgvArray.Size(); }
-      std::string GetCmdLineArg(int i) { return mArgvArray.Get()[i]->StringValue(); }
+      ArrayProperty::size_type GetNumCmdLineArgs() const { return  mArgvArray.Size(); }
+      std::string GetCmdLineArg(ArrayProperty::size_type i) { return mArgvArray.Get()[i]->StringValue(); }
 
    private:
 
