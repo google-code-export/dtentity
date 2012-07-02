@@ -235,7 +235,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnEnterWorld(const Message& msg)
    {
-      EntityId eid = (EntityId)msg.GetUInt(EntityAddedToSceneMessage::AboutEntityId);
+      EntityId eid = static_cast<EntityId>(msg.GetUInt(EntityAddedToSceneMessage::AboutEntityId));
       SoundComponent* sc;
       if(GetEntityManager().GetComponent(eid, sc))
       {
@@ -249,7 +249,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnLeaveWorld(const Message& msg)
    {
-      EntityId eid = (EntityId)msg.GetUInt(EntityRemovedFromSceneMessage::AboutEntityId);
+      EntityId eid = static_cast<EntityId>(msg.GetUInt(EntityRemovedFromSceneMessage::AboutEntityId));
       SoundComponent* sc;
       if(GetEntityManager().GetComponent(eid, sc))
       {  

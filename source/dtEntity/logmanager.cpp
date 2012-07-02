@@ -27,14 +27,14 @@ namespace dtEntity
    void LogManager::LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                    const std::string& msg) const
    {
-      std::vector<osg::ref_ptr<LogListener> > listeners;
+      Listeners listeners;
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
          listeners = mListeners;
       }
-      for(unsigned int i = 0; i < listeners.size(); ++i)
+      for(Listeners::iterator i = listeners.begin(); i != listeners.end(); ++i)
       {
-         listeners[i]->LogMessage(level, filename, methodname, linenumber, msg);
+         (*i)->LogMessage(level, filename, methodname, linenumber, msg);
       }
    }
 
@@ -49,8 +49,8 @@ namespace dtEntity
    void LogManager::RemoveListener(LogListener* l)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
-      std::vector<osg::ref_ptr<LogListener> >::iterator i;
-      for(i = mListeners.begin(); i != mListeners.end(); ++i)
+
+      for(Listeners::iterator i = mListeners.begin(); i != mListeners.end(); ++i)
       {
          if(*i == l)
          {
@@ -61,14 +61,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int LogManager::GetNumListeners() const
+   LogManager::Listeners::size_type LogManager::GetNumListeners() const
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
       return mListeners.size();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   LogListener* LogManager::GetListener(int index) const
+   LogListener* LogManager::GetListener(LogManager::Listeners::size_type index) const
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
       return mListeners[index];

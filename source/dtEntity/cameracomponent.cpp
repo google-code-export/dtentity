@@ -277,7 +277,7 @@ namespace dtEntity
       osgViewer::View* view;
             
       if(GetCamera()->getGraphicsContext() &&
-         GetCamera()->getGraphicsContext()->getState()->getContextID() == (unsigned int)mContextId.Get())
+         GetCamera()->getGraphicsContext()->getState()->getContextID() == static_cast<unsigned int>(mContextId.Get()))
       {
          view = static_cast<osgViewer::View*>(GetCamera()->getView());
       }
@@ -307,7 +307,7 @@ namespace dtEntity
                }
             }
             unsigned int cid = oldcam->getGraphicsContext()->getState()->getContextID();
-            if(cid == (unsigned int)mContextId.Get())
+            if(cid == static_cast<unsigned int>(mContextId.Get()))
             {               
                
                appsys->GetViewer()->stopThreading();
@@ -343,11 +343,11 @@ namespace dtEntity
                
                double fovy, aspectRatio, zNear, zFar;
                newcam->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-               double newAspectRatio = double(traits.width) / double(traits.height);
-               double aspectRatioChange = newAspectRatio / aspectRatio;
-               if (aspectRatioChange != 1.0)
+               double newAspectRatio = static_cast<double>(traits.width) / static_cast<double>(traits.height);
+               if (newAspectRatio != aspectRatio)
                {
-                 newcam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange, 1.0, 1.0);
+                  double aspectRatioChange = newAspectRatio / aspectRatio;
+                  newcam->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange, 1.0, 1.0);
                }
                
                newcam->setViewport(new osg::Viewport(0, 0, traits.width, traits.height));

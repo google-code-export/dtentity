@@ -102,7 +102,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddLines(const std::vector<osg::Vec3> lines, const osg::Vec4& color, int linewidth = 1,
+      void AddLines(const std::vector<osg::Vec3>& lines, const osg::Vec4& color, int linewidth = 1,
                     float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -149,7 +149,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddTriangles(const std::vector<osg::Vec3> verts, const osg::Vec4& color,
+      void AddTriangles(const std::vector<osg::Vec3>& verts, const osg::Vec4& color,
                         int lineWidth, float duration = 0, bool depthTestEnabled = true);
 
       /**

@@ -926,8 +926,8 @@ namespace dtEntity
          CheckForError("Attempt to get frequency of buffer.", __FUNCTION__, __LINE__);
       }
 
-      const float nAvgBytesPerSec = float(samplesPerSecond * numChannels * bitsPerSample) / 8;
-      const float flDurationSeconds = (dataSize / nAvgBytesPerSec ) / GetPitch();
+      const float nAvgBytesPerSec = static_cast<float>(samplesPerSecond * numChannels * bitsPerSample) / 8.0f;
+      const float flDurationSeconds = (static_cast<float>(dataSize) / nAvgBytesPerSec ) / GetPitch();
 
       return flDurationSeconds;
    }

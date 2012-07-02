@@ -41,6 +41,8 @@ namespace dtEntitySimulation
       static const dtEntity::StringId PathVisibleId;
       static const dtEntity::StringId VertsVisibleId;
 
+      typedef dtEntity::PropertyArray::size_type size_type;
+
       PathComponent();
       virtual ~PathComponent();
 
@@ -58,9 +60,9 @@ namespace dtEntitySimulation
       void SetVertsVisible(bool v) { mVertsVisible.Set(v); }
       bool GetVertsVisible() const { return mVertsVisible.Get(); }
 
-      osg::Vec3 GetVertex(unsigned int index) const;
-      void SetVertex(unsigned int index, const osg::Vec3& v);
-      unsigned int GetNumVertices() const;
+      osg::Vec3 GetVertex(size_type index) const;
+      void SetVertex(size_type index, const osg::Vec3& v);
+      size_type GetNumVertices() const;
 
    private:
 

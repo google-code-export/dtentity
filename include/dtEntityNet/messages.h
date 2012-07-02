@@ -145,8 +145,15 @@ namespace dtEntityNet
       // Create a copy of this message on the heap
       virtual dtEntity::Message* Clone() const { return CloneContainer<UpdateTransformMessage>(); }
 
-      void SetDeadReckoning(DeadReckoningAlgorithm::e v) { mDeadReckoningAlgorithm.Set(v); }
-      DeadReckoningAlgorithm::e GetDeadReckoning() const { return (DeadReckoningAlgorithm::e)mDeadReckoningAlgorithm.Get(); }
+      void SetDeadReckoning(DeadReckoningAlgorithm::e v)
+      {
+         mDeadReckoningAlgorithm.Set(v);
+      }
+
+      DeadReckoningAlgorithm::e GetDeadReckoning() const
+      {
+         return static_cast<DeadReckoningAlgorithm::e>(mDeadReckoningAlgorithm.Get());
+      }
 
       void SetPosition(const osg::Vec3d& v) { mPosition.Set(v); }
       const osg::Vec3d& GetPosition() const { return mPosition.GetAsVec3d(); }

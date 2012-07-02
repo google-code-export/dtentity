@@ -104,7 +104,7 @@ namespace dtEntity
          osg::Timer_t lastTick = mStartOfFrameTick;
          mStartOfFrameTick = osg::Timer::instance()->tick();
 
-         mDeltaTime = (float)osg::Timer::instance()->delta_s(lastTick, mStartOfFrameTick);
+         mDeltaTime = static_cast<float>(osg::Timer::instance()->delta_s(lastTick, mStartOfFrameTick));
          mDeltaSimTime = mDeltaTime * mTimeScale;
 
          mSimulationClockTime += mDeltaSimTime;
@@ -295,7 +295,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    Property* ApplicationSystem::ScriptGetSimulationClockTimeString(const PropertyArgs& args)
    {
-      time_t time = GetSimulationClockTime() * osg::Timer::instance()->getSecondsPerTick();
+      time_t time = static_cast<time_t>(GetSimulationClockTime() * osg::Timer::instance()->getSecondsPerTick());
       struct tm * ptm = gmtime(&time);
       std::string ret = "";
 

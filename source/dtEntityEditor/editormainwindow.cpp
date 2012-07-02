@@ -89,11 +89,12 @@ namespace dtEntityEditor
 
       // register local message pump to receive messages from game message pump
       dtEntity::MessageFunctor functor(&mMessagePump, &dtEntity::MessagePump::EnqueueMessage);
-      mApplication->GetEntityManager().RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
-      mApplication->GetEntityManager().RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, functor);
-      mApplication->GetEntityManager().RegisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, functor);
-      mApplication->GetEntityManager().RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, functor);
-      mApplication->GetEntityManager().RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, functor);
+      dtEntity::EntityManager& em = mApplication->GetEntityManager();
+      em.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, functor);
+      em.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, functor);
+      em.RegisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, functor);
+      em.RegisterForMessages(dtEntity::MapLoadedMessage::TYPE, functor);
+      em.RegisterForMessages(dtEntity::MapUnloadedMessage::TYPE, functor);
 
       mMessagePump.RegisterForMessages(dtEntity::ToolsUpdatedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnToolsUpdated));
       mMessagePump.RegisterForMessages(dtEntity::SceneLoadedMessage::TYPE, dtEntity::MessageFunctor(this, &EditorMainWindow::OnSceneLoaded));
@@ -593,7 +594,7 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void RecursiveSearch(QDir dir, QSet<QString>& entries, const QString& extension, const QString relDir = "")
+   void RecursiveSearch(QDir dir, QSet<QString>& entries, const QString& extension, const QString& relDir = "")
    {
       dir.setSorting( QDir::Name );
       dir.setFilter( QDir::Files | QDir::Dirs );

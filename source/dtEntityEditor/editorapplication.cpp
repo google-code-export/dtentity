@@ -90,7 +90,7 @@ namespace dtEntityEditor
          }      
       }
 
-      for(unsigned int i = 0; i < oldpaths.size(); ++i)
+      for(osgDB::FilePathList::size_type i = 0; i < oldpaths.size(); ++i)
       {
          if(std::find(newpaths.begin(), newpaths.end(), oldpaths[i]) == newpaths.end() && 
             QFile::exists(oldpaths[i].c_str()))
@@ -102,7 +102,7 @@ namespace dtEntityEditor
       osgDB::setDataFilePathList(newpaths);
 
       QStringList newpathsqt;
-      for(unsigned int i = 0; i < newpaths.size(); ++i)
+      for(osgDB::FilePathList::size_type i = 0; i < newpaths.size(); ++i)
       {
          newpathsqt.push_back(newpaths[i].c_str());
       }
@@ -217,7 +217,7 @@ namespace dtEntityEditor
          connect(this, SIGNAL(ErrorOccurred(const QString&)),
                  mMainWindow, SLOT(OnDisplayError(const QString&)));
 
-         for(unsigned int i = 0; i < mPluginPaths.size(); ++i) 
+         for(std::vector<std::string>::size_type i = 0; i < mPluginPaths.size(); ++i)
          {
             LOG_DEBUG("Looking for plugins in directory " + mPluginPaths[i]);
             // load and start all entity systems in plugins
@@ -346,7 +346,7 @@ namespace dtEntityEditor
 
       double vfov, aspectRatio, nearClip, farClip;
       cams.front()->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
-      cams.front()->setProjectionMatrixAsPerspective(vfov, (double)size.width() / (double) size.height(), nearClip, farClip);
+      cams.front()->setProjectionMatrixAsPerspective(vfov, static_cast<double>(size.width()) / static_cast<double>(size.height()), nearClip, farClip);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

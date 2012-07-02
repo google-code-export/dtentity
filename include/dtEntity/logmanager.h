@@ -60,17 +60,20 @@ namespace dtEntity
          : public dtEntity::Singleton<LogManager>
    {
    public:
+
+      typedef std::vector<osg::ref_ptr<LogListener> > Listeners;
+
       void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                       const std::string& msg) const;
 
       void AddListener(LogListener* l);
       void RemoveListener(LogListener* l);
 
-      int GetNumListeners() const;
-      LogListener* GetListener(int index) const;
+      Listeners::size_type GetNumListeners() const;
+      LogListener* GetListener(Listeners::size_type index) const;
 
    private:
-      std::vector<osg::ref_ptr<LogListener> > mListeners;
+      Listeners mListeners;
       mutable OpenThreads::Mutex mMutex;
    };
 

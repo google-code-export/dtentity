@@ -105,10 +105,10 @@ namespace dtEntityNet
 
       osg::Vec3f euler;
       // heading = rotation about z-axis
-      euler[2] = (f32) (atan2(2.0 * (X*Y +Z*W),(double)(sqx - sqy - sqz + sqw)));
+      euler[2] = static_cast<f32>(atan2(2.0 * (X*Y +Z*W),(double)(sqx - sqy - sqz + sqw)));
 
       // bank = rotation about x-axis
-      euler[0] = (f32) (atan2(2.0 * (Y*Z +X*W),(double)(-sqx - sqy + sqz + sqw)));
+      euler[0] = static_cast<f32>(atan2(2.0 * (Y*Z +X*W),(double)(-sqx - sqy + sqz + sqw)));
 
       // attitude = rotation about y-axis
       f64 v = -2.0f * (X*Z - Y*W);
@@ -142,14 +142,14 @@ namespace dtEntityNet
 
       osg::Quat ret;
 
-      ret[0] = (f32)(sr * cpcy - cr * spsy);
-      ret[1] = (f32)(cr * spcy + sr * cpsy);
-      ret[2] = (f32)(cr * cpsy - sr * spcy);
-      ret[3] = (f32)(cr * cpcy + sr * spsy);
+      ret[0] = static_cast<f32>(sr * cpcy - cr * spsy);
+      ret[1] = static_cast<f32>(cr * spcy + sr * cpsy);
+      ret[2] = static_cast<f32>(cr * cpsy - sr * spcy);
+      ret[3] = static_cast<f32>(cr * cpcy + sr * spsy);
 
       const f32 n = ret[0]*ret[0] + ret[1]*ret[1] + ret[2]*ret[2] + ret[3]*ret[3];
 
-      if (n != 1)
+      if (n != 1.0f)
       {
         ret *= 1.0 / sqrt(n);
       }

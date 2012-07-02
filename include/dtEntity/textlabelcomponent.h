@@ -39,6 +39,8 @@ namespace dtEntity
       typedef NodeComponent BaseClass;
 
    public:
+
+      typedef typename std::vector<osg::ref_ptr<osgText::Text> >::size_type size_type;
       
       static const ComponentType TYPE;
       static const StringId TextsId;
@@ -67,41 +69,41 @@ namespace dtEntity
 
       void OnAddedToEntity(Entity& entity);
 
-      unsigned int GetNumTexts() const { return mTextEntries.size(); }
-      void Create(unsigned int textid);
-      void Destroy(unsigned int textid);
+      size_type GetNumTexts() const { return mTextEntries.size(); }
+      void Create(size_type textid);
+      void Destroy(size_type textid);
 
       void ClearAll();
 
-      void SetText(unsigned int textid, const std::string&);
-      std::string GetText(unsigned int textid) const;
+      void SetText(size_type textid, const std::string&);
+      std::string GetText(size_type textid) const;
 
-      void SetHighlighted(unsigned int textid, bool);
-      bool GetHighlighted(unsigned int textid) const;
+      void SetHighlighted(size_type textid, bool);
+      bool GetHighlighted(size_type textid) const;
 
-      void SetFlashing(unsigned int textid, bool);
-      bool GetFlashing(unsigned int textid) const;
+      void SetFlashing(size_type textid, bool);
+      bool GetFlashing(size_type textid) const;
 
-      void SetColor(unsigned int textid, const osg::Vec4&);
-      osg::Vec4 GetColor(unsigned int textid) const;
+      void SetColor(size_type textid, const osg::Vec4&);
+      osg::Vec4 GetColor(size_type textid) const;
 
-      void SetBackdropColor(unsigned int textid, const osg::Vec4&);
-      osg::Vec4 GetBackdropColor(unsigned int textid) const;
+      void SetBackdropColor(size_type textid, const osg::Vec4&);
+      osg::Vec4 GetBackdropColor(size_type textid) const;
 
-      void SetVisible(unsigned int textid, bool);
-      bool GetVisible(unsigned int textid) const;
+      void SetVisible(size_type textid, bool);
+      bool GetVisible(size_type textid) const;
 
-      void SetFont(unsigned int textid, const std::string&);
-      std::string GetFont(unsigned int textid) const;
+      void SetFont(size_type textid, const std::string&);
+      std::string GetFont(size_type textid) const;
 
-      void SetOffset(unsigned int textid, const osg::Vec3&);
-      osg::Vec3 GetOffset(unsigned int textid) const;
+      void SetOffset(size_type textid, const osg::Vec3&);
+      osg::Vec3 GetOffset(size_type textid) const;
 
-      void SetCharacterHeight(unsigned int textid, float);
-      float GetCharacterHeight(unsigned int textid) const;
+      void SetCharacterHeight(size_type textid, float);
+      float GetCharacterHeight(size_type textid) const;
 
-      void SetAlignment(unsigned int textid, const std::string& str);
-      std::string GetAlignment(unsigned int textid) const;
+      void SetAlignment(size_type textid, const std::string& str);
+      std::string GetAlignment(size_type textid) const;
 
       bool GetAlwaysOnTop() const { return mAlwaysOnTopVal; }
       void SetAlwaysOnTop(bool v);

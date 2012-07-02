@@ -511,13 +511,13 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    float DoubleProperty::FloatValue() const 
    { 
-      return (float)Get(); 
+      return static_cast<float>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    unsigned int DoubleProperty::UIntValue() const
    {
-      return (unsigned int) Get();
+      return static_cast<unsigned int>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -734,19 +734,19 @@ namespace dtEntity
          LOG_ERROR("Error casting uint value to int: Too big!");
       }
 #endif
-      return (int)Get(); 
+      return static_cast<int>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    float UIntProperty::FloatValue() const
    {
-      return (float) Get();
+      return static_cast<float>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    double UIntProperty::DoubleValue() const
    {
-      return (double) Get();
+      return static_cast<double>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -782,13 +782,13 @@ namespace dtEntity
    void UIntProperty::SetDouble(double v)
    {
       LOG_WARNING("Setting unsigned int property from double value!");
-      Set((unsigned int) v);
+      Set(static_cast<unsigned int>(v));
    }
    /////////////////////////////////////////////////////////////////////////////////
    void UIntProperty::SetFloat(float v)
    {
       LOG_WARNING("Setting unsigned int property from float value!");
-      Set((unsigned int) v);
+      Set(static_cast<unsigned int>(v));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -928,7 +928,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    void StringProperty::SetString(const std::string& v) 
    {
-      mValue = v; 
+      Set(v);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1117,13 +1117,13 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    float IntProperty::FloatValue() const
    {
-      return (float) Get();
+      return static_cast<float>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    double IntProperty::DoubleValue() const
    {
-      return (double) Get();
+      return static_cast<double>(Get());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1159,13 +1159,13 @@ namespace dtEntity
    void IntProperty::SetDouble(double v)
    {
       LOG_WARNING("Setting int property from double value!");
-      Set((int) v);
+      Set(static_cast<int>(v));
    }
    /////////////////////////////////////////////////////////////////////////////////
    void IntProperty::SetFloat(float v)
    {
       LOG_WARNING("Setting int property from float value!");
-      Set((int) v);
+      Set(static_cast<int>(v));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
