@@ -1007,7 +1007,7 @@ namespace dtEntity
 
       PropertyArray arr = prop->ArrayValue();
 
-      for(unsigned int i = 0; i < arr.size(); ++i)
+      for(PropertyArray::size_type i = 0; i < arr.size(); ++i)
       {
          std::ostringstream os;
          os << i;

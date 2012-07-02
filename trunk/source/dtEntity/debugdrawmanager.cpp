@@ -296,7 +296,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddLines(const std::vector<osg::Vec3> lines,
+   void DebugDrawManager::AddLines(const std::vector<osg::Vec3>& lines,
       const osg::Vec4& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled || lines.empty())
@@ -420,7 +420,7 @@ namespace dtEntity
             osg::Vec3Array* verts = dynamic_cast<osg::Vec3Array*>(newgeometry->getVertexArray());
             if(verts)
             {
-               for(unsigned int i = 0; i < verts->size(); ++i)
+               for(osg::Vec3Array::size_type i = 0; i < verts->size(); ++i)
                {
                   (*verts)[i] += position;
                }
@@ -492,7 +492,7 @@ namespace dtEntity
             osg::Vec3Array* verts = dynamic_cast<osg::Vec3Array*>(newgeometry->getVertexArray());
             if(verts)
             {
-               for(unsigned int i = 0; i < verts->size(); ++i)
+               for(osg::Vec3Array::size_type i = 0; i < verts->size(); ++i)
                {
                   (*verts)[i] += position;
                }
@@ -565,7 +565,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddTriangles(const std::vector<osg::Vec3> tris, const osg::Vec4& color,
+   void DebugDrawManager::AddTriangles(const std::vector<osg::Vec3>& tris, const osg::Vec4& color,
       int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -615,7 +615,7 @@ namespace dtEntity
        
        for(unsigned int i = 0; i < numPoints; ++i)
        {
-          float angle = ((float)i / (float)numPoints) * osg::PI * 2;
+          float angle = (static_cast<float>(i) / static_cast<float>(numPoints)) * osg::PI * 2;
           osg::Vec3 p = position + ortho1 * sin(angle) * -1 * radius + ortho2 * cos(angle) * radius;
           lines.push_back(p);
           if(numPoints != i + 1)

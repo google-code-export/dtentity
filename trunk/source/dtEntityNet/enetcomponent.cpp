@@ -108,11 +108,13 @@ namespace dtEntityNet
       DeadReckoningSenderSystem* sendersys;
       bool deadRecSenderSystemInEntityManager = em.GetES(sendersys);
       assert(deadRecSenderSystemInEntityManager);
-      sendersys->GetOutgoingMessagePump().RegisterForMessages(UpdateTransformMessage::TYPE,
+
+      dtEntity::MessagePump& mp = sendersys->GetOutgoingMessagePump();
+      mp.RegisterForMessages(UpdateTransformMessage::TYPE,
                                    dtEntity::MessageFunctor(this, &ENetSystem::SendToClients));
-      sendersys->GetOutgoingMessagePump().RegisterForMessages(JoinMessage::TYPE,
+      mp.RegisterForMessages(JoinMessage::TYPE,
                                    dtEntity::MessageFunctor(this, &ENetSystem::SendToClients));
-      sendersys->GetOutgoingMessagePump().RegisterForMessages(ResignMessage::TYPE,
+      mp.RegisterForMessages(ResignMessage::TYPE,
                                    dtEntity::MessageFunctor(this, &ENetSystem::SendToClients));
    }
 
@@ -220,7 +222,7 @@ namespace dtEntityNet
 
             std::string uniqueId = dtEntity::CreateUniqueIdString();
             /* Store any relevant client information here. */
-            event.peer->data = (void*)uniqueId.c_str();
+            event.peer->data = reinterpret_cast<void*>(const_cast<char*>(uniqueId.c_str()));
 
             mConnectedClients.push_back(event.peer);
 

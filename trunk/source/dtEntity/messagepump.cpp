@@ -172,7 +172,7 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    void MessagePump::EnqueueMessage(const Message& msg, double when)
    {
-      if(when == 0)
+      if(when <= 0.001)
       {
          mMessageQueue.Push(msg.Clone());
       }

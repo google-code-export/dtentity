@@ -248,6 +248,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void Spawner::SetComponentValues(ComponentType ctype, const GroupProperty &props)
    {
+      if(mComponentProperties.find(ctype) == mComponentProperties.end())
+      {
+         LOG_ERROR("SetComponentValues: Spawner does not exist yet!");
+      }
       mComponentProperties[ctype] = props;
    }
 }

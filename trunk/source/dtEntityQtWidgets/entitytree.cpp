@@ -1699,7 +1699,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      while(spwnr->GetParent() != NULL)
+      if(spwnr->GetParent() != NULL)
       {
          LOG_ERROR("Cannot remove spawner from its parent!");
          return;

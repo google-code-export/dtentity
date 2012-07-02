@@ -74,7 +74,7 @@ namespace dtEntity
       {
          const unsigned char* s = reinterpret_cast<const unsigned char*>(str.c_str());
          unsigned int hash;
-         MurmurHash3_x86_32(s, str.size(), 0, &hash);
+         MurmurHash3_x86_32(s, static_cast<int>(str.size()), 0, &hash);
          return hash;
       }
 

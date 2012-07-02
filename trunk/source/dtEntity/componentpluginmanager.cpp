@@ -252,7 +252,7 @@ namespace dtEntity
 
       if (messagesaddr)
       {
-         RegisterMessagesFn fn = (RegisterMessagesFn) messagesaddr;
+         RegisterMessagesFn fn = reinterpret_cast<RegisterMessagesFn>(messagesaddr);
 
          // let plugin create its factories
          fn(MessageFactory::GetInstance());
@@ -265,7 +265,7 @@ namespace dtEntity
       //have been exported.
       if (pluginaddr)
       {
-         CreatePluginFactoriesFn fn = (CreatePluginFactoriesFn) pluginaddr;
+         CreatePluginFactoriesFn fn = reinterpret_cast<CreatePluginFactoriesFn>(pluginaddr);
 
          std::list<ComponentPluginFactory*> faclist;
          // let plugin create its factories

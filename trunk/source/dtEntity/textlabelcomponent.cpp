@@ -159,7 +159,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::Create(unsigned int textid)
+   void TextLabelComponent::Create(size_type textid)
    {
       bool visible = true;
       if(mTextLabelSystem != NULL && !mTextLabelSystem->GetEnabled())
@@ -238,7 +238,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::Destroy(unsigned int textid)
+   void TextLabelComponent::Destroy(size_type textid)
    {
       if(mTextEntries.size() <= textid || !mTextEntries[textid].valid())
       {
@@ -259,7 +259,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetVisible(unsigned int textid, bool enabled)
+   void TextLabelComponent::SetVisible(size_type textid, bool enabled)
    {
       if(mTextEntries.size() < textid || !mTextEntries[textid].valid())
       {
@@ -295,7 +295,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool TextLabelComponent::GetVisible(unsigned int textid) const
+   bool TextLabelComponent::GetVisible(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -305,7 +305,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetText(unsigned int textid, const std::string& txt)
+   void TextLabelComponent::SetText(size_type textid, const std::string& txt)
    {
       if(mTextEntries.size() < textid || !mTextEntries[textid].valid())
       {
@@ -321,7 +321,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   std::string TextLabelComponent::GetText(unsigned int textid) const
+   std::string TextLabelComponent::GetText(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -331,7 +331,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetHighlighted(unsigned int textid, bool h)
+   void TextLabelComponent::SetHighlighted(size_type textid, bool h)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -347,7 +347,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool TextLabelComponent::GetHighlighted(unsigned int textid) const
+   bool TextLabelComponent::GetHighlighted(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -357,7 +357,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetColor(unsigned int textid, const osg::Vec4& c)
+   void TextLabelComponent::SetColor(size_type textid, const osg::Vec4& c)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -372,7 +372,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 TextLabelComponent::GetColor(unsigned int textid) const
+   osg::Vec4 TextLabelComponent::GetColor(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -382,7 +382,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetOffset(unsigned int textid, const osg::Vec3& v)
+   void TextLabelComponent::SetOffset(size_type textid, const osg::Vec3& v)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -397,7 +397,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 TextLabelComponent::GetOffset(unsigned int textid) const
+   osg::Vec3 TextLabelComponent::GetOffset(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -407,7 +407,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetCharacterHeight(unsigned int textid, float v)
+   void TextLabelComponent::SetCharacterHeight(size_type textid, float v)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -422,7 +422,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   float TextLabelComponent::GetCharacterHeight(unsigned int textid) const
+   float TextLabelComponent::GetCharacterHeight(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -432,7 +432,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetBackdropColor(unsigned int textid, const osg::Vec4& c)
+   void TextLabelComponent::SetBackdropColor(size_type textid, const osg::Vec4& c)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -447,7 +447,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 TextLabelComponent::GetBackdropColor(unsigned int textid) const
+   osg::Vec4 TextLabelComponent::GetBackdropColor(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -458,7 +458,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetFont(unsigned int textid, const std::string& f)
+   void TextLabelComponent::SetFont(size_type textid, const std::string& f)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -475,7 +475,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////
-   std::string TextLabelComponent::GetFont(unsigned int textid) const
+   std::string TextLabelComponent::GetFont(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {
@@ -485,7 +485,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetAlignment(unsigned int textid, const std::string& align)
+   void TextLabelComponent::SetAlignment(size_type textid, const std::string& align)
    {
       if(!mTextEntries[textid].valid())
       {
@@ -562,7 +562,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////
-   std::string TextLabelComponent::GetAlignment(unsigned int textid) const
+   std::string TextLabelComponent::GetAlignment(size_type textid) const
    {
       if(!mTextEntries[textid].valid())
       {

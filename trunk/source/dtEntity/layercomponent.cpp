@@ -190,7 +190,7 @@ namespace dtEntity
       assert(mEntity != NULL);
       if(mAttachedComponentVal == StringId()) return NULL;
       Component* ac;
-      bool found = mEntity->GetComponent((ComponentType)mAttachedComponentVal, ac);
+      bool found = mEntity->GetComponent(static_cast<ComponentType>(mAttachedComponentVal), ac);
       if(!found)
       {
          LOG_DEBUG("LayerComponent: Attached component does not exist: " 
@@ -267,7 +267,7 @@ namespace dtEntity
             bool success = current->GetAttachmentGroup()->addChild(attachedNode);
             assert(success);
             Component* ac;
-            if(mEntity->GetComponent((ComponentType)mAttachedComponent.Get(), ac))
+            if(mEntity->GetComponent(static_cast<ComponentType>(mAttachedComponent.Get()), ac))
             {
                static_cast<NodeComponent*>(ac)->SetParentComponent(LayerComponent::TYPE);
             }
@@ -456,7 +456,7 @@ namespace dtEntity
       osg::BoundingBox b = v.mBoundingBox;
 
       float radius = b.radius();
-      if(radius == 0 )
+      if(radius == 0.0f )
       {
          return;
       }

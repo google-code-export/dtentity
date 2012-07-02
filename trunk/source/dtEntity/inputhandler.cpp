@@ -654,9 +654,12 @@ namespace dtEntity
    {     
       osgGA::GUIEventAdapter::TouchData* data = ea.getTouchData();
       mNumTouches = 0;
-      mTouches.resize(data->getNumTouchPoints());
 
-      for(unsigned int i = 0; i < data->getNumTouchPoints(); ++i)
+      std::vector<TouchPoint>::size_type numtouches =
+            static_cast<std::vector<TouchPoint>::size_type>(data->getNumTouchPoints());
+      mTouches.resize(numtouches);
+
+      for(std::vector<TouchPoint>::size_type i = 0; i < numtouches; ++i)
       {
          osgGA::GUIEventAdapter::TouchData::TouchPoint tp = data->get(i);
          TouchPoint mypt;
@@ -708,7 +711,7 @@ namespace dtEntity
       KeyNames::const_iterator found = mKeyNames.find(name);
       if(found == mKeyNames.end())
       { 
-         return (osgGA::GUIEventAdapter::KeySymbol)0;
+         return static_cast<osgGA::GUIEventAdapter::KeySymbol>(0);
       }
       return found->second;
    }

@@ -79,7 +79,7 @@ namespace dtEntitySimulation
          osg::Geometry* geometry = new osg::Geometry();
          osg::Vec3Array* arr =  new osg::Vec3Array(props.size());
 
-         for(unsigned int i = 0; i != props.size(); ++i)
+         for(dtEntity::PropertyArray::size_type i = 0; i != props.size(); ++i)
          {
             (*arr)[i] = props[i]->Vec3Value();
          }
@@ -118,7 +118,7 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 PathComponent::GetVertex(unsigned int index) const
+   osg::Vec3 PathComponent::GetVertex(size_type index) const
    {
       dtEntity::PropertyArray props = mVerts.Get();
       if(props.size() <= index)
@@ -130,7 +130,7 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PathComponent::SetVertex(unsigned int index, const osg::Vec3& v)
+   void PathComponent::SetVertex(size_type index, const osg::Vec3& v)
    {
      dtEntity::PropertyArray props = mVerts.Get();
      if(props.size() <= index)
@@ -142,7 +142,7 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   unsigned int PathComponent::GetNumVertices() const
+   PathComponent::size_type PathComponent::GetNumVertices() const
    {
       dtEntity::PropertyArray props = mVerts.Get();
       return props.size();

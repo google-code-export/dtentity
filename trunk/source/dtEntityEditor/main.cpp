@@ -63,6 +63,7 @@ public:
       }
       catch(...)
       {
+         LOG_ERROR("Unknown exception caught");
       }
       return false;
    }

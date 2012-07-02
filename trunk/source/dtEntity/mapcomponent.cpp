@@ -388,7 +388,7 @@ namespace dtEntity
             break;
          }
       }
-      unsigned int mapsaveorder = mLoadedMaps.size();
+      LoadedMaps::size_type mapsaveorder = mLoadedMaps.size();
 
       assert(mapdatapath != "");
 
@@ -401,7 +401,7 @@ namespace dtEntity
       bool success = enc->LoadMapFromFile(path);
       if(success)
       {
-         mLoadedMaps.push_back(MapData(path, mapdatapath, mLoadedMaps.size()));
+         mLoadedMaps.push_back(MapData(path, mapdatapath, static_cast<unsigned int>(mLoadedMaps.size())));
 
          MapLoadedMessage msg1;
          msg1.SetMapPath(path);
@@ -628,7 +628,7 @@ namespace dtEntity
       }
       if(osgDB::findDataFile(mapname) != "")
       {
-         mLoadedMaps.push_back(MapData(mapname, dataPath, mLoadedMaps.size()));
+         mLoadedMaps.push_back(MapData(mapname, dataPath, static_cast<unsigned int>(mLoadedMaps.size())));
          return false;
       }
 
@@ -645,7 +645,7 @@ namespace dtEntity
       MapBeginLoadMessage msg;
       msg.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg);
-      mLoadedMaps.push_back(MapData(mapname, dataPath, mLoadedMaps.size()));
+      mLoadedMaps.push_back(MapData(mapname, dataPath, static_cast<unsigned int>(mLoadedMaps.size())));
       MapLoadedMessage msg2;
       msg2.SetMapPath(mapname);
       GetEntityManager().EmitMessage(msg2);
