@@ -102,6 +102,11 @@ namespace dtEntity
        */
       osg::Node* GetAttachedComponentNode() const;
 
+      /**
+       * @return bool if geometry is attached to layer component
+       */
+      bool GetBoundingBox(osg::Vec3d& min, osg::Vec3d& max);
+
    private:
 
       StringIdProperty mLayerProperty;
