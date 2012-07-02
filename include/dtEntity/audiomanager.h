@@ -113,14 +113,14 @@ namespace dtEntity
        */
       struct BufferData
       {
-         ALuint       buf;
-         const char*  file;
          ALboolean    loop;
-         unsigned int use;
          ALenum       format;
+         ALuint       buf;
+         unsigned int use;
          ALsizei      freq;
          ALsizei      size;
-
+         const char*  file;
+         
          BufferData()
             : buf(0L)
             , file("")
