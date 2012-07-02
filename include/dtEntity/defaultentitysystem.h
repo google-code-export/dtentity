@@ -65,7 +65,7 @@ namespace dtEntity
       : public __gnu_cxx::hash_map<EntityId, T*>
    {
    public:
-      typedef __gnu_cxx::hash_map<EntityId, T*>::size_type size_type;
+      typedef typename __gnu_cxx::hash_map<EntityId, T*>::size_type size_type;
    };
 #else
    template<class T>
@@ -73,7 +73,7 @@ namespace dtEntity
       : public std::map<EntityId, T*>
    {
    public:
-      typedef std::map<EntityId, T*>::size_type size_type;
+      typedef typename std::map<EntityId, T*>::size_type size_type;
    };
 #endif
 

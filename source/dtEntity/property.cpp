@@ -351,7 +351,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::Insert(unsigned int index, Property* prop)
+   void ArrayProperty::Insert(size_type index, Property* prop)
    {
       PropertyArray::iterator i = mValue.begin();
       i += index;
@@ -359,13 +359,13 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Property* ArrayProperty::Get(unsigned int index)
+   Property* ArrayProperty::Get(size_type index)
    {
       return mValue[index];
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const Property* ArrayProperty::Get(unsigned int index) const
+   const Property* ArrayProperty::Get(size_type index) const
    {
       return mValue[index];
    }
