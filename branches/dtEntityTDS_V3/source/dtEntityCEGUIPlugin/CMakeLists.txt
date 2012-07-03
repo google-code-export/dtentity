@@ -1,0 +1,3 @@
+SET(TARGET_ADDED_LIBRARIES dtEntityCEGUI)
+SET(TARGET_SRC pluginfactory.cpp)
+SETUP_PLUGIN(dtEntityCEGUIPlugin)

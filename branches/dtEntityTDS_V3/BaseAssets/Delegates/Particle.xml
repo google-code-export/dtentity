@@ -1,0 +1,51 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+   <switchinput propertyname="Counter" />
+   <switchinput propertyname="Placer" />
+   <fileinput propertyname="TextureFile" filters="*.bmp *.tga *.png *.jpg *.gif *.rgb" />
+   <enuminput propertyname="Shape" values="Point|Quad|QuadTriangeStrip|Hexagon|Line" />
+   <colorinput propertyname="ColorRangeMax" />
+   <colorinput propertyname="ColorRangeMin" />
+
+	<arrayinput propertyname="Operators" >
+		<prototype>
+			<groupproperty name="ProgramChoice">
+				<stringproperty name="__SELECTED__">BounceOperator</stringproperty>
+				<groupproperty name="BounceOperator">
+					<floatproperty name="Friction" value="1" />
+					<floatproperty name="Resilience" value="1" />
+					<floatproperty name="Cutoff" value="1" />
+
+					<arrayproperty name="Domains" />
+
+				</groupproperty>
+				<groupproperty name="ForceOperator">
+					<vec3property name="Force" x="0" y="0" z="-9.8" />
+				</groupproperty>
+			</groupproperty>
+		</prototype>
+		<inputs>
+			<switchinput propertyname="Prototype">
+				<arrayinput propertyname="Domains">
+					<prototype>
+					  <groupproperty name="DomainChoice">
+						 <stringproperty name="__SELECTED__">PlaneDomain</stringproperty>
+						 <groupproperty name="PlaneDomain">
+							<vec3property name="Normal" x="0" y="0" z="1" />
+							<floatproperty name="Dist" value="0" />
+						 </groupproperty>
+						 <groupproperty name="SphereDomain">
+							<vec3property name="Center" x="0" y="0" z="0" />
+							<floatproperty name="Radius" value="0" />
+						 </groupproperty>
+					  </groupproperty>
+					</prototype>
+					<inputs>
+					 <switchinput propertyname="Prototype" />
+					</inputs>
+				</arrayinput>
+			</switchinput>
+		</inputs>
+	</arrayinput>
+
+</delegates>   

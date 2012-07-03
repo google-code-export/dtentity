@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
+<map>
+	<spawner name="WheeledVehicle" guicategory="default" addtospawnerstore="false" iconpath="">
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">StaticMesh</stringproperty>
+			<stringproperty name="Layer">default</stringproperty>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/articulation_test.ive</stringproperty>
+		</component>
+		<component type="Wheel">
+			<floatproperty name="Speed" value="5.0000000000"/>
+			<arrayproperty name="Wheels">
+				<groupproperty name="0">
+					<stringproperty name="NodeName">dof_wheel_lt_01</stringproperty>
+					<floatproperty name="Radius" value="0.3000000119"/>
+				</groupproperty>
+				<groupproperty name="1">
+					<stringproperty name="NodeName">dof_wheel_lt_02</stringproperty>
+					<floatproperty name="Radius" value="0.3000000119"/>
+				</groupproperty>
+				<groupproperty name="2">
+					<stringproperty name="NodeName">dof_wheel_rt_01</stringproperty>
+					<floatproperty name="Radius" value="0.3000000119"/>
+				</groupproperty>
+				<groupproperty name="3">
+					<stringproperty name="NodeName">dof_wheel_rt_02</stringproperty>
+					<floatproperty name="Radius" value="0.3000000119"/>
+				</groupproperty>
+			</arrayproperty>
+		</component>
+	</spawner>
+	<entity spawner="WheeledVehicle">
+		<component type="Layer"/>
+		<component type="Map">
+			<stringproperty name="UniqueId">27689e5b-27d2-482c-9cdd-ed6a394c46b2</stringproperty>
+		</component>
+		<component type="StaticMesh"/>
+	</entity>
+	<entity>
+		<component type="Layer">
+			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">Terrain</stringproperty>
+			<stringproperty name="MapName">maps/testmap_wheels.dtemap</stringproperty>
+			<stringproperty name="SpawnerName"/>
+			<stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+		</component>
+		<component type="PositionAttitudeTransform">
+			<quatproperty name="Attitude" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<arrayproperty name="Children">
+				<stringproperty name="0">StaticMesh</stringproperty>
+			</arrayproperty>
+			<vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+			<vec3property name="Scale" x="1.0000000000" y="1.0000000000" z="1.0000000000"/>
+		</component>
+		<component type="StaticMesh">
+			<stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+		</component>
+	</entity>
+	<entity>
+		<component type="Camera">
+			<doubleproperty name="AspectRatio" value="0.8112449799"/>
+			<vec4property name="ClearColor" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
+			<intproperty name="ContextId" value="0"/>
+			<uintproperty name="CullMask" value="32"/>
+			<vec3property name="EyeDirection" x="-0.9496655301" y="0.2405872240" z="-0.2006319231"/>
+			<doubleproperty name="FarClip" value="100000.0000003804"/>
+			<doubleproperty name="FieldOfView" value="45.0000000000"/>
+			<floatproperty name="LODScale" value="1.0000000000"/>
+			<doubleproperty name="NearClip" value="1.0000000000"/>
+			<vec3property name="Position" x="45.3167616559" y="-11.8623206382" z="9.2307528305"/>
+		</component>
+		<component type="Map">
+			<stringproperty name="EntityName">cam_0</stringproperty>
+			<stringproperty name="MapName">maps/testmap_wheels.dtemap</stringproperty>
+			<stringproperty name="UniqueId">cam_0</stringproperty>
+		</component>
+	</entity>
+</map>
+
