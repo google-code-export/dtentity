@@ -375,6 +375,7 @@ namespace dtEntitySimulation
             {
                transformcomp->SetRotation(component->GetLastClampedAttitude());
             }
+            transformcomp->Finished();
             continue;
          }
 
@@ -456,5 +457,6 @@ namespace dtEntitySimulation
       component->SetLastClampedPosition(translation);
 
       component->SetDirty(false);
+      transformcomp->Finished();
    }
 }
