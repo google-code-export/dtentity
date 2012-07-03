@@ -52,6 +52,7 @@ namespace dtEntitySimulation
       static const dtEntity::StringId ClampingMode_SetHeightToTerrainHeightId;
       static const dtEntity::StringId ClampingMode_SetHeightAndRotationToTerrainId;
       static const dtEntity::StringId MinDistToCameraId;
+      static const dtEntity::StringId MinMovementDeltaId;
       static const dtEntity::StringId VerticalOffsetId;
 
       GroundClampingComponent();
@@ -92,6 +93,9 @@ namespace dtEntitySimulation
       void SetMinDistToCamera(float p) { mMinDistToCamera.Set(p); }
       float GetMinDistToCamera() const { return mMinDistToCamera.Get(); }
 
+      void SetMinMovementDelta(float p) { mMinMovementDelta.Set(p); }
+      float GetMinMovementDelta() const { return mMinMovementDelta.Get(); }
+
        void SetDirty(bool v) { mDirty = v; }
       bool GetDirty() const { return mDirty; }
 
@@ -100,6 +104,8 @@ namespace dtEntitySimulation
       dtEntity::StringIdProperty mClampingMode;
       dtEntity::FloatProperty mVerticalOffset;
       dtEntity::FloatProperty mMinDistToCamera;
+      dtEntity::FloatProperty mMinMovementDelta;
+
       dtEntity::TransformComponent* mTransformComponent;
       unsigned int mIntersectIndex;
       dtEntity::Entity* mEntity;

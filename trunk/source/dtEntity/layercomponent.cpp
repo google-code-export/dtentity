@@ -203,6 +203,23 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   bool LayerComponent::GetBoundingBox(osg::Vec3d& min, osg::Vec3d& max)
+   {
+      osg::Node* att = GetAttachedComponentNode();
+      if(att == NULL)
+      {
+          return false;
+      }
+
+      osg::ComputeBoundsVisitor v;
+      v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+      att->accept(v);
+      min = v.getBoundingBox()._min;
+      max = v.getBoundingBox()._max;
+      return v.getBoundingBox().valid();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    bool LayerComponent::IsVisible() const
    {
       return mVisibleVal;
@@ -613,16 +630,15 @@ namespace dtEntity
       {
          return NULL;
       }
-      osg::Node* att = lc->GetAttachedComponentNode();
-      if(att == NULL)
+      osg::Vec3d min, max;
+      bool success = lc->GetBoundingBox(min, max);
+      if(!success)
       {
-          return new Vec4dProperty(osg::Vec4d());
+         return new Vec4dProperty(osg::Vec4d());
       }
+      osg::Vec3d center = (min + max) * 0.5;
+      double radius = (max - min).length();
+      return new Vec4dProperty(center[0], center[1], center[2], radius);
 
-      osg::ComputeBoundsVisitor v;
-      v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
-      att->accept(v);
-
-      return new Vec4dProperty(osg::Vec4d(v.getBoundingBox().center(), v.getBoundingBox().radius()));
    }
 }
