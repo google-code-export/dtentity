@@ -497,7 +497,7 @@ namespace dtEntityQtWidgets
       std::vector<dtEntity::EntityId> ids;
       mtsystem->GetSpawnerCreatedEntities(name.toStdString(), ids);
 
-      for(unsigned int i = 0; i < ids.size(); ++i)
+      for(size_t i = 0; i < ids.size(); ++i)
       {
          dtEntity::RequestEntitySelectMessage msg;
          msg.SetAboutEntityId(ids[i]);

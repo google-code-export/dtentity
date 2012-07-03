@@ -37,6 +37,8 @@
 #include <iostream>
 #include <stdlib.h>
 
+#define ALL_BITS 0xFFFFFFFF
+
 namespace dtEntity
 {
 
@@ -143,8 +145,8 @@ namespace dtEntity
       if(enabled)
       {
          mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor, "DebugDrawManager::Update");
-         mGroupDepthTest->setNodeMask(0xFFFFFFFF);
-         mGroupNoDepthTest->setNodeMask(0xFFFFFFFF);
+         mGroupDepthTest->setNodeMask(ALL_BITS);
+         mGroupNoDepthTest->setNodeMask(ALL_BITS);
       }
       else
       {      

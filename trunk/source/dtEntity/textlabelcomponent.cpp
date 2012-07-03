@@ -104,7 +104,7 @@ namespace dtEntity
       mTextsVal.Set(texts);
 
       ClearAll();
-      unsigned int count = 0;
+      size_t count = 0;
       const dtEntity::PropertyArray& grps = mTextsVal.Get();
       dtEntity::PropertyArray::const_iterator i;
       for(i = grps.begin(); i != grps.end(); ++i)
