@@ -100,7 +100,7 @@ namespace dtEntitySimulation
          osg::TessellationHints* hints = new osg::TessellationHints;
          hints->setDetailRatio(0.2f);
 
-         for(unsigned int i = 0; i != props.size(); ++i)
+         for(size_t i = 0; i != props.size(); ++i)
          {
             osg::Vec3 v = props[i]->Vec3Value();
 
