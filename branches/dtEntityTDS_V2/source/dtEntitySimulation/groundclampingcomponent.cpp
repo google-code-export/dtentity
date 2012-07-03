@@ -32,8 +32,6 @@
 #include <osg/io_utils>
 #include <osgSim/LineOfSight>
 
-#define MINIMUM_MOVEMENT_DISTANCE 0.2
-
 namespace dtEntitySimulation
 {
 
@@ -48,6 +46,7 @@ namespace dtEntitySimulation
       dtEntity::SID("SetHeightAndRotationToTerrain"));
    const dtEntity::StringId GroundClampingComponent::VerticalOffsetId(dtEntity::SID("VerticalOffset"));
    const dtEntity::StringId GroundClampingComponent::MinDistToCameraId(dtEntity::SID("MinDistToCamera"));
+   const dtEntity::StringId GroundClampingComponent::MinMovementDeltaId(dtEntity::SID("MinMovementDelta"));
 
    ////////////////////////////////////////////////////////////////////////////
    GroundClampingComponent::GroundClampingComponent()
@@ -59,8 +58,10 @@ namespace dtEntitySimulation
       Register(ClampingModeId, &mClampingMode);
       Register(VerticalOffsetId, &mVerticalOffset);
       Register(MinDistToCameraId, &mMinDistToCamera);
+      Register(MinMovementDeltaId, &mMinMovementDelta);
 
       mMinDistToCamera.Set(500);
+      mMinMovementDelta.Set(0.2f);
       
    }
     
@@ -332,8 +333,8 @@ namespace dtEntitySimulation
          // if only moved a little: Set height to last clamp height to override other
          // height modifiers
          if(!component->GetDirty() &&
-            fabs(distMovedX) < MINIMUM_MOVEMENT_DISTANCE &&
-            fabs(distMovedY) < MINIMUM_MOVEMENT_DISTANCE
+            fabs(distMovedX) < component->GetMinMovementDelta() &&
+            fabs(distMovedY) < component->GetMinMovementDelta()
             )
          {
             osg::Vec3 norml = component->GetLastClampedNormal();
@@ -357,6 +358,7 @@ namespace dtEntitySimulation
             {
                transformcomp->SetRotation(component->GetLastClampedAttitude());
             }
+            transformcomp->Finished();
             continue;
          }
 
@@ -438,5 +440,6 @@ namespace dtEntitySimulation
       component->SetLastClampedPosition(translation);
 
       component->SetDirty(false);
+      transformcomp->Finished();
    }
 }
