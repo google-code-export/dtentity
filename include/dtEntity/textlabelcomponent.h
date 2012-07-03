@@ -40,7 +40,7 @@ namespace dtEntity
 
    public:
 
-      typedef typename std::vector<osg::ref_ptr<osgText::Text> >::size_type size_type;
+      typedef std::vector<osg::ref_ptr<osgText::Text> >::size_type size_type;
       
       static const ComponentType TYPE;
       static const StringId TextsId;
