@@ -112,6 +112,42 @@ namespace dtEntitySimulation
       , mParticleSystem(new osgParticle::ParticleSystem())
       , mModularEmitter(new osgParticle::ModularEmitter())
       , mProgram(new osgParticle::ModularProgram())
+      , mDebugOn(
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &ParticleComponent::SetDebugOn),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &ParticleComponent::GetDebugOn)
+        )
+      , mDebugOnVal(false)
+      , mPlacer(
+           dtEntity::DynamicGroupProperty::SetValueCB(this, &ParticleComponent::SetPlacer),
+           dtEntity::DynamicGroupProperty::GetValueCB(this, &ParticleComponent::GetPlacer)
+        )
+      , mCounter(
+           dtEntity::DynamicGroupProperty::SetValueCB(this, &ParticleComponent::SetCounter),
+           dtEntity::DynamicGroupProperty::GetValueCB(this, &ParticleComponent::GetCounter)
+        )
+      , mShooterThetaRange(
+           dtEntity::DynamicVec2Property::SetValueCB(this, &ParticleComponent::SetShooterThetaRange),
+           dtEntity::DynamicVec2Property::GetValueCB(this, &ParticleComponent::GetShooterThetaRange)
+        )
+      , mShooterPhiRange(
+           dtEntity::DynamicVec2Property::SetValueCB(this, &ParticleComponent::SetShooterPhiRange),
+           dtEntity::DynamicVec2Property::GetValueCB(this, &ParticleComponent::GetShooterPhiRange)
+        )
+      , mShooterInitialSpeedRange(
+           dtEntity::DynamicVec2Property::SetValueCB(this, &ParticleComponent::SetShooterInitialSpeedRange),
+           dtEntity::DynamicVec2Property::GetValueCB(this, &ParticleComponent::GetShooterInitialSpeedRange)
+        )
+      , mShooterInitialRotationalSpeedMin(
+           dtEntity::DynamicVec3Property::SetValueCB(this, &ParticleComponent::SetShooterInitialRotationalSpeedMin),
+           dtEntity::DynamicVec3Property::GetValueCB(this, &ParticleComponent::GetShooterInitialRotationalSpeedMin)
+        )
+      , mShooterInitialRotationalSpeedMax(
+           dtEntity::DynamicVec3Property::SetValueCB(this, &ParticleComponent::SetShooterInitialRotationalSpeedMax),
+           dtEntity::DynamicVec3Property::GetValueCB(this, &ParticleComponent::GetShooterInitialRotationalSpeedMax)
+        )
+      , mOperators(dtEntity::DynamicArrayProperty::SetValueCB(this, &ParticleComponent::SetOperators),
+                   dtEntity::DynamicArrayProperty::GetValueCB(this, &ParticleComponent::GetOperators)
+        )
       , mDebugDrawManager(NULL)
    {      
       Register(AlphaRangeId, &mAlphaRange);
@@ -170,9 +206,9 @@ namespace dtEntitySimulation
       dtEntity::GroupProperty* pointplacer = new GroupProperty;
       pointplacer->Add(CenterId, new Vec3Property());
 
-      mPlacer.Add(__SELECTED__Id, new StringIdProperty(BoxId));
-      mPlacer.Add(BoxId, boxplacer);
-      mPlacer.Add(PointId, pointplacer);
+      mPlacerVal.Add(__SELECTED__Id, new StringIdProperty(BoxId));
+      mPlacerVal.Add(BoxId, boxplacer);
+      mPlacerVal.Add(PointId, pointplacer);
 
       GroupProperty* randomratecounter = new GroupProperty;
       randomratecounter->Add(RateRangeId, new Vec2Property(osg::Vec2(1, 1)));
@@ -181,9 +217,9 @@ namespace dtEntitySimulation
       constantratecounter->Add(NumberOfParticlesPerSecondToCreateId, new DoubleProperty(0));
       constantratecounter->Add(MinimumNumberOfParticlesToCreateId, new IntProperty(0));
 
-      mCounter.Add(__SELECTED__Id, new StringIdProperty(ConstantRateCounterId));
-      mCounter.Add(RandomRateCounterId, randomratecounter);
-      mCounter.Add(ConstantRateCounterId, constantratecounter);
+      mCounterVal.Add(__SELECTED__Id, new StringIdProperty(ConstantRateCounterId));
+      mCounterVal.Add(RandomRateCounterId, randomratecounter);
+      mCounterVal.Add(ConstantRateCounterId, constantratecounter);
 
       mShape.Set(ShapeQuadId);
 
@@ -266,162 +302,279 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ParticleComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
+   void ParticleComponent::SetCounter(const dtEntity::PropertyGroup& props)
    {
-      using namespace dtEntity;
-      if(propname == CounterId)
+      mCounterVal.Set(props);
+      dtEntity::PropertyGroup::const_iterator i1 = props.find(__SELECTED__Id);
+      if(i1 == props.end())
       {
-         PropertyGroup props = prop.GroupValue();
-         StringId selected = props[__SELECTED__Id]->StringIdValue();
+         LOG_ERROR("No __SELECTED_Id in particle counter!");
+         return;
+      }
+      dtEntity::StringId selected = i1->second->StringIdValue();
 
-         if(selected == ConstantRateCounterId)
+      if(selected == ConstantRateCounterId)
+      {
+         dtEntity::PropertyGroup::const_iterator i2 = props.find(ConstantRateCounterId);
+         if(i2 == props.end())
          {
-            PropertyGroup pprops = props[ConstantRateCounterId]->GroupValue();
-            osgParticle::ConstantRateCounter* crc = new osgParticle::ConstantRateCounter();
-            crc->setMinimumNumberOfParticlesToCreate(pprops[MinimumNumberOfParticlesToCreateId]->IntValue());
-            crc->setNumberOfParticlesPerSecondToCreate(pprops[NumberOfParticlesPerSecondToCreateId]->DoubleValue());
-            mModularEmitter->setCounter(crc);
+            LOG_ERROR("No ConstantRateCounterId in particle counter!");
+            return;
          }
-         else if(selected == RandomRateCounterId){
-            PropertyGroup pprops = props[RandomRateCounterId]->GroupValue();
-            osgParticle::RandomRateCounter* rrc = new osgParticle::RandomRateCounter();
-            osg::Vec2 range = pprops[RateRangeId]->Vec2Value();
-            rrc->setRateRange(range[0], range[1]);
-            mModularEmitter->setCounter(rrc);
+         dtEntity::PropertyGroup pprops = i2->second->GroupValue();
+         osgParticle::ConstantRateCounter* crc = new osgParticle::ConstantRateCounter();
+         crc->setMinimumNumberOfParticlesToCreate(pprops[MinimumNumberOfParticlesToCreateId]->IntValue());
+         crc->setNumberOfParticlesPerSecondToCreate(pprops[NumberOfParticlesPerSecondToCreateId]->DoubleValue());
+         mModularEmitter->setCounter(crc);
+      }
+      else if(selected == RandomRateCounterId)
+      {
+         dtEntity::PropertyGroup::const_iterator i2 = props.find(RandomRateCounterId);
+         if(i2 == props.end())
+         {
+            LOG_ERROR("No RandomRateCounterId in particle counter!");
+            return;
+         }
+         dtEntity::PropertyGroup pprops = i2->second->GroupValue();
+         osgParticle::RandomRateCounter* rrc = new osgParticle::RandomRateCounter();
+         osg::Vec2 range = pprops[RateRangeId]->Vec2Value();
+         rrc->setRateRange(range[0], range[1]);
+         mModularEmitter->setCounter(rrc);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::PropertyGroup ParticleComponent::GetCounter() const
+   {
+      return mPlacerVal.Get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetPlacer(const dtEntity::PropertyGroup& props)
+   {
+      mPlacerVal.Set(props);
+
+      dtEntity::PropertyGroup::const_iterator i1 = props.find(__SELECTED__Id);
+      if(i1 == props.end())
+      {
+         LOG_ERROR("No __SELECTED_Id in particle placer!");
+         return;
+      }
+      dtEntity::StringId selected = i1->second->StringIdValue();
+
+      if(selected == BoxId)
+      {
+         osgParticle::BoxPlacer* bp = new osgParticle::BoxPlacer();
+         dtEntity::PropertyGroup::const_iterator i2 = props.find(BoxId);
+         if(i2 == props.end())
+         {
+            LOG_ERROR("No BoxId in particle placer!");
+            return;
          }
 
+         dtEntity::PropertyGroup pprops = i2->second->GroupValue();
+         osg::Vec2 xr = pprops[XRangeId]->Vec2Value();
+         osg::Vec2 yr = pprops[YRangeId]->Vec2Value();
+         osg::Vec2 zr = pprops[ZRangeId]->Vec2Value();
+         bp->setXRange(xr[0], xr[1]);
+         bp->setYRange(yr[0], yr[1]);
+         bp->setZRange(zr[0], zr[1]);
+         mModularEmitter->setPlacer(bp);
       }
-      else if(propname == DebugOnId)
+      else if(selected == PointId)
       {
-         if(prop.BoolValue())
-         {
-            mDebugDrawManager = new dtEntity::DebugDrawManager(mEntity->GetEntityManager());
-         }
-         else
-         {
-            mDebugDrawManager = NULL;
-         }
-      }
-      else if(propname == PlacerId)
-      {
-         PropertyGroup props = prop.GroupValue();
-         StringId selected = props[__SELECTED__Id]->StringIdValue();
+         osgParticle::PointPlacer* cp = new osgParticle::PointPlacer();
 
-         if(selected == BoxId)
+         dtEntity::PropertyGroup::const_iterator i2 = props.find(PointId);
+         if(i2 == props.end())
          {
-            osgParticle::BoxPlacer* bp = new osgParticle::BoxPlacer();
-            PropertyGroup pprops = props[BoxId]->GroupValue();
-            osg::Vec2 xr = pprops[XRangeId]->Vec2Value();
-            osg::Vec2 yr = pprops[YRangeId]->Vec2Value();
-            osg::Vec2 zr = pprops[ZRangeId]->Vec2Value();
-            bp->setXRange(xr[0], xr[1]);
-            bp->setYRange(yr[0], yr[1]);
-            bp->setZRange(zr[0], zr[1]);
-            mModularEmitter->setPlacer(bp);
-         }
-         else if(selected == PointId)
-         {
-            osgParticle::PointPlacer* cp = new osgParticle::PointPlacer();
-            PropertyGroup pprops = props[PointId]->GroupValue();
-            osg::Vec3 center = pprops[CenterId]->Vec3Value();
-            cp->setCenter(center);
-            mModularEmitter->setPlacer(cp);
+            LOG_ERROR("No PointId in particle placer!");
+            return;
          }
 
+         dtEntity::PropertyGroup pprops = i2->second->GroupValue();
+         osg::Vec3 center = pprops[CenterId]->Vec3Value();
+         cp->setCenter(center);
+         mModularEmitter->setPlacer(cp);
       }
-      else if(propname == ShooterThetaRangeId)
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::PropertyGroup ParticleComponent::GetPlacer() const
+   {
+      return mCounterVal.Get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetDebugOn(bool v)
+   {
+      mDebugOnVal = v;
+      if(v)
       {
-         osgParticle::RadialShooter* shooter =
-               static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
-         osg::Vec2 v = prop.Vec2Value();
-         shooter->setThetaRange(v[0], v[1]);
+         mDebugDrawManager = new dtEntity::DebugDrawManager(mEntity->GetEntityManager());
       }
-      else if(propname == ShooterPhiRangeId)
+      else
       {
-         osgParticle::RadialShooter* shooter =
-               static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
-         osg::Vec2 v = prop.Vec2Value();
-         shooter->setPhiRange(v[0], v[1]);
+         mDebugDrawManager = NULL;
       }
-      else if(propname == ShooterInitialSpeedRangeId)
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetShooterThetaRange(const osg::Vec2& v)
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+      shooter->setThetaRange(v[0], v[1]);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 ParticleComponent::GetShooterThetaRange() const
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+
+      return osg::Vec2(shooter->getThetaRange().minimum, shooter->getThetaRange().maximum);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetShooterPhiRange(const osg::Vec2& v)
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+      shooter->setPhiRange(v[0], v[1]);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 ParticleComponent::GetShooterPhiRange() const
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+
+      return osg::Vec2(shooter->getPhiRange().minimum, shooter->getPhiRange().maximum);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetShooterInitialSpeedRange(const osg::Vec2& v)
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+      shooter->setInitialSpeedRange(v[0], v[1]);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 ParticleComponent::GetShooterInitialSpeedRange() const
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+
+      return osg::Vec2(shooter->getInitialSpeedRange().minimum, shooter->getInitialSpeedRange().maximum);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetShooterInitialRotationalSpeedMin(const osg::Vec3& v)
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+      shooter->setInitialRotationalSpeedRange(v, GetShooterInitialRotationalSpeedMax());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 ParticleComponent::GetShooterInitialRotationalSpeedMin() const
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+
+      return shooter->getInitialRotationalSpeedRange().minimum;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetShooterInitialRotationalSpeedMax(const osg::Vec3& v)
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+      shooter->setInitialRotationalSpeedRange(GetShooterInitialRotationalSpeedMin(), v);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 ParticleComponent::GetShooterInitialRotationalSpeedMax() const
+   {
+      osgParticle::RadialShooter* shooter =
+            static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
+
+      return shooter->getInitialRotationalSpeedRange().maximum;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ParticleComponent::SetOperators(const dtEntity::PropertyArray& arr)
+   {
+      mOperatorsVal.Set(arr);
+
+      if(mDebugDrawManager)
       {
-         osgParticle::RadialShooter* shooter =
-               static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
-         osg::Vec2 v = prop.Vec2Value();
-         shooter->setInitialSpeedRange(v[0], v[1]);
+         mDebugDrawManager->Clear();
       }
-      else if(propname == ShooterInitialRotationalSpeedMinId ||
-              propname == ShooterInitialRotationalSpeedMaxId)
+      while(mProgram->numOperators() > 0)
       {
-         osgParticle::RadialShooter* shooter =
-               static_cast<osgParticle::RadialShooter*>(mModularEmitter->getShooter());
-         shooter->setInitialRotationalSpeedRange(
-                  mShooterInitialRotationalSpeedMin.Get(),
-                  mShooterInitialRotationalSpeedMax.Get());
+         mProgram->removeOperator(0);
       }
-      else if(propname == OperatorsId)
+
+      for(dtEntity::PropertyArray::const_iterator i = arr.begin(); i != arr.end(); ++i)
       {
-         if(mDebugDrawManager)
+         GroupProperty* grp = dynamic_cast<GroupProperty*>(*i);
+         if(!grp) continue;
+         dtEntity::PropertyGroup props = grp->Get();
+         dtEntity::StringId selected = props[__SELECTED__Id]->StringIdValue();
+         if(selected == BounceOperatorId)
          {
-            mDebugDrawManager->Clear();
-         }
-         while(mProgram->numOperators() > 0)
-         {
-            mProgram->removeOperator(0);
-         }
-         PropertyArray arr = mOperators.Get();
-         for(PropertyArray::const_iterator i = arr.begin(); i != arr.end(); ++i)
-         {
-            GroupProperty* grp = dynamic_cast<GroupProperty*>(*i);
-            if(!grp) continue;
-            PropertyGroup props = grp->Get();
-            StringId selected = props[__SELECTED__Id]->StringIdValue();
-            if(selected == BounceOperatorId)
+            dtEntity::PropertyGroup bprops = props[BounceOperatorId]->GroupValue();
+            osgParticle::BounceOperator* bo = new osgParticle::BounceOperator();;
+            bo->setResilience(bprops[ResilienceId]->FloatValue());
+            bo->setCutoff(bprops[CutoffId]->FloatValue());
+            dtEntity::PropertyArray domains = bprops[DomainsId]->ArrayValue();
+            for(dtEntity::PropertyArray::const_iterator i = domains.begin(); i != domains.end(); ++i)
             {
-               PropertyGroup bprops = props[BounceOperatorId]->GroupValue();
-               osgParticle::BounceOperator* bo = new osgParticle::BounceOperator();;
-               bo->setResilience(bprops[ResilienceId]->FloatValue());
-               bo->setCutoff(bprops[CutoffId]->FloatValue());
-               PropertyArray domains = bprops[DomainsId]->ArrayValue();
-               for(PropertyArray::const_iterator i = domains.begin(); i != domains.end(); ++i)
+               dtEntity::PropertyGroup domainprops = (*i)->GroupValue();
+               dtEntity::StringId domainsel = domainprops[__SELECTED__Id]->StringIdValue();
+               dtEntity::PropertyGroup selprops = domainprops[domainsel]->GroupValue();
+               if(domainsel == PlaneDomainId)
                {
-                  PropertyGroup domainprops = (*i)->GroupValue();
-                  StringId domainsel = domainprops[__SELECTED__Id]->StringIdValue();
-                  PropertyGroup selprops = domainprops[domainsel]->GroupValue();
-                  if(domainsel == PlaneDomainId)
+                  osg::Vec3 normal = selprops[NormalId]->Vec3Value();
+                  float dist = selprops[DistId]->FloatValue();
+                  bo->addPlaneDomain(osg::Plane(normal, dist));
+                  if(mDebugDrawManager)
                   {
-                     osg::Vec3 normal = selprops[NormalId]->Vec3Value();
-                     float dist = selprops[DistId]->FloatValue();
-                     bo->addPlaneDomain(osg::Plane(normal, dist));
-                     if(mDebugDrawManager)
-                     {
-                        mDebugDrawManager->AddCircle(osg::Vec3(0, 0, -dist), normal,  10, osg::Vec4(0,1,0,1), FLT_MAX);
-                     }
+                     mDebugDrawManager->AddCircle(osg::Vec3(0, 0, -dist), normal,  10, osg::Vec4(0,1,0,1), FLT_MAX);
                   }
-                  else if(domainsel == SphereDomainId)
-                  {
-                      osg::Vec3 pos = selprops[CenterId]->Vec3Value();
-                      float radius = selprops[RadiusId]->FloatValue();
-                      bo->addSphereDomain(pos, radius);
-                      if(mDebugDrawManager)
-                      {
-                         mDebugDrawManager->AddSphere(pos, radius, osg::Vec4(0,1,0,1), FLT_MAX);
-                      }
-                  }
-
                }
-               mProgram->addOperator(bo);
+               else if(domainsel == SphereDomainId)
+               {
+                   osg::Vec3 pos = selprops[CenterId]->Vec3Value();
+                   float radius = selprops[RadiusId]->FloatValue();
+                   bo->addSphereDomain(pos, radius);
+                   if(mDebugDrawManager)
+                   {
+                      mDebugDrawManager->AddSphere(pos, radius, osg::Vec4(0,1,0,1), FLT_MAX);
+                   }
+               }
 
             }
-            else if(selected == ForceOperatorId)
-            {
-               PropertyGroup bprops = props[ForceOperatorId]->GroupValue();
-               osgParticle::ForceOperator* fo = new osgParticle::ForceOperator();
-               fo->setForce(bprops[ForceId]->Vec3Value());
-               mProgram->addOperator(fo);
-            }
+            mProgram->addOperator(bo);
+
+         }
+         else if(selected == ForceOperatorId)
+         {
+            dtEntity::PropertyGroup bprops = props[ForceOperatorId]->GroupValue();
+            osgParticle::ForceOperator* fo = new osgParticle::ForceOperator();
+            fo->setForce(bprops[ForceId]->Vec3Value());
+            mProgram->addOperator(fo);
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::PropertyArray ParticleComponent::GetOperators() const
+   {
+      return mOperatorsVal.Get();
    }
   
    ////////////////////////////////////////////////////////////////////////////

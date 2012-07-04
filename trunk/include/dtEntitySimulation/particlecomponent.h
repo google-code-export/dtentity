@@ -129,6 +129,9 @@ namespace dtEntitySimulation
       void SetEmissiveParticles(bool v) { mEmissiveParticles.Set(v); }
       bool GetEmissiveParticles() const { return mEmissiveParticles.Get(); }
 
+      void SetDebugOn(bool v);
+      bool GetDebugOn() const { return mDebugOnVal; }
+
       void SetLighting(bool v) { mLighting.Set(v); }
       bool GetLighting() const { return mLighting.Get(); }
 
@@ -144,7 +147,30 @@ namespace dtEntitySimulation
       void SetSizeRange(const osg::Vec2& v) { mSizeRange.Set(v); }
       osg::Vec2 GetSizeRange() const { return mSizeRange.Get(); }
 
-      virtual void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
+
+      void SetCounter(const dtEntity::PropertyGroup&);
+      dtEntity::PropertyGroup GetCounter() const;
+
+      void SetPlacer(const dtEntity::PropertyGroup&);
+      dtEntity::PropertyGroup GetPlacer() const;
+
+      void SetShooterThetaRange(const osg::Vec2& v);
+      osg::Vec2 GetShooterThetaRange() const;
+
+      void SetShooterPhiRange(const osg::Vec2& v);
+      osg::Vec2 GetShooterPhiRange() const;
+
+      void SetShooterInitialSpeedRange(const osg::Vec2& v);
+      osg::Vec2 GetShooterInitialSpeedRange() const;
+
+      void SetShooterInitialRotationalSpeedMin(const osg::Vec3& v);
+      osg::Vec3 GetShooterInitialRotationalSpeedMin() const;
+
+      void SetShooterInitialRotationalSpeedMax(const osg::Vec3& v);
+      osg::Vec3 GetShooterInitialRotationalSpeedMax() const;
+
+      void SetOperators(const dtEntity::PropertyArray& v);
+      dtEntity::PropertyArray GetOperators() const;
 
    protected:
 
@@ -153,7 +179,8 @@ namespace dtEntitySimulation
       osg::ref_ptr<osgParticle::ModularEmitter> mModularEmitter;
       osg::ref_ptr<osgParticle::ModularProgram> mProgram;
       
-      dtEntity::BoolProperty mDebugOn;
+      dtEntity::DynamicBoolProperty mDebugOn;
+      bool mDebugOnVal;
       dtEntity::StringProperty mTextureFile;
       dtEntity::BoolProperty mEmissiveParticles;
       dtEntity::BoolProperty mEnabled;
@@ -167,19 +194,21 @@ namespace dtEntitySimulation
       dtEntity::Vec4Property mColorRangeMin;
       dtEntity::Vec4Property mColorRangeMax;
 
-      dtEntity::GroupProperty mPlacer;
-      dtEntity::GroupProperty mCounter;
-
+      dtEntity::DynamicGroupProperty mPlacer;
+      dtEntity::GroupProperty mPlacerVal;
+      dtEntity::DynamicGroupProperty mCounter;
+      dtEntity::GroupProperty mCounterVal;
       
-      dtEntity::Vec2Property mShooterThetaRange;
-      dtEntity::Vec2Property mShooterPhiRange;
-      dtEntity::Vec2Property mShooterInitialSpeedRange;
-      dtEntity::Vec3Property mShooterInitialRotationalSpeedMin;
-      dtEntity::Vec3Property mShooterInitialRotationalSpeedMax;
+      dtEntity::DynamicVec2Property mShooterThetaRange;
+      dtEntity::DynamicVec2Property mShooterPhiRange;
+      dtEntity::DynamicVec2Property mShooterInitialSpeedRange;
+      dtEntity::DynamicVec3Property mShooterInitialRotationalSpeedMin;
+      dtEntity::DynamicVec3Property mShooterInitialRotationalSpeedMax;
 
       dtEntity::StringIdProperty mShape;
 
-      dtEntity::ArrayProperty mOperators;
+      dtEntity::DynamicArrayProperty mOperators;
+      dtEntity::ArrayProperty mOperatorsVal;
 
       osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDrawManager;
 

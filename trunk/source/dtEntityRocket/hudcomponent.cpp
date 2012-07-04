@@ -112,19 +112,6 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void HUDComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop)
-   {
-      if(propname == ElementId)
-      {
-         SetElementById(prop.StringValue());
-      }
-      else if(propname == AlignmentId || propname == OffsetId)
-      {
-         CalculateRelPosition();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void HUDComponent::CalculateRelPosition()
    {
 
