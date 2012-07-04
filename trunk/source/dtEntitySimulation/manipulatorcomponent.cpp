@@ -236,7 +236,36 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    ManipulatorComponent::ManipulatorComponent()
       : BaseClass()
+      , mLayerProperty(
+         dtEntity::DynamicStringIdProperty::SetValueCB(this, &ManipulatorComponent::SetLayer),
+         dtEntity::DynamicStringIdProperty::GetValueCB(this, &ManipulatorComponent::GetLayer)
+      )
+      , mLayerVal(dtEntity::SIDHash("root"))
       , mAttachPoint(dtEntity::StringId())
+      , mDraggerType(
+         dtEntity::DynamicStringIdProperty::SetValueCB(this, &ManipulatorComponent::SetDraggerType),
+         dtEntity::DynamicStringIdProperty::GetValueCB(this, &ManipulatorComponent::GetDraggerType)
+      )
+      , mDraggerTypeVal(dtEntity::StringId())
+      , mOffsetFromStart(
+         dtEntity::DynamicVec3dProperty::SetValueCB(this, &ManipulatorComponent::SetOffsetFromStart),
+         dtEntity::DynamicVec3dProperty::GetValueCB(this, &ManipulatorComponent::GetOffsetFromStart)
+      )
+      , mKeepSizeConstant(
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &ManipulatorComponent::SetKeepSizeConstant),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &ManipulatorComponent::GetKeepSizeConstant)
+      )
+      , mKeepSizeConstantVal(true)
+      , mUseLocalCoords(
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &ManipulatorComponent::SetUseLocalCoords),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &ManipulatorComponent::GetUseLocalCoords)
+      )
+      , mUseLocalCoordsVal(false)
+      , mPivotAtBottom(
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &ManipulatorComponent::SetPivotAtBottom),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &ManipulatorComponent::GetPivotAtBottom)
+      )
+      , mPivotAtBottomVal(false)
       , mDraggerContainer(NULL)
    {
       Register(LayerId, &mLayerProperty);
@@ -245,10 +274,7 @@ namespace dtEntitySimulation
       Register(UseLocalCoordsId, &mUseLocalCoords);
       Register(KeepSizeConstantId, &mKeepSizeConstant);
       Register(PivotAtBottomId, &mPivotAtBottom);
-      mLayerProperty.Set(dtEntity::SIDHash("root"));
 
-      mKeepSizeConstant.Set(true);
-      mUseLocalCoords.Set(false);
       SetDraggerType(TabBoxDraggerId);
    }
     
@@ -274,42 +300,9 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ManipulatorComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
-   {
-      if(propname == LayerId)
-      {
-         SetLayer(prop.StringIdValue());
-      }
-      else if(propname == DraggerTypeId)
-      {
-         SetDraggerType(prop.StringIdValue());
-      }
-      else if(propname == UseLocalCoordsId)
-      {
-         SetUseLocalCoords(prop.BoolValue());
-      }
-      else if(propname == KeepSizeConstantId)
-      {
-         SetKeepSizeConstant(prop.BoolValue());
-      }
-      else if(propname == PivotAtBottomId)
-      {
-         SetPivotAtBottom(prop.BoolValue());
-      }
-      else if(propname == OffsetFromStartId)
-      {
-         if(mDraggerCallback)
-         {
-            static_cast<DraggerCallback*>(mDraggerCallback.get())->SetOffsetFromStart(prop.Vec3dValue());
-         }
-      }
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::SetUseLocalCoords(bool v)
    {
-      mUseLocalCoords.Set(v);
+      mUseLocalCoordsVal = v;
 
       if(mDraggerContainer)
       {
@@ -320,7 +313,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::SetKeepSizeConstant(bool v)
    {
-      mKeepSizeConstant.Set(v);
+      mKeepSizeConstantVal = v;
 
       if(mDraggerContainer)
       {
@@ -331,7 +324,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::SetPivotAtBottom(bool v)
    {
-      mPivotAtBottom.Set(v);
+      mPivotAtBottomVal = v;
 
       if(mDraggerContainer)
       {
@@ -382,14 +375,20 @@ namespace dtEntitySimulation
             DraggerContainer* dc = new DraggerContainer(GetDragger(), tcomp);
             mDraggerContainer = dc;
 
-            dc->SetUseLocalCoords(mUseLocalCoords.Get());
-            dc->setKeepSizeConstant(mKeepSizeConstant.Get());
-            dc->setPivotAtBottom(mPivotAtBottom.Get());
+            dc->SetUseLocalCoords(mUseLocalCoordsVal);
+            dc->setKeepSizeConstant(mKeepSizeConstantVal);
+            dc->setPivotAtBottom(mPivotAtBottomVal);
 
             next->GetAttachmentGroup()->addChild(mDraggerContainer);
             mAttachPoint = mLayerProperty.Get();
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::StringId ManipulatorComponent::GetLayer() const
+   {
+      return mLayerVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -400,7 +399,7 @@ namespace dtEntitySimulation
          return;
       }
 
-      mLayerProperty.Set(layername);
+      mLayerVal = layername;
       if(mEntity != NULL)
       {
          RemoveFromParent();
@@ -411,7 +410,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    void ManipulatorComponent::SetDraggerType(dtEntity::StringId draggerType)
    {
-      mDraggerType.Set(draggerType);
+      mDraggerTypeVal = draggerType;
       RemoveFromParent();
       osgManipulator::Dragger* dragger = GetDragger();
       if(dragger != NULL && mDraggerCallback != NULL)
@@ -482,6 +481,17 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void ManipulatorComponent::SetOffsetFromStart(const osg::Vec3d& v)
+   {
+      mOffsetFromStartVal = v;
+
+      if(mDraggerCallback)
+      {
+         static_cast<DraggerCallback*>(mDraggerCallback.get())->SetOffsetFromStart(v);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    osgManipulator::Dragger* ManipulatorComponent::GetDragger() const
    {
       return static_cast<osgManipulator::Dragger*>(GetNode());
@@ -518,6 +528,11 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    ManipulatorSystem::ManipulatorSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
+      , mUseLocalCoords(
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &ManipulatorSystem::SetUseLocalCoords),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &ManipulatorSystem::GetUseLocalCoords)
+      )
+      , mUseLocalCoordsVal(false)
    {
       Register(UseLocalCoordsId, &mUseLocalCoords);
       Register(UseGroundClampingId, &mUseGroundClamping);
@@ -530,17 +545,9 @@ namespace dtEntitySimulation
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ManipulatorSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
-   {
-      if(propname == UseLocalCoordsId)
-      {
-         SetUseLocalCoords(prop.BoolValue());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void ManipulatorSystem::SetUseLocalCoords(bool v)
    {
+      mUseLocalCoordsVal = v;
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          i->second->SetUseLocalCoords(v);

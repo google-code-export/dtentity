@@ -316,8 +316,9 @@ namespace dtEntity
       /**
        *called by component. Don't call, please set the property on 
        * the component instead
+       * returns true if change succeeded, false if an entity with this id already exists
        */
-      void OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
+      bool OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
 
 
       // implementation of EntityManager::EntitySystemRequestCallback interface

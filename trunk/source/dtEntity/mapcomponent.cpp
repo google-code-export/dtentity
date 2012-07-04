@@ -141,12 +141,29 @@ namespace dtEntity
       std::string olduid = mUniqueIdStr;
       if(olduid == v) return;
 
-      mUniqueIdStr = v;
       if(mOwner != NULL)
       {
          MapSystem* ms;
          mOwner->GetEntityManager().GetEntitySystem(TYPE, ms);
-         ms->OnEntityChangedUniqueId(mOwner->GetId(), olduid, v);
+
+         int inc = 0;
+         bool success = false;
+
+         while(!success)
+         {
+            std::ostringstream os;
+            os << v;
+            if(inc != 0)
+            {
+               os << "_" << inc;
+            }
+            ++inc;
+            success = ms->OnEntityChangedUniqueId(mOwner->GetId(), olduid, os.str());
+            if(success)
+            {
+               mUniqueIdStr = os.str();
+            }
+         }
       }
    }
 
@@ -230,37 +247,38 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MapSystem::OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueId)
+   bool MapSystem::OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueId)
    {
+      if(oldUniqueId == newUniqueId)
+      {
+         return true;
+      }
+
       typedef std::map<std::string, EntityId> UIMap;
       MapComponent* comp = GetComponent(id);
       assert(comp != NULL);
 
-      UIMap::iterator i = mEntitiesByUniqueId.find(oldUniqueId);
-      if(i != mEntitiesByUniqueId.end())
-      {
-         if(oldUniqueId == newUniqueId)
-         {
-            return;
-         }
-         mEntitiesByUniqueId.erase(i);
-      }
-
       UIMap::iterator j = mEntitiesByUniqueId.find(newUniqueId);
       if(j != mEntitiesByUniqueId.end())
       {
-         LOG_ERROR("An entity with unique id " << newUniqueId << " already exists!");
+         return false;
       }  
-      else
+
+      UIMap::iterator i = mEntitiesByUniqueId.find(oldUniqueId);
+      if(i != mEntitiesByUniqueId.end())
       {
-         mEntitiesByUniqueId[newUniqueId] = id;
+         mEntitiesByUniqueId.erase(i);
       }
+
+      mEntitiesByUniqueId[newUniqueId] = id;
+
 
       EntityNameUpdatedMessage msg;
       msg.SetAboutEntityId(id);
       msg.SetEntityName(comp->GetEntityName());
       msg.SetUniqueId(newUniqueId);
       GetEntityManager().EmitMessage(msg);
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////
