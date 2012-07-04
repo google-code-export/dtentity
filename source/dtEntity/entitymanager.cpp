@@ -83,58 +83,80 @@ namespace dtEntity
    bool EntityManager::CloneEntity(EntityId target, EntityId origin)
    {
       bool success = true;
-      std::vector<Component*> createdComponents;
+      std::vector<Component*> comps;
 
       for(EntitySystemStore::iterator i = mEntitySystemStore.begin();
           i != mEntitySystemStore.end(); ++i)
       {
          EntitySystem* sys = i->second;
 
-         if(!sys->AllowComponentCreationBySpawner())
+         if(sys->AllowComponentCreationBySpawner())
          {
+            Component* c;
+            if(sys->GetComponent(origin, c))
+            {
+               comps.push_back(c);
+            }
+         }
+      }
+
+      // first create all components in target
+      for(std::vector<Component*>::iterator i = comps.begin(); i != comps.end(); ++i)
+      {
+         Component* origincomp = *i;
+         Component* newcomp;
+         if(!CreateComponent(target, origincomp->GetType(), newcomp))
+         {
+            LOG_ERROR("Could not clone component " << GetStringFromSID(origincomp->GetType()));
+            success = false;
+         }
+      }
+
+      // then configure them
+      for(std::vector<Component*>::iterator i = comps.begin(); i != comps.end(); ++i)
+      {
+         Component* origincomp = *i;
+         Component* clonecomp;
+         if(!GetComponent(target, origincomp->GetType(), clonecomp))
+         {
+            LOG_ERROR("Error in clone entity, could not find cloned component?!?");
+            success = false;
             continue;
          }
 
-         Component* origincomp;
+         const PropertyGroup& props = origincomp->Get();
 
-         if(sys->GetComponent(origin, origincomp))
+         for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
          {
-            Component* clonecomp;
-            bool created = sys->CreateComponent(target, clonecomp);
-            if(!created)
+            Property* prp = clonecomp->Get(i->first);
+            if(prp)
             {
-               LOG_ERROR("Error cloning component!");
-               success = false;
+               prp->SetFrom(*i->second);
+               clonecomp->OnPropertyChanged(i->first, *prp);
             }
             else
             {
-               createdComponents.push_back(clonecomp);
-               const PropertyGroup& props = origincomp->Get();
-
-               for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
-               {
-                  Property* prp = clonecomp->Get(i->first);
-                  if(prp)
-                  {
-                     prp->SetFrom(*i->second);
-                     clonecomp->OnPropertyChanged(i->first, *prp);
-                  }
-                  else
-                  {
-                     LOG_ERROR("Error cloning: Property does not exist in target");
-                     success = false;
-                  }
-               }
+               LOG_ERROR("Error cloning: Property does not exist in target");
+               success = false;
             }
          }
       }
 
-
-      for(std::vector<Component*>::iterator i = createdComponents.begin();
-          i != createdComponents.end(); ++i)
+      // then configure them
+      for(std::vector<Component*>::iterator i = comps.begin(); i != comps.end(); ++i)
       {
-         (*i)->Finished();
+         Component* origincomp = *i;
+         Component* clonecomp;
+         if(!GetComponent(target, origincomp->GetType(), clonecomp))
+         {
+            LOG_ERROR("Error in clone entity, could not find cloned component?!?");
+            success = false;
+            continue;
+         }
+
+         clonecomp->Finished();
       }
+
       return success;
    }
 

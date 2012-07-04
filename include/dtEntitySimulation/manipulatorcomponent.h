@@ -22,7 +22,7 @@
 
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/property.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/nodecomponent.h>
 #include <osgManipulator/Dragger>
 
@@ -70,8 +70,6 @@ namespace dtEntitySimulation
       virtual void OnRemovedFromEntity(dtEntity::Entity& e);
       virtual void Finished();
 
-      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
-
       osgManipulator::Dragger* GetDragger() const;
 
       /**
@@ -80,20 +78,20 @@ namespace dtEntitySimulation
       dtEntity::StringId GetLayer() const;
       void SetLayer(dtEntity::StringId);
 
-      dtEntity::StringId GetDraggerType() const { return mDraggerType.Get(); }
+      dtEntity::StringId GetDraggerType() const { return mDraggerTypeVal; }
       void SetDraggerType(dtEntity::StringId);
 
-      void SetOffsetFromStart(const osg::Vec3d& v) { mOffsetFromStart.Set(v); }
-      osg::Vec3d GetOffsetFromStart() const { return mOffsetFromStart.Get(); }
+      void SetOffsetFromStart(const osg::Vec3d& v);
+      osg::Vec3d GetOffsetFromStart() const { return mOffsetFromStartVal; }
 
       void SetUseLocalCoords(bool v);
       bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
 
       void SetKeepSizeConstant(bool v);
-      bool GetKeepSizeConstant() const { return mKeepSizeConstant.Get(); }
+      bool GetKeepSizeConstant() const { return mKeepSizeConstantVal; }
 
       void SetPivotAtBottom(bool v);
-      bool GetPivotAtBottom() const { return mPivotAtBottom.Get(); }
+      bool GetPivotAtBottom() const { return mPivotAtBottomVal; }
 
    private:
 
@@ -101,14 +99,19 @@ namespace dtEntitySimulation
       void AddToLayer();
 
       osg::ref_ptr<osgManipulator::DraggerCallback> mDraggerCallback;
-      dtEntity::StringIdProperty mLayerProperty;
+      dtEntity::DynamicStringIdProperty mLayerProperty;
+      dtEntity::StringId mLayerVal;
       dtEntity::StringId mAttachPoint;
-      dtEntity::StringIdProperty mDraggerType;
-      dtEntity::Vec3dProperty mOffsetFromStart;
-      dtEntity::BoolProperty mKeepSizeConstant;
-      dtEntity::BoolProperty mUseLocalCoords;
-      dtEntity::BoolProperty mPivotAtBottom;
-
+      dtEntity::DynamicStringIdProperty mDraggerType;
+      dtEntity::StringId mDraggerTypeVal;
+      dtEntity::DynamicVec3dProperty mOffsetFromStart;
+      osg::Vec3 mOffsetFromStartVal;
+      dtEntity::DynamicBoolProperty mKeepSizeConstant;
+      bool mKeepSizeConstantVal;
+      dtEntity::DynamicBoolProperty mUseLocalCoords;
+      bool mUseLocalCoordsVal;
+      dtEntity::DynamicBoolProperty mPivotAtBottom;
+      bool mPivotAtBottomVal;
       osg::ref_ptr<osg::Group> mDraggerContainer;
       
    };
@@ -135,17 +138,16 @@ namespace dtEntitySimulation
       // don't copy manipulators with entities, also don't store to spawners
       virtual bool AllowComponentCreationBySpawner() const { return false; }
 
-      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop);
-
       void SetUseLocalCoords(bool v);
-      bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
+      bool GetUseLocalCoords() const { return mUseLocalCoordsVal; }
 
       void SetUseGroundClamping(bool v) { mUseGroundClamping.Set(v); }
       bool GetUseGroundClamping() const { return mUseGroundClamping.Get(); }
 
    private:
 
-      dtEntity::BoolProperty mUseLocalCoords;
+      dtEntity::DynamicBoolProperty mUseLocalCoords;
+      bool mUseLocalCoordsVal;
       dtEntity::BoolProperty mUseGroundClamping;
    };
 }
