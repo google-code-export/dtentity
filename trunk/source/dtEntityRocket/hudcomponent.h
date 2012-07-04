@@ -23,7 +23,7 @@
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
-#include <dtEntity/property.h>
+#include <dtEntity/dynamicproperty.h>
 #include <Rocket/Core/Element.h>
 #include <v8.h>
 
@@ -81,8 +81,8 @@ namespace dtEntityRocket
 
       Rocket::Core::Element* GetElement() { return mElement; }
 
-      osg::Vec3 GetOffset() const  { return mOffset.Get(); }
-      void SetOffset(const osg::Vec3& o) { mOffset.Set(o); }
+      osg::Vec3 GetOffset() const;
+      void SetOffset(const osg::Vec3& o);
 
       void SetPixelOffset(const osg::Vec2& o) { mPixelOffset.Set(o); }
       osg::Vec2 GetPixelOffset() const { return mPixelOffset.Get(); }
@@ -91,8 +91,8 @@ namespace dtEntityRocket
         * if false, set HUD to origin of transform.
         * if true, get bounding sphere of entity and set HUD to center
         */
-      void SetAlignment(dtEntity::StringId v) { mAlignment.Set(v); }
-      dtEntity::StringId GetAlignment() const { return mAlignment.Get(); }
+      void SetAlignment(dtEntity::StringId v);
+      dtEntity::StringId GetAlignment() const;
 
       /**
         * set HUD to hidden when object relative vector [0,0,1] points away from camera
@@ -109,11 +109,14 @@ namespace dtEntityRocket
 
       dtEntity::Entity* mEntity;
       Rocket::Core::Element* mElement;
-      dtEntity::StringProperty mElementProp;
-      dtEntity::Vec3Property mOffset;
+      std::string mElementId;
+      dtEntity::DynamicStringProperty mElementProp;
+      dtEntity::DynamicVec3Property mOffset;
+      osg::Vec3 mOffsetVal;
       dtEntity::Vec2Property mPixelOffset;
       dtEntity::BoolProperty mVisible;
-      dtEntity::StringIdProperty mAlignment;
+      dtEntity::DynamicStringIdProperty mAlignment;
+      dtEntity::StringId mAlignmentVal;
       dtEntity::BoolProperty mHideWhenNormalPointsAway;
       dtEntity::TransformComponent* mTransformComponent;
       osg::Vec3 mRelPosition;
@@ -140,7 +143,6 @@ namespace dtEntityRocket
 
       void OnRemoveFromEntityManager(dtEntity::EntityManager &em);
 
-      void OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop);
       void SetEnabled(bool);
       bool GetEnabled() const { return mEnabled.Get(); }
 
