@@ -33,6 +33,7 @@
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/globalfunctions.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
+#include <dtEntityWrappers/jsproperty.h>
 #include <dtEntityWrappers/messages.h>
 #include <dtEntityWrappers/screenwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
@@ -149,6 +150,7 @@ namespace dtEntityWrappers
       Isolate::GetCurrent()->SetData(this);
 
       RegisterGlobalFunctions(this, mGlobalContext);
+      RegisterPropertyFunctions(this, mGlobalContext);
 
       InitializeAllWrappers(GetEntityManager());
 
@@ -181,12 +183,10 @@ namespace dtEntityWrappers
          }
       }
 
-
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());
-
 
    }
 
