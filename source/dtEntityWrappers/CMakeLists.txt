@@ -22,6 +22,7 @@ SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/file.h
 	${HEADER_PATH}/globalfunctions.h
 	${HEADER_PATH}/inputhandlerwrapper.h
+  ${HEADER_PATH}/jsproperty.h
 	${HEADER_PATH}/loggerwrapper.h
 	${HEADER_PATH}/mapsystemwrapper.h
 	${HEADER_PATH}/messages.h
@@ -43,7 +44,8 @@ SET(LIB_SOURCES
 	file.cpp
 	globalfunctions.cpp
 	inputhandlerwrapper.cpp	
-    loggerwrapper.cpp
+  jsproperty.cpp
+  loggerwrapper.cpp
 	mapsystemwrapper.cpp
 	propertyconverter.cpp
 	screenwrapper.cpp
