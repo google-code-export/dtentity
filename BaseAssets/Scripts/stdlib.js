@@ -288,3 +288,30 @@ function makeMatrix(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16) {
    ret.__TYPE_HINT = "MT";
    return ret;
 }
+
+
+function __createPropertyGeneric(createFun, value, getter, setter) {
+  if(typeof getter === 'undefined' || typeof setter === 'undefined') {
+    var b = createFun(function() { return this.val; }, function(v) { this.val = v; });
+    b.val = value;
+    return b;
+  } else {
+    var b = createFun(getter, setter);
+    if(typeof value !== 'undefined') {
+      __createPropertyBool.set(value);
+    }
+    return b;
+  }
+}
+
+function createPropertyBool(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyBool, value, getter, setter);
+}
+
+function createPropertyInt(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyInt, value, getter, setter);
+}
+
+function createPropertyNumber(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyNumber, value, getter, setter);
+}

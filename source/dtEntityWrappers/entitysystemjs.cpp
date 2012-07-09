@@ -21,7 +21,9 @@
 #include <dtEntityWrappers/entitysystemjs.h>
 #include <dtEntity/log.h>
 #include <dtEntity/property.h>
+#include <dtEntityWrappers/jsproperty.h>
 #include <dtEntityWrappers/propertyconverter.h>
+#include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
 #include <iostream>
@@ -70,6 +72,9 @@ namespace dtEntityWrappers
 
       V8::AdjustAmountOfExternalAllocatedMemory(sizeof(ComponentJS));
 
+      Handle<FunctionTemplate> proptpl = GetScriptSystem()->GetTemplateBySID(PropertyGetterSetter::TemplateHandle);
+
+
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
       {
@@ -88,20 +93,37 @@ namespace dtEntityWrappers
          // don't convert functions to component properties
          if(!val->IsFunction())
          {
-            dtEntity::Property* prop = ConvertValueToProperty(val);
-            if(prop)
+            // handle properties created with createProperty* functions
+            if(!proptpl.IsEmpty() && proptpl->HasInstance(val))
             {
+               PropertyGetterSetter* prop = UnwrapProperty(val);
+               assert(prop);
                dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
                if(j != mValue.end())
                {
-		           delete j->second;
+                 delete j->second;
                  mValue.erase(j);
-	            }        
-               mValue[propname_sid] = prop;     
-            }      
-            
-            Handle<External> ext = v8::External::New(static_cast<void*>(this));
-            obj->SetAccessor(propname, PropertyGetter, PropertySetter, ext);
+               }
+               mValue[propname_sid] = prop;
+
+            }
+            else
+            {
+               dtEntity::Property* prop = ConvertValueToProperty(val);
+               if(prop)
+               {
+                  dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
+                  if(j != mValue.end())
+                  {
+                    delete j->second;
+                    mValue.erase(j);
+                  }
+                  mValue[propname_sid] =  prop;
+               }
+
+               Handle<External> ext = v8::External::New(static_cast<void*>(this));
+               obj->SetAccessor(propname, PropertyGetter, PropertySetter, ext);
+            }
          }
       }
    }
@@ -250,6 +272,8 @@ namespace dtEntityWrappers
       mStringAllowComponentCreationBySpawner = Persistent<String>::New(String::New("allowComponentCreationBySpawner"));
       mStringStorePropertiesToScene = Persistent<String>::New(String::New("storePropertiesToScene"));
 
+      Handle<FunctionTemplate> proptpl = GetScriptSystem()->GetTemplateBySID(PropertyGetterSetter::TemplateHandle);
+
       Handle<Array> propnames = obj->GetPropertyNames();
       // loop through all properties of object
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -267,17 +291,34 @@ namespace dtEntityWrappers
          //don't convert functions to entity system properties, only primitive values
          if(!val->IsFunction())
          {
-            dtEntity::Property* prop = ConvertValueToProperty(val);
-            if(prop)
+            // handle properties created with createProperty* functions
+            if(!proptpl.IsEmpty() && proptpl->HasInstance(val))
             {
+               PropertyGetterSetter* prop = UnwrapProperty(val);
+               assert(prop);
                dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
                if(j != mValue.end())
                {
-		           delete j->second;
+                 delete j->second;
                  mValue.erase(j);
-	            }        
-               mValue[propname_sid] = prop;     
-            }         
+               }
+               mValue[propname_sid] = prop;
+
+            }
+            else
+            {
+               dtEntity::Property* prop = ConvertValueToProperty(val);
+               if(prop)
+               {
+                  dtEntity::PropertyGroup::iterator j = mValue.find(propname_sid);
+                  if(j != mValue.end())
+                  {
+                    delete j->second;
+                    mValue.erase(j);
+                  }
+                  mValue[propname_sid] = prop;
+               }
+            }
          }
       }
    }
