@@ -332,6 +332,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void RegisterPropertyFunctions(ScriptSystem* ss, Handle<Context> context)
    {
+      Context::Scope context_scope(context);
       context->Global()->Set(String::New("__createPropertyBool"), FunctionTemplate::New(CreatePropertyBool)->GetFunction());
       context->Global()->Set(String::New("__createPropertyInt32"), FunctionTemplate::New(CreatePropertyInt32)->GetFunction());
       context->Global()->Set(String::New("__createPropertyNumber"), FunctionTemplate::New(CreatePropertyNumber)->GetFunction());
