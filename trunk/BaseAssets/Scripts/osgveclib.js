@@ -206,6 +206,28 @@ osg.Matrix = {
         return result;
     },
 
+  preMultVec4: function(s, vec, result) {
+      if (result === undefined) {
+          result = [];
+      }
+      result[0] = s[0]*vec[0] + s[4]*vec[1] + s[ 8]*vec[2] + s[12]*[3];
+      result[1] = s[1]*vec[0] + s[5]*vec[1] + s[ 9]*vec[2] + s[13]*[3];
+      result[2] = s[2]*vec[0] + s[6]*vec[1] + s[10]*vec[2] + s[14]*[3];
+      result[3] = s[3]*vec[0] + s[7]*vec[1] + s[11]*vec[2] + s[15]*[3];
+      return result;
+  },
+
+  postMultVec4: function(s, vec, result) {
+      if (result === undefined) {
+          result = [];
+      }
+      result[0] = s[ 0]*vec[0] + s[ 1]*vec[1] + s[ 2]*vec[2] + s[ 3]*vec[3];
+      result[0] = s[ 4]*vec[0] + s[ 5]*vec[1] + s[ 6]*vec[2] + s[ 7]*vec[3];
+      result[0] = s[ 8]*vec[0] + s[ 9]*vec[1] + s[10]*vec[2] + s[11]*vec[3];
+      result[0] = s[12]*vec[0] + s[13]*vec[1] + s[14]*vec[2] + s[15]*vec[3];
+      return result;
+  },
+
     makeLookAt: function(eye, center, up, result) {
 
         if (result === undefined) {

@@ -98,6 +98,13 @@ namespace dtEntityNet
       {
          dtEntity::EntityId id = i->first;
          DeadReckoningReceiverComponent* comp = i->second;
+
+         // if did not yet receive a valid position
+         if(comp->mTimeLastReceive == 0)
+         {
+            continue;
+         }
+
          if(comp->mDeadRecAlg == DeadReckoningAlgorithm::DISABLED)
          {
             continue;
@@ -135,6 +142,7 @@ namespace dtEntityNet
             }
             case DeadReckoningAlgorithm::FPW:
             {
+
                osg::Vec3d newpos;
                osg::Vec3 newori;
                CalculateDRFPW(comp->mPosition,
@@ -144,8 +152,13 @@ namespace dtEntityNet
                            msg.GetSimulationTime() - comp->mTimeLastReceive,
                            newpos,
                            newori);
-               osg::Vec3d smootht = (newpos + comp->mTransformComponent->GetTranslation()) * 0.5f;
-               comp->mTransformComponent->SetTranslation(smootht);
+
+               // apply smoothing
+               if(true)
+               {
+                  newpos = (newpos + comp->mTransformComponent->GetTranslation()) * 0.5f;
+               }
+               comp->mTransformComponent->SetTranslation(newpos);
 
                osg::Quat smoothr;
                smoothr.slerp(0.5, EulerToQuat(newori), comp->mTransformComponent->GetRotation());
@@ -168,14 +181,11 @@ namespace dtEntityNet
          std::string entitytype = msg.GetEntityType();
          std::string uniqueid = msg.GetUniqueId();
 
-         dtEntity::MapSystem* mapsys;
-         GetEntityManager().GetES(mapsys);
-
          dtEntity::Entity* entity;
          GetEntityManager().CreateEntity(entity);
 
          dtEntity::Spawner* spawner;
-         if(!mapsys->GetSpawner(entitytype, spawner))
+         if(!mMapSystem->GetSpawner(entitytype, spawner))
          {
             LOG_ERROR("Cannot instantiate remote entity, spawner not found: " << entitytype);
             return;
@@ -194,7 +204,6 @@ namespace dtEntityNet
          entity->CreateComponent(rc);
          rc->mUniqueId = msg.GetUniqueId();
 
-         mapsys->AddToScene(entity->GetId());
       }
 
 
@@ -206,15 +215,14 @@ namespace dtEntityNet
       if(GetSpawnFromEntityType())
       {
          const ResignMessage& msg = static_cast<const ResignMessage&>(m);
-         dtEntity::MapSystem* mapsys;
-         GetEntityManager().GetES(mapsys);
+
          dtEntity::Entity* entity;
-         if(!mapsys->GetEntityByUniqueId(msg.GetUniqueId(), entity))
+         if(!mMapSystem->GetEntityByUniqueId(msg.GetUniqueId(), entity))
          {
             LOG_ERROR("Cannot resign: Entity not found with unique id " << msg.GetUniqueId());
             return;
          }
-         mapsys->RemoveFromScene(entity->GetId());
+         mMapSystem->RemoveFromScene(entity->GetId());
          GetEntityManager().KillEntity(entity->GetId());
       }
    }
@@ -222,6 +230,7 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningReceiverSystem::OnUpdateTransform(const dtEntity::Message& m)
    {
+      assert(dynamic_cast<const UpdateTransformMessage*>(&m) != NULL);
       const UpdateTransformMessage& msg = static_cast<const UpdateTransformMessage&>(m);
 
       assert(mMapSystem != NULL);
@@ -236,6 +245,24 @@ namespace dtEntityNet
       {
          LOG_ERROR("Received transform, entity exists but has no receiver component!");
          return;
+      }
+
+      // first time a transform was received, make visible!
+      if(comp->mTimeLastReceive == 0)
+      {
+         if(comp->mTransformComponent == NULL)
+         {
+            bool success = GetEntityManager().GetComponent(id, comp->mTransformComponent, true);
+            if(!success)
+            {
+               LOG_ERROR("NetworSender Component expects a Transform Component!");
+               return;
+            }
+         }
+
+         comp->mTransformComponent->SetTranslation(msg.GetPosition());
+         comp->mTransformComponent->SetRotation(EulerToQuat(msg.GetOrientation()));
+         mMapSystem->AddToScene(id);
       }
 
       assert(mApplicationSystem != NULL);
