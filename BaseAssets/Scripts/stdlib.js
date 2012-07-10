@@ -304,23 +304,23 @@ function __createPropertyGeneric(createFun, value, getter, setter) {
   return p;
 }
 
-function createPropertyBool(value, getter, setter) {
+function boolProp(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyBool, value, getter, setter);
 }
 
-function createPropertyInt32(value, getter, setter) {
+function int32Prop(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyInt32, value, getter, setter);
 }
 
-function createPropertyUint32(value, getter, setter) {
+function uint32Prop(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyUint32, value, getter, setter);
 }
 
-function createPropertyNumber(value, getter, setter) {
+function numberProp(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyNumber, value, getter, setter);
 }
 
-function createPropertyString(value, getter, setter) {
+function stringProp(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyString, value, getter, setter);
 }
 
@@ -347,20 +347,20 @@ function __createPropertyStruct(createFun, value, getter, setter) {
 
 }
 
-function createPropertyQuat(value, getter, setter) {
+function quatProp(value, getter, setter) {
   return __createPropertyStruct(__createPropertyQuat, value, getter, setter);
 }
 
-function createPropertyVec2(value, getter, setter) {
+function vec2Prop(value, getter, setter) {
   return __createPropertyStruct(__createPropertyVec2, value, getter, setter);
 }
 
 
-function createPropertyVec3(value, getter, setter) {
+function vec3Prop(value, getter, setter) {
   return __createPropertyStruct(__createPropertyVec3, value, getter, setter);
 }
 
 
-function createPropertyVec4(value, getter, setter) {
+function vec4Prop(value, getter, setter) {
   return __createPropertyStruct(__createPropertyVec4, value, getter, setter);
 }
