@@ -152,6 +152,11 @@ namespace dtEntityNet
          dtEntity::EntityId id = i->first;
          DeadReckoningSenderComponent* comp = i->second;
 
+         if(!comp->mIsInScene)
+         {
+            continue;
+         }
+
          if(comp->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::DISABLED ||
             comp->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
          {
@@ -257,9 +262,6 @@ namespace dtEntityNet
          msg.SetEntityType(comp->GetEntityType());
          mOutgoing.EmitMessage(msg);
 
-         UpdateTransformMessage transmsg;
-         comp->FillMessage(transmsg);
-         mOutgoing.EmitMessage(transmsg);
       }
    }
 
@@ -283,6 +285,11 @@ namespace dtEntityNet
    ////////////////////////////////////////////////////////////////////////////
    void DeadReckoningSenderSystem::ResendJoinMessages(dtEntity::MessageReceiver& rcvr)
    {
+      if(mComponents.empty())
+      {
+         return;
+      }
+
       JoinMessage joinmsg;
 
       for(ComponentStore::const_iterator i = mComponents.begin(); i != mComponents.end(); ++i)
