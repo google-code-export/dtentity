@@ -954,9 +954,9 @@ namespace dtEntity
    QuatProperty::QuatProperty()
    {
       mValues[0] = 0;
-      mValues[1] = 1;
-      mValues[2] = 2;
-      mValues[3] = 3;
+      mValues[1] = 0;
+      mValues[2] = 0;
+      mValues[3] = 1;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
