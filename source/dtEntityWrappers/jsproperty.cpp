@@ -331,6 +331,75 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
+   JSQuatProperty::JSQuatProperty(Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(getter, setter)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Quat JSQuatProperty::Get() const
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mGetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+      Handle<Array> a = Handle<Array>::Cast(ret);
+      if(a.IsEmpty() || a->Length() < 4)
+      {
+         LOG_ERROR("Wrong return value from array property getter!");
+      }
+      return osg::Quat(a->Get(0)->NumberValue(),
+                       a->Get(1)->NumberValue(),
+                       a->Get(2)->NumberValue(),
+                       a->Get(3)->NumberValue());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void JSQuatProperty::Set(const osg::Quat& v)
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mSetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> argv[4] = { Number::New(v[0]),
+                                Number::New(v[1]),
+                                Number::New(v[2]),
+                                Number::New(v[3])
+                              };
+      Handle<Value> ret = mSetter->Call(mHolder, 4, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> CreatePropertyQuat(const Arguments& args)
+   {
+      HandleScope scope;
+
+      Handle<Function> fg = Handle<Function>::Cast(args[0]);
+      Handle<Function> fs = Handle<Function>::Cast(args[1]);
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyQuat expects two function arguments");
+      }
+      JSQuatProperty* prop = new JSQuatProperty(fg, fs);
+      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
+      pobj.MakeWeak(NULL, &PropertyDestructor);
+      prop->mHolder = pobj;
+      return pobj;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    JSStringProperty::JSStringProperty(Handle<Function> getter, Handle<Function> setter)
    : PropertyGetterSetter(getter, setter)
    {
@@ -388,13 +457,218 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   JSVec2Property::JSVec2Property(Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(getter, setter)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2d JSVec2Property::Get() const
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mGetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+      Handle<Array> a = Handle<Array>::Cast(ret);
+      if(a.IsEmpty() || a->Length() < 2)
+      {
+         LOG_ERROR("Wrong return value from array property getter!");
+      }
+      return osg::Vec2d(a->Get(0)->NumberValue(),
+                       a->Get(1)->NumberValue());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void JSVec2Property::Set(const osg::Vec2d& v)
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mSetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> argv[2] = { Number::New(v[0]),
+                                Number::New(v[1])
+                              };
+      Handle<Value> ret = mSetter->Call(mHolder, 2, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> CreatePropertyVec2(const Arguments& args)
+   {
+      HandleScope scope;
+
+      Handle<Function> fg = Handle<Function>::Cast(args[0]);
+      Handle<Function> fs = Handle<Function>::Cast(args[1]);
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyVec2 expects two function arguments");
+      }
+      JSVec2Property* prop = new JSVec2Property(fg, fs);
+      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
+      pobj.MakeWeak(NULL, &PropertyDestructor);
+      prop->mHolder = pobj;
+      return pobj;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   JSVec3Property::JSVec3Property(Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(getter, setter)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3d JSVec3Property::Get() const
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mGetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+      Handle<Array> a = Handle<Array>::Cast(ret);
+      if(a.IsEmpty() || a->Length() < 3)
+      {
+         LOG_ERROR("Wrong return value from array property getter!");
+      }
+      return osg::Vec3d(a->Get(0)->NumberValue(),
+                        a->Get(1)->NumberValue(),
+                        a->Get(2)->NumberValue());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void JSVec3Property::Set(const osg::Vec3d& v)
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mSetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> argv[3] = { Number::New(v[0]),
+                                Number::New(v[1]),
+                                Number::New(v[2])
+                              };
+      Handle<Value> ret = mSetter->Call(mHolder, 3, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> CreatePropertyVec3(const Arguments& args)
+   {
+      HandleScope scope;
+
+      Handle<Function> fg = Handle<Function>::Cast(args[0]);
+      Handle<Function> fs = Handle<Function>::Cast(args[1]);
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyVec3 expects two function arguments");
+      }
+      JSVec3Property* prop = new JSVec3Property(fg, fs);
+      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
+      pobj.MakeWeak(NULL, &PropertyDestructor);
+      prop->mHolder = pobj;
+      return pobj;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   JSVec4Property::JSVec4Property(Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(getter, setter)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec4d JSVec4Property::Get() const
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mGetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+      Handle<Array> a = Handle<Array>::Cast(ret);
+      if(a.IsEmpty() || a->Length() < 4)
+      {
+         LOG_ERROR("Wrong return value from array property getter!");
+      }
+      return osg::Vec4d(a->Get(0)->NumberValue(),
+                        a->Get(1)->NumberValue(),
+                        a->Get(2)->NumberValue(),
+                        a->Get(3)->NumberValue());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void JSVec4Property::Set(const osg::Vec4d& v)
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mSetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> argv[4] = { Number::New(v[0]),
+                                Number::New(v[1]),
+                                Number::New(v[2]),
+                                Number::New(v[3])
+                              };
+      Handle<Value> ret = mSetter->Call(mHolder, 4, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> CreatePropertyVec4(const Arguments& args)
+   {
+      HandleScope scope;
+
+      Handle<Function> fg = Handle<Function>::Cast(args[0]);
+      Handle<Function> fs = Handle<Function>::Cast(args[1]);
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyVec4 expects two function arguments");
+      }
+      JSVec4Property* prop = new JSVec4Property(fg, fs);
+      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
+      pobj.MakeWeak(NULL, &PropertyDestructor);
+      prop->mHolder = pobj;
+      return pobj;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void RegisterPropertyFunctions(ScriptSystem* ss, Handle<Context> context)
    {
       Context::Scope context_scope(context);
       context->Global()->Set(String::New("__createPropertyBool"), FunctionTemplate::New(CreatePropertyBool)->GetFunction());
       context->Global()->Set(String::New("__createPropertyInt32"), FunctionTemplate::New(CreatePropertyInt32)->GetFunction());
       context->Global()->Set(String::New("__createPropertyNumber"), FunctionTemplate::New(CreatePropertyNumber)->GetFunction());
+      context->Global()->Set(String::New("__createPropertyQuat"), FunctionTemplate::New(CreatePropertyQuat)->GetFunction());
       context->Global()->Set(String::New("__createPropertyUInt32"), FunctionTemplate::New(CreatePropertyUInt32)->GetFunction());
       context->Global()->Set(String::New("__createPropertyString"), FunctionTemplate::New(CreatePropertyString)->GetFunction());
+      context->Global()->Set(String::New("__createPropertyVec2"), FunctionTemplate::New(CreatePropertyVec2)->GetFunction());
+      context->Global()->Set(String::New("__createPropertyVec3"), FunctionTemplate::New(CreatePropertyVec3)->GetFunction());
+      context->Global()->Set(String::New("__createPropertyVec4"), FunctionTemplate::New(CreatePropertyVec4)->GetFunction());
    }
 }
