@@ -291,25 +291,29 @@ function makeMatrix(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16) {
 
 
 function __createPropertyGeneric(createFun, value, getter, setter) {
-  if(typeof getter === 'undefined' || typeof setter === 'undefined') {
-    var b = createFun(function() { return this.value; }, function(v) { this.value = v; });
-    b.value = value;
-    return b;
-  } else {
-    var b = createFun(getter, setter);
-    if(typeof value !== 'undefined') {
-      __createPropertyBool.set(value);
-    }
-    return b;
+  if(typeof getter === 'undefined') {
+    getter = function() { return this.value; };
   }
+  if(typeof setter === 'undefined') {
+    setter = function(v) { this.value = v; };
+  }
+  var p = createFun(getter, setter);
+  if(typeof value !== 'undefined') {
+    p.value = value;
+  }
+  return p;
 }
 
 function createPropertyBool(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyBool, value, getter, setter);
 }
 
-function createPropertyInt(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyInt, value, getter, setter);
+function createPropertyInt32(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyInt32, value, getter, setter);
+}
+
+function createPropertyUint32(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyUint32, value, getter, setter);
 }
 
 function createPropertyNumber(value, getter, setter) {
@@ -318,4 +322,45 @@ function createPropertyNumber(value, getter, setter) {
 
 function createPropertyString(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyString, value, getter, setter);
+}
+
+function __createPropertyStruct(createFun, value, getter, setter) {
+
+  if(typeof getter === 'undefined') {
+    getter = function() { return this.value; }
+  }
+  if(typeof setter === 'undefined') {
+    setter = function() {
+      for(var i = 0; i < arguments.length; ++i) {
+        this.value[i] = arguments[i];
+      }
+    }
+  }
+
+  var p = createFun(getter, setter);
+  if(typeof value === 'undefined') {
+    p.value = [];
+  } else {
+    p.value = value;
+  }
+  return p;
+
+}
+
+function createPropertyQuat(value, getter, setter) {
+  return __createPropertyStruct(__createPropertyQuat, value, getter, setter);
+}
+
+function createPropertyVec2(value, getter, setter) {
+  return __createPropertyStruct(__createPropertyVec2, value, getter, setter);
+}
+
+
+function createPropertyVec3(value, getter, setter) {
+  return __createPropertyStruct(__createPropertyVec3, value, getter, setter);
+}
+
+
+function createPropertyVec4(value, getter, setter) {
+  return __createPropertyStruct(__createPropertyVec4, value, getter, setter);
 }
