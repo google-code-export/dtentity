@@ -41,6 +41,13 @@ namespace dtEntityWrappers
       {
       }
 
+      ~PropertyGetterSetter()
+      {
+         mGetter.Dispose();
+         mSetter.Dispose();
+         mHolder.Dispose();
+      }
+
       v8::Persistent<v8::Function> mGetter;
       v8::Persistent<v8::Function> mSetter;
       v8::Persistent<v8::Object> mHolder;
@@ -56,8 +63,6 @@ namespace dtEntityWrappers
          GROUP,
          MATRIX,
          QUAT,
-         STRING,
-         STRINGID,
          VEC2,
          VEC3,
          VEC4,
@@ -153,5 +158,25 @@ namespace dtEntityWrappers
 
       double Get() const;
       void Set(double v);
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class JSStringProperty
+         : public PropertyGetterSetter
+   {
+   public:
+
+      JSStringProperty(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+
+      virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::STRING; }
+
+      virtual void SetString(const std::string& v) { Set(v); }
+      virtual const std::string StringValue() const { return Get(); }
+      virtual Property* Clone() const { return new dtEntity::StringProperty(Get()); }
+      virtual bool operator==(const dtEntity::Property& other) const { return other.StringValue() == Get(); }
+      virtual bool SetFrom(const dtEntity::Property& other) { Set(other.StringValue()); return true; }
+
+      std::string Get() const;
+      void Set(const std::string& v);
    };
 }

@@ -292,8 +292,8 @@ function makeMatrix(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16) {
 
 function __createPropertyGeneric(createFun, value, getter, setter) {
   if(typeof getter === 'undefined' || typeof setter === 'undefined') {
-    var b = createFun(function() { return this.val; }, function(v) { this.val = v; });
-    b.val = value;
+    var b = createFun(function() { return this.value; }, function(v) { this.value = v; });
+    b.value = value;
     return b;
   } else {
     var b = createFun(getter, setter);
@@ -314,4 +314,8 @@ function createPropertyInt(value, getter, setter) {
 
 function createPropertyNumber(value, getter, setter) {
   return __createPropertyGeneric(__createPropertyNumber, value, getter, setter);
+}
+
+function createPropertyString(value, getter, setter) {
+  return __createPropertyGeneric(__createPropertyString, value, getter, setter);
 }

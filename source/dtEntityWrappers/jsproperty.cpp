@@ -330,6 +330,64 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   JSStringProperty::JSStringProperty(Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(getter, setter)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string JSStringProperty::Get() const
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mGetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+      return ToStdString(ret);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void JSStringProperty::Set(const std::string& v)
+   {
+      HandleScope scope;
+      Context::Scope context_scope(mSetter->CreationContext());
+      TryCatch try_catch;
+
+      Handle<Value> val = String::New(v.c_str());
+      Handle<Value> argv[1] = { val };
+      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> CreatePropertyString(const Arguments& args)
+   {
+      HandleScope scope;
+
+      Handle<Function> fg = Handle<Function>::Cast(args[0]);
+      Handle<Function> fs = Handle<Function>::Cast(args[1]);
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyString expects two function arguments");
+      }
+      JSStringProperty* prop = new JSStringProperty(fg, fs);
+      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
+      pobj.MakeWeak(NULL, &PropertyDestructor);
+      prop->mHolder = pobj;
+      return pobj;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void RegisterPropertyFunctions(ScriptSystem* ss, Handle<Context> context)
    {
       Context::Scope context_scope(context);
@@ -337,5 +395,6 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("__createPropertyInt32"), FunctionTemplate::New(CreatePropertyInt32)->GetFunction());
       context->Global()->Set(String::New("__createPropertyNumber"), FunctionTemplate::New(CreatePropertyNumber)->GetFunction());
       context->Global()->Set(String::New("__createPropertyUInt32"), FunctionTemplate::New(CreatePropertyUInt32)->GetFunction());
+      context->Global()->Set(String::New("__createPropertyString"), FunctionTemplate::New(CreatePropertyString)->GetFunction());
    }
 }
