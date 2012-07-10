@@ -57,6 +57,19 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    TextureLabelComponent::TextureLabelComponent()
       : dtEntity::NodeComponent(new osg::Geode())
+      , mOffset(
+         DynamicVec3Property::SetValueCB(this, &TextureLabelComponent::SetOffset),
+         DynamicVec3Property::GetValueCB(this, &TextureLabelComponent::GetOffset)
+      )
+      , mColor(
+         DynamicVec4Property::SetValueCB(this, &TextureLabelComponent::SetColor),
+         DynamicVec4Property::GetValueCB(this, &TextureLabelComponent::GetColor)
+      )
+      , mColorVal(osg::Vec4(1,1,1,1))
+      , mVisible(
+         DynamicBoolProperty::SetValueCB(this, &TextureLabelComponent::SetVisible),
+         DynamicBoolProperty::GetValueCB(this, &TextureLabelComponent::GetVisible)
+      )
       , mLabelSystem(NULL)
    {
       osg::Geode* geode = static_cast<osg::Geode*>(GetNode());
@@ -77,7 +90,7 @@ namespace dtEntity
       mMaxSize.Set(1024);
       mMinSize.Set(0);
       mDistanceAttenuation.Set(osg::Vec3(0, 0, 0));
-      mColor.Set(osg::Vec4(1,1,1,1));
+
       mVisible.Set(true);
       mAlwaysOnTop.Set(true);
 
@@ -108,7 +121,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void TextureLabelComponent::SetVisible(bool v)
    {
-      mVisible.Set(v);
       osg::Geode* geode = static_cast<osg::Geode*>(GetNode());
 
       bool visible = GetVisible();
@@ -135,7 +147,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void TextureLabelComponent::SetOffset(const osg::Vec3& o)
    {
-      mOffset.Set(o);
+      mOffsetVal = o;
       osg::Vec3Array* verts = static_cast<osg::Vec3Array*>(mDotGeometry->getVertexArray());
       (*verts)[0] = o;
       mDotGeometry->dirtyDisplayList();
@@ -145,7 +157,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void TextureLabelComponent::SetColor(const osg::Vec4& v)
    {
-      mColor.Set(v);
+      mColorVal = v;
       mColorUniform->set(v);
    }
 
@@ -153,27 +165,6 @@ namespace dtEntity
    osg::Geode* TextureLabelComponent::GetGeode() const
    {
       return static_cast<osg::Geode*>(GetNode());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void TextureLabelComponent::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
-   {
-      if(propname == OffsetId)
-      {
-         SetOffset(prop.Vec3Value());
-      }
-      else if(propname == ColorId)
-      {
-         SetColor(prop.Vec4Value());
-      }
-      else if(propname == VisibleId)
-      {
-         SetVisible(prop.BoolValue());
-      }
-      else
-      {
-         BaseClass::OnPropertyChanged(propname, prop);
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -199,9 +190,14 @@ namespace dtEntity
 
    TextureLabelSystem::TextureLabelSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<TextureLabelComponent>(em)
+      , mEnabled(
+         DynamicBoolProperty::SetValueCB(this, &TextureLabelSystem::SetEnabled),
+         DynamicBoolProperty::GetValueCB(this, &TextureLabelSystem::GetEnabled)
+      )
+      , mEnabledVal(true)
    {
       Register(EnabledId, &mEnabled);
-      mEnabled.Set(true);
+
 
       mProgram = new osg::Program();
 
@@ -244,21 +240,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextureLabelSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property& prop)
-   {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    void TextureLabelSystem::SetEnabled(bool v)
    {
+      mEnabledVal = v;
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {
          i->second->SetVisible(v);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool TextureLabelSystem::GetEnabled() const
+   {
+      return mEnabledVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////

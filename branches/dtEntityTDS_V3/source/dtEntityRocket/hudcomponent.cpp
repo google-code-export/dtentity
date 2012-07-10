@@ -52,6 +52,19 @@ namespace dtEntityRocket
    HUDComponent::HUDComponent()
       : mEntity(NULL)
       , mElement(NULL)
+      , mElementProp(
+           dtEntity::DynamicStringProperty::SetValueCB(this, &HUDComponent::SetElementById),
+           dtEntity::DynamicStringProperty::GetValueCB(this, &HUDComponent::GetElementId)
+        )
+      , mOffset(
+           dtEntity::DynamicVec3Property::SetValueCB(this, &HUDComponent::SetOffset),
+           dtEntity::DynamicVec3Property::GetValueCB(this, &HUDComponent::GetOffset)
+        )
+      , mAlignment(
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &HUDComponent::SetAlignment),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &HUDComponent::GetAlignment)
+        )
+      , mAlignmentVal(AlignToOriginId)
       , mTransformComponent(NULL)
    {
       Register(ElementId, &mElementProp);
@@ -62,6 +75,7 @@ namespace dtEntityRocket
       Register(HideWhenNormalPointsAwayId, &mHideWhenNormalPointsAway);
 
       mVisible.Set(true);
+
    }
     
    ////////////////////////////////////////////////////////////////////////////
@@ -113,8 +127,6 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    void HUDComponent::CalculateRelPosition()
    {
-
-      mRelPosition = GetOffset();
 
       if(mTransformComponent == NULL)
       {
@@ -168,12 +180,21 @@ namespace dtEntityRocket
          mRelPosition += GetOffset();
          mRelPosition -= mTransformComponent->GetTranslation();
       }
+      else if(alignment == HUDComponent::AlignToOriginId)
+      {
+         mRelPosition = GetOffset();
+      }
+      else
+      {
+         LOG_ERROR("Unknown alignment for HUD component: " << dtEntity::GetStringFromSID(alignment));
+         mRelPosition = GetOffset();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void HUDComponent::SetElementById(const std::string& id)
    {
-      mElementProp.Set(id);
+      mElementId = id;
       mElement = NULL;
       RocketSystem* rs;
       bool success = mEntity->GetEntityManager().GetEntitySystem(RocketComponent::TYPE, rs);
@@ -203,11 +224,33 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    std::string HUDComponent::GetElementId() const
    {
-      if(mElement == NULL)
-      {
-         return "";
-      }
-      return mElement->GetId().CString();
+      return mElementId;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 HUDComponent::GetOffset() const
+   {
+      return mOffsetVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDComponent::SetOffset(const osg::Vec3& o)
+   {
+      mOffsetVal = o;
+      CalculateRelPosition();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDComponent::SetAlignment(dtEntity::StringId v)
+   {
+      mAlignmentVal = v;
+      CalculateRelPosition();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::StringId HUDComponent::GetAlignment() const
+   {
+      return mAlignmentVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -239,15 +282,6 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    HUDSystem::~HUDSystem()
    {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void HUDSystem::OnPropertyChanged(dtEntity::StringId propname, dtEntity::Property &prop)
-   {
-      if(propname == EnabledId)
-      {
-         SetEnabled(prop.BoolValue());
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
