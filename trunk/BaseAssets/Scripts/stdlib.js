@@ -364,3 +364,56 @@ function vec3Prop(value, getter, setter) {
 function vec4Prop(value, getter, setter) {
   return __createPropertyStruct(__createPropertyVec4, value, getter, setter);
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+function JSEntitySystem(componentCreateFun, componentType) {
+
+  this.components = [];
+
+  this.componentType = componentType;
+  this.ComponentCreateFun = componentCreateFun;
+  this.created = function() {}
+  this.destroyed = function() {}
+
+  this.hasComponent = function (eid) {
+    for(var k in this.components) {
+      if(k === eid) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  this.getComponent = function (eid) {
+    return this.components[eid];
+  }
+
+  this.createComponent = function (eid) {
+    if(this.hasComponent(eid)) {
+      Log.error("component with id " + eid + " already exists!");
+      return null;
+    }
+
+    var c = new this.ComponentCreateFun(eid);
+    this.components[eid] = c;
+    this.created(eid, c);
+    return c;
+  }
+
+  this.deleteComponent = function (eid) {
+    var c = this.components[eid];
+    this.destroyed(eid, c);
+    delete c;
+  }
+
+
+  this.getEntitiesInSystem = function () {
+    var arr = [];
+    for(var key in this.components) {
+       arr.push(parseInt(key));
+    }
+    return arr;
+  }
+}
