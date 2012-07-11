@@ -26,6 +26,7 @@ function EditorMotionComponent(eid) {
   this.contextId = int32Prop(0);
 
   this.finished = function() {
+
      camera = getEntitySystem("Camera").getComponent(eid);
      if(camera) {
        this.contextId.set(camera.ContextId);
@@ -156,9 +157,9 @@ function EditorMotionComponent(eid) {
    }
 
    this.mouseMove = function(x, y, handled, cid) {
-
       if(handled) return;
-      if(camera === null || !this.Enabled.get() || this.contextId.value !== cid) return;
+
+      if(camera === null || !this.Enabled.value || this.contextId.value !== cid) return;
 
       var pos = camera.Position;
       var up = camera.Up;
@@ -188,6 +189,7 @@ function EditorMotionComponent(eid) {
       } else if(Input.getMouseButton(2, this.contextId.value)) {
 
         if(self.Projection.value === "3d") {
+
             var pivotToCam = osg.Vec3.sub(pos, pivot);
             osg.Quat.makeRotate(mouseX * -0.001, up[0], up[1], up[2], rotateOp);
             osg.Quat.rotate(rotateOp, pivotToCam, pivotToCam);
@@ -350,105 +352,57 @@ function EditorMotionComponent(eid) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-function EditorMotionSystem() {
 
-  var self = this;
-  // -----------------------------------------
-  var components = [];
 
-  this.componentType = "EditorMotion";
+var editorMotionSystem = new JSEntitySystem(EditorMotionComponent, "EditorMotion");
 
-  setInterval(function() {
-    for(k in components) {
-      components[k].update();
-    }
-  }, 0);
-
-  // -----------------------------------------
-  this.hasComponent = function(eid) {
-
-    return (components[eid]) ? true : false;
-  };
-
-  // -----------------------------------------
-  this.getComponent = function(eid) {
-    return components[eid];
-  }
-
-  // ----------------------------
-  this.createComponent = function(eid) {
-    if(self.hasComponent(eid)) {
-      Log.error("EditorMotion component with id " + eid + " already exists!");
-      return self.getComponent(eid);
-    }
-
-    var c = new EditorMotionComponent(eid);
-    components[eid] = c;
-
-    Input.addInputCallback(c);
-    c.finished();
-    return c;
-  }
-
-  // -----------------------------------------
-  this.deleteComponent = function(eid) {
-    if(self.hasComponent(eid)) {
-      var comp = components[eid];
-      comp.destruct();
-      Input.removeInputCallback(comp);
-      delete components[eid];
+// -----------------------------------------
+editorMotionSystem.getComponentByContextId = function(contextid)  {
+  var component = null;
+  for(k in editorMotionSystem.components) {
+    if(editorMotionSystem.components[k].contextId.value === contextid) {
+      return editorMotionSystem.components[k];
     }
   }
+  return null;
+}
 
-  // -----------------------------------------
-  this.getEntitiesInSystem = function() {
-    var arr = [];
-    for(var key in components) {
-       arr.push(parseInt(key));
-    }
-    return arr;
+// don't store motion component to map, should be created by script at load time
+editorMotionSystem.storeComponentToMap = function() { return false; }
+editorMotionSystem.storePropertiesToScene = function() { return false; }
+
+setInterval(function() {
+  for(k in editorMotionSystem.components) {
+    editorMotionSystem.components[k].update();
   }
+}, 0);
 
-  // -----------------------------------------
-  this.onPropertyChanged = function(propname) {
+// -----------------------------------------
+function doJumpToEntity(name, params) {
+  var context = params.ContextId;
+  var component = editorMotionSystem.getComponentByContextId(context);
+  if(component !== null) {
+    component.jumpToEntity(params.AboutEntity, params.Distance, params.KeepCameraDirection);
   }
+}
+EntityManager.registerForMessages("MoveCameraToEntityMessage", doJumpToEntity);
 
-  // -----------------------------------------
-  this.getComponentByContextId = function(contextid)  {
-    var component = null;
-    for(k in components) {
-      if(components[k].contextId.value === contextid) {
-        return components[k];
-      }
-    }
-    return null;
+// -----------------------------------------
+function doJumpToPosition(name, params) {
+  var context = params.ContextId;
+  var component = editorMotionSystem.getComponentByContextId(context);
+  if(component !== null) {
+    component.jumpToPosition(params.Position, params.LookAt, params.Up);
   }
+}
+EntityManager.registerForMessages("MoveCameraToPositionMessage", doJumpToPosition);
 
-  // don't store motion component to map, should be created by script at load time
-  this.storeComponentToMap = function() { return false; }
-  this.storePropertiesToScene = function() { return false; }
+editorMotionSystem.created = function(id, component) {
+      println("Adding input callback");
+  Input.addInputCallback(component);
+}
 
-  // -----------------------------------------
-  function doJumpToEntity(name, params) {
-    var context = params.ContextId;
-    var component = self.getComponentByContextId(context);
-    if(component !== null) {
-      component.jumpToEntity(params.AboutEntity, params.Distance, params.KeepCameraDirection);
-    }
-  }
-  EntityManager.registerForMessages("MoveCameraToEntityMessage", doJumpToEntity);
-
-  // -----------------------------------------
-  function doJumpToPosition(name, params) {
-    var context = params.ContextId;
-    var component = self.getComponentByContextId(context);
-    if(component !== null) {
-      component.jumpToPosition(params.Position, params.LookAt, params.Up);
-    }
-  }
-  EntityManager.registerForMessages("MoveCameraToPositionMessage", doJumpToPosition);
-
-};
-
-EntityManager.addEntitySystem(new EditorMotionSystem());
+editorMotionSystem.destroyed = function(id, component) {
+  Input.removeInputCallback(component);
+}
+EntityManager.addEntitySystem(editorMotionSystem);
