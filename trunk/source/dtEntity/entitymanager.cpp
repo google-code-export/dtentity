@@ -19,6 +19,7 @@
 */
 #include <dtEntity/entitymanager.h>
 
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/component.h>
@@ -132,7 +133,9 @@ namespace dtEntity
             if(prp)
             {
                prp->SetFrom(*i->second);
+#if CALL_ONPROPERTYCHANGED_METHOD
                clonecomp->OnPropertyChanged(i->first, *prp);
+#endif
             }
             else
             {

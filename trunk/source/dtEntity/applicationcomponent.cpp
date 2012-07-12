@@ -21,6 +21,7 @@
 #include <dtEntity/applicationcomponent.h>
 
 #include <dtEntity/cameracomponent.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -421,7 +422,9 @@ namespace dtEntity
             continue;
          }
          target->SetFrom(*i->second);
+#if CALL_ONPROPERTYCHANGED_METHOD
          component->OnPropertyChanged(i->first, *target);
+#endif
       }
       component->Finished();
    }
@@ -450,7 +453,9 @@ namespace dtEntity
             continue;
          }
          target->SetFrom(*i->second);
+#if CALL_ONPROPERTYCHANGED_METHOD
          sys->OnPropertyChanged(i->first, *target);
+#endif
       }
       sys->Finished();
       

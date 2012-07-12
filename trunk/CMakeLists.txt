@@ -66,6 +66,8 @@ ELSE ()
     SET(DTENTITY_LIBS_DYNAMIC_OR_STATIC "SHARED")
 ENDIF()
 
+OPTION(CALL_ONPROPERTYCHANGED_METHOD "When OFF, PropertyContainer::OnPropertyChanged is no longer called" ON)
+
 # all plugins link against these libs
 SET(TARGET_COMMON_LIBRARIES
     ${OPENTHREADS_LIBRARIES}

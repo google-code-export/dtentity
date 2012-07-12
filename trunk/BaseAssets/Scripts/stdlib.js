@@ -289,40 +289,59 @@ function makeMatrix(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16) {
    return ret;
 }
 
+function __createProp(obj, propname, val, getter, setter, createfun) {
 
-function __createPropertyGeneric(createFun, value, getter, setter) {
   if(typeof getter === 'undefined') {
     getter = function() { return this.value; };
   }
   if(typeof setter === 'undefined') {
     setter = function(v) { this.value = v; };
   }
-  var p = createFun(getter, setter);
-  if(typeof value !== 'undefined') {
-    p.value = value;
+  createfun(obj, propname, getter, setter);
+
+  // call the setter
+  if(typeof val !== 'undefined') {
+    obj[propname] = val;
   }
-  return p;
 }
 
-function boolProp(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyBool, value, getter, setter);
+
+function createBoolProp(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createBoolProp);
 }
 
-function int32Prop(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyInt32, value, getter, setter);
+function createInt32Prop(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createInt32Prop);
 }
 
-function uint32Prop(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyUint32, value, getter, setter);
+function createUint32Prop(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createUint32Prop);
 }
 
-function numberProp(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyNumber, value, getter, setter);
+function createStringProp(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createStringProp);
 }
 
-function stringProp(value, getter, setter) {
-  return __createPropertyGeneric(__createPropertyString, value, getter, setter);
+function createNumberProp(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createNumberProp);
 }
+
+function createQuatProp(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createQuatProp);
+}
+
+function createVec2Prop(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createVec2Prop);
+}
+
+function createVec3Prop(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createVec3Prop);
+}
+
+function createVec4Prop(obj, propname, val, getter, setter) {
+  __createProp(obj, propname, val, getter, setter, __createVec4Prop);
+}
+
 
 function __createPropertyStruct(createFun, value, getter, setter) {
 

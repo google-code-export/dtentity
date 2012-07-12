@@ -23,7 +23,7 @@
 
 #include <dtEntityWrappers/propertyconverter.h>
 #include <dtEntity/component.h>
-
+#include <dtEntity/dtentity_config.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
@@ -65,11 +65,11 @@ namespace dtEntityWrappers
       case dtEntity::DataType::MATRIX:
       case dtEntity::DataType::QUAT:
       {
-         Handle<Value> v = info.Holder()->GetHiddenValue(propname);
-         if(v.IsEmpty())
+         Handle<Value> v;// = info.Holder()->GetHiddenValue(propname);
+         if(true)//v.IsEmpty())
          {
             v = ConvertPropertyToValue(info.Holder()->CreationContext(), prop);
-            info.Holder()->SetHiddenValue(propname, v);
+           // info.Holder()->SetHiddenValue(propname, v);
          }
          else
          {
@@ -104,7 +104,9 @@ namespace dtEntityWrappers
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
       assert(prop);
       SetPropertyFromValue(value, prop);
+#if CALL_ONPROPERTYCHANGED_METHOD
       component->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////

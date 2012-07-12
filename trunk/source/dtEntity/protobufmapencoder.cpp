@@ -21,6 +21,7 @@
 #include <dtEntity/protobufmapencoder.h>
 
 #include <dtEntity/component.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
@@ -759,7 +760,9 @@ namespace dtEntity
             {
                LOG_ERROR("Property type mismatch!");
             }
+#if CALL_ONPROPERTYCHANGED_METHOD
             component->OnPropertyChanged(SID(prop.property_name()), *toset);
+#endif
          }
       }
 
@@ -845,7 +848,9 @@ namespace dtEntity
             {
                LOG_ERROR("Property type mismatch!");
             }
+#if CALL_ONPROPERTYCHANGED_METHOD
             es->OnPropertyChanged(SID(prop.property_name()), *toset);
+#endif
          }
       }
 

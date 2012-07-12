@@ -33,44 +33,25 @@ namespace dtEntityWrappers
    {
    public:
 
-      static const dtEntity::StringId TemplateHandle;
-
-      PropertyGetterSetter(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter)
-      : mGetter(v8::Persistent<v8::Function>::New(getter))
+      PropertyGetterSetter(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter)
+      : mHolder(v8::Persistent<v8::Object>::New(holder))
+      , mGetter(v8::Persistent<v8::Function>::New(getter))
       , mSetter(v8::Persistent<v8::Function>::New(setter))
       {
       }
 
       ~PropertyGetterSetter()
       {
-         mGetter.Dispose();
-         mSetter.Dispose();
          mHolder.Dispose();
+         mGetter.Dispose();
+         mSetter.Dispose();         
       }
 
+      v8::Persistent<v8::Object> mHolder;
       v8::Persistent<v8::Function> mGetter;
       v8::Persistent<v8::Function> mSetter;
-      v8::Persistent<v8::Object> mHolder;
-
 
    };
-
-   v8::Handle<v8::Object> WrapProperty(PropertyGetterSetter* v);
-   PropertyGetterSetter* UnwrapProperty(v8::Handle<v8::Value>);
-
-   /*
-         ARRAY,
-         GROUP,
-         MATRIX,
-         QUAT,
-         VEC2,
-         VEC3,
-         VEC4,
-         VEC2D,
-         VEC3D,
-         VEC4D*/
-
-
 
    ////////////////////////////////////////////////////////////////////////////////
    class JSBoolProperty
@@ -78,7 +59,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSBoolProperty(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSBoolProperty(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::BOOL; }
 
@@ -100,7 +81,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSInt32Property(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSInt32Property(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::INT; }
 
@@ -122,7 +103,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSUInt32Property(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSUInt32Property(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::UINT; }
 
@@ -144,7 +125,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSNumberProperty(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSNumberProperty(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::DOUBLE; }
 
@@ -166,7 +147,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSQuatProperty(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSQuatProperty(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::QUAT; }
 
@@ -188,7 +169,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSStringProperty(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSStringProperty(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::STRING; }
 
@@ -208,7 +189,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSVec2Property(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSVec2Property(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC2D; }
 
@@ -230,7 +211,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSVec3Property(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSVec3Property(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC3D; }
 
@@ -252,7 +233,7 @@ namespace dtEntityWrappers
    {
    public:
 
-      JSVec4Property(v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
+      JSVec4Property(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC4D; }
 

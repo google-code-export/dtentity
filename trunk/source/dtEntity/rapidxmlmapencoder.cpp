@@ -21,6 +21,7 @@
 #include <dtEntity/rapidxmlmapencoder.h>
 
 #include <dtEntity/component.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
@@ -454,7 +455,9 @@ namespace dtEntity
                else
                {
                   toset->SetFrom(*property);
+#if CALL_ONPROPERTYCHANGED_METHOD
                   component->OnPropertyChanged(namesid, *toset);
+#endif
                }
                delete property;
             }
@@ -724,7 +727,9 @@ namespace dtEntity
                else
                {
                   toset->SetFrom(*property);
+#if CALL_ONPROPERTYCHANGED_METHOD
                   es->OnPropertyChanged(namesid, *toset);
+#endif
                }
                delete property;
             }

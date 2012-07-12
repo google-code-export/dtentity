@@ -27,80 +27,99 @@ using namespace v8;
 namespace dtEntityWrappers
 {
 
-   ////////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId PropertyGetterSetter::TemplateHandle = dtEntity::SID("PropertyWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyDestructor(v8::Persistent<Value> v, void* scriptsysnull)
    {
-      PropertyGetterSetter* prop = UnwrapProperty(v);
-      if(prop != NULL)
-      {
-         delete prop;
-      }
+      Handle<Object> obj = Handle<Object>::Cast(v);
+      assert(!obj.IsEmpty());
+
+      PropertyGetterSetter* gs;
+      GetInternal(obj, 0, gs);
+      delete gs;
       v.Dispose();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> PRGet(const Arguments& args)
+   Handle<Value> JSPropertyGetter(Local<String> propname, const AccessorInfo& info)
    {
-      PropertyGetterSetter* prop = UnwrapProperty(args.This());
+      PropertyGetterSetter* prop = static_cast<PropertyGetterSetter*>(Handle<External>::Cast(info.Data())->Value());
+      std::string propnamestr = ToStdString(propname);
+      if(!prop)
+      {
+         LOG_ERROR("Property not found!");
+         return Undefined();
+      }
       HandleScope scope;
-      Context::Scope context_scope(args.This()->CreationContext());
+      Context::Scope context_scope(prop->mGetter->CreationContext());
       return prop->mGetter->Call(prop->mHolder, 0, NULL);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> PRSet(const Arguments& args)
+   void JSPropertySetter(Local<String> propname,
+                               Local<Value> value,
+                               const AccessorInfo& info)
    {
-      PropertyGetterSetter* prop = UnwrapProperty(args.This());
-      HandleScope scope;
-      Context::Scope context_scope(args.This()->CreationContext());
-      Handle<Value> argv[1] = { args[0] };
-      return prop->mSetter->Call(prop->mHolder, 1, argv);
-   }
+      PropertyGetterSetter* prop = static_cast<PropertyGetterSetter*>(Handle<External>::Cast(info.Data())->Value());
 
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<v8::Object> WrapProperty(PropertyGetterSetter* v)
-   {
-      HandleScope handle_scope;
-
-      Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(PropertyGetterSetter::TemplateHandle);
-      if(templt.IsEmpty())
+      if(!prop)
       {
-
-         templt = FunctionTemplate::New();
-
-         templt->SetClassName(String::New("Property"));
-         templt->InstanceTemplate()->SetInternalFieldCount(1);
-
-         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
-
-         proto->Set("get", FunctionTemplate::New(PRGet));
-         proto->Set("set", FunctionTemplate::New(PRSet));
-
-         GetScriptSystem()->SetTemplateBySID(PropertyGetterSetter::TemplateHandle, templt);
+         LOG_ERROR("Property not found!");
+         return;
       }
 
+      HandleScope scope;
+      Context::Scope context_scope(prop->mSetter->CreationContext());
 
-      Local<Object> instance = templt->GetFunction()->NewInstance();
-      instance->SetInternalField(0, External::New(v));
-      return handle_scope.Close(instance);
+      Handle<Value> argv[1] = { value };
+
+      TryCatch try_catch;
+      Handle<Value> ret = prop->mSetter->Call(prop->mHolder, 1, argv);
+      if(ret.IsEmpty())
+      {
+         ReportException(&try_catch);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   PropertyGetterSetter* UnwrapProperty(Handle<Value> val)
+   template<class T>
+   Handle<Value> CreateProp(const Arguments& args)
    {
-      Handle<Object> obj = Handle<Object>::Cast(val);
-      PropertyGetterSetter* v;
-      GetInternal(obj, 0, v);
-      return v;
+      HandleScope scope;
+
+      //obj, propname, val, getter, setter
+      Handle<Object> obj = Handle<Function>::Cast(args[0]);
+      Handle<String> propname = Handle<String>::Cast(args[1]);
+      Handle<Function> fg = Handle<Function>::Cast(args[2]);
+      Handle<Function> fs = Handle<Function>::Cast(args[3]);
+
+      if(fg.IsEmpty() || fs.IsEmpty())
+      {
+         return ThrowError("__createPropertyInt32 expects two function arguments");
+      }
+      Persistent<Object> holder = Persistent<Object>::New(Object::New());
+      holder->Set(String::New("get"), fg);
+      holder->Set(String::New("set"), fs);
+
+      holder.MakeWeak(NULL, &PropertyDestructor);
+      T* prop = new T(holder, fg, fs);
+
+      Handle<External> ext = v8::External::New(static_cast<void*>(prop));
+      holder->Set(String::New("__property"), ext);
+
+      obj->SetAccessor(propname, JSPropertyGetter, JSPropertySetter, ext, PROHIBITS_OVERWRITING, DontDelete);
+
+      // also store property in object as hidden value. This way it can be found
+      // when c++ wrappers are created
+      obj->SetHiddenValue(propname, ext);
+      return Undefined();
    }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   JSBoolProperty::JSBoolProperty(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSBoolProperty::JSBoolProperty(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -138,27 +157,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyBool(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyBool expects two function arguments");
-      }
-      JSBoolProperty* prop = new JSBoolProperty(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSInt32Property::JSInt32Property(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSInt32Property::JSInt32Property(v8::Handle<v8::Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -196,27 +197,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyInt32(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyInt32 expects two function arguments");
-      }
-      JSInt32Property* prop = new JSInt32Property(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSUInt32Property::JSUInt32Property(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSUInt32Property::JSUInt32Property(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -254,27 +237,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyUInt32(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyInt32 expects two function arguments");
-      }
-      JSUInt32Property* prop = new JSUInt32Property(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSNumberProperty::JSNumberProperty(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSNumberProperty::JSNumberProperty(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -312,27 +277,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyNumber(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyNumber expects two function arguments");
-      }
-      JSNumberProperty* prop = new JSNumberProperty(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSQuatProperty::JSQuatProperty(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSQuatProperty::JSQuatProperty(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -380,28 +327,11 @@ namespace dtEntityWrappers
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyQuat(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyQuat expects two function arguments");
-      }
-      JSQuatProperty* prop = new JSQuatProperty(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   JSStringProperty::JSStringProperty(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSStringProperty::JSStringProperty(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -439,27 +369,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyString(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyString expects two function arguments");
-      }
-      JSStringProperty* prop = new JSStringProperty(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSVec2Property::JSVec2Property(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSVec2Property::JSVec2Property(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -504,27 +416,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyVec2(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyVec2 expects two function arguments");
-      }
-      JSVec2Property* prop = new JSVec2Property(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSVec3Property::JSVec3Property(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSVec3Property::JSVec3Property(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -571,27 +465,9 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyVec3(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyVec3 expects two function arguments");
-      }
-      JSVec3Property* prop = new JSVec3Property(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   JSVec4Property::JSVec4Property(Handle<Function> getter, Handle<Function> setter)
-   : PropertyGetterSetter(getter, setter)
+   JSVec4Property::JSVec4Property(Handle<Object> holder, Handle<Function> getter, Handle<Function> setter)
+   : PropertyGetterSetter(holder, getter, setter)
    {
    }
 
@@ -639,36 +515,20 @@ namespace dtEntityWrappers
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> CreatePropertyVec4(const Arguments& args)
-   {
-      HandleScope scope;
-
-      Handle<Function> fg = Handle<Function>::Cast(args[0]);
-      Handle<Function> fs = Handle<Function>::Cast(args[1]);
-      if(fg.IsEmpty() || fs.IsEmpty())
-      {
-         return ThrowError("__createPropertyVec4 expects two function arguments");
-      }
-      JSVec4Property* prop = new JSVec4Property(fg, fs);
-      Persistent<Object> pobj = Persistent<Object>::New(WrapProperty(prop));
-      pobj.MakeWeak(NULL, &PropertyDestructor);
-      prop->mHolder = pobj;
-      return pobj;
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void RegisterPropertyFunctions(ScriptSystem* ss, Handle<Context> context)
    {
       Context::Scope context_scope(context);
-      context->Global()->Set(String::New("__createPropertyBool"), FunctionTemplate::New(CreatePropertyBool)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyInt32"), FunctionTemplate::New(CreatePropertyInt32)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyNumber"), FunctionTemplate::New(CreatePropertyNumber)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyQuat"), FunctionTemplate::New(CreatePropertyQuat)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyUInt32"), FunctionTemplate::New(CreatePropertyUInt32)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyString"), FunctionTemplate::New(CreatePropertyString)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyVec2"), FunctionTemplate::New(CreatePropertyVec2)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyVec3"), FunctionTemplate::New(CreatePropertyVec3)->GetFunction());
-      context->Global()->Set(String::New("__createPropertyVec4"), FunctionTemplate::New(CreatePropertyVec4)->GetFunction());
+
+      context->Global()->Set(String::New("__createInt32Prop"), FunctionTemplate::New(CreateProp<JSInt32Property>)->GetFunction());
+      context->Global()->Set(String::New("__createUint32Prop"), FunctionTemplate::New(CreateProp<JSUInt32Property>)->GetFunction());
+      context->Global()->Set(String::New("__createBoolProp"), FunctionTemplate::New(CreateProp<JSBoolProperty>)->GetFunction());
+      context->Global()->Set(String::New("__createNumberProp"), FunctionTemplate::New(CreateProp<JSNumberProperty>)->GetFunction());
+      context->Global()->Set(String::New("__createStringProp"), FunctionTemplate::New(CreateProp<JSStringProperty>)->GetFunction());
+      context->Global()->Set(String::New("__createQuatProp"), FunctionTemplate::New(CreateProp<JSQuatProperty>)->GetFunction());
+      context->Global()->Set(String::New("__createVec2Prop"), FunctionTemplate::New(CreateProp<JSVec2Property>)->GetFunction());
+      context->Global()->Set(String::New("__createVec3Prop"), FunctionTemplate::New(CreateProp<JSVec3Property>)->GetFunction());
+      context->Global()->Set(String::New("__createVec4Prop"), FunctionTemplate::New(CreateProp<JSVec4Property>)->GetFunction());
    }
 }
