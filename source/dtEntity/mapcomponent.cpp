@@ -94,11 +94,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void MapComponent::SetEntityName(const std::string& v)
    {
-      bool changed = (mEntityNameStr != "" && v != mEntityNameStr);
-
-      mEntityNameStr = v;
-      if(changed)
+      if(v != mEntityNameStr)
       {
+         mEntityNameStr = v;
          EntityNameUpdatedMessage msg;
          msg.SetAboutEntityId(mOwner->GetId());
          msg.SetEntityName(v);

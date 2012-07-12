@@ -21,6 +21,7 @@
 #include <dtEntity/spawner.h>
 
 #include <dtEntity/component.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
@@ -165,7 +166,9 @@ namespace dtEntity
             bool success = toSet->SetFrom(*prop);
             if(success)
             {  
+#if CALL_ONPROPERTYCHANGED_METHOD
                newcomp->OnPropertyChanged(propname, *toSet);
+#endif
             }
             else
             {

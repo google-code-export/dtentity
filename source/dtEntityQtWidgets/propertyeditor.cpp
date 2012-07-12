@@ -26,6 +26,7 @@
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/propertydelegate.h>
 #include <dtEntity/commandmessages.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
@@ -1502,7 +1503,9 @@ namespace dtEntityQtWidgets
          if(propToSet)
          {
             propToSet->SetFrom(*prop);
+#if CALL_ONPROPERTYCHANGED_METHOD
             comp->OnPropertyChanged(sid, *propToSet);
+#endif
          }
          else
          {
@@ -1539,7 +1542,9 @@ namespace dtEntityQtWidgets
          if(propToSet)
          {
             propToSet->SetFrom(*prop);
+#if CALL_ONPROPERTYCHANGED_METHOD
             es->OnPropertyChanged(sid, *propToSet);
+#endif
          }
          else
          {            
@@ -1594,7 +1599,9 @@ namespace dtEntityQtWidgets
          if(targetProp->operator==(oldprop))
          {
             targetProp->SetFrom(newprop);
+#if CALL_ONPROPERTYCHANGED_METHOD
             targetComp->OnPropertyChanged(propname, *targetProp);
+#endif
          }
       }
    }

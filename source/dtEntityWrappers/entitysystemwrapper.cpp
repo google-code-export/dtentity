@@ -415,12 +415,13 @@ namespace dtEntityWrappers
       {
          SetPropertyFromValue(value, prop);
       }
-
+#if CALL_ONPROPERTYCHANGED_METHOD
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(info.Holder());
 	  if(sys)
 	  {
 		sys->OnPropertyChanged(dtEntity::SIDHash(ToStdString(propname)), *prop);
 	  }
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////

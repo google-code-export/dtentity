@@ -30,6 +30,7 @@
 #include <osg/Quat>
 #include <vector>
 #include <map>
+#include <dtEntity/dtentity_config.h>
 
 namespace dtEntity
 {
@@ -51,12 +52,18 @@ namespace dtEntity
          mValue.clear();
       }
       
+#if CALL_ONPROPERTYCHANGED_METHOD == 0
+      // hide when compiling with new property system
+   private:
+#endif
       /**
        * Can be overridden to react to changes of properties.
        * Should be called by user when changing a property on the
        * PropertyContainer.
        */
       virtual void OnPropertyChanged(StringId propname, Property& prop) {}
+
+   public:
 
       /**
        * should be called when a set of interdependent
