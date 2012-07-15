@@ -436,6 +436,16 @@ namespace dtEntityWrappers
       ddm->Clear();
       return Undefined();
 	}
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DebugDrawManagerDestructor(v8::Persistent<Value> v, void* scriptsysnull)
+   {      
+      Handle<External> ext = Handle<External>::Cast(v);
+      assert(!ext.IsEmpty());
+      dtEntity::DebugDrawManager* ddm = reinterpret_cast<dtEntity::DebugDrawManager*>(ext->Value());
+      delete ddm;
+      v.Dispose();
+   }
    
    ////////////////////////////////////////////////////////////////////////////////
 	Handle<Value> DebugDrawManager_create(const Arguments& args) {
@@ -444,7 +454,10 @@ namespace dtEntityWrappers
      
 		Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
       dtEntity::EntityManager* em = UnwrapEntityManager(emh);
-      args.This()->SetInternalField(0, External::New(new dtEntity::DebugDrawManager(*em)));
+      Handle<External> ext = External::New(new dtEntity::DebugDrawManager(*em));
+      args.This()->SetInternalField(0, ext);
+      Persistent<External> p = Persistent<External>::New(ext);
+      p.MakeWeak(NULL, &DebugDrawManagerDestructor);
       return args.This();
 	}
 

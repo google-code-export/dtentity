@@ -4,7 +4,6 @@
 #include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
-#include <dtEntity/debugdrawmanager.h>
 #include <osg/ref_ptr>
 
 class TestComponent : public dtEntity::Component
@@ -144,5 +143,5 @@ private:
    dtEntity::MessageFunctor mTickFunctor;
 
    // A debug draw manager is a simple way to draw primitive shapes to the scene
-   osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDrawManager;
+   dtEntity::DebugDrawManager mDebugDrawManager;
 };
