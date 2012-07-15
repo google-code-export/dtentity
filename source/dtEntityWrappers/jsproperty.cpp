@@ -52,7 +52,7 @@ namespace dtEntityWrappers
       }
       HandleScope scope;
       Context::Scope context_scope(prop->mGetter->CreationContext());
-      return prop->mGetter->Call(prop->mHolder, 0, NULL);
+      return scope.Close(prop->mGetter->Call(prop->mHolder, 0, NULL));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
