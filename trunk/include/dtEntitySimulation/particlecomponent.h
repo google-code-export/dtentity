@@ -210,7 +210,7 @@ namespace dtEntitySimulation
       dtEntity::DynamicArrayProperty mOperators;
       dtEntity::ArrayProperty mOperatorsVal;
 
-      osg::ref_ptr<dtEntity::DebugDrawManager> mDebugDrawManager;
+      dtEntity::DebugDrawManager* mDebugDrawManager;
 
    };
 

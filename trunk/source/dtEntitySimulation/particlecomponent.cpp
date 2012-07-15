@@ -234,6 +234,7 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    ParticleComponent::~ParticleComponent()
    {
+      delete mDebugDrawManager;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -415,7 +416,11 @@ namespace dtEntitySimulation
       }
       else
       {
-         mDebugDrawManager = NULL;
+         if(mDebugDrawManager)
+         {
+            delete mDebugDrawManager;
+            mDebugDrawManager = NULL;
+         }
       }
    }
 

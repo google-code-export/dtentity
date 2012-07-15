@@ -36,6 +36,7 @@ namespace osg
 namespace dtEntity
 {
 
+
    /**
     * Can be used to add simple debug geometry to the scene. Each debug graphics primitive is added
     * together with a lifetime /  duration. 
@@ -43,7 +44,7 @@ namespace dtEntity
     * execute the draw each frame.
     * Warning: To use, first do SetEnabled(true), it is off by default!
     */
-   class DT_ENTITY_EXPORT DebugDrawManager : public osg::Referenced
+    class DT_ENTITY_EXPORT DebugDrawManager
    {
    public:      
 

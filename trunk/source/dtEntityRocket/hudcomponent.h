@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/dynamicproperty.h>
