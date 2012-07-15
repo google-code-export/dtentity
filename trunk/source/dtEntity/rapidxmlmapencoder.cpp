@@ -190,7 +190,7 @@ namespace dtEntity
            fromString<double>(y, attr->value());
          }
       }
-      return new Vec2dProperty(osg::Vec2d(x, y));
+      return new Vec2dProperty(x, y);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ namespace dtEntity
            fromString<double>(z, attr->value());
          }
       }
-      return new Vec3dProperty(osg::Vec3d(x, y, z));
+      return new Vec3dProperty(x, y, z);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ namespace dtEntity
            fromString<double>(w, attr->value());
          }
       }
-      return new Vec4dProperty(osg::Vec4d(x, y, z, w));
+      return new Vec4dProperty(x, y, z, w);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ namespace dtEntity
            fromString<double>(w, attr->value());
          }
       }
-      return new QuatProperty(osg::Quat(x, y, z, w));
+      return new QuatProperty(x, y, z, w);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -957,7 +957,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeVec2Property(xml_document<>& doc, const Names& names, const osg::Vec2d& v)
+   xml_node<>* SerializeVec2Property(xml_document<>& doc, const Names& names, const Vec2d& v)
    {
       xml_node<>* entity = doc.allocate_node(node_element, names.mVec2Property);
       entity->append_attribute(doc.allocate_attribute(names.mX, ToString(doc, v[0])));
@@ -966,7 +966,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeVec3Property(xml_document<>& doc, const Names& names, const osg::Vec3d& v)
+   xml_node<>* SerializeVec3Property(xml_document<>& doc, const Names& names, const Vec3d& v)
    {
       xml_node<>* entity = doc.allocate_node(node_element, names.mVec3Property);
       entity->append_attribute(doc.allocate_attribute(names.mX, ToString(doc, v[0])));
@@ -976,7 +976,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeVec4Property(xml_document<>& doc, const Names& names, const osg::Vec4d& v)
+   xml_node<>* SerializeVec4Property(xml_document<>& doc, const Names& names, const Vec4d& v)
    {
       xml_node<>* entity = doc.allocate_node(node_element, names.mVec4Property);
       entity->append_attribute(doc.allocate_attribute(names.mX, ToString(doc, v[0])));
@@ -987,7 +987,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   xml_node<>* SerializeQuatProperty(xml_document<>& doc, const Names& names, const osg::Quat& v)
+   xml_node<>* SerializeQuatProperty(xml_document<>& doc, const Names& names, const Quat& v)
    {
       xml_node<>* entity = doc.allocate_node(node_element, names.mQuatProperty);
       entity->append_attribute(doc.allocate_attribute(names.mX, ToString(doc, v[0])));

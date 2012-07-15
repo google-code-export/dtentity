@@ -106,7 +106,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetMatrix(StringId name, const osg::Matrix& val)
+   void PropertyContainer::SetMatrix(StringId name, const Matrix& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -115,7 +115,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetQuat(StringId name, const osg::Quat& val)
+   void PropertyContainer::SetQuat(StringId name, const Quat& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -151,7 +151,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec2(StringId name, const osg::Vec2f& val)
+   void PropertyContainer::SetVec2(StringId name, const Vec2f& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -160,7 +160,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec3(StringId name, const osg::Vec3f& val)
+   void PropertyContainer::SetVec3(StringId name, const Vec3f& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -169,7 +169,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec4(StringId name, const osg::Vec4f& val)
+   void PropertyContainer::SetVec4(StringId name, const Vec4f& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -178,7 +178,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec2d(StringId name, const osg::Vec2d& val)
+   void PropertyContainer::SetVec2d(StringId name, const Vec2d& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -187,7 +187,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec3d(StringId name, const osg::Vec3d& val)
+   void PropertyContainer::SetVec3d(StringId name, const Vec3d& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -196,7 +196,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::SetVec4d(StringId name, const osg::Vec4d& val)
+   void PropertyContainer::SetVec4d(StringId name, const Vec4d& val)
    {
       assert(Get(name));
       Property* prop = Get(name);
@@ -253,7 +253,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Quat PropertyContainer::GetQuat(StringId name) const
+   Quat PropertyContainer::GetQuat(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -285,7 +285,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f PropertyContainer::GetVec2(StringId name) const
+   Vec2f PropertyContainer::GetVec2(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -293,7 +293,7 @@ namespace dtEntity
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3f PropertyContainer::GetVec3(StringId name) const
+   Vec3f PropertyContainer::GetVec3(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -301,7 +301,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4f PropertyContainer::GetVec4(StringId name) const
+   Vec4f PropertyContainer::GetVec4(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -309,7 +309,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d PropertyContainer::GetVec2d(StringId name) const
+   Vec2d PropertyContainer::GetVec2d(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -317,7 +317,7 @@ namespace dtEntity
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d PropertyContainer::GetVec3d(StringId name) const
+   Vec3d PropertyContainer::GetVec3d(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");
@@ -325,7 +325,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4d PropertyContainer::GetVec4d(StringId name) const
+   Vec4d PropertyContainer::GetVec4d(StringId name) const
    {
       const Property* prop = Get(name);
       assert(prop && "Property with that name does not exist!");

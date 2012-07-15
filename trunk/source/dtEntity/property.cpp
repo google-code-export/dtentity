@@ -123,97 +123,97 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f ArrayProperty::Vec2Value() const
+   Vec2f ArrayProperty::Vec2Value() const
    {
       if(mValue.size() < 2)
       {
          LOG_ERROR("Not enough entries in array for Vec2Value!");
-         return osg::Vec2f();
+         return Vec2f();
       }
-      return osg::Vec2f(mValue[0]->FloatValue(), mValue[1]->FloatValue());
+      return Vec2f(mValue[0]->FloatValue(), mValue[1]->FloatValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3f ArrayProperty::Vec3Value() const
+   Vec3f ArrayProperty::Vec3Value() const
    {
       if(mValue.size() < 3)
       {
          LOG_ERROR("Not enough entries in array for Vec3Value!");
-         return osg::Vec3f();
+         return Vec3f();
       }
-      return osg::Vec3f(mValue[0]->FloatValue(), mValue[1]->FloatValue(), 
+      return Vec3f(mValue[0]->FloatValue(), mValue[1]->FloatValue(), 
          mValue[2]->FloatValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4f ArrayProperty::Vec4Value() const
+   Vec4f ArrayProperty::Vec4Value() const
    {
       if(mValue.size() < 4)
       {
          LOG_ERROR("Not enough entries in array for Vec4Value!");
-         return osg::Vec4f();
+         return Vec4f();
       }
-      return osg::Vec4f(mValue[0]->FloatValue(), mValue[1]->FloatValue(),
+      return Vec4f(mValue[0]->FloatValue(), mValue[1]->FloatValue(),
          mValue[2]->FloatValue(), mValue[3]->FloatValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d ArrayProperty::Vec2dValue() const
+   Vec2d ArrayProperty::Vec2dValue() const
    {
       if(mValue.size() < 2)
       {
          LOG_ERROR("Not enough entries in array for Vec2dValue!");
-         return osg::Vec2f();
+         return Vec2f();
       }
-      return osg::Vec2d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue());
+      return Vec2d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue());
    }
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d ArrayProperty::Vec3dValue() const
+   Vec3d ArrayProperty::Vec3dValue() const
    {
       if(mValue.size() < 3)
       {
          LOG_ERROR("Not enough entries in array for Vec3dValue!");
-         return osg::Vec3d();
+         return Vec3d();
       }
-      return osg::Vec3d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(), 
+      return Vec3d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(), 
          mValue[2]->DoubleValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4d ArrayProperty::Vec4dValue() const
+   Vec4d ArrayProperty::Vec4dValue() const
    {
       if(mValue.size() < 4)
       {
          LOG_ERROR("Not enough entries in array for Vec4dValue!");
-         return osg::Vec4d();
+         return Vec4d();
       }
-      return osg::Vec4d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(),
+      return Vec4d(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(),
          mValue[2]->DoubleValue(), mValue[3]->DoubleValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Quat ArrayProperty::QuatValue() const
+   Quat ArrayProperty::QuatValue() const
    {
       if(mValue.size() < 4)
       {
          LOG_ERROR("Not enough entries in array for QuatValue!");
-         return osg::Quat(0,0,0,1);
+         return Quat(0,0,0,1);
       }
-      return osg::Quat(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(),
+      return Quat(mValue[0]->DoubleValue(), mValue[1]->DoubleValue(),
          mValue[2]->DoubleValue(), mValue[3]->DoubleValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Matrix ArrayProperty::MatrixValue() const
+   Matrix ArrayProperty::MatrixValue() const
    {
       if(mValue.size() < 16)
       {
          LOG_ERROR("Not enough entries in array for MatrixValue!");
-         osg::Matrix m;
+         Matrix m;
          m.makeIdentity();
          return m;
       }
-      return osg::Matrix(
+      return Matrix(
                mValue[ 0]->DoubleValue(),
                mValue[ 1]->DoubleValue(),
                mValue[ 2]->DoubleValue(),
@@ -273,7 +273,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec2(const osg::Vec2& v)
+   void ArrayProperty::SetVec2(const Vec2f& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -281,7 +281,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec3(const osg::Vec3& v)
+   void ArrayProperty::SetVec3(const Vec3f& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -290,7 +290,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec4(const osg::Vec4& v)
+   void ArrayProperty::SetVec4(const Vec4f& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -300,7 +300,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec2D(const osg::Vec2d& v)
+   void ArrayProperty::SetVec2D(const Vec2d& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -308,7 +308,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec3D(const osg::Vec3d& v)
+   void ArrayProperty::SetVec3D(const Vec3d& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -317,7 +317,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayProperty::SetVec4D(const osg::Vec4d& v)
+   void ArrayProperty::SetVec4D(const Vec4d& v)
    {
       Clear();
       Add(new DoubleProperty(v[0]));
@@ -800,13 +800,13 @@ namespace dtEntity
 
    /////////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-   MatrixProperty::MatrixProperty(const osg::Matrix& v)
+   MatrixProperty::MatrixProperty(const Matrix& v)
       : mValue(v)
    {         
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Matrix MatrixProperty::MatrixValue() const 
+   Matrix MatrixProperty::MatrixValue() const 
    { 
       return Get(); 
    }
@@ -814,7 +814,7 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    const std::string MatrixProperty::StringValue() const 
    { 
-      osg::Matrix m = Get();
+      Matrix m = Get();
 
       std::ostringstream os;
       os.precision(10);
@@ -870,7 +870,7 @@ namespace dtEntity
          fromString<float>(v14, l[14], std::dec);
          fromString<float>(v15, l[15], std::dec);
 
-         mValue = osg::Matrix(
+         mValue = Matrix(
             v0, v1, v2, v3,
             v4, v5, v6, v7,
             v8, v9, v10, v11,
@@ -960,7 +960,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QuatProperty::QuatProperty(const osg::Quat& v)
+   QuatProperty::QuatProperty(const Quat& v)
    {         
       Set(v);
    }
@@ -981,7 +981,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Quat QuatProperty::QuatValue() const 
+   Quat QuatProperty::QuatValue() const 
    { 
       return Get(); 
    }
@@ -1008,7 +1008,7 @@ namespace dtEntity
       {
          return false;
       }
-      osg::Quat q = other.QuatValue();
+      Quat q = other.QuatValue();
       return (q[0] == mValues[0] &&
               q[1] == mValues[1] &&
               q[2] == mValues[2] &&
@@ -1184,7 +1184,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec2Property::Vec2Property(const osg::Vec2& v)
+   Vec2Property::Vec2Property(const Vec2f& v)
    {         
       Set(v);
    }
@@ -1203,15 +1203,15 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 Vec2Property::Vec2Value() const
+   Vec2f Vec2Property::Vec2Value() const
    { 
       return Get();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec2Property::Vec2dValue() const
+   Vec2d Vec2Property::Vec2dValue() const
    {
-      return osg::Vec2d(mValues[0], mValues[1]);
+      return Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1268,7 +1268,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec3Property::Vec3Property(const osg::Vec3& v)
+   Vec3Property::Vec3Property(const Vec3f& v)
    {
       Set(v);
    }
@@ -1288,27 +1288,27 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Vec3Property::Vec3Value() const
+   Vec3f Vec3Property::Vec3Value() const
    { 
-      return osg::Vec3(mValues[0], mValues[1], mValues[2]);
+      return Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d Vec3Property::Vec3dValue() const
+   Vec3d Vec3Property::Vec3dValue() const
    {
-      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
+      return Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f Vec3Property::Vec2Value() const
+   Vec2f Vec3Property::Vec2Value() const
    {
-      return osg::Vec2f(mValues[0], mValues[1]);
+      return Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec3Property::Vec2dValue() const
+   Vec2d Vec3Property::Vec2dValue() const
    {
-      return osg::Vec2d(mValues[0], mValues[1]);
+      return Vec2d(mValues[0], mValues[1]);
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -1369,7 +1369,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec4Property::Vec4Property(const osg::Vec4& v)
+   Vec4Property::Vec4Property(const Vec4f& v)
    {         
       Set(v);
    }
@@ -1390,39 +1390,39 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Vec4Property::Vec4Value() const
+   Vec4f Vec4Property::Vec4Value() const
    { 
       return Get();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4d Vec4Property::Vec4dValue() const
+   Vec4d Vec4Property::Vec4dValue() const
    {
-      return osg::Vec4d(mValues[0], mValues[1], mValues[2], mValues[3]);
+      return Vec4d(mValues[0], mValues[1], mValues[2], mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f Vec4Property::Vec2Value() const
+   Vec2f Vec4Property::Vec2Value() const
    {
-      return osg::Vec2f(mValues[0], mValues[1]);
+      return Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec4Property::Vec2dValue() const
+   Vec2d Vec4Property::Vec2dValue() const
    {
-      return osg::Vec2d(mValues[0], mValues[1]);
+      return Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3f Vec4Property::Vec3Value() const
+   Vec3f Vec4Property::Vec3Value() const
    {
-      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
+      return Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d Vec4Property::Vec3dValue() const
+   Vec3d Vec4Property::Vec3dValue() const
    {
-      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
+      return Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1484,7 +1484,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec2dProperty::Vec2dProperty(const osg::Vec2d& v)
+   Vec2dProperty::Vec2dProperty(const Vec2d& v)
    {
       Set(v);
    }
@@ -1503,13 +1503,13 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f Vec2dProperty::Vec2Value() const
+   Vec2f Vec2dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValues[0], mValues[1]);
+      return Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec2dProperty::Vec2dValue() const
+   Vec2d Vec2dProperty::Vec2dValue() const
    {
       return Get();
    }
@@ -1569,7 +1569,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec3dProperty::Vec3dProperty(const osg::Vec3d& v)
+   Vec3dProperty::Vec3dProperty(const Vec3d& v)
    {
       Set(v);
    }
@@ -1589,27 +1589,27 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3f Vec3dProperty::Vec3Value() const
+   Vec3f Vec3dProperty::Vec3Value() const
    {
-      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
+      return Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d Vec3dProperty::Vec3dValue() const
+   Vec3d Vec3dProperty::Vec3dValue() const
    {
       return Get();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f Vec3dProperty::Vec2Value() const
+   Vec2f Vec3dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValues[0], mValues[1]);
+      return Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec3dProperty::Vec2dValue() const
+   Vec2d Vec3dProperty::Vec2dValue() const
    {
-      return osg::Vec2d(mValues[0], mValues[1]);
+      return Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1670,7 +1670,7 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   Vec4dProperty::Vec4dProperty(const osg::Vec4d& v)
+   Vec4dProperty::Vec4dProperty(const Vec4d& v)
    {
       Set(v);
    }
@@ -1691,39 +1691,39 @@ namespace dtEntity
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4f Vec4dProperty::Vec4Value() const
+   Vec4f Vec4dProperty::Vec4Value() const
    {
-      return osg::Vec4f(mValues[0], mValues[1], mValues[2], mValues[3]);
+      return Vec4f(mValues[0], mValues[1], mValues[2], mValues[3]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4d Vec4dProperty::Vec4dValue() const
+   Vec4d Vec4dProperty::Vec4dValue() const
    {
       return Get();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2f Vec4dProperty::Vec2Value() const
+   Vec2f Vec4dProperty::Vec2Value() const
    {
-      return osg::Vec2f(mValues[0], mValues[1]);
+      return Vec2f(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d Vec4dProperty::Vec2dValue() const
+   Vec2d Vec4dProperty::Vec2dValue() const
    {
-      return osg::Vec2d(mValues[0], mValues[1]);
+      return Vec2d(mValues[0], mValues[1]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3f Vec4dProperty::Vec3Value() const
+   Vec3f Vec4dProperty::Vec3Value() const
    {
-      return osg::Vec3f(mValues[0], mValues[1], mValues[2]);
+      return Vec3f(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d Vec4dProperty::Vec3dValue() const
+   Vec3d Vec4dProperty::Vec3dValue() const
    {
-      return osg::Vec3d(mValues[0], mValues[1], mValues[2]);
+      return Vec3d(mValues[0], mValues[1], mValues[2]);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

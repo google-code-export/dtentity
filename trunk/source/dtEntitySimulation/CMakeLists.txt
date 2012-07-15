@@ -7,7 +7,6 @@ SET(TARGET_H
   ${HEADER_DIR}/manipulators.h
   ${HEADER_DIR}/particlecomponent.h
   ${HEADER_DIR}/pathcomponent.h
-  ${HEADER_DIR}/quattools.h
 )			 
 			 
 SET(TARGET_SRC_ADD

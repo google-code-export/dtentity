@@ -26,9 +26,12 @@
 #include <dtEntity/stringid.h>
 #include <string>
 #include <osg/Matrix>
-#include <osg/Vec2>
-#include <osg/Vec3>
-#include <osg/Vec4>
+#include <osg/Vec2f>
+#include <osg/Vec3f>
+#include <osg/Vec4f>
+#include <osg/Vec2d>
+#include <osg/Vec3d>
+#include <osg/Vec4d>
 #include <vector>
 #include <map>
 
@@ -776,7 +779,7 @@ namespace dtEntity
       virtual Vec2f Vec2Value() const;
       virtual Vec2d Vec2dValue() const;
       virtual const std::string StringValue() const;
-      const Vec3f Get() const { return osg::Vec3f(mValues[0], mValues[1], mValues[2]); }
+      const Vec3f Get() const { return Vec3f(mValues[0], mValues[1], mValues[2]); }
 
       // warning: not sure if this is safe on all platforms
       const Vec3f& GetAsVec3() const { return reinterpret_cast<const Vec3f&>(mValues); }
@@ -924,7 +927,7 @@ namespace dtEntity
       virtual Vec3d Vec3dValue() const;
       virtual void SetVec3D(const Vec3d& v) { Set(v); }
       virtual const std::string StringValue() const;
-      const Vec3d Get() const { return osg::Vec3d(mValues[0], mValues[1], mValues[2]); }
+      const Vec3d Get() const { return Vec3d(mValues[0], mValues[1], mValues[2]); }
 
       // warning: not sure if this is safe on all platforms
       const Vec3d& GetAsVec3d() const { return reinterpret_cast<const Vec3d&>(mValues); }

@@ -106,88 +106,88 @@ TEST(SetValuesDynamicStringId)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2d s_v2dval(1,2);
-void SetV2d(const osg::Vec2d& v) { s_v2dval = v; }
-osg::Vec2d GetV2d() { return s_v2dval; }
+Vec2d s_v2dval(1,2);
+void SetV2d(const Vec2d& v) { s_v2dval = v; }
+Vec2d GetV2d() { return s_v2dval; }
 TEST(SetValuesDynamicVec2d)
 {
    DynamicVec2dProperty prop = DynamicVec2dProperty(DynamicVec2dProperty::SetValueCB(SetV2d), DynamicVec2dProperty::GetValueCB(GetV2d));
-   prop.Set(osg::Vec2d(4,5));
-   CHECK(prop.Get() == osg::Vec2d(4,5));
+   prop.Set(Vec2d(4,5));
+   CHECK(prop.Get() == Vec2d(4,5));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3d s_v3dval(1,2,3);
-void SetV3d(const osg::Vec3d& v) { s_v3dval = v; }
-osg::Vec3d GetV3d() { return s_v3dval; }
+Vec3d s_v3dval(1,2,3);
+void SetV3d(const Vec3d& v) { s_v3dval = v; }
+Vec3d GetV3d() { return s_v3dval; }
 TEST(SetValuesDynamicVec3d)
 {
    DynamicVec3dProperty prop = DynamicVec3dProperty(DynamicVec3dProperty::SetValueCB(SetV3d), DynamicVec3dProperty::GetValueCB(GetV3d));
-   prop.Set(osg::Vec3d(4,5,6));
-   CHECK(prop.Get() == osg::Vec3d(4,5,6));
+   prop.Set(Vec3d(4,5,6));
+   CHECK(prop.Get() == Vec3d(4,5,6));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec4d s_v4dval(1,2,3,4);
-void SetV4d(const osg::Vec4d& v) { s_v4dval = v; }
-osg::Vec4d GetV4d() { return s_v4dval; }
+Vec4d s_v4dval(1,2,3,4);
+void SetV4d(const Vec4d& v) { s_v4dval = v; }
+Vec4d GetV4d() { return s_v4dval; }
 TEST(SetValuesDynamicVec4d)
 {
    DynamicVec4dProperty prop = DynamicVec4dProperty(DynamicVec4dProperty::SetValueCB(SetV4d), DynamicVec4dProperty::GetValueCB(GetV4d));
-   prop.Set(osg::Vec4d(4,5,6,7));
-   CHECK(prop.Get() == osg::Vec4d(4,5,6,7));
+   prop.Set(Vec4d(4,5,6,7));
+   CHECK(prop.Get() == Vec4d(4,5,6,7));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2 s_v2val(1,2);
-void SetV2(const osg::Vec2& v) { s_v2val = v; }
-osg::Vec2 GetV2() { return s_v2val; }
+Vec2f s_v2val(1,2);
+void SetV2(const Vec2f& v) { s_v2val = v; }
+Vec2f GetV2() { return s_v2val; }
 TEST(SetValuesDynamicVec2)
 {
    DynamicVec2Property prop = DynamicVec2Property(DynamicVec2Property::SetValueCB(SetV2), DynamicVec2Property::GetValueCB(GetV2));
-   prop.Set(osg::Vec2(4,5));
-   CHECK(prop.Get() == osg::Vec2(4,5));
+   prop.Set(Vec2f(4,5));
+   CHECK(prop.Get() == Vec2f(4,5));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 s_v3val(1,2,3);
-void SetV3(const osg::Vec3& v) { s_v3val = v; }
-osg::Vec3 GetV3() { return s_v3val; }
+Vec3f s_v3val(1,2,3);
+void SetV3(const Vec3f& v) { s_v3val = v; }
+Vec3f GetV3() { return s_v3val; }
 TEST(SetValuesDynamicVec3)
 {
    DynamicVec3Property prop = DynamicVec3Property(DynamicVec3Property::SetValueCB(SetV3), DynamicVec3Property::GetValueCB(GetV3));
-   prop.Set(osg::Vec3(4,5,6));
-   CHECK(prop.Get() == osg::Vec3(4,5,6));
+   prop.Set(Vec3f(4,5,6));
+   CHECK(prop.Get() == Vec3f(4,5,6));
 }
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec4 s_v4val(1,2,3,4);
-void SetV4(const osg::Vec4& v) { s_v4val = v; }
-osg::Vec4 GetV4() { return s_v4val; }
+Vec4f s_v4val(1,2,3,4);
+void SetV4(const Vec4f& v) { s_v4val = v; }
+Vec4f GetV4() { return s_v4val; }
 TEST(SetValuesDynamicVec4)
 {
    DynamicVec4Property prop = DynamicVec4Property(DynamicVec4Property::SetValueCB(SetV4), DynamicVec4Property::GetValueCB(GetV4));
-   prop.Set(osg::Vec4(4,5,6,7));
-   CHECK(prop.Get() == osg::Vec4(4,5,6,7));
+   prop.Set(Vec4f(4,5,6,7));
+   CHECK(prop.Get() == Vec4f(4,5,6,7));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Quat s_qval(1,2,3,4);
-void SetQ(const osg::Quat& v) { s_qval = v; }
-osg::Quat GetQ() { return s_qval; }
+Quat s_qval(1,2,3,4);
+void SetQ(const Quat& v) { s_qval = v; }
+Quat GetQ() { return s_qval; }
 TEST(SetValuesDynamicQuat)
 {
    DynamicQuatProperty prop = DynamicQuatProperty(DynamicQuatProperty::SetValueCB(SetQ), DynamicQuatProperty::GetValueCB(GetQ));
-   prop.Set(osg::Quat(4,5,6,7));
-   CHECK(prop.Get() == osg::Quat(4,5,6,7));
+   prop.Set(Quat(4,5,6,7));
+   CHECK(prop.Get() == Quat(4,5,6,7));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Matrix s_mval(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
-void SetM(const osg::Matrix& v) { s_mval = v; }
-osg::Matrix GetM() { return s_mval; }
+Matrix s_mval(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
+void SetM(const Matrix& v) { s_mval = v; }
+Matrix GetM() { return s_mval; }
 TEST(SetValuesDynamicMatrix)
 {
    DynamicMatrixProperty prop = DynamicMatrixProperty(DynamicMatrixProperty::SetValueCB(SetM), DynamicMatrixProperty::GetValueCB(GetM));
-   prop.Set(osg::Matrix(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19));
-   CHECK(prop.Get() == osg::Matrix(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19));
+   prop.Set(Matrix(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19));
+   CHECK(prop.Get() == Matrix(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19));
 }

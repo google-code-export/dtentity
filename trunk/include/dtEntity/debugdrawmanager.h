@@ -68,7 +68,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddPoint(const osg::Vec3f& position, const osg::Vec4& color, int size = 1,
+      void AddPoint(const Vec3f& position, const Vec4f& color, int size = 1,
                     float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -79,7 +79,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddPoints(const std::vector<osg::Vec3f>& positions, const osg::Vec4& color, int size = 1,
+      void AddPoints(const std::vector<Vec3f>& positions, const Vec4f& color, int size = 1,
                      float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -91,7 +91,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddLine(const osg::Vec3& start, const osg::Vec3& end, const osg::Vec4& color, int linewidth = 1,
+      void AddLine(const Vec3f& start, const Vec3f& end, const Vec4f& color, int linewidth = 1,
                    float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -102,7 +102,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddLines(const std::vector<osg::Vec3>& lines, const osg::Vec4& color, int linewidth = 1,
+      void AddLines(const std::vector<Vec3f>& lines, const Vec4f& color, int linewidth = 1,
                     float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -113,7 +113,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddCross(const osg::Vec3& position, const osg::Vec4& color, float size,
+      void AddCross(const Vec3f& position, const Vec4f& color, float size,
                     float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -124,7 +124,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddSphere(const osg::Vec3& position, float radius, const osg::Vec4& color,
+      void AddSphere(const Vec3f& position, float radius, const Vec4f& color,
                      float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -137,8 +137,8 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddTriangle(const osg::Vec3& vert0, const osg::Vec3& vert1, const osg::Vec3& vert2,
-                       const osg::Vec4& color, int lineWidth, float duration = 0,
+      void AddTriangle(const Vec3f& vert0, const Vec3f& vert1, const Vec3f& vert2,
+                       const Vec4f& color, int lineWidth, float duration = 0,
                        bool depthTestEnabled = true);
 
       /**
@@ -149,7 +149,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddTriangles(const std::vector<osg::Vec3>& verts, const osg::Vec4& color,
+      void AddTriangles(const std::vector<Vec3f>& verts, const Vec4f& color,
                         int lineWidth, float duration = 0, bool depthTestEnabled = true);
 
       /**
@@ -163,8 +163,8 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddMesh(osg::Geometry* geometry, const osg::Vec3& position, const osg::Vec4& lineColor,
-                   int lineWidth, const osg::Vec4& faceColor, float duration = 0, bool depthTestEnabled = true);
+      void AddMesh(osg::Geometry* geometry, const Vec3f& position, const Vec4f& lineColor,
+                   int lineWidth, const Vec4f& faceColor, float duration = 0, bool depthTestEnabled = true);
 
       /**
        * Draw a circle
@@ -175,7 +175,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddCircle(const osg::Vec3& position, const osg::Vec3& planeNormal, float radius, const osg::Vec4& color, float duration = 0, bool depthTestEnabled = true);
+      void AddCircle(const Vec3f& position, const Vec3f& planeNormal, float radius, const Vec4f& color, float duration = 0, bool depthTestEnabled = true);
 
       /**
        * Draw a text string
@@ -185,7 +185,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddString(const osg::Vec3& position, const std::string& str, const osg::Vec4& color, float duration = 0, bool depthTestEnabled = true);
+      void AddString(const Vec3f& position, const std::string& str, const Vec4f& color, float duration = 0, bool depthTestEnabled = true);
 
       /**
        * Draw an axis aligned bounding box
@@ -196,7 +196,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddAABB(const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+      void AddAABB(const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
 
       /**
        * Add an oriented bounding box
@@ -208,7 +208,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddOBB(const osg::Matrix& matrix, const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
+      void AddOBB(const Matrix& matrix, const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration = 0, bool depthTestEnabled = true);
 
       /**
        * Add a cross showing coordinate orientation
@@ -218,7 +218,7 @@ namespace dtEntity
        * @param duration Show for how many seconds. Value 0 means draw once
        * @param depthTestEnabled if false, always draw on top
        */
-      void AddAxes(const osg::Matrix& matrix, const osg::Vec4& color, float size, float duration = 0, bool depthTestEnabled = true);
+      void AddAxes(const Matrix& matrix, const Vec4f& color, float size, float duration = 0, bool depthTestEnabled = true);
       
       /**
        * Add an OSG drawable
