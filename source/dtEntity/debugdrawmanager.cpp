@@ -206,7 +206,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddPoint(const osg::Vec3f& position, const osg::Vec4& color, int size,
+   void DebugDrawManager::AddPoint(const Vec3f& position, const Vec4f& color, int size,
       float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -240,7 +240,7 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    void DebugDrawManager::AddPoints(const std::vector<osg::Vec3f>& positions,
-      const osg::Vec4& color, int size, float duration, bool depthTestEnabled)
+      const Vec4f& color, int size, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -268,8 +268,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddLine(const osg::Vec3& start, const osg::Vec3& end,
-      const osg::Vec4& color, int linewidth, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddLine(const Vec3f& start, const Vec3f& end,
+      const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -298,8 +298,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddLines(const std::vector<osg::Vec3>& lines,
-      const osg::Vec4& color, int linewidth, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddLines(const std::vector<Vec3f>& lines,
+      const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled || lines.empty())
          return;
@@ -330,7 +330,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddCross(const osg::Vec3& position, const osg::Vec4& color,
+   void DebugDrawManager::AddCross(const Vec3f& position, const Vec4f& color,
       float size, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -363,8 +363,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddSphere(const osg::Vec3& position, float radius,
-      const osg::Vec4& color, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddSphere(const Vec3f& position, float radius,
+      const Vec4f& color, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -385,8 +385,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddMesh(osg::Geometry* mesh, const osg::Vec3& position, 
-      const osg::Vec4& lineColor, int lineWidth, const osg::Vec4& faceColor, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddMesh(osg::Geometry* mesh, const Vec3f& position, 
+      const Vec4f& lineColor, int lineWidth, const Vec4f& faceColor, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -536,8 +536,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddTriangle(const osg::Vec3& vert0, const osg::Vec3& vert1, 
-      const osg::Vec3& vert2, const osg::Vec4& color, int linewidth, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddTriangle(const Vec3f& vert0, const Vec3f& vert1, 
+      const Vec3f& vert2, const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -567,7 +567,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddTriangles(const std::vector<osg::Vec3>& tris, const osg::Vec4& color,
+   void DebugDrawManager::AddTriangles(const std::vector<Vec3f>& tris, const Vec4f& color,
       int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -598,7 +598,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddCircle(const osg::Vec3& position, const osg::Vec3& planeNormal, float radius, const osg::Vec4& color, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddCircle(const Vec3f& position, const Vec3f& planeNormal, float radius, const Vec4f& color, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -631,7 +631,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddString(const osg::Vec3& position, const std::string& str, const osg::Vec4& color, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddString(const Vec3f& position, const std::string& str, const Vec4f& color, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -654,7 +654,7 @@ namespace dtEntity
    }      
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManager::AddAABB(const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration, bool depthTestEnabled)
+   void DebugDrawManager::AddAABB(const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -687,7 +687,8 @@ namespace dtEntity
       AddLines(lines, color, lineWidth, duration, depthTestEnabled);
    }      
 
-   void DebugDrawManager::AddOBB(const osg::Matrix& m, const osg::Vec3& minCoords, const osg::Vec3& maxCoords, const osg::Vec4& color, int lineWidth, float duration, bool depthTestEnabled)
+   ////////////////////////////////////////////////////////////////////////////////
+   void DebugDrawManager::AddOBB(const Matrix& m, const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -729,7 +730,8 @@ namespace dtEntity
       AddLines(lines, color, lineWidth, duration, depthTestEnabled);
    }
       
-   void DebugDrawManager::AddAxes(const osg::Matrix& m, const osg::Vec4& color, float size, float duration, bool depthTestEnabled)
+   ////////////////////////////////////////////////////////////////////////////////
+   void DebugDrawManager::AddAxes(const Matrix& m, const Vec4f& color, float size, float duration, bool depthTestEnabled)
    {
       float arroww = 0.1f;
       osg::Vec3 p0(0, 0, 0);

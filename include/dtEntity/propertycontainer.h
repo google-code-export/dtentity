@@ -95,17 +95,17 @@ namespace dtEntity
       void SetFloat(StringId name, float val);
       void SetGroup(StringId name, const std::map<StringId, Property*>& val);
       void SetInt(StringId name, int val);
-      void SetMatrix(StringId name, const osg::Matrix& val);
-      void SetQuat(StringId name, const osg::Quat& val);
+      void SetMatrix(StringId name, const Matrix& val);
+      void SetQuat(StringId name, const Quat& val);
       void SetString(StringId name, const std::string& val);
       void SetStringId(StringId name, StringId val);
       void SetUInt(StringId name, unsigned int val);
-      void SetVec2(StringId name, const osg::Vec2f& val);
-      void SetVec3(StringId name, const osg::Vec3f& val);
-      void SetVec4(StringId name, const osg::Vec4f& val); 
-      void SetVec2d(StringId name, const osg::Vec2d& val);
-      void SetVec3d(StringId name, const osg::Vec3d& val);
-      void SetVec4d(StringId name, const osg::Vec4d& val); 
+      void SetVec2(StringId name, const Vec2f& val);
+      void SetVec3(StringId name, const Vec3f& val);
+      void SetVec4(StringId name, const Vec4f& val); 
+      void SetVec2d(StringId name, const Vec2d& val);
+      void SetVec3d(StringId name, const Vec3d& val);
+      void SetVec4d(StringId name, const Vec4d& val); 
 
       /**
        * Return value of property registered with given string id
@@ -116,17 +116,17 @@ namespace dtEntity
       float GetFloat(StringId name) const;
       std::map<StringId, Property*> GetGroup(StringId name) const;
       int GetInt(StringId name) const;
-      osg::Matrix GetMatrix(StringId name) const;
-      osg::Quat GetQuat(StringId name) const;
+      Matrix GetMatrix(StringId name) const;
+      Quat GetQuat(StringId name) const;
       std::string GetString(StringId name) const;
       StringId GetStringId(StringId name) const;
       unsigned int GetUInt(StringId name) const;
-      osg::Vec2f GetVec2(StringId name) const;
-      osg::Vec3f GetVec3(StringId name) const;
-      osg::Vec4f GetVec4(StringId name) const;      
-      osg::Vec2d GetVec2d(StringId name) const;
-      osg::Vec3d GetVec3d(StringId name) const;
-      osg::Vec4d GetVec4d(StringId name) const; 
+      Vec2f GetVec2(StringId name) const;
+      Vec3f GetVec3(StringId name) const;
+      Vec4f GetVec4(StringId name) const;      
+      Vec2d GetVec2d(StringId name) const;
+      Vec3d GetVec3d(StringId name) const;
+      Vec4d GetVec4d(StringId name) const; 
 
    protected:
       

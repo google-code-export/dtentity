@@ -128,7 +128,7 @@ namespace dtEntity
       case DataType::INT:        propertyobj.set_value_int(prop.IntValue()); break;
       case DataType::MATRIX:     {
          dtProtoBuf::Matrix& mat = *propertyobj.mutable_value_matrix();
-         const osg::Matrix m = prop.MatrixValue();
+         const Matrix m = prop.MatrixValue();
          mat.set_value_0(m(0,0)); 
          mat.set_value_1(m(0,1));
          mat.set_value_2(m(0,2));
@@ -149,7 +149,7 @@ namespace dtEntity
       }
       case DataType::QUAT:       {
          dtProtoBuf::Quat& q = *propertyobj.mutable_value_quat();
-         const osg::Quat quat = prop.QuatValue();
+         const Quat quat = prop.QuatValue();
          q.set_value_0(quat[0]);
          q.set_value_1(quat[1]);
          q.set_value_2(quat[2]);
@@ -168,14 +168,14 @@ namespace dtEntity
       case DataType::UINT:       propertyobj.set_value_uint(prop.UIntValue()); break;
       case DataType::VEC2:       {
          dtProtoBuf::Vec2& v = *propertyobj.mutable_value_vec2();
-         const osg::Vec2 vec = prop.Vec2Value();
+         const Vec2f vec = prop.Vec2Value();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          break;
       }
       case DataType::VEC3:       {
          dtProtoBuf::Vec3& v = *propertyobj.mutable_value_vec3();
-         const osg::Vec3 vec = prop.Vec3Value();
+         const Vec3f vec = prop.Vec3Value();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          v.set_value_2(vec[2]);
@@ -183,7 +183,7 @@ namespace dtEntity
       }
       case DataType::VEC4:       {
          dtProtoBuf::Vec4& v = *propertyobj.mutable_value_vec4();
-         const osg::Vec4 vec = prop.Vec4Value();
+         const Vec4f vec = prop.Vec4Value();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          v.set_value_2(vec[2]);
@@ -192,14 +192,14 @@ namespace dtEntity
       }
       case DataType::VEC2D:      {
          dtProtoBuf::Vec2d& v = *propertyobj.mutable_value_vec2d();
-         const osg::Vec2d vec = prop.Vec2dValue();
+         const Vec2d vec = prop.Vec2dValue();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          break;
       }
       case DataType::VEC3D:      {
          dtProtoBuf::Vec3d& v = *propertyobj.mutable_value_vec3d();
-         const osg::Vec3d vec = prop.Vec3dValue();
+         const Vec3d vec = prop.Vec3dValue();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          v.set_value_2(vec[2]);
@@ -207,7 +207,7 @@ namespace dtEntity
       }
       case DataType::VEC4D:      {
          dtProtoBuf::Vec4d& v = *propertyobj.mutable_value_vec4d();
-         const osg::Vec4d vec = prop.Vec4dValue();
+         const Vec4d vec = prop.Vec4dValue();
          v.set_value_0(vec[0]);
          v.set_value_1(vec[1]);
          v.set_value_2(vec[2]);
@@ -360,7 +360,7 @@ namespace dtEntity
       case dtProtoBuf::MATRIX:   {
 
          const dtProtoBuf::Matrix& v = propobj.value_matrix();
-         osg::Matrix mat;
+         Matrix mat;
          mat(0,0) = v.value_0();
          mat(0,1) = v.value_1();
          mat(0,2) = v.value_2();
@@ -383,7 +383,7 @@ namespace dtEntity
 
       case dtProtoBuf::QUAT:     {
          const dtProtoBuf::Quat& v = propobj.value_quat();
-         return new QuatProperty(osg::Quat(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return new QuatProperty(Quat(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
       }
       case dtProtoBuf::STRING:   {
          std::string str = "";
@@ -397,27 +397,27 @@ namespace dtEntity
       case dtProtoBuf::UINT:     { return new UIntProperty(propobj.value_uint()); }
       case dtProtoBuf::VEC2:     {
          const dtProtoBuf::Vec2& v = propobj.value_vec2();
-         return new Vec2Property(osg::Vec2(v.value_0(), v.value_1()));
+         return new Vec2Property(v.value_0(), v.value_1());
       }
       case dtProtoBuf::VEC3:     {
          const dtProtoBuf::Vec3& v = propobj.value_vec3();
-         return new Vec3Property(osg::Vec3(v.value_0(), v.value_1(), v.value_2()));
+         return new Vec3Property(v.value_0(), v.value_1(), v.value_2());
       }
       case dtProtoBuf::VEC4:     {
          const dtProtoBuf::Vec4& v = propobj.value_vec4();
-         return new Vec4Property(osg::Vec4(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return new Vec4Property(v.value_0(), v.value_1(), v.value_2(), v.value_3());
       }
       case dtProtoBuf::VEC2D:    {
          const dtProtoBuf::Vec2d& v = propobj.value_vec2d();
-         return new Vec2dProperty(osg::Vec2d(v.value_0(), v.value_1()));
+         return new Vec2dProperty(v.value_0(), v.value_1());
       }
       case dtProtoBuf::VEC3D:    {
          const dtProtoBuf::Vec3d& v = propobj.value_vec3d();
-         return new Vec3dProperty(osg::Vec3d(v.value_0(), v.value_1(), v.value_2()));
+         return new Vec3dProperty(v.value_0(), v.value_1(), v.value_2());
       }
       case dtProtoBuf::VEC4D:    {
          const dtProtoBuf::Vec4d& v = propobj.value_vec4d();
-         return new Vec4dProperty(osg::Vec4d(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         return new Vec4dProperty(v.value_0(), v.value_1(), v.value_2(), v.value_3());
       }
       default:
          LOG_ERROR("Could not parse property, unknown type!");
@@ -510,7 +510,7 @@ namespace dtEntity
             return false;
          }
          const dtProtoBuf::Matrix& v = propobj.value_matrix();
-         osg::Matrix mat;
+         Matrix mat;
          mat(0,0) = v.value_0();
          mat(0,1) = v.value_1();
          mat(0,2) = v.value_2();
@@ -538,7 +538,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Quat& v = propobj.value_quat();
 
-         prop->SetQuat(osg::Quat(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         prop->SetQuat(Quat(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
          return true;
 
       }
@@ -580,7 +580,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec2& v = propobj.value_vec2();
 
-         prop->SetVec2(osg::Vec2(v.value_0(), v.value_1()));
+         prop->SetVec2(Vec2f(v.value_0(), v.value_1()));
          return true;
       }
       case dtProtoBuf::VEC3:     {
@@ -590,7 +590,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec3& v = propobj.value_vec3();
 
-         prop->SetVec3(osg::Vec3(v.value_0(), v.value_1(), v.value_2()));
+         prop->SetVec3(Vec3f(v.value_0(), v.value_1(), v.value_2()));
          return true;
       }
       case dtProtoBuf::VEC4:     {
@@ -600,7 +600,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec4& v = propobj.value_vec4();
 
-         prop->SetVec4(osg::Vec4(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         prop->SetVec4(Vec4f(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
          return true;
       }
       case dtProtoBuf::VEC2D:    {
@@ -610,7 +610,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec2d& v = propobj.value_vec2d();
 
-         prop->SetVec2D(osg::Vec2d(v.value_0(), v.value_1()));
+         prop->SetVec2D(Vec2d(v.value_0(), v.value_1()));
          return true;
       }
       case dtProtoBuf::VEC3D:    {
@@ -620,7 +620,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec3d& v = propobj.value_vec3d();
 
-         prop->SetVec3D(osg::Vec3d(v.value_0(), v.value_1(), v.value_2()));
+         prop->SetVec3D(Vec3d(v.value_0(), v.value_1(), v.value_2()));
          return true;
       }
       case dtProtoBuf::VEC4D:    {
@@ -630,7 +630,7 @@ namespace dtEntity
          }
          const dtProtoBuf::Vec4d& v = propobj.value_vec4d();
 
-         prop->SetVec4D(osg::Vec4d(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
+         prop->SetVec4D(Vec4d(v.value_0(), v.value_1(), v.value_2(), v.value_3()));
          return true;
       }
       default:

@@ -31,7 +31,7 @@ using namespace dtEntity;
 TEST(ReinterpretCastsV3f)
 {
    float values[3] = {3.0f, -234.234f, 0.0f};
-   const osg::Vec3f& casted = reinterpret_cast<const osg::Vec3f&>(values);
+   const Vec3f& casted = reinterpret_cast<const Vec3f&>(values);
    CHECK_EQUAL(values[0], casted[0]);
    CHECK_EQUAL(values[1], casted[1]);
    CHECK_EQUAL(values[2], casted[2]);
@@ -40,7 +40,7 @@ TEST(ReinterpretCastsV3f)
 TEST(ReinterpretCastsV4d)
 {
    double values[4] = {3.0f, -234.234f, 0.0f, 3254325.235325};
-   const osg::Vec4d& casted = reinterpret_cast<const osg::Vec4d&>(values);
+   const Vec4d& casted = reinterpret_cast<const Vec4d&>(values);
    CHECK_EQUAL(values[0], casted[0]);
    CHECK_EQUAL(values[1], casted[1]);
    CHECK_EQUAL(values[2], casted[2]);
@@ -50,7 +50,7 @@ TEST(ReinterpretCastsV4d)
 TEST(ReinterpretCastsQuat)
 {
    double values[4] = {3.0f, -234.234f, 0.0f, 3254325.235325};
-   const osg::Quat& casted = reinterpret_cast<const osg::Quat&>(values);
+   const Quat& casted = reinterpret_cast<const Quat&>(values);
    CHECK_EQUAL(values[0], casted[0]);
    CHECK_EQUAL(values[1], casted[1]);
    CHECK_EQUAL(values[2], casted[2]);
@@ -59,14 +59,14 @@ TEST(ReinterpretCastsQuat)
 
 TEST(SetValuesVec2)
 {
-   Vec2Property v2prop(osg::Vec2(1,2));
+   Vec2Property v2prop(1,2);
    CHECK_EQUAL(v2prop.Vec2Value()[0], 1.0f);
    CHECK_EQUAL(v2prop.Vec2Value()[1], 2.0f);
 }
 
 TEST(SetValuesVec3)
 {
-   Vec3Property v3prop(osg::Vec3(1,2,3));
+   Vec3Property v3prop(1,2,3);
    CHECK_EQUAL(v3prop.Vec3Value()[0], 1.0f);
    CHECK_EQUAL(v3prop.Vec3Value()[1], 2.0f);
    CHECK_EQUAL(v3prop.Vec3Value()[2], 3.0f);
@@ -74,7 +74,7 @@ TEST(SetValuesVec3)
 
 TEST(SetValuesVec4)
 {
-   Vec4Property v4prop(osg::Vec4(1,2,3,4));
+   Vec4Property v4prop(1,2,3,4);
    CHECK_EQUAL(v4prop.Vec4Value()[0], 1.0f);
    CHECK_EQUAL(v4prop.Vec4Value()[1], 2.0f);
    CHECK_EQUAL(v4prop.Vec4Value()[2], 3.0f);
@@ -84,14 +84,14 @@ TEST(SetValuesVec4)
 
 TEST(SetValuesVecRe2)
 {
-   Vec2Property v2prop(osg::Vec2(1,2));
+   Vec2Property v2prop(1,2);
    CHECK_EQUAL(v2prop.Get()[0], 1.0f);
    CHECK_EQUAL(v2prop.Get()[1], 2.0f);
 }
 
 TEST(SetValuesVecRe3)
 {
-   Vec3Property v3prop(osg::Vec3(1,2,3));
+   Vec3Property v3prop(1,2,3);
    CHECK_EQUAL(v3prop.Get()[0], 1.0f);
    CHECK_EQUAL(v3prop.Get()[1], 2.0f);
    CHECK_EQUAL(v3prop.Get()[2], 3.0f);
@@ -99,7 +99,7 @@ TEST(SetValuesVecRe3)
 
 TEST(SetValuesVecRe4)
 {
-   Vec4Property v4prop(osg::Vec4(1,2,3,4));
+   Vec4Property v4prop(1,2,3,4);
    CHECK_EQUAL(v4prop.Get()[0], 1.0f);
    CHECK_EQUAL(v4prop.Get()[1], 2.0f);
    CHECK_EQUAL(v4prop.Get()[2], 3.0f);
@@ -147,7 +147,7 @@ TEST(SetValuesInt)
 
 TEST(SetValuesMat)
 {
-   osg::Matrix mat;
+   Matrix mat;
    mat(0, 0) = 3;
 
    MatrixProperty p(mat);
@@ -156,7 +156,7 @@ TEST(SetValuesMat)
 
 TEST(SetValuesQuat)
 {
-   osg::Quat q(1,2,3,4);
+   Quat q(1,2,3,4);
    QuatProperty p(q);
    CHECK_EQUAL(p.QuatValue()[0], q[0]);
    CHECK_EQUAL(p.QuatValue()[1], q[1]);
@@ -190,7 +190,7 @@ TEST(SetValuesBool)
 
 TEST(CloneVec2)
 {
-   Vec2Property p(osg::Vec2(1,2));
+   Vec2Property p(1,2);
    Property* c = p.Clone();
    CHECK_EQUAL(p.Vec2Value()[0], c->Vec2Value()[0]);
    CHECK_EQUAL(p.Vec2Value()[1], c->Vec2Value()[1]);
@@ -199,7 +199,7 @@ TEST(CloneVec2)
 
 TEST(CloneVec3)
 {
-   Vec3Property p(osg::Vec3(1,2, 3));
+   Vec3Property p(1,2, 3);
    Property* c = p.Clone();
    CHECK_EQUAL(p.Vec3Value()[0], c->Vec3Value()[0]);
    CHECK_EQUAL(p.Vec3Value()[1], c->Vec3Value()[1]);
@@ -209,7 +209,7 @@ TEST(CloneVec3)
 
 TEST(CloneVec4)
 {
-   Vec4Property p(osg::Vec4(1,2, 3, 4));
+   Vec4Property p(1,2, 3, 4);
    Property* c = p.Clone();
    CHECK_EQUAL(p.Vec4Value()[0], c->Vec4Value()[0]);
    CHECK_EQUAL(p.Vec4Value()[1], c->Vec4Value()[1]);
@@ -280,7 +280,7 @@ TEST(CloneInt)
 TEST(CloneMatrix)
 {
 
-   osg::Matrix mat;
+   Matrix mat;
    mat(0, 0) = 666;
    MatrixProperty p(mat);
    Property* c = p.Clone();
@@ -306,7 +306,7 @@ TEST(CloneString)
 TEST(CloneQuat)
 {
 
-   osg::Quat v (1,2,3,4);
+   Quat v (1,2,3,4);
    
    QuatProperty p(v);
    Property* c = p.Clone();
@@ -468,7 +468,7 @@ TEST(FromToStringInt)
 TEST(FromToStringMatrix)
 {
 
-   osg::Matrix m(0, -1234.1234, 1, 2
+   Matrix m(0, -1234.1234, 1, 2
                  , 1234124, 21.245, 2, 2
                  , 52, 246, 21346, 2346
                  , 0, 3, -3, 5);
