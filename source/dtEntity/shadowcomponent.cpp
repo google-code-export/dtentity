@@ -218,6 +218,10 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    ShadowSystem::ShadowSystem(EntityManager& em)
       : DefaultEntitySystem<ShadowComponent>(em)
+      , mEnabled(
+           DynamicBoolProperty::SetValueCB(this, &ShadowSystem::SetEnabled),
+           DynamicBoolProperty::GetValueCB(this, &ShadowSystem::GetEnabled)
+          )
       , mEnabledVal(true)
    {
       Register(EnabledId, &mEnabled);
