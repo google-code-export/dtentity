@@ -23,7 +23,7 @@
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
-#include <dtEntity/property.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/stringid.h>
 
 namespace dtEntity
@@ -48,8 +48,10 @@ namespace dtEntity
 
       virtual ComponentType GetType() const { return TYPE; }
 
-      const osg::Vec3& GetVelocity() const { return mVelocity.GetAsVec3(); }
-      void SetVelocity(const osg::Vec3& v) { mVelocity.Set(v); }
+      void OnAddedToEntity(Entity &entity) { mEntity = &entity; }
+
+      osg::Vec3 GetVelocity() const { return mVelocityVal; }
+      void SetVelocity(const osg::Vec3& v);
 
       const osg::Quat& GetAngularVelocity() const { return mAngularVelocity.GetAsQuat(); }
       void SetAngularVelocity(const osg::Quat& v) { mAngularVelocity.Set(v); }
@@ -58,11 +60,14 @@ namespace dtEntity
       void SetAcceleration(const osg::Vec3& v) { mAcceleration.Set(v); }
 
    protected:
+      Entity* mEntity;
      
       // path to loaded script file
-      Vec3Property mVelocity;
+      DynamicVec3Property mVelocity;
+      osg::Vec3 mVelocityVal;
       QuatProperty mAngularVelocity;
       Vec3Property mAcceleration;
+      bool mIsMoving;
 
    };
 

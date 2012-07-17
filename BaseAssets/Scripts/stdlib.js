@@ -397,12 +397,7 @@ function JSEntitySystem(componentCreateFun, componentType) {
   this.destroyed = function() {}
 
   this.hasComponent = function (eid) {
-    for(var k in this.components) {
-      if(k === eid) {
-        return true;
-      }
-    }
-    return false;
+      return (eid in this.components);
   };
 
   this.getComponent = function (eid) {
@@ -414,7 +409,6 @@ function JSEntitySystem(componentCreateFun, componentType) {
       Log.error("component with id " + eid + " already exists!");
       return null;
     }
-
     var c = new this.ComponentCreateFun(eid);
     this.components[eid] = c;
     this.created(eid, c);
@@ -424,7 +418,7 @@ function JSEntitySystem(componentCreateFun, componentType) {
   this.deleteComponent = function (eid) {
     var c = this.components[eid];
     this.destroyed(eid, c);
-    delete c;
+    delete this.components[eid];
   }
 
 
