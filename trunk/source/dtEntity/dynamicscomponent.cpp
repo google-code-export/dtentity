@@ -19,7 +19,7 @@
 */
 
 #include <dtEntity/dynamicscomponent.h>
-
+#include <dtEntity/systemmessages.h>
 
 namespace dtEntity
 {
@@ -32,7 +32,13 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    DynamicsComponent::DynamicsComponent()
-      : mAngularVelocity(osg::Quat(0,0,0,1))
+      : mEntity(NULL)
+      , mVelocity(
+         dtEntity::DynamicVec3Property::SetValueCB(this, &DynamicsComponent::SetVelocity),
+         dtEntity::DynamicVec3Property::GetValueCB(this, &DynamicsComponent::GetVelocity)
+      )
+      , mAngularVelocity(osg::Quat(0,0,0,1))
+      , mIsMoving(false)
    {
       Register(VelocityId, &mVelocity);
       Register(AngularVelocityId, &mAngularVelocity);
@@ -44,6 +50,25 @@ namespace dtEntity
    {
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void DynamicsComponent::SetVelocity(const osg::Vec3& v)
+   {
+      mVelocityVal = v;
+      float delta = 0.0001f;
+      bool isMoving = fabs(v[0]) > delta || fabs(v[1]) > delta || fabs(v[2]) > delta;
+
+      if(isMoving != mIsMoving)
+      {
+         mIsMoving = isMoving;
+         if(mEntity)
+         {
+            EntityVelocityNotNullMessage msg;
+            msg.SetAboutEntityId(mEntity->GetId());
+            msg.SetIsNull(!isMoving);
+            mEntity->GetEntityManager().EmitMessage(msg);
+         }
+      }
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////

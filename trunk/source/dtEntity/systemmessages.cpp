@@ -38,6 +38,7 @@ namespace dtEntity
       em.RegisterMessageType<EntitySpawnedMessage>(EntitySpawnedMessage::TYPE);
       em.RegisterMessageType<EntitySystemAddedMessage>(EntitySystemAddedMessage::TYPE);
       em.RegisterMessageType<EntitySystemRemovedMessage>(EntitySystemRemovedMessage::TYPE);
+      em.RegisterMessageType<EntityVelocityNotNullMessage>(EntityVelocityNotNullMessage::TYPE);
       em.RegisterMessageType<MapBeginLoadMessage>(MapBeginLoadMessage::TYPE);
       em.RegisterMessageType<MapBeginUnloadMessage>(MapBeginUnloadMessage::TYPE);
       em.RegisterMessageType<MapLoadedMessage>(MapLoadedMessage::TYPE);
@@ -204,6 +205,19 @@ namespace dtEntity
    {
       this->Register(ComponentTypeId, &mComponentType);
       this->Register(ComponentTypeStringId, &mComponentTypeString);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType EntityVelocityNotNullMessage::TYPE(dtEntity::SID("EntityVelocityNotNullMessage"));
+   const StringId EntityVelocityNotNullMessage::AboutEntityId(dtEntity::SID("AboutEntity"));
+   const StringId EntityVelocityNotNullMessage::IsNullId(dtEntity::SID("IsNull"));
+
+
+   EntityVelocityNotNullMessage::EntityVelocityNotNullMessage()
+      : Message(TYPE)
+   {
+      Register(AboutEntityId, &mAboutEntity);
+      Register(IsNullId, &mIsNull);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

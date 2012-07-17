@@ -239,7 +239,8 @@ namespace dtEntity
       ComponentStore::iterator i = mComponents.find(eid);
       if(i != mComponents.end())
       {
-         mEntitiesByUniqueId.erase(i->second->GetUniqueId());
+         size_t s = mEntitiesByUniqueId.erase(i->second->GetUniqueId());
+         assert(s == 1);
       }
       return BaseClass::DeleteComponent(eid);
    }
