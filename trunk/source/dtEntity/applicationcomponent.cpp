@@ -23,12 +23,14 @@
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntity/commandmessages.h>
+#include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/uniqueid.h>
 #include <dtEntity/windowmanager.h>
+#include <dtEntity/osgsysteminterface.h>
 
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
@@ -44,77 +46,10 @@
 
 namespace dtEntity
 {   
-   class ApplicationImpl
-   {
-   public:
-
-      osg::observer_ptr<osgViewer::ViewerBase> mViewer;
-      osg::ref_ptr<DtEntityUpdateCallback> mUpdateCallback;
-      osg::ref_ptr<const osg::FrameStamp> mLastFrameStamp;
-      osg::ref_ptr<WindowManager> mWindowManager;
-   };
 
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DtEntityUpdateCallback : public osg::NodeCallback
-   {
-      ApplicationSystem* mApplicationSystem;
-      osg::Timer_t mStartOfFrameTick;
-      osg::Timer_t mSimulationClockTime;
-      unsigned int mLastFrameNumber;
 
-   public:
-
-      double mSimTime;
-      float mDeltaSimTime;
-      float mDeltaTime;
-      float mTimeScale;
-     
-      DtEntityUpdateCallback(ApplicationSystem* as)
-         : mApplicationSystem(as)
-         , mStartOfFrameTick(osg::Timer::instance()->tick())
-         , mSimulationClockTime(0)
-         , mLastFrameNumber(0)
-         , mSimTime(0)
-         , mDeltaSimTime(0)
-         , mDeltaTime(0)
-         , mTimeScale(1)
-      {
-         time_t t;
-         time(&t);
-         osg::Timer_t time = t;
-         mSimulationClockTime = time / osg::Timer::instance()->getSecondsPerTick();
-      }
-
-      void SetSimulationClockTime(osg::Timer_t t) { mSimulationClockTime = t; }
-      osg::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
-
-      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-      {
-
-         
-         const osg::FrameStamp* fs = nv->getFrameStamp();
-
-         if(fs->getFrameNumber() == mLastFrameNumber)
-         {
-            return;
-         }
-         mLastFrameNumber = fs->getFrameNumber();
-
-         mSimTime = fs->getSimulationTime();
-         osg::Timer_t lastTick = mStartOfFrameTick;
-         mStartOfFrameTick = osg::Timer::instance()->tick();
-
-         mDeltaTime = static_cast<float>(osg::Timer::instance()->delta_s(lastTick, mStartOfFrameTick));
-         mDeltaSimTime = mDeltaTime * mTimeScale;
-
-         mSimulationClockTime += mDeltaSimTime;
-         
-         mApplicationSystem->mImpl->mLastFrameStamp = fs;
-         traverse(node,nv);
-      }
-
-   };
 
    ////////////////////////////////////////////////////////////////////////////////
    const StringId ApplicationSystem::TYPE(dtEntity::SID("Application"));
@@ -124,7 +59,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    ApplicationSystem::ApplicationSystem(EntityManager& em)
       : EntitySystem(em)
-      , mImpl(new ApplicationImpl())
       , mTimeScale(
            DynamicFloatProperty::SetValueCB(this, &ApplicationSystem::SetTimeScale),
            DynamicFloatProperty::GetValueCB(this, &ApplicationSystem::GetTimeScale)
@@ -133,8 +67,6 @@ namespace dtEntity
 
       // generate a unique ID
       mApplicationSystemInfo.mUniqueID = CreateUniqueIdString();
-
-      mImpl->mUpdateCallback = new DtEntityUpdateCallback(this);
 
       Register(TimeScaleId, &mTimeScale);
       Register(CmdLineArgsId, &mArgvArray);
@@ -146,7 +78,6 @@ namespace dtEntity
       AddScriptedMethod("getSimulationClockTime", ScriptMethodFunctor(this, &ApplicationSystem::ScriptGetSimulationClockTime));
       AddScriptedMethod("getRealClockTime", ScriptMethodFunctor(this, &ApplicationSystem::ScriptGetRealClockTime));
       AddScriptedMethod("changeTimeSettings", ScriptMethodFunctor(this, &ApplicationSystem::ScriptChangeTimeSettings));
-      AddScriptedMethod("getSimulationClockTimeString", ScriptMethodFunctor(this, &ApplicationSystem::ScriptGetSimulationClockTimeString));
 
       mSetComponentPropertiesFunctor = MessageFunctor(this, &ApplicationSystem::OnSetComponentProperties);
       em.RegisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor, "ApplicationSystem::OnSetComponentProperties");
@@ -166,42 +97,45 @@ namespace dtEntity
       GetEntityManager().UnregisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor);
       GetEntityManager().UnregisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor);
       GetEntityManager().UnregisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor);
-
-      delete mImpl;
-
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::EmitTickMessagesAndQueuedMessages()
    {
+      SystemInterface* iface = GetSystemInterface();
+      float deltasimtime = iface->GetDeltaSimTime();
+      float deltarealtime = iface->GetDeltaRealTime();
+      float simtimescale = iface->GetTimeScale();
+      double simulationtime = iface->GetSimulationTime();
+
       EntityManager& em = GetEntityManager();
       
       {
          dtEntity::PostFrameMessage msg;
-         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
-         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
-         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
-         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
          em.EmitMessage(msg);
       }
 
       {
          dtEntity::TickMessage msg;
-         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
-         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
-         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
-         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
          em.EmitMessage(msg);
       }
 
-      em.EmitQueuedMessages(mImpl->mUpdateCallback->mSimTime);
+      em.EmitQueuedMessages(simulationtime);
 
       {
          dtEntity::EndOfFrameMessage msg;
-         msg.SetDeltaSimTime(mImpl->mUpdateCallback->mDeltaSimTime);
-         msg.SetDeltaRealTime(mImpl->mUpdateCallback->mDeltaTime);
-         msg.SetSimTimeScale(mImpl->mUpdateCallback->mTimeScale);
-         msg.SetSimulationTime(mImpl->mUpdateCallback->mSimTime);
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
          em.EmitMessage(msg);
       }
 
@@ -210,40 +144,53 @@ namespace dtEntity
    //////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetWindowManager(WindowManager* wm) 
    { 
-      mImpl->mWindowManager = wm; 
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      iface->SetWindowManager(wm);
    }
          
    //////////////////////////////////////////////////////////////////////////////
    WindowManager* ApplicationSystem::GetWindowManager() const 
    { 
-      return mImpl->mWindowManager.get(); 
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      return iface->GetWindowManager();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    osgViewer::View* ApplicationSystem::GetPrimaryView() const
    {
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      if(iface == NULL || iface->GetViewer() == NULL)
+      {
+         return NULL;
+      }
       osgViewer::ViewerBase::Views views;
-      mImpl->mViewer->getViews(views);
+      iface->GetViewer()->getViews(views);
       return views.front();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    osgViewer::GraphicsWindow* ApplicationSystem::GetPrimaryWindow() const
    {
-      if(!mImpl->mViewer)
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      if(iface == NULL || iface->GetViewer() == NULL)
       {
          return NULL;
       }
       osgViewer::ViewerBase::Windows wins;
-      mImpl->mViewer->getWindows(wins, false);
+      iface->GetViewer()->getWindows(wins, false);
       return wins.front();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    osg::Camera* ApplicationSystem::GetPrimaryCamera() const
    {
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      if(iface == NULL || iface->GetViewer() == NULL)
+      {
+         return NULL;
+      }
       osgViewer::CompositeViewer::Cameras cams;
-      mImpl->mViewer->getCameras(cams);
+      iface->GetViewer()->getCameras(cams);
       if(cams.empty())
       {
          return NULL;
@@ -254,94 +201,54 @@ namespace dtEntity
    //////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetViewer(osgViewer::ViewerBase* viewer)
    {
-      mImpl->mViewer = viewer;
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      iface->SetViewer(viewer);
    }
 
    //////////////////////////////////////////////////////////////////////////////
    osgViewer::ViewerBase* ApplicationSystem::GetViewer() const
    {
-      return mImpl->mViewer.get();
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      return iface->GetViewer();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    float ApplicationSystem::GetTimeScale() const
    {
-      return mImpl->mUpdateCallback->mTimeScale;
+      return GetSystemInterface()->GetTimeScale();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::SetTimeScale(float v)
    {
-      mImpl->mUpdateCallback->mTimeScale = v;
+      GetSystemInterface()->SetTimeScale(v);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    double ApplicationSystem::GetSimulationTime() const
    {
-      return mImpl->mUpdateCallback->mSimTime;
+      return GetSystemInterface()->GetSimulationTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Timer_t ApplicationSystem::GetSimulationClockTime() const
+   Timer_t ApplicationSystem::GetSimulationClockTime() const
    {
-      return mImpl->mUpdateCallback->GetSimulationClockTime();
+      return GetSystemInterface()->GetSimulationClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Timer_t ApplicationSystem::GetRealClockTime()
+   Timer_t ApplicationSystem::GetRealClockTime()
    {
-      return osg::Timer::instance()->tick();
+      return GetSystemInterface()->GetRealClockTime();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   Property* ApplicationSystem::ScriptGetSimulationClockTimeString(const PropertyArgs& args)
-   {
-      time_t time = static_cast<time_t>(GetSimulationClockTime() * osg::Timer::instance()->getSecondsPerTick());
-      struct tm * ptm = gmtime(&time);
-      std::string ret = "";
-
-      if(ptm != NULL)
-      {
-         std::ostringstream os;
-         /*os << time << "___";
-         if(ptm->tm_mday < 10)
-         {
-            os << "0";
-         }
-         os << ptm->tm_mday<<".";
-
-         if(ptm->tm_mon < 9)
-         {
-            os << "0";
-         }
-         os << (ptm->tm_mon + 1) << "." << (ptm->tm_year + 1900);
-         os << " ";*/
-         if(ptm->tm_hour < 10)
-         {
-            os << "0";
-         }
-         os << ptm->tm_hour << ":";
-         if(ptm->tm_min < 10)
-         {
-            os << "0";
-         }
-         os << ptm->tm_min << ":";
-         if(ptm->tm_sec < 10)
-         {
-            os << "0";
-         }
-         os << ptm->tm_sec;
-         ret = os.str();
-      }
-      return new StringProperty(ret);      
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime)
+   void ApplicationSystem::ChangeTimeSettings(double newTime, float newTimeScale, const Timer_t& newClockTime)
    {
       mTimeScale.Set(newTimeScale);
 
-      osg::Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
+      Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
       osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
       if(cv)
       {
@@ -356,8 +263,7 @@ namespace dtEntity
             v->setStartTick(newstarttick);
          }
       }
-
-      mImpl->mUpdateCallback->SetSimulationClockTime(newClockTime);
+      GetSystemInterface()->SetSimulationClockTime(newClockTime);
       TimeChangedMessage msg;
       msg.SetSimulationTime(newTime);
       msg.SetSimulationClockTime(newClockTime);
@@ -375,15 +281,9 @@ namespace dtEntity
       }
       double newtime = args[0]->DoubleValue();
       float newtimescale = args[1]->FloatValue();
-      osg::Timer_t newclocktime = args[2]->DoubleValue();
+      Timer_t newclocktime = args[2]->DoubleValue();
       ChangeTimeSettings(newtime, newtimescale, newclocktime);
       return NULL;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::InstallUpdateCallback(osg::Node* node)
-   {
-      node->setUpdateCallback(mImpl->mUpdateCallback);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -496,7 +396,8 @@ namespace dtEntity
          LayerAttachPointComponent* lc;
          if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
          {
-            InstallUpdateCallback(lc->GetNode());
+            OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+            iface->InstallUpdateCallback(lc->GetNode());
          }
          else
          {

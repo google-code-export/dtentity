@@ -26,7 +26,7 @@
 #include <QtCore/QSize>
 #include <QtCore/QObject>
 #include <QtCore/QFileSystemWatcher>
-#include <osg/Timer>
+#include <dtEntity/systeminterface.h>
 #include <set>
 
 namespace dtEntity
@@ -139,7 +139,7 @@ namespace dtEntityEditor
       dtEntity::EntityManager* mEntityManager;
       osg::ref_ptr<osgViewer::Viewer> mViewer;
       std::vector<std::string> mPluginPaths;
-      osg::Timer_t mStartOfFrameTick;
+      dtEntity::Timer_t mStartOfFrameTick;
       double mTimeScale;
       QFileSystemWatcher* mFileSystemWatcher;
 

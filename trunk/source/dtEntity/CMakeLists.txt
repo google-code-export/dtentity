@@ -52,6 +52,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/componentplugin.h
   ${HEADER_PATH}/componentpluginmanager.h
+  ${HEADER_PATH}/core.h
   ${HEADER_PATH}/hash.h
   ${HEADER_PATH}/debugdrawmanager.h
   ${HEADER_PATH}/defaultentitysystem.h
@@ -83,6 +84,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
   ${HEADER_PATH}/osganimationcomponent.h
+  ${HEADER_PATH}/osgsysteminterface.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
@@ -98,6 +100,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/skyboxcomponent.h
   ${HEADER_PATH}/staticmeshcomponent.h
   ${HEADER_PATH}/stringid.h
+  ${HEADER_PATH}/systeminterface.h
   ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/textlabelcomponent.h
   ${HEADER_PATH}/texturelabelcomponent.h
@@ -113,6 +116,7 @@ SET(LIB_REPLACE
   applicationcomponent.cpp
   cameracomponent.cpp
   commandmessages.cpp
+  core.cpp
   dynamicscomponent.cpp
   groupcomponent.cpp
   inputhandler.cpp
@@ -123,6 +127,7 @@ SET(LIB_REPLACE
   matrixtransformcomponent.cpp
   nodecomponent.cpp
   osganimationcomponent.cpp
+  osgsysteminterface.cpp
   pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
   shadercomponent.cpp

@@ -24,11 +24,10 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <osg/ref_ptr>
-#include <osg/Referenced>
+#include <osg/Group>
 
 namespace osg
 {
-   class Group;
    class Geode;
    class Geometry;
 }

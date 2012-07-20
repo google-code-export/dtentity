@@ -27,6 +27,7 @@
 #include <dtEntity/message.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systeminterface.h>
 #include <osg/Timer>
 
 namespace osgViewer
@@ -95,12 +96,12 @@ namespace dtEntity
       /**
        * @return the current simulation wall-clock time. This is in MICRO SECONDS (seconds * 1000000LL).
        */
-      osg::Timer_t GetSimulationClockTime() const;
+      Timer_t GetSimulationClockTime() const;
 
       /**
        * @return The current real clock time. This is in MICRO SECONDS (seconds * 1000000LL).
        */
-      static osg::Timer_t GetRealClockTime();
+      static Timer_t GetRealClockTime();
 
       /**
        * Change the time settings.
@@ -108,7 +109,7 @@ namespace dtEntity
        * @param newTimeScale the new simulation time progression as a factor of real time.
        * @param newClockTime  The new simulation wall-clock time. In MICRO SECONDs (seconds * 1000000LL).
        */
-      void ChangeTimeSettings(double newTime, float newTimeScale, const osg::Timer_t& newClockTime);
+      void ChangeTimeSettings(double newTime, float newTimeScale, const Timer_t& newClockTime);
 
 	  /** Functor reacting to SetComponentPropertiesMessage */
       void OnSetComponentProperties(const Message& msg);
@@ -118,8 +119,6 @@ namespace dtEntity
 
       /** adds input callback to cameras */
       void OnCameraAdded(const Message& msg);      
-
-      void InstallUpdateCallback(osg::Node*);
 
       void SetWindowManager(WindowManager* wm);
       WindowManager* GetWindowManager() const;
@@ -157,8 +156,6 @@ namespace dtEntity
 
       ArrayProperty mArgvArray;
 
-      ApplicationImpl* mImpl;
-
       DynamicFloatProperty mTimeScale;
 
       Property* ScriptGetTimeScale(const PropertyArgs& args)
@@ -175,8 +172,6 @@ namespace dtEntity
       {
          return new DoubleProperty(GetSimulationClockTime());
       }
-
-      Property* ScriptGetSimulationClockTimeString(const PropertyArgs& args);
 
       Property* ScriptGetRealClockTime(const PropertyArgs& args)
       {
