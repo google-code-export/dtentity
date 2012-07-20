@@ -24,6 +24,8 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentpluginmanager.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/initosgviewer.h>
@@ -63,7 +65,7 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
-
+      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface());
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
       dtEntity::SetupDataPaths(argc,argv, false);

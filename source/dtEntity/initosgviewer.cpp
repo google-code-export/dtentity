@@ -22,10 +22,12 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentfactories.h>
+#include <dtEntity/core.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/matrixtransformcomponent.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
@@ -177,6 +179,8 @@ namespace dtEntity
                       bool addConsoleLog,
                       osg::Group* pSceneNode)
    {
+      SetSystemInterface(new OSGSystemInterface());
+
       if(pSceneNode == NULL)
       {
          pSceneNode = new osg::Group();
@@ -243,7 +247,8 @@ namespace dtEntity
       
       // install update traversal callback of application system into scene graph
       // root node. Used for sending tick messages etc.
-      appsystem->InstallUpdateCallback(pSceneNode);
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      iface->InstallUpdateCallback(pSceneNode);
 
       // set scene graph root node as scene data for viewer. This is done again in camera setup,
       // but to make it accessible immediately we add it here, first
