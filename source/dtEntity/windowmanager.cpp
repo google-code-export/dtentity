@@ -22,13 +22,13 @@
 
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/cameracomponent.h>
+#include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/systemmessages.h>
-
 #include <osg/GraphicsContext>
 #include <osg/NodeCallback>
 #include <osg/NodeVisitor>
@@ -56,11 +56,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    osgViewer::View* WindowManager::GetViewByName(const std::string& name)
    {
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::ViewerBase::Views views;
-      appsys->GetViewer()->getViews(views);
+      iface->GetViewer()->getViews(views);
       osgViewer::ViewerBase::Views::iterator i;
 
       for(i = views.begin(); i != views.end(); ++i)
@@ -76,11 +74,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    osgViewer::GraphicsWindow* WindowManager::GetWindowByName(const std::string& name)
    {
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::ViewerBase::Windows wins;
-      appsys->GetViewer()->getWindows(wins, false);
+      iface->GetViewer()->getWindows(wins, false);
 
       osgViewer::ViewerBase::Windows::iterator i;
       for(i = wins.begin(); i != wins.end(); ++i)
@@ -142,20 +138,20 @@ namespace dtEntity
    ///////////////////////////////////////////////////////////////////////////////
    bool OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
    {
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      osgViewer::CompositeViewer* compviewer = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());      
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      osgViewer::ViewerBase* viewer = iface->GetViewer();
+      osgViewer::CompositeViewer* compviewer = dynamic_cast<osgViewer::CompositeViewer*>(viewer);
       
 	   if(compviewer == NULL)
       {
-         appsys->GetViewer()->realize();
-         if(!appsys->GetViewer()->isRealized())
+         viewer->realize();
+         if(!viewer->isRealized())
          {
             LOG_ERROR("OSG viewer could not realize window, check your display traits!");
             return false;
          }
          osgViewer::ViewerBase::Windows windows;
-         appsys->GetViewer()->getWindows(windows);
+         viewer->getWindows(windows);
          windows.front()->setName(name);
          contextId = 0;
       }
@@ -207,10 +203,9 @@ namespace dtEntity
          return;
       }
 
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
 
-      osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());
+      osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(iface->GetViewer());
       if(compview == NULL)
       {
          LOG_ERROR("Cannot close window, use CompositeViewer class!");
@@ -309,9 +304,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    bool OSGWindowManager::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height)
    {
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
       if(!window)
       {
          return false;
@@ -325,9 +319,8 @@ namespace dtEntity
    {
       SetFullscreen(contextId, false);
 
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
       if(!window)
       {
          return false;
@@ -339,9 +332,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void OSGWindowManager::SetFullscreen(unsigned int contextId, bool fullscreen)
    {
-      ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, appsys->GetViewer());
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
       if(!window)
       {
          LOG_ERROR("Cannot set window to fullscreen, no window with that id found! " << contextId);

@@ -21,7 +21,8 @@
 #include <dtEntityWrappers/scriptcomponent.h>
 
 
-
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
@@ -164,11 +165,12 @@ namespace dtEntityWrappers
       dtEntity::ApplicationSystem* as;
       if(GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as))
       {
-         osgViewer::GraphicsWindow* window = as->GetPrimaryWindow();
+         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+         osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
 
          if(window)
          {
-            context->Global()->Set(String::New("Screen"), WrapScreen(this, as->GetPrimaryView(), window));
+            context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
          }
 
          if(as->GetWindowManager())

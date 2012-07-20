@@ -40,7 +40,10 @@ namespace dtEntity
       WindowManager* GetWindowManager() { return mWindowManager; }
 
       void SetViewer(osgViewer::ViewerBase* v) { mViewer = v; }
-      osgViewer::ViewerBase* GetViewer() { return mViewer.get(); }
+      osgViewer::ViewerBase* GetViewer() const { return mViewer.get(); }
+      osgViewer::View* GetPrimaryView() const;
+      osgViewer::GraphicsWindow* GetPrimaryWindow() const;
+      osg::Camera* GetPrimaryCamera() const;
 
       virtual float GetDeltaSimTime() const;
       virtual float GetDeltaRealTime() const;

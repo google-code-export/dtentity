@@ -86,6 +86,8 @@ namespace dtEntity
 
    };
 
+
+
    ////////////////////////////////////////////////////////////////////////////////
    OSGSystemInterface::OSGSystemInterface()
       : mUpdateCallback(new DtEntityUpdateCallback())
@@ -96,6 +98,33 @@ namespace dtEntity
    void OSGSystemInterface::InstallUpdateCallback(osg::Node* node)
    {
       node->setUpdateCallback(mUpdateCallback);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osgViewer::View* OSGSystemInterface::GetPrimaryView() const
+   {
+      osgViewer::ViewerBase::Views views;
+      GetViewer()->getViews(views);
+      assert(!views.empty());
+      return views.front();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osgViewer::GraphicsWindow* OSGSystemInterface::GetPrimaryWindow() const
+   {
+      osgViewer::ViewerBase::Windows wins;
+      GetViewer()->getWindows(wins, false);
+      assert(!wins.empty());
+      return wins.front();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osg::Camera* OSGSystemInterface::GetPrimaryCamera() const
+   {
+      osgViewer::ViewerBase::Cameras cams;
+      GetViewer()->getCameras(cams);
+      assert(!cams.empty());
+      return cams.front();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

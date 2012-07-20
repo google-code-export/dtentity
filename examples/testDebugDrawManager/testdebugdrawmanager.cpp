@@ -23,11 +23,13 @@
 */
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/component.h>
-#include <dtEntity/layercomponent.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/initosgviewer.h>
+#include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
@@ -94,9 +96,11 @@ int main(int argc, char** argv)
    debugDrawManager.AddOBB(m, osg::Vec3(-2,-2,-2), osg::Vec3(2,2,2), osg::Vec4(0.5f,1,0.5f, 1), 1, 50);
    debugDrawManager.AddAxes(m, osg::Vec4(1,0,0.5f, 1), 1, 50);
 
-   appsystem->GetPrimaryView()->setCameraManipulator(new osgGA::TrackballManipulator());
-   appsystem->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(0, -10, 0), osg::Vec3(0, 1, 0), osg::Vec3(0,0,1),false);
-   appsystem->GetPrimaryView()->getCameraManipulator()->home(0);
+   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+
+   iface->GetPrimaryView()->setCameraManipulator(new osgGA::TrackballManipulator());
+   iface->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(0, -10, 0), osg::Vec3(0, 1, 0), osg::Vec3(0,0,1),false);
+   iface->GetPrimaryView()->getCameraManipulator()->home(0);
 
    float time = 0;
 

@@ -155,63 +155,6 @@ namespace dtEntity
       return iface->GetWindowManager();
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   osgViewer::View* ApplicationSystem::GetPrimaryView() const
-   {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      if(iface == NULL || iface->GetViewer() == NULL)
-      {
-         return NULL;
-      }
-      osgViewer::ViewerBase::Views views;
-      iface->GetViewer()->getViews(views);
-      return views.front();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   osgViewer::GraphicsWindow* ApplicationSystem::GetPrimaryWindow() const
-   {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      if(iface == NULL || iface->GetViewer() == NULL)
-      {
-         return NULL;
-      }
-      osgViewer::ViewerBase::Windows wins;
-      iface->GetViewer()->getWindows(wins, false);
-      return wins.front();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   osg::Camera* ApplicationSystem::GetPrimaryCamera() const
-   {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      if(iface == NULL || iface->GetViewer() == NULL)
-      {
-         return NULL;
-      }
-      osgViewer::CompositeViewer::Cameras cams;
-      iface->GetViewer()->getCameras(cams);
-      if(cams.empty())
-      {
-         return NULL;
-      }
-      return cams.front();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::SetViewer(osgViewer::ViewerBase* viewer)
-   {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      iface->SetViewer(viewer);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   osgViewer::ViewerBase* ApplicationSystem::GetViewer() const
-   {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      return iface->GetViewer();
-   }
-
    ///////////////////////////////////////////////////////////////////////////////
    float ApplicationSystem::GetTimeScale() const
    {
@@ -242,14 +185,14 @@ namespace dtEntity
       return GetSystemInterface()->GetRealClockTime();
    }
 
-
    ///////////////////////////////////////////////////////////////////////////////
    void ApplicationSystem::ChangeTimeSettings(double newTime, float newTimeScale, const Timer_t& newClockTime)
    {
       mTimeScale.Set(newTimeScale);
 
       Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
-      osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
+      osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(GetSystemInterface())->GetViewer();
+      osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(viewer);
       if(cv)
       {
          cv->setStartTick(newstarttick);
@@ -257,7 +200,7 @@ namespace dtEntity
       }
       else
       {
-         osgViewer::Viewer* v = dynamic_cast<osgViewer::Viewer*>(GetViewer());
+         osgViewer::Viewer* v = dynamic_cast<osgViewer::Viewer*>(viewer);
          if(v != NULL)
          {
             v->setStartTick(newstarttick);

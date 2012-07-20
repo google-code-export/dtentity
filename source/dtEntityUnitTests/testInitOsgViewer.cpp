@@ -19,6 +19,9 @@
 */
 
 #include <UnitTest++.h>
+#include <dtEntity/core.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entitymanager.h>
@@ -67,8 +70,9 @@ TEST(InitOsgViewer)
    CHECK(em.HasEntitySystem(dtEntity::SID("LayerAttachPoint")));
    CHECK(em.HasEntitySystem(dtEntity::SID("Layer")));
 
+   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    // check if passed root node is actually used as root node
-   CHECK(appsys->GetPrimaryView()->getSceneData() == root);
+   CHECK(iface->GetPrimaryView()->getSceneData() == root);
 
 
    ComponentPluginManager::DestroyInstance();

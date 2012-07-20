@@ -31,7 +31,8 @@
 #include <osg/Texture2D>
 #include <osgDB/FileNameUtils>
 #include <osgViewer/GraphicsWindow>
-#include <dtEntity/applicationcomponent.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>  // for base class
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
@@ -185,15 +186,14 @@ namespace dtEntityCEGUI
    ////////////////////////////////////////////////////////////////////////////////
    void CEGUISystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
-      dtEntity::ApplicationSystem* appsys;
-      GetEntityManager().GetES(appsys);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
-      appsys->GetPrimaryView()->addEventHandler(this);
-      appsys->GetPrimaryWindow()->makeCurrent();
+      iface->GetPrimaryView()->addEventHandler(this);
+      iface->GetPrimaryWindow()->makeCurrent();
 
       _SetupInternalGraph();
 
-      SetCamera(appsys->GetPrimaryCamera());
+      SetCamera(iface->GetPrimaryCamera());
        _SetupSystemAndRenderer();
       _SetupDefaultUI();  
    }
@@ -201,11 +201,8 @@ namespace dtEntityCEGUI
    ////////////////////////////////////////////////////////////////////////////////
    void CEGUISystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
-      dtEntity::ApplicationSystem* appsys;
-      if(GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys))
-      {
-         appsys->GetPrimaryView()->removeEventHandler(this);
-      }
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      iface->GetPrimaryView()->removeEventHandler(this);
 
       if (mCamera.valid() && mInternalGraph.valid())
       {
