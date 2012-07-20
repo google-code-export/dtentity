@@ -86,18 +86,33 @@ namespace dtEntity
 
    };
 
-
+   class OSGSystemInterface::Impl
+   {
+   public:
+	   Impl() 
+		   : mUpdateCallback(new DtEntityUpdateCallback())
+	   {
+	   }
+		
+	   osg::ref_ptr<DtEntityUpdateCallback> mUpdateCallback;
+   };
 
    ////////////////////////////////////////////////////////////////////////////////
    OSGSystemInterface::OSGSystemInterface()
-      : mUpdateCallback(new DtEntityUpdateCallback())
+      : mImpl(new Impl())
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   OSGSystemInterface::~OSGSystemInterface()
+   {
+	   delete mImpl;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void OSGSystemInterface::InstallUpdateCallback(osg::Node* node)
    {
-      node->setUpdateCallback(mUpdateCallback);
+      node->setUpdateCallback(mImpl->mUpdateCallback);
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -130,43 +145,43 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    float OSGSystemInterface::GetDeltaSimTime() const
    {
-      return mUpdateCallback->mDeltaSimTime;
+      return mImpl->mUpdateCallback->mDeltaSimTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    float OSGSystemInterface::GetDeltaRealTime() const
    {
-      return mUpdateCallback->mDeltaTime;
+      return mImpl->mUpdateCallback->mDeltaTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    float OSGSystemInterface::GetTimeScale() const
    {
-      return mUpdateCallback->mTimeScale;
+      return mImpl->mUpdateCallback->mTimeScale;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void OSGSystemInterface::SetTimeScale(float v)
    {
-      mUpdateCallback->mTimeScale = v;
+      mImpl->mUpdateCallback->mTimeScale = v;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double OSGSystemInterface::GetSimulationTime() const
    {
-      return mUpdateCallback->mSimTime;
+      return mImpl->mUpdateCallback->mSimTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Timer_t OSGSystemInterface::GetSimulationClockTime() const
    {
-      return mUpdateCallback->mSimulationClockTime;
+      return mImpl->mUpdateCallback->mSimulationClockTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void OSGSystemInterface::SetSimulationClockTime(Timer_t t)
    {
-      mUpdateCallback->SetSimulationClockTime(t);
+      mImpl->mUpdateCallback->SetSimulationClockTime(t);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
