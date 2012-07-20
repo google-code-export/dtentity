@@ -27,12 +27,13 @@
 namespace dtEntity
 {     
 
-   class DtEntityUpdateCallback;
-
-   class OSGSystemInterface : public SystemInterface
+   class DT_ENTITY_EXPORT OSGSystemInterface : public SystemInterface
    {
+	   class Impl;
+
    public:
       OSGSystemInterface();
+	  ~OSGSystemInterface();
 
       void InstallUpdateCallback(osg::Node* node);
 
@@ -59,8 +60,8 @@ namespace dtEntity
 
 
    private:
-      osg::observer_ptr<osgViewer::ViewerBase> mViewer;
-      osg::ref_ptr<DtEntityUpdateCallback> mUpdateCallback;
+      osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
+	  Impl* mImpl;
       osg::ref_ptr<WindowManager> mWindowManager;
    };
   

@@ -20,9 +20,11 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/export.h>
+
 namespace dtEntity
 {
    class SystemInterface;
-   void SetSystemInterface(SystemInterface*);
-   SystemInterface* GetSystemInterface();
+   DT_ENTITY_EXPORT void SetSystemInterface(SystemInterface*);
+   DT_ENTITY_EXPORT SystemInterface* GetSystemInterface();
 }

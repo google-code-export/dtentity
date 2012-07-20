@@ -20,6 +20,7 @@
  * Martin Scheffler
  */
 
+#include <dtEntity/export.h>
 
 namespace dtEntity
 {     
@@ -29,7 +30,7 @@ namespace dtEntity
        typedef unsigned long long Timer_t;
    #endif
 
-   class SystemInterface
+   class DT_ENTITY_EXPORT SystemInterface
    {
    public:
       virtual float GetDeltaSimTime() const = 0;
