@@ -123,13 +123,6 @@ namespace dtEntity
       void SetWindowManager(WindowManager* wm);
       WindowManager* GetWindowManager() const;
 
-      osgViewer::ViewerBase* GetViewer() const;
-      void SetViewer(osgViewer::ViewerBase*);
-
-      osgViewer::View* GetPrimaryView() const;      
-      osgViewer::GraphicsWindow* GetPrimaryWindow() const;
-      osg::Camera* GetPrimaryCamera() const;
-
       void AddCmdLineArg(const std::string& arg)
       {
          mArgvArray.Add(new StringProperty(arg));

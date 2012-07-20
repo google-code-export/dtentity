@@ -21,6 +21,8 @@
 #include <dtEntity/shadowcomponent.h>
 
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/lightcomponent.h>
 #include <dtEntity/nodemasks.h>
@@ -173,10 +175,8 @@ namespace dtEntity
       osgShadow::ShadowedScene* shadowedScene = static_cast<osgShadow::ShadowedScene*>(GetNode());
       shadowedScene->setShadowTechnique(mTechnique);
 
-      ApplicationSystem* appsys;
-      mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      
-      osg::ref_ptr<osg::Light> light = appsys->GetPrimaryView()->getLight();
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      osg::ref_ptr<osg::Light> light = iface->GetPrimaryView()->getLight();
       
       if(msm)
       {

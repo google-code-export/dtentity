@@ -201,10 +201,8 @@ namespace dtEntity
       AddDefaultEntitySystemsAndFactories(argc, argv, em);
      
       // give application system access to viewer
-      dtEntity::ApplicationSystem* appsystem;
-      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
-      appsystem->SetViewer(&viewer);
-
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      iface->SetViewer(&viewer);
       bool success = DoScreenSetup(argc, argv, viewer, em);
       if(!success)
       {
@@ -237,26 +235,28 @@ namespace dtEntity
    {
       assert(pSceneNode != NULL);
 
-      dtEntity::ApplicationSystem* appsystem;
-      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
 
-      if(appsystem->GetViewer() == NULL)
+      if(iface->GetViewer() == NULL)
       {
-         appsystem->SetViewer(&viewer);
+         iface->SetViewer(&viewer);
       }
       
       // install update traversal callback of application system into scene graph
       // root node. Used for sending tick messages etc.
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       iface->InstallUpdateCallback(pSceneNode);
 
       // set scene graph root node as scene data for viewer. This is done again in camera setup,
       // but to make it accessible immediately we add it here, first
-      appsystem->GetPrimaryView()->setSceneData(pSceneNode);
+      osgViewer::ViewerBase::Views views;
+      iface->GetViewer()->getViews(views);
+      views.front()->setSceneData(pSceneNode);
 
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
-      appsystem->GetPrimaryView()->addEventHandler(&appsystem->GetWindowManager()->GetInputHandler());
+      dtEntity::ApplicationSystem* appsystem;
+      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
+      views.front()->addEventHandler(&appsystem->GetWindowManager()->GetInputHandler());
 
       // create an entity holding the scene graph root as an attach point
       LayerAttachPointSystem* layerattachsys;

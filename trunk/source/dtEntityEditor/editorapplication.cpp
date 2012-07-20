@@ -169,9 +169,9 @@ namespace dtEntityEditor
       assert(mMainWindow != NULL);
 
       // give application system access to viewer
-      dtEntity::ApplicationSystem* appsystem;
-      GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
-      appsystem->SetViewer(mViewer);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      iface->SetViewer(mViewer);
+
 
       bool success = dtEntity::DoScreenSetup(0, NULL, *mViewer, GetEntityManager());
       if(!success)
@@ -393,13 +393,11 @@ namespace dtEntityEditor
          }
 
          // create a main camera entity if it was not loaded from map
-         dtEntity::ApplicationSystem* appsys;
-         GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
 
          dtEntity::Entity* entity;
          mEntityManager->CreateEntity(entity);
-
-         unsigned int contextId = appsys->GetPrimaryWindow()->getState()->getContextID();
+         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+         unsigned int contextId = iface->GetPrimaryWindow()->getState()->getContextID();
          dtEntity::CameraComponent* camcomp;
          entity->CreateComponent(camcomp);
          camcomp->SetContextId(contextId);

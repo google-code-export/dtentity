@@ -20,6 +20,8 @@
 
 #include "hudcomponent.h"
 #include "rocketcomponent.h"
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/applicationcomponent.h>
@@ -327,13 +329,9 @@ namespace dtEntityRocket
          return;
       }
 
-      dtEntity::ApplicationSystem* appsys;
-      if(!GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys))
-      {
-         return;
-      }
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
-      osg::Camera* cam = appsys->GetPrimaryCamera();
+      osg::Camera* cam = iface->GetPrimaryCamera();
       if(cam == NULL)
       {
          return;

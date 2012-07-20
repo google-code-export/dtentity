@@ -20,7 +20,8 @@
 
 #include <dtEntity/cameracomponent.h>
 
-#include <dtEntity/applicationcomponent.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
@@ -270,9 +271,7 @@ namespace dtEntity
    {
       if(mEntity == NULL || mContextId.Get() == -1) return;
 
-      ApplicationSystem* appsys;
-      bool success = mEntity->GetEntityManager().GetEntitySystem(ApplicationSystem::TYPE, appsys);
-      assert(success);
+      osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(GetSystemInterface())->GetViewer();
 
       osgViewer::View* view;
             
@@ -285,7 +284,7 @@ namespace dtEntity
       {
          osg::View* lastView = GetCamera()->getView();
          osgViewer::ViewerBase::Views views;
-         appsys->GetViewer()->getViews(views);
+         viewer->getViews(views);
 
          for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
          {
@@ -310,7 +309,7 @@ namespace dtEntity
             if(cid == static_cast<unsigned int>(mContextId.Get()))
             {               
                
-               appsys->GetViewer()->stopThreading();
+               viewer->stopThreading();
 
                osg::ref_ptr<osg::GraphicsContext> ctx = oldcam->getGraphicsContext();
                for(unsigned int j = 0; j < oldcam->getNumChildren(); ++j)
@@ -329,7 +328,7 @@ namespace dtEntity
                   view->removeSlave(0);
                }
 
-               appsys->GetViewer()->startThreading(); 
+               viewer->startThreading();
 
                CameraAddedMessage msg;
                msg.SetAboutEntityId(mEntity->GetId());
@@ -363,7 +362,7 @@ namespace dtEntity
 
                if(lastView != NULL && lastView != view)
                {
-                  osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(appsys->GetViewer());
+                  osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(viewer);
                   if(compview)
                   {
                      compview->removeView(dynamic_cast<osgViewer::View*>(lastView));
@@ -377,7 +376,7 @@ namespace dtEntity
       }
       
       LayerAttachPointSystem* layersys;
-      success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
+      bool success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
       assert(success);
 
       LayerAttachPointComponent* lcomp;

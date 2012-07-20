@@ -20,6 +20,8 @@
 
 #include <dtEntity/soundcomponent.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/audiomanager.h>
 #include <dtEntity/sound.h>
 #include <dtEntity/entity.h>
@@ -260,16 +262,15 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnWindowClosed(const Message& m)
    {
-      dtEntity::ApplicationSystem* appSys;
-      if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appSys) )
+
+      const WindowClosedMessage& msg = static_cast<const WindowClosedMessage&>(m);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osg::Camera* currCam = iface->GetPrimaryCamera();
+      if(currCam == NULL || msg.GetName() == currCam->getGraphicsContext()->getName())
       {
-         const WindowClosedMessage& msg = static_cast<const WindowClosedMessage&>(m);
-         osg::Camera* currCam = appSys->GetPrimaryCamera();
-         if(currCam == NULL || msg.GetName() == currCam->getGraphicsContext()->getName())
-         {
-            mListenerLinkToCamera.Set(false);
-         }
+         mListenerLinkToCamera.Set(false);
       }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -344,7 +345,8 @@ namespace dtEntity
       dtEntity::ApplicationSystem* pAppSys;
       if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
       {
-         osg::Camera* currCam = pAppSys->GetPrimaryCamera();
+         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+         osg::Camera* currCam = iface->GetPrimaryCamera();
          if(currCam == NULL)
          {
             LOG_ERROR("Cannot copy cam transform to audio listener, no primary camera set!");
