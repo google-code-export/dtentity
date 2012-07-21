@@ -19,7 +19,8 @@
 */
 
 #include <dtEntityWrappers/screenwrapper.h>
-
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
@@ -119,10 +120,8 @@ namespace dtEntityWrappers
       osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
 
       unsigned int contextId = window->getState()->getContextID();
-      dtEntity::ApplicationSystem* appsys;
-      dtEntity::EntityManager* em = GetEntityManager(info.Holder()->CreationContext());
-      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      return Boolean::New(appsys->GetWindowManager()->GetFullscreen(contextId));
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      return Boolean::New(iface->GetWindowManager()->GetFullscreen(contextId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -131,20 +130,16 @@ namespace dtEntityWrappers
       osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
 
       unsigned int contextId = window->getState()->getContextID();
-      dtEntity::ApplicationSystem* appsys;
-      dtEntity::EntityManager* em = GetEntityManager(info.Holder()->CreationContext());
-      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetWindowManager()->SetFullscreen(contextId, value->BooleanValue());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      iface->GetWindowManager()->SetFullscreen(contextId, value->BooleanValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetPickRay(const Arguments& args)
    {
       dtEntity::EntityManager* em = GetEntityManager(args.This()->CreationContext());
-
-      dtEntity::ApplicationSystem* appsys;
-      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      osg::Vec3 pr = appsys->GetWindowManager()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      osg::Vec3 pr = iface->GetWindowManager()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
       return WrapVec3(pr);
    }
 
@@ -185,10 +180,8 @@ namespace dtEntityWrappers
 	   }
 	   osg::Vec3d from = camcomp->GetPosition();
 
-	   dtEntity::ApplicationSystem* appsys;
-      em->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      
-      osg::Vec3 pr = appsys->GetWindowManager()->GetPickRay("defaultView", x, y, true);
+	   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      osg::Vec3 pr = iface->GetWindowManager()->GetPickRay("defaultView", x, y, true);
       
       osg::Vec3d to = from + pr * 10000;
 
@@ -347,12 +340,10 @@ namespace dtEntityWrappers
          if(traitsin->Has(String::New("vsync"))) traits->vsync = traitsin->Get(String::New("vsync"))->BooleanValue();
       }
 
-      dtEntity::EntityManager* entityManager = GetEntityManager(args.This()->CreationContext());
-      dtEntity::ApplicationSystem* appsys;
-      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-
+      
       unsigned int contextid;
-      bool success = appsys->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits, contextid);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      bool success = iface->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits, contextid);
       assert(success);
       return Uint32::New(contextid);
    }
@@ -361,9 +352,8 @@ namespace dtEntityWrappers
    Handle<Value> SCRCloseWindow(const Arguments& args)
    {     
       dtEntity::EntityManager* entityManager = GetEntityManager(args.This()->CreationContext());
-      dtEntity::ApplicationSystem* appsys;
-      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetWindowManager()->CloseWindow(ToStdString(args[0]));
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      iface->GetWindowManager()->CloseWindow(ToStdString(args[0]));
       return Undefined();
    }
 
@@ -376,10 +366,8 @@ namespace dtEntityWrappers
       }
       unsigned int contextId = args[0]->Uint32Value();
       int x, y, w, h;
-      dtEntity::EntityManager* entityManager = GetEntityManager(args.This()->CreationContext());
-      dtEntity::ApplicationSystem* appsys;
-      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetWindowManager()->GetWindowGeometry(contextId, x, y, w, h);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      iface->GetWindowManager()->GetWindowGeometry(contextId, x, y, w, h);
 
       HandleScope scope;
       Handle<Array> arr = Array::New();
@@ -405,10 +393,8 @@ namespace dtEntityWrappers
       int w = arr->Get(2)->Int32Value();
       int h = arr->Get(3)->Int32Value();
 
-      dtEntity::EntityManager* entityManager = GetEntityManager(args.This()->CreationContext());
-      dtEntity::ApplicationSystem* appsys;
-      entityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      appsys->GetWindowManager()->SetWindowGeometry(contextId, x, y, w, h);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      iface->GetWindowManager()->SetWindowGeometry(contextId, x, y, w, h);
 
       return Undefined();
    }

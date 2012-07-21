@@ -173,9 +173,9 @@ namespace dtEntityWrappers
             context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
          }
 
-         if(as->GetWindowManager())
+         if(iface->GetWindowManager())
          {
-            dtEntity::InputHandler* input = &as->GetWindowManager()->GetInputHandler();
+            dtEntity::InputHandler* input = &iface->GetWindowManager()->GetInputHandler();
             if(input)
             {
                context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));

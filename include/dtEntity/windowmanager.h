@@ -53,11 +53,12 @@ namespace dtEntity
    osgViewer::GraphicsWindow* GetWindowByContextId(unsigned int contextId, osgViewer::ViewerBase* v);
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT WindowManager : public osg::Referenced
+   class DT_ENTITY_EXPORT WindowManager
    {     
    public:
 
       WindowManager(EntityManager& em);
+      virtual ~WindowManager() {}
 
       /**
        * Opens a new window if used viewer is a composite viewer.

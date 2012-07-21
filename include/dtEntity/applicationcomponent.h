@@ -28,29 +28,11 @@
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systeminterface.h>
-#include <osg/Timer>
-
-namespace osgViewer
-{
-   class View;
-   class Window;
-   class ViewerBase;
-   class GraphicsWindow;
-}
-
-namespace osg
-{
-   class Camera;
-   class Group;
-   class Node;
-}
 
 namespace dtEntity
 { 
 
    ////////////////////////////////////////////////////////////////////////////////
-   class ApplicationImpl;  
-   class DtEntityUpdateCallback;
    class WindowManager;
 
 
@@ -62,8 +44,6 @@ namespace dtEntity
       : public EntitySystem
       , public ScriptAccessor
    {
-
-      friend class DtEntityUpdateCallback;
 
    public:
       static const ComponentType TYPE;
@@ -119,9 +99,6 @@ namespace dtEntity
 
       /** adds input callback to cameras */
       void OnCameraAdded(const Message& msg);      
-
-      void SetWindowManager(WindowManager* wm);
-      WindowManager* GetWindowManager() const;
 
       void AddCmdLineArg(const std::string& arg)
       {
