@@ -88,7 +88,7 @@ namespace dtEntity
       mCameraAddedFunctor = MessageFunctor(this, &ApplicationSystem::OnCameraAdded);
       em.RegisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor, "ApplicationSystem::OnCameraAdded");
 
-      SetWindowManager(new OSGWindowManager(em));
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -139,20 +139,6 @@ namespace dtEntity
          em.EmitMessage(msg);
       }
 
-   }
-   
-   //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::SetWindowManager(WindowManager* wm) 
-   { 
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      iface->SetWindowManager(wm);
-   }
-         
-   //////////////////////////////////////////////////////////////////////////////
-   WindowManager* ApplicationSystem::GetWindowManager() const 
-   { 
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      return iface->GetWindowManager();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -311,6 +297,7 @@ namespace dtEntity
       const CameraAddedMessage& msg = static_cast<const CameraAddedMessage&>(m);
       CameraComponent* camcomp;
 
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       
       if(!GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
       {
@@ -322,9 +309,9 @@ namespace dtEntity
       if(view)
       {
          osgViewer::View::EventHandlers& eh = view->getEventHandlers();
-         if(std::find(eh.begin(), eh.end(),&GetWindowManager()->GetInputHandler()) ==  eh.end())
+         if(std::find(eh.begin(), eh.end(),&iface->GetWindowManager()->GetInputHandler()) ==  eh.end())
          {
-            eh.push_back(&GetWindowManager()->GetInputHandler());
+            eh.push_back(&iface->GetWindowManager()->GetInputHandler());
          }
       }
       else
@@ -339,7 +326,7 @@ namespace dtEntity
          LayerAttachPointComponent* lc;
          if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
          {
-            OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+
             iface->InstallUpdateCallback(lc->GetNode());
          }
          else

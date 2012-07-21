@@ -23,6 +23,8 @@
 */
 
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
@@ -111,9 +113,10 @@ int main(int argc, char** argv)
    entityManager.EmitMessage(*msg);
    delete msg;
 
+   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    dtEntity::ApplicationSystem* appsys;
    entityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-   dtEntity::WindowManager* windowManager = appsys->GetWindowManager();
+   dtEntity::WindowManager* windowManager = iface->GetWindowManager();
    
    if(profiling_enabled)
    {

@@ -65,7 +65,7 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
-      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface());
+      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface(new dtEntity::OSGWindowManager(*mEntityManager)));
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
       dtEntity::SetupDataPaths(argc,argv, false);
@@ -302,6 +302,7 @@ namespace dtEntityEditor
    {
       dtEntity::ApplicationSystem* appsys;
       GetEntityManager().GetES(appsys);
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
       while(!mViewer->done())
       {
@@ -310,7 +311,7 @@ namespace dtEntityEditor
          mViewer->advance(DBL_MAX);
 
          // check if a window should be closed
-         appsys->GetWindowManager()->ProcessQueuedMessages();
+         iface->GetWindowManager()->ProcessQueuedMessages();
 
          mViewer->eventTraversal();
 

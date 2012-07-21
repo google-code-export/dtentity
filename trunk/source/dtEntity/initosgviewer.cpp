@@ -179,7 +179,7 @@ namespace dtEntity
                       bool addConsoleLog,
                       osg::Group* pSceneNode)
    {
-      SetSystemInterface(new OSGSystemInterface());
+      SetSystemInterface(new OSGSystemInterface(new OSGWindowManager(em)));
 
       if(pSceneNode == NULL)
       {
@@ -256,7 +256,7 @@ namespace dtEntity
       // but is done here first so everything runs fine without a camera.
       dtEntity::ApplicationSystem* appsystem;
       em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
-      views.front()->addEventHandler(&appsystem->GetWindowManager()->GetInputHandler());
+      views.front()->addEventHandler(&iface->GetWindowManager()->GetInputHandler());
 
       // create an entity holding the scene graph root as an attach point
       LayerAttachPointSystem* layerattachsys;
@@ -345,11 +345,10 @@ namespace dtEntity
          traits->screenNum = screenNum;
       }
       
-      dtEntity::ApplicationSystem* appsystem;
-      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
 
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       unsigned int contextId;
-      bool success = appsystem->GetWindowManager()->OpenWindow("defaultView", dtEntity::SID("root"), *traits, contextId);
+      bool success = iface->GetWindowManager()->OpenWindow("defaultView", dtEntity::SID("root"), *traits, contextId);
       if(!success)
       {
          LOG_ERROR("Could not open window, exiting!");
@@ -358,7 +357,7 @@ namespace dtEntity
 
       if(screenNum != -1)
       {
-         appsystem->GetWindowManager()->SetFullscreen(contextId, true);
+         iface->GetWindowManager()->SetFullscreen(contextId, true);
       } 
       return true;
    }

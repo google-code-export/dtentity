@@ -19,6 +19,8 @@
 */
 
 #include <dtEntity/osgsysteminterface.h>
+
+#include <dtEntity/windowmanager.h>
 #include <osg/NodeCallback>
 #include <osg/Timer>
 #include <osg/FrameStamp>
@@ -98,15 +100,18 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   OSGSystemInterface::OSGSystemInterface()
+   OSGSystemInterface::OSGSystemInterface(OSGWindowManager* wm)
       : mImpl(new Impl())
+      , mWindowManager(wm)
    {
    }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    OSGSystemInterface::~OSGSystemInterface()
    {
-	   delete mImpl;
+      delete mImpl;
+      delete mWindowManager;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +143,10 @@ namespace dtEntity
    {
       osgViewer::ViewerBase::Cameras cams;
       GetViewer()->getCameras(cams);
-      assert(!cams.empty());
+      if(cams.empty())
+      {
+         return NULL;
+      }
       return cams.front();
    }
 

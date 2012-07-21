@@ -21,27 +21,31 @@
  */
 
 #include <dtEntity/systeminterface.h>
-#include <dtEntity/windowmanager.h>
 #include <osgViewer/ViewerBase>
 
 namespace dtEntity
 {     
 
+   class OSGWindowManager;
+
    class DT_ENTITY_EXPORT OSGSystemInterface : public SystemInterface
    {
-	   class Impl;
+
+      class Impl;
+      
 
    public:
-      OSGSystemInterface();
-	  ~OSGSystemInterface();
+
+      OSGSystemInterface(OSGWindowManager* wm);
+      ~OSGSystemInterface();
 
       void InstallUpdateCallback(osg::Node* node);
 
-      void SetWindowManager(WindowManager* wm) { mWindowManager = wm; }
-      WindowManager* GetWindowManager() { return mWindowManager; }
+      OSGWindowManager* GetWindowManager() const { return mWindowManager; }
 
       void SetViewer(osgViewer::ViewerBase* v) { mViewer = v; }
       osgViewer::ViewerBase* GetViewer() const { return mViewer.get(); }
+
       osgViewer::View* GetPrimaryView() const;
       osgViewer::GraphicsWindow* GetPrimaryWindow() const;
       osg::Camera* GetPrimaryCamera() const;
@@ -61,8 +65,8 @@ namespace dtEntity
 
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
-	  Impl* mImpl;
-      osg::ref_ptr<WindowManager> mWindowManager;
+      Impl* mImpl;
+      OSGWindowManager* mWindowManager;
    };
   
 }

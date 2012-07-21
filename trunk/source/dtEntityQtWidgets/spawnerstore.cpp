@@ -22,6 +22,8 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/commandmessages.h>
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
@@ -405,7 +407,8 @@ namespace dtEntityQtWidgets
       dtEntity::ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
       
-      osg::Vec3 pickray = appsys->GetWindowManager()->GetPickRay("defaultView", pos.x(), pos.y());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osg::Vec3 pickray = iface->GetWindowManager()->GetPickRay("defaultView", pos.x(), pos.y());
       
       dtEntity::CameraComponent* cam;
       mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), cam);
