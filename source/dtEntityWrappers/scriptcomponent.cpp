@@ -26,7 +26,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/inputhandler.h>
+#include <dtEntity/inputinterface.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/windowmanager.h>
@@ -175,12 +175,12 @@ namespace dtEntityWrappers
 
          if(iface->GetWindowManager())
          {
-            dtEntity::InputHandler* input = &iface->GetWindowManager()->GetInputHandler();
-            if(input)
+            dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
+            if(ipiface)
             {
-               context->Global()->Set(String::New("Input"), WrapInputHandler(GetGlobalContext(), input));
-               context->Global()->Set(String::New("Axis"), WrapAxes(input));
-               context->Global()->Set(String::New("Key"), WrapKeys(input));
+               context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
+               context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
+               context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
             }
          }
       }

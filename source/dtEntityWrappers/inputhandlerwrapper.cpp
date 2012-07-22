@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/inputhandler.h>
+#include <dtEntity/inputinterface.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
@@ -221,7 +221,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKey(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
       if(args.Length() > 1)
       {
@@ -233,7 +233,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKeyUp(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
       if(args.Length() > 1)
       {
@@ -245,7 +245,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetKeyDown(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
       if(args.Length() > 1)
       {
@@ -257,21 +257,21 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHAnyKey(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       return Boolean::New(input->AnyKeyDown());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetInputString(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       return ToJSString(input->GetInputString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseButton(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
 
       unsigned int contextId = 0;
       if(args.Length() > 1)
@@ -284,7 +284,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseButtonUp(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
 
       unsigned int contextId = 0;
       if(args.Length() > 1)
@@ -297,7 +297,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseButtonDown(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
       if(args.Length() > 1)
       {
@@ -309,7 +309,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetAxis(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
       return Number::New(input->GetAxis(ToStdString(args[0])));
 #else
@@ -320,7 +320,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMouseWheelState(const Arguments& args)
    {
-      dtEntity::InputHandler* input = UnwrapInputHandler(args.This());
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
       if(args.Length() > 0)
       {
@@ -332,21 +332,21 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetMultiTouchEnabled(const Arguments& args)
    {
-      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+      dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       return Boolean::New(ih->GetMultiTouchEnabled());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetNumTouches(const Arguments& args)
    {
-      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+      dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       return Integer::New(ih->GetNumTouches());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> IHGetTouches(const Arguments& args)
    {
-      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+      dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       HandleScope scope;
       Handle<Array> jstouches = Array::New();
 
@@ -385,7 +385,7 @@ namespace dtEntityWrappers
       Handle<Object> o = Handle<Object>::Cast(args[0]);
       InputCallbackWrapper* wr = new InputCallbackWrapper(o);
 
-      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+      dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       ih->AddInputCallback(wr);
       s_inputCallbackWrappers.push_back(wr);
 
@@ -400,7 +400,7 @@ namespace dtEntityWrappers
       {
          if((*i)->mObject == args[0])
          {
-            dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
+            dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
             ih->RemoveInputCallback(*i);
             s_inputCallbackWrappers.erase(i);
             return True();
@@ -411,22 +411,22 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHPrintKeys(const Arguments& args)
+   /*Handle<Value> IHPrintKeys(const Arguments& args)
    {
-      dtEntity::InputHandler* ih; GetInternal(args.This(), 0, ih);
-      const dtEntity::InputHandler::KeyNames k = ih->GetKeyNames();
+      dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
+      const dtEntity::InputInterface::KeyNames k = ih->GetKeyNames();
       
-      dtEntity::InputHandler::KeyNames::const_iterator i;
+      dtEntity::InputInterface::KeyNames::const_iterator i;
       for(i = k.begin(); i != k.end(); ++i)
       {
          std::cout << i->first << "\n";         
       }
       return Undefined();
-   }
+   }*/
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapInputHandler(Handle<Context> context, dtEntity::InputHandler* v)
+   v8::Handle<v8::Object> WrapInputInterface(Handle<Context> context, dtEntity::InputInterface* v)
    {
       HandleScope handle_scope;
       Context::Scope context_scope(context);
@@ -453,7 +453,7 @@ namespace dtEntityWrappers
       proto->Set("getMultiTouchEnabled", FunctionTemplate::New(IHGetMultiTouchEnabled));
       proto->Set("getNumTouches", FunctionTemplate::New(IHGetNumTouches));
       proto->Set("getTouches", FunctionTemplate::New(IHGetTouches));
-      proto->Set("printKeys", FunctionTemplate::New(IHPrintKeys));
+      //proto->Set("printKeys", FunctionTemplate::New(IHPrintKeys));
       proto->Set("toString", FunctionTemplate::New(IHToString));
       proto->Set("addInputCallback", FunctionTemplate::New(IHAddInputCallback));
       proto->Set("removeInputCallback", FunctionTemplate::New(IHRemoveInputCallback));
@@ -465,10 +465,10 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::InputHandler* UnwrapInputHandler(Handle<Value> val)
+   dtEntity::InputInterface* UnwrapInputInterface(Handle<Value> val)
    {
       Handle<Object> obj = Handle<Object>::Cast(val);
-      dtEntity::InputHandler* v;
+      dtEntity::InputInterface* v;
       GetInternal(obj, 0, v);
       return v;      
    }
@@ -487,24 +487,25 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapKeys(dtEntity::InputHandler* ih)
+   v8::Handle<v8::Object> WrapKeys(dtEntity::InputInterface* ih)
    {
-      const dtEntity::InputHandler::KeyNames& keynames = ih->GetKeyNames();
-      dtEntity::InputHandler::KeyNames::const_iterator i;
+      typedef std::map<std::string, unsigned int> KN;
+      KN kn;
+      ih->GetKeyNames(kn);
       
       HandleScope scope;
       Handle<Object> obj = Object::New();
       
-      for(i = keynames.begin(); i != keynames.end(); ++i)
+      for(KN::const_iterator i = kn.begin(); i != kn.end(); ++i)
       {
-         obj->Set(ToJSString(i->first), Integer::New(i->second));
+         obj->Set(ToJSString(i->first), Uint32::New(i->second));
       }
 
       return scope.Close(obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapAxes(dtEntity::InputHandler* ih)
+   v8::Handle<v8::Object> WrapAxes(dtEntity::InputInterface* ih)
    {
             
       HandleScope scope;
@@ -520,14 +521,14 @@ namespace dtEntityWrappers
       obj->Set(String::New("MouseDeltaXRaw"), String::New(dtEntity::InputHandler::MouseDeltaXRawId.c_str()));
       obj->Set(String::New("MouseDeltaYRaw"), String::New(dtEntity::InputHandler::MouseDeltaYRawId.c_str()));
 #else
-      obj->Set(String::New("MouseX"), Uint32::New(dtEntity::InputHandler::MouseXId));
-      obj->Set(String::New("MouseY"), Uint32::New(dtEntity::InputHandler::MouseYId));
-      obj->Set(String::New("MouseXRaw"), Uint32::New(dtEntity::InputHandler::MouseXRawId));
-      obj->Set(String::New("MouseYRaw"), Uint32::New(dtEntity::InputHandler::MouseYRawId));
-      obj->Set(String::New("MouseDeltaX"), Uint32::New(dtEntity::InputHandler::MouseDeltaXId));
-      obj->Set(String::New("MouseDeltaY"), Uint32::New(dtEntity::InputHandler::MouseDeltaYId));
-      obj->Set(String::New("MouseDeltaXRaw"), Uint32::New(dtEntity::InputHandler::MouseDeltaXRawId));
-      obj->Set(String::New("MouseDeltaYRaw"), Uint32::New(dtEntity::InputHandler::MouseDeltaYRawId));
+      obj->Set(String::New("MouseX"), Uint32::New(dtEntity::InputInterface::MouseXId));
+      obj->Set(String::New("MouseY"), Uint32::New(dtEntity::InputInterface::MouseYId));
+      obj->Set(String::New("MouseXRaw"), Uint32::New(dtEntity::InputInterface::MouseXRawId));
+      obj->Set(String::New("MouseYRaw"), Uint32::New(dtEntity::InputInterface::MouseYRawId));
+      obj->Set(String::New("MouseDeltaX"), Uint32::New(dtEntity::InputInterface::MouseDeltaXId));
+      obj->Set(String::New("MouseDeltaY"), Uint32::New(dtEntity::InputInterface::MouseDeltaYId));
+      obj->Set(String::New("MouseDeltaXRaw"), Uint32::New(dtEntity::InputInterface::MouseDeltaXRawId));
+      obj->Set(String::New("MouseDeltaYRaw"), Uint32::New(dtEntity::InputInterface::MouseDeltaYRawId));
 #endif 
       return scope.Close(obj);
    }

@@ -27,6 +27,7 @@
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/matrixtransformcomponent.h>
+#include <dtEntity/osginputinterface.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/staticmeshcomponent.h>
@@ -180,6 +181,7 @@ namespace dtEntity
                       osg::Group* pSceneNode)
    {
       SetSystemInterface(new OSGSystemInterface(new OSGWindowManager(em)));
+      SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
 
       if(pSceneNode == NULL)
       {
@@ -254,9 +256,8 @@ namespace dtEntity
 
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
-      dtEntity::ApplicationSystem* appsystem;
-      em.GetEntitySystem(ApplicationSystem::TYPE, appsystem);
-      views.front()->addEventHandler(&iface->GetWindowManager()->GetInputHandler());
+      OSGInputInterface* ipface = static_cast<OSGInputInterface*>(GetInputInterface());
+      views.front()->addEventHandler(ipface);
 
       // create an entity holding the scene graph root as an attach point
       LayerAttachPointSystem* layerattachsys;

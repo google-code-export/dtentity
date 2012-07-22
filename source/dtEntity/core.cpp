@@ -21,10 +21,23 @@
 #include <dtEntity/core.h>
 #include <dtEntity/systeminterface.h>
 
-
 namespace dtEntity
 {
+   static InputInterface* sInputInterface = 0;
    static SystemInterface* sSystemInterface = 0;
+   static WindowInterface* sWindowInterface = 0;
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SetInputInterface(InputInterface* v)
+   {
+      sInputInterface = v;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InputInterface* GetInputInterface()
+   {
+      return sInputInterface;
+   }   
 
    ////////////////////////////////////////////////////////////////////////////////
    void SetSystemInterface(SystemInterface* v)
@@ -36,5 +49,17 @@ namespace dtEntity
    SystemInterface* GetSystemInterface()
    {
       return sSystemInterface;
+   }   
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SetWindowInterface(WindowInterface* v)
+   {
+      sWindowInterface = v;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   WindowInterface* GetWindowInterface()
+   {
+      return sWindowInterface;
    }
 }

@@ -67,7 +67,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/FastDelegateBind.h
   ${HEADER_PATH}/groupcomponent.h
   ${HEADER_PATH}/initosgviewer.h
-  ${HEADER_PATH}/inputhandler.h
+  ${HEADER_PATH}/inputinterface.h
   ${HEADER_PATH}/layerattachpointcomponent.h
   ${HEADER_PATH}/layercomponent.h
   ${HEADER_PATH}/lightcomponent.h
@@ -84,7 +84,9 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
   ${HEADER_PATH}/osganimationcomponent.h
+  ${HEADER_PATH}/osginputinterface.h
   ${HEADER_PATH}/osgsysteminterface.h
+  ${HEADER_PATH}/osgwindowinterface.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
@@ -107,6 +109,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/threadsafequeue.h
   ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/uniqueid.h
+  ${HEADER_PATH}/windowinterface.h
   ${HEADER_PATH}/windowmanager.h
   ${DTENTITY_CONFIG_HEADER}
 
@@ -119,7 +122,7 @@ SET(LIB_REPLACE
   core.cpp
   dynamicscomponent.cpp
   groupcomponent.cpp
-  inputhandler.cpp
+  inputinterface.cpp
   layerattachpointcomponent.cpp
   layercomponent.cpp
   lightcomponent.cpp
@@ -127,6 +130,7 @@ SET(LIB_REPLACE
   matrixtransformcomponent.cpp
   nodecomponent.cpp
   osganimationcomponent.cpp
+  osginputinterface.cpp
   osgsysteminterface.cpp
   pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
@@ -149,9 +153,11 @@ SET(LIB_SOURCES
   entitymanager.cpp
   hash.cpp
   initosgviewer.cpp
+  inputinterface.cpp
   logmanager.cpp
   messagefactory.cpp
   messagepump.cpp
+  osgwindowinterface.cpp
   profile.cpp
   property.cpp
   propertycontainer.cpp

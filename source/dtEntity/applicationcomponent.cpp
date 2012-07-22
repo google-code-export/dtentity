@@ -31,6 +31,7 @@
 #include <dtEntity/uniqueid.h>
 #include <dtEntity/windowmanager.h>
 #include <dtEntity/osgsysteminterface.h>
+#include <dtEntity/osginputinterface.h>
 
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
@@ -298,6 +299,7 @@ namespace dtEntity
       CameraComponent* camcomp;
 
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      OSGInputInterface* wface = static_cast<OSGInputInterface*>(GetInputInterface());
       
       if(!GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
       {
@@ -309,9 +311,9 @@ namespace dtEntity
       if(view)
       {
          osgViewer::View::EventHandlers& eh = view->getEventHandlers();
-         if(std::find(eh.begin(), eh.end(),&iface->GetWindowManager()->GetInputHandler()) ==  eh.end())
+         if(std::find(eh.begin(), eh.end(), wface) ==  eh.end())
          {
-            eh.push_back(&iface->GetWindowManager()->GetInputHandler());
+            eh.push_back(wface);
          }
       }
       else

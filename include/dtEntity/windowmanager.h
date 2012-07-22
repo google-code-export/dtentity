@@ -24,9 +24,9 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/entitysystem.h>
-#include <dtEntity/inputhandler.h>
 #include <dtEntity/messagepump.h>
 #include <dtEntity/stringid.h>
+#include <osg/GraphicsContext>
 
 namespace osgViewer
 {
@@ -83,8 +83,6 @@ namespace dtEntity
       virtual osgViewer::View* GetViewByName(const std::string& name);
       virtual osgViewer::GraphicsWindow* GetWindowByName(const std::string& name);
 
-      InputHandler& GetInputHandler() { return *mInputHandler.get(); }
-
       virtual void ProcessQueuedMessages() { mMessagePump.EmitQueuedMessages(FLT_MAX); }
 
       virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) = 0;
@@ -96,7 +94,6 @@ namespace dtEntity
    protected:
 
       EntityManager* mEntityManager;
-      osg::ref_ptr<InputHandler> mInputHandler;
       MessagePump mMessagePump;
    };	
 

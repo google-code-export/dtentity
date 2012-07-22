@@ -23,7 +23,8 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgViewer/GraphicsWindow>
 
-#include <dtEntity/inputhandler.h>
+#include <dtEntity/inputinterface.h>
+#include <dtEntity/osginputinterface.h>
 #include <dtEntity/log.h>
 #include <iostream>
 #include <osg/Version>

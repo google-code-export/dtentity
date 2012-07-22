@@ -24,7 +24,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/inputhandler.h>
+#include <dtEntity/inputinterface.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/windowmanager.h>
@@ -52,7 +52,7 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Handle<Context> context = info.Holder()->CreationContext();
       Handle<Value> ih = context->Global()->Get(String::New("Input"));
-      dtEntity::InputHandler* input = UnwrapInputHandler(ih);
+      dtEntity::InputInterface* input = UnwrapInputInterface(ih);
       input->SetLockCursor(value->BooleanValue());
 
    }
@@ -63,7 +63,7 @@ namespace dtEntityWrappers
       HandleScope handle_scope;
       Handle<Context> context = info.Holder()->CreationContext();
       Handle<Value> ih = context->Global()->Get(String::New("Input"));
-      dtEntity::InputHandler* input = UnwrapInputHandler(ih);
+      dtEntity::InputInterface* input = UnwrapInputInterface(ih);
       return Boolean::New(input->GetLockCursor());
    }
 
@@ -343,6 +343,7 @@ namespace dtEntityWrappers
       
       unsigned int contextid;
       dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());      
+      dtEntity::OSGWindowManager* wm = static_cast<dtEntity::OSGWindowManager*>(iface->GetWindowManager());
       bool success = iface->GetWindowManager()->OpenWindow(ToStdString(args[0]), layername, *traits, contextid);
       assert(success);
       return Uint32::New(contextid);

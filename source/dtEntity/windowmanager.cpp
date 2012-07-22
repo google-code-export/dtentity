@@ -47,7 +47,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    WindowManager::WindowManager(EntityManager& em)
       : mEntityManager(&em)
-      , mInputHandler(new InputHandler(em))
 
    {
 
