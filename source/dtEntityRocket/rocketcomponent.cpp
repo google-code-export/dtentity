@@ -28,7 +28,6 @@
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/windowmanager.h>
 #include <iostream>
 #include <osgLibRocket/GuiNode>
 #include <osgViewer/CompositeViewer>

@@ -32,11 +32,7 @@
 namespace dtEntity
 { 
 
-   ////////////////////////////////////////////////////////////////////////////////
-   class WindowManager;
-
-
-	/**
+   /**
     * An entity system for holding the dtEntity application
     * and providing some time management methods
 	 */

@@ -34,7 +34,7 @@
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
+#include <dtEntity/osgwindowinterface.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
@@ -66,7 +66,8 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
-      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface(new dtEntity::OSGWindowManager(*mEntityManager)));
+      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface());
+      dtEntity::SetWindowInterface(new dtEntity::OSGWindowInterface(*mEntityManager));
       dtEntity::SetInputInterface(new dtEntity::OSGInputInterface(mEntityManager->GetMessagePump()));
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
@@ -313,7 +314,7 @@ namespace dtEntityEditor
          mViewer->advance(DBL_MAX);
 
          // check if a window should be closed
-         iface->GetWindowManager()->ProcessQueuedMessages();
+         static_cast<dtEntity::OSGWindowInterface*>(dtEntity::GetWindowInterface())->ProcessQueuedMessages();
 
          mViewer->eventTraversal();
 

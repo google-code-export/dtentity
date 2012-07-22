@@ -18,13 +18,12 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/windowmanager.h>
+#include <dtEntity/osgwindowinterface.h>
 
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/osgsysteminterface.h>
@@ -45,15 +44,7 @@ namespace dtEntity
 {   
 
    ////////////////////////////////////////////////////////////////////////////////
-   WindowManager::WindowManager(EntityManager& em)
-      : mEntityManager(&em)
-
-   {
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osgViewer::View* WindowManager::GetViewByName(const std::string& name)
+   osgViewer::View* GetViewByName(const std::string& name)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::ViewerBase::Views views;
@@ -71,7 +62,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osgViewer::GraphicsWindow* WindowManager::GetWindowByName(const std::string& name)
+   osgViewer::GraphicsWindow* GetWindowByName(const std::string& name)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::ViewerBase::Windows wins;
@@ -106,22 +97,22 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   OSGWindowManager::OSGWindowManager(EntityManager& em)
-      : WindowManager(em)
+   OSGWindowInterface::OSGWindowInterface(EntityManager& em)
+      : mEntityManager(&em)
    {
-      mCloseWindowFunctor = MessageFunctor(this, &OSGWindowManager::OnCloseWindow);
+      mCloseWindowFunctor = MessageFunctor(this, &OSGWindowInterface::OnCloseWindow);
       mMessagePump.RegisterForMessages(InternalCloseWindowMessage::TYPE, mCloseWindowFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   OSGWindowManager::~OSGWindowManager()
+   OSGWindowInterface::~OSGWindowInterface()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowManager::OpenWindow(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
+   bool OSGWindowInterface::OpenWindow(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
    {
-      bool success = OpenWindowInternal(name, layername, traits, contextId);
+      bool success = OpenWindowInternal(name, layername, contextId);
       
       if(success)
       {
@@ -135,7 +126,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowManager::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, osg::GraphicsContext::Traits& traits, unsigned int& contextId)
+   bool OSGWindowInterface::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::ViewerBase* viewer = iface->GetViewer();
@@ -156,10 +147,10 @@ namespace dtEntity
       }
       else
       {
-         traits.readDISPLAY();
-         if (traits.displayNum<0) traits.displayNum = 0;
+         mTraits->readDISPLAY();
+         if (mTraits->displayNum < 0) mTraits->displayNum = 0;
 
-         osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
+         osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(mTraits);
          osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
          if (gw)
          {
@@ -167,7 +158,7 @@ namespace dtEntity
              view->getCamera()->setGraphicsContext(gw);
              compviewer->addView(view);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
-             gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y, traits.width, traits.height );
+             gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(mTraits->x, mTraits->y, mTraits->width, mTraits->height);
              gw->getEventQueue()->getCurrentEventState()->setMouseYOrientation(osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS);
              gw->setName(name);
              
@@ -190,7 +181,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::OnCloseWindow(const Message& m)
+   void OSGWindowInterface::OnCloseWindow(const Message& m)
    {
       const InternalCloseWindowMessage& msg = static_cast<const InternalCloseWindowMessage&>(m);
 
@@ -234,7 +225,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::CloseWindow(const std::string& name)
+   void OSGWindowInterface::CloseWindow(const std::string& name)
    {
       // closing window from an event handler creates a crash.
       // Closing window at time of message processing works OK.
@@ -245,7 +236,7 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 OSGWindowManager::GetPickRay(const std::string& name, float x, float y, bool usePixels)
+   Vec3f OSGWindowInterface::GetPickRay(const std::string& name, float x, float y, bool usePixels)
    {
       osgViewer::GraphicsWindow* window = GetWindowByName(name);
       
@@ -301,7 +292,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowManager::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height)
+   bool OSGWindowInterface::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
@@ -314,7 +305,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowManager::SetWindowGeometry(unsigned int contextId, int x, int y, int width, int height)
+   bool OSGWindowInterface::SetWindowGeometry(unsigned int contextId, int x, int y, int width, int height)
    {
       SetFullscreen(contextId, false);
 
@@ -329,7 +320,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGWindowManager::SetFullscreen(unsigned int contextId, bool fullscreen)
+   void OSGWindowInterface::SetFullscreen(unsigned int contextId, bool fullscreen)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
@@ -388,7 +379,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowManager::GetFullscreen(unsigned int contextId) const
+   bool OSGWindowInterface::GetFullscreen(unsigned int contextId) const
    {
       WindowPosMap::const_iterator i = mWindowPositions.find(contextId);
       return (i != mWindowPositions.end());

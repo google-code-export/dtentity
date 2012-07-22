@@ -20,11 +20,11 @@
 
 #include <dtEntity/osgsysteminterface.h>
 
-#include <dtEntity/windowmanager.h>
 #include <osg/NodeCallback>
 #include <osg/Timer>
 #include <osg/FrameStamp>
 #include <osg/NodeVisitor>
+#include <assert.h>
 
 namespace dtEntity
 {
@@ -100,9 +100,8 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   OSGSystemInterface::OSGSystemInterface(OSGWindowManager* wm)
+   OSGSystemInterface::OSGSystemInterface()
       : mImpl(new Impl())
-      , mWindowManager(wm)
    {
    }
 
@@ -111,7 +110,6 @@ namespace dtEntity
    OSGSystemInterface::~OSGSystemInterface()
    {
       delete mImpl;
-      delete mWindowManager;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

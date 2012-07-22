@@ -110,7 +110,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/uniqueid.h
   ${HEADER_PATH}/windowinterface.h
-  ${HEADER_PATH}/windowmanager.h
   ${DTENTITY_CONFIG_HEADER}
 
 )
@@ -167,8 +166,6 @@ SET(LIB_SOURCES
   spawner.cpp
   stringid.cpp
   uniqueid.cpp
-  windowmanager.cpp
-
 )
 
 SET(DTENTITYLIBS      ${OPENSCENEGRAPH_LIBRARIES}
