@@ -28,17 +28,17 @@
 
 namespace dtEntity
 {
-   class InputHandler;
+   class InputInterface;
 }
 
 namespace dtEntityWrappers
 {   
    
-   v8::Handle<v8::Object> WrapInputHandler(v8::Handle<v8::Context> context, dtEntity::InputHandler* v);
-   dtEntity::InputHandler* UnwrapInputHandler(v8::Handle<v8::Value>);
+   v8::Handle<v8::Object> WrapInputInterface(v8::Handle<v8::Context> context, dtEntity::InputInterface* v);
+   dtEntity::InputInterface* UnwrapInputInterface(v8::Handle<v8::Value>);
    v8::Handle<v8::Object> WrapTouchPhases();
-   v8::Handle<v8::Object> WrapKeys(dtEntity::InputHandler* ih);
-   v8::Handle<v8::Object> WrapAxes(dtEntity::InputHandler* ih);
+   v8::Handle<v8::Object> WrapKeys(dtEntity::InputInterface* ih);
+   v8::Handle<v8::Object> WrapAxes(dtEntity::InputInterface* ih);
    v8::Handle<v8::Object> WrapMouseWheelStates();
 
 }

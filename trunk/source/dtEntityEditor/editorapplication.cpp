@@ -25,12 +25,13 @@
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/osginputinterface.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/windowmanager.h>
@@ -66,6 +67,7 @@ namespace dtEntityEditor
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
       dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface(new dtEntity::OSGWindowManager(*mEntityManager)));
+      dtEntity::SetInputInterface(new dtEntity::OSGInputInterface(mEntityManager->GetMessagePump()));
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
       dtEntity::SetupDataPaths(argc,argv, false);
