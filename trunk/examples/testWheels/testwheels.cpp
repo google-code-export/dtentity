@@ -32,7 +32,6 @@
 #include <dtEntity/stringid.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntityPhysX/pagedterraincullvisitor.h>
 #include <dtEntityPhysX/physxcomponent.h>
 #include <dtEntityPhysX/physxpagedterraincomponent.h>

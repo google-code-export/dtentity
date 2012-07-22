@@ -32,7 +32,7 @@
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
+#include <dtEntity/osgwindowinterface.h>
 
 #include <osg/Notify>
 #include <osgDB/FileNameUtils>
@@ -180,8 +180,9 @@ namespace dtEntity
                       bool addConsoleLog,
                       osg::Group* pSceneNode)
    {
-      SetSystemInterface(new OSGSystemInterface(new OSGWindowManager(em)));
+      SetSystemInterface(new OSGSystemInterface());
       SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
+      SetWindowInterface(new OSGWindowInterface(em));
 
       if(pSceneNode == NULL)
       {
@@ -347,9 +348,11 @@ namespace dtEntity
       }
       
 
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+      WindowInterface* wface = GetWindowInterface();
+      OSGWindowInterface* o = static_cast<OSGWindowInterface*>(wface);
+      o->SetTraits(traits);
       unsigned int contextId;
-      bool success = iface->GetWindowManager()->OpenWindow("defaultView", dtEntity::SID("root"), *traits, contextId);
+      bool success = wface->OpenWindow("defaultView", dtEntity::SID("root"), contextId);
       if(!success)
       {
          LOG_ERROR("Could not open window, exiting!");
@@ -358,7 +361,7 @@ namespace dtEntity
 
       if(screenNum != -1)
       {
-         iface->GetWindowManager()->SetFullscreen(contextId, true);
+         wface->SetFullscreen(contextId, true);
       } 
       return true;
    }

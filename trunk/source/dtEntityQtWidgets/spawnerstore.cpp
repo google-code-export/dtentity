@@ -31,7 +31,7 @@
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
+#include <dtEntity/windowinterface.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <osgUtil/LineSegmentIntersector>
 #include <osgViewer/View>
@@ -407,8 +407,8 @@ namespace dtEntityQtWidgets
       dtEntity::ApplicationSystem* appsys;
       mEntityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
       
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osg::Vec3 pickray = iface->GetWindowManager()->GetPickRay("defaultView", pos.x(), pos.y());
+      dtEntity::WindowInterface* iface = dtEntity::GetWindowInterface();
+      osg::Vec3 pickray = iface->GetPickRay("defaultView", pos.x(), pos.y());
       
       dtEntity::CameraComponent* cam;
       mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), cam);

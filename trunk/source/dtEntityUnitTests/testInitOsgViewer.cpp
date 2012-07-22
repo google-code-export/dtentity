@@ -25,7 +25,6 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntity/initosgviewer.h>
 #include <osgViewer/Viewer>
 #include <osg/ShapeDrawable>

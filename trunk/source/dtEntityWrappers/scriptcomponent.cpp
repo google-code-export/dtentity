@@ -29,7 +29,6 @@
 #include <dtEntity/inputinterface.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntityWrappers/componentwrapper.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/globalfunctions.h>
@@ -172,16 +171,13 @@ namespace dtEntityWrappers
          {
             context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
          }
-
-         if(iface->GetWindowManager())
+         
+         dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
+         if(ipiface)
          {
-            dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
-            if(ipiface)
-            {
-               context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
-               context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
-               context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
-            }
+            context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
+            context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
+            context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
          }
       }
 

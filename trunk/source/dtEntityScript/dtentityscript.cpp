@@ -28,7 +28,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/windowmanager.h>
+#include <dtEntity/osgwindowinterface.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <iostream>
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
    dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    dtEntity::ApplicationSystem* appsys;
    entityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-   dtEntity::WindowManager* windowManager = iface->GetWindowManager();
+   dtEntity::OSGWindowInterface* windowinterface = static_cast<dtEntity::OSGWindowInterface*>(dtEntity::GetWindowInterface());
    
    if(profiling_enabled)
    {
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
          CProfileManager::Stop_Profile();
 
          // check if a window should be closed
-         windowManager->ProcessQueuedMessages();
+         windowinterface->ProcessQueuedMessages();
 
          CProfileManager::Start_Profile(frameEvTrId);
          viewer.eventTraversal();
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
          viewer.advance(DBL_MAX);
 
          // check if a window should be closed
-         windowManager->ProcessQueuedMessages();
+         windowinterface->ProcessQueuedMessages();
 
          viewer.eventTraversal();
          appsys->EmitTickMessagesAndQueuedMessages();

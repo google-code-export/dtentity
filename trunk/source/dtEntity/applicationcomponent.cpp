@@ -29,7 +29,6 @@
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/uniqueid.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/osginputinterface.h>
 

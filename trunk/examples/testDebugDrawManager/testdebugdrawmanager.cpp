@@ -33,7 +33,6 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/windowmanager.h>
 #include <dtEntityPhysX/pagedterraincullvisitor.h>
 #include <dtEntityPhysX/physxcomponent.h>
 #include <dtEntityPhysX/physxpagedterraincomponent.h>

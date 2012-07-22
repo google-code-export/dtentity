@@ -26,22 +26,14 @@
 namespace dtEntity
 {     
 
-   class OSGWindowManager;
-
    class DT_ENTITY_EXPORT OSGSystemInterface : public SystemInterface
    {
-
-      class Impl;
-      
-
    public:
 
-      OSGSystemInterface(OSGWindowManager* wm);
+      OSGSystemInterface();
       ~OSGSystemInterface();
 
       void InstallUpdateCallback(osg::Node* node);
-
-      OSGWindowManager* GetWindowManager() const { return mWindowManager; }
 
       void SetViewer(osgViewer::ViewerBase* v) { mViewer = v; }
       osgViewer::ViewerBase* GetViewer() const { return mViewer.get(); }
@@ -58,15 +50,14 @@ namespace dtEntity
       virtual float GetTimeScale() const;
       virtual void SetTimeScale(float v);
 
-
       virtual Timer_t GetSimulationClockTime() const;
       virtual void SetSimulationClockTime(Timer_t t);
 
-
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
+
+      class Impl;
       Impl* mImpl;
-      OSGWindowManager* mWindowManager;
    };
   
 }
