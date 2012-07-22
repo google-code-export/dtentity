@@ -54,6 +54,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/componentpluginmanager.h
   ${HEADER_PATH}/core.h
   ${HEADER_PATH}/hash.h
+  ${HEADER_PATH}/debugdrawinterface.h
   ${HEADER_PATH}/debugdrawmanager.h
   ${HEADER_PATH}/defaultentitysystem.h
   ${HEADER_PATH}/dynamicscomponent.h
@@ -84,6 +85,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
   ${HEADER_PATH}/osganimationcomponent.h
+  ${HEADER_PATH}/osgdebugdrawinterface.h
   ${HEADER_PATH}/osginputinterface.h
   ${HEADER_PATH}/osgsysteminterface.h
   ${HEADER_PATH}/osgwindowinterface.h
@@ -129,6 +131,7 @@ SET(LIB_REPLACE
   matrixtransformcomponent.cpp
   nodecomponent.cpp
   osganimationcomponent.cpp
+  osgdebugdrawinterface.cpp
   osginputinterface.cpp
   osgsysteminterface.cpp
   pickshapecomponent.cpp

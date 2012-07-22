@@ -24,6 +24,11 @@
 
 namespace dtEntity
 {
+
+   class DebugDrawInterface;
+   DT_ENTITY_EXPORT void SetDebugDrawInterface(DebugDrawInterface*);
+   DT_ENTITY_EXPORT DebugDrawInterface* GetDebugDrawInterface();
+
    class InputInterface;
    DT_ENTITY_EXPORT void SetInputInterface(InputInterface*);
    DT_ENTITY_EXPORT InputInterface* GetInputInterface();
