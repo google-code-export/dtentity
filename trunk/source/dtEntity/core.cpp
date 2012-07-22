@@ -19,13 +19,25 @@
 */
 
 #include <dtEntity/core.h>
-#include <dtEntity/systeminterface.h>
 
 namespace dtEntity
 {
+   static DebugDrawInterface* sDebugDrawInterface = 0;
    static InputInterface* sInputInterface = 0;
    static SystemInterface* sSystemInterface = 0;
    static WindowInterface* sWindowInterface = 0;
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SetDebugDrawInterface(DebugDrawInterface* v)
+   {
+      sDebugDrawInterface = v;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DebugDrawInterface* GetDebugDrawInterface()
+   {
+      return sDebugDrawInterface;
+   }   
 
    ////////////////////////////////////////////////////////////////////////////////
    void SetInputInterface(InputInterface* v)

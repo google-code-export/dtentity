@@ -155,15 +155,15 @@ namespace dtEntity
 
       virtual Message* Clone() const { return CloneContainer<MoveCameraToPositionMessage>(); }
 
-      osg::Vec3d GetPosition() const { return mPosition.Get(); }
-      void SetPosition(const osg::Vec3d& v) { mPosition.Set(v); }
+      Vec3d GetPosition() const { return mPosition.Get(); }
+      void SetPosition(const Vec3d& v) { mPosition.Set(v); }
 
       // if same as position: Look in direction of movement from last position
-      osg::Vec3d GetLookAt() const { return mLookAt.Get(); }
-      void SetLookAt(const osg::Vec3d& v) { mLookAt.Set(v); }
+      Vec3d GetLookAt() const { return mLookAt.Get(); }
+      void SetLookAt(const Vec3d& v) { mLookAt.Set(v); }
 
-      osg::Vec3 GetUp() const { return mUp.Get(); }
-      void SetUp(const osg::Vec3& v) { mUp.Set(v); }
+      Vec3f GetUp() const { return mUp.Get(); }
+      void SetUp(const Vec3f& v) { mUp.Set(v); }
 
       // camera context
       int GetContextId() const { return mContextId.Get(); }
