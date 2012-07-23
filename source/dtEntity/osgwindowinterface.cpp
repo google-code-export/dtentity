@@ -100,8 +100,7 @@ namespace dtEntity
    OSGWindowInterface::OSGWindowInterface(EntityManager& em)
       : mEntityManager(&em)
    {
-      mCloseWindowFunctor = MessageFunctor(this, &OSGWindowInterface::OnCloseWindow);
-      mMessagePump.RegisterForMessages(InternalCloseWindowMessage::TYPE, mCloseWindowFunctor);
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -181,7 +180,7 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowInterface::OnCloseWindow(const Message& m)
+  /* void OSGWindowInterface::OnCloseWindow(const Message& m)
    {
       const InternalCloseWindowMessage& msg = static_cast<const InternalCloseWindowMessage&>(m);
 
@@ -222,16 +221,48 @@ namespace dtEntity
       window->close();
       compview->removeView(view);
 
-   }
+   }*/
 
    ///////////////////////////////////////////////////////////////////////////////
    void OSGWindowInterface::CloseWindow(const std::string& name)
    {
-      // closing window from an event handler creates a crash.
-      // Closing window at time of message processing works OK.
-      InternalCloseWindowMessage msg;
-      msg.SetName(name);
-      mMessagePump.EnqueueMessage(msg);
+
+      osgViewer::GraphicsWindow* window = GetWindowByName(name);
+
+      if(window == NULL)
+      {
+         LOG_ERROR("Cannot close window!");
+         return;
+      }
+
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
+
+      osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(iface->GetViewer());
+      if(compview == NULL)
+      {
+         LOG_ERROR("Cannot close window, use CompositeViewer class!");
+         return;
+      }
+
+      CameraSystem* camsys;
+      mEntityManager->GetEntitySystem(CameraComponent::TYPE, camsys);
+      EntityId camid = camsys->GetCameraEntityByContextId(window->getState()->getContextID());
+      if(camid != EntityId())
+      {
+         mEntityManager->RemoveFromScene(camid);
+         mEntityManager->KillEntity(camid);
+      }
+
+      osgViewer::View* view = GetViewByName(name);
+      if(!view)
+      {
+         LOG_ERROR("Cannot close view, not found: " << name);
+         return;
+      }
+      view->setSceneData(NULL);
+
+      window->close();
+      compview->removeView(view);
    }
 
 

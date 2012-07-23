@@ -195,7 +195,7 @@ namespace dtEntity
 
       SetupDataPaths(argc, argv, checkPaths);
 
-      SetSystemInterface(new OSGSystemInterface());
+      SetSystemInterface(new OSGSystemInterface(em.GetMessagePump()));
       SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
       SetWindowInterface(new OSGWindowInterface(em));
 

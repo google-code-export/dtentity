@@ -67,7 +67,7 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
-      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface());
+      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface(mEntityManager->GetMessagePump()));
       dtEntity::SetWindowInterface(new dtEntity::OSGWindowInterface(*mEntityManager));
       dtEntity::SetInputInterface(new dtEntity::OSGInputInterface(mEntityManager->GetMessagePump()));
 
@@ -315,9 +315,6 @@ namespace dtEntityEditor
 
          //LOG_ALWAYS("STEP!" << appsys->GetSimulationTime());
          mViewer->advance(DBL_MAX);
-
-         // check if a window should be closed
-         static_cast<dtEntity::OSGWindowInterface*>(dtEntity::GetWindowInterface())->ProcessQueuedMessages();
 
          mViewer->eventTraversal();
 
