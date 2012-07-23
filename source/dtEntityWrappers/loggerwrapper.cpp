@@ -21,6 +21,7 @@
 
 #include <dtEntityWrappers/loggerwrapper.h>
 #include <dtEntity/log.h>
+#include <dtEntity/threadsafequeue.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappers.h>
@@ -73,6 +74,16 @@ namespace dtEntityWrappers
          : public dtEntity::LogListener
    {
 
+      struct Msg
+      {
+         dtEntity::LogLevel::e mLevel;
+         std::string mFilename;
+         std::string mMethodname;
+         int mLinenumber;
+         std::string mMsg;
+      };
+
+      dtEntity::ThreadSafeQueue<Msg> mMessages;
    public:
 
       LogListenerHolder(Handle<Function> func)
@@ -95,43 +106,62 @@ namespace dtEntityWrappers
          mFunction.Dispose();
       }
 
+
+      void Process()
+      {
+         HandleScope scope;
+         Context::Scope context_scope(mFunction->CreationContext());
+
+         Handle<String> loglevel;
+
+         while(!mMessages.Empty())
+         {
+            Msg msg = mMessages.Pop();
+            switch(msg.mLevel)
+            {
+            case dtEntity::LogLevel::LVL_ALWAYS:  loglevel = mAlways; break;
+            case dtEntity::LogLevel::LVL_DEBUG:   loglevel = mDebug; break;
+            case dtEntity::LogLevel::LVL_ERROR:   loglevel = mError; break;
+            case dtEntity::LogLevel::LVL_INFO :   loglevel = mInfo; break;
+            case dtEntity::LogLevel::LVL_WARNING: loglevel = mWarning; break;
+            }
+
+   #if defined (_DEBUG)
+            bool is_debug = true;
+   #else
+            bool is_debug = false;
+   #endif
+            Handle<Value> argv[6] = {
+               loglevel,
+               ToJSString(msg.mFilename),
+               ToJSString(msg.mMethodname),
+               Integer::New(msg.mLinenumber),
+               ToJSString(msg.mMsg),
+               Boolean::New(is_debug)
+            };
+
+
+            TryCatch try_catch;
+            Handle<Value> result = mFunction->Call(mFunction, 6, argv);
+
+            if(result.IsEmpty())
+            {
+               ReportException(&try_catch);
+            }
+         }
+      }
+
       virtual void LogMessage(dtEntity::LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                       const std::string& msg)
       {
-         HandleScope scope;
+         Msg lmsg;
+         lmsg.mLevel = level;
+         lmsg.mFilename = filename;
+         lmsg.mMethodname = methodname;
+         lmsg.mLinenumber = linenumber;
+         lmsg.mMsg = msg;
 
-         Handle<String> loglevel;
-         switch(level)
-         {
-         case dtEntity::LogLevel::LVL_ALWAYS:  loglevel = mAlways; break;
-         case dtEntity::LogLevel::LVL_DEBUG:   loglevel = mDebug; break;
-         case dtEntity::LogLevel::LVL_ERROR:   loglevel = mError; break;
-         case dtEntity::LogLevel::LVL_INFO :   loglevel = mInfo; break;
-         case dtEntity::LogLevel::LVL_WARNING: loglevel = mWarning; break;
-         }
-
-#if defined (_DEBUG)
-         bool is_debug = true;
-#else
-         bool is_debug = false;
-#endif
-         Handle<Value> argv[6] = {
-            loglevel,
-            ToJSString(filename),
-            ToJSString(methodname),
-            Integer::New(linenumber),
-            ToJSString(msg),
-            Boolean::New(is_debug)
-         };
-
-         Context::Scope context_scope(mFunction->CreationContext());
-         TryCatch try_catch;
-         Handle<Value> result = mFunction->Call(mFunction, 6, argv);
-
-         if(result.IsEmpty())
-         {
-            ReportException(&try_catch);
-         }
+         mMessages.Push(lmsg);
       }
 
       Persistent<Function> mFunction;
@@ -160,6 +190,23 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> LogProcessListeners(const Arguments& args)
+   {
+      dtEntity::LogManager& lm = dtEntity::LogManager::GetInstance();
+      unsigned int num = lm.GetNumListeners();
+      for(unsigned int i = 0; i < num; ++i)
+      {
+         dtEntity::LogListener* listener = lm.GetListener(i);
+         LogListenerHolder* lh = dynamic_cast<LogListenerHolder*>(listener);
+         if(lh)
+         {
+            lh->Process();
+         }
+      }
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapLogger(Handle<Context> context)
    {
       v8::HandleScope handle_scope;
@@ -177,6 +224,7 @@ namespace dtEntityWrappers
         proto->Set("info", FunctionTemplate::New(LogInfo));
         proto->Set("warning", FunctionTemplate::New(LogWarning));
         proto->Set("addLogListener", FunctionTemplate::New(LogAddListener));
+        proto->Set("processLogListeners", FunctionTemplate::New(LogProcessListeners));
         GetScriptSystem()->SetTemplateBySID(s_loggerWrapper, templt);
       }
       Local<Object> instance = templt->GetFunction()->NewInstance();
