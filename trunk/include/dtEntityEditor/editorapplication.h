@@ -134,7 +134,6 @@ namespace dtEntityEditor
 
    private:
 
-      void CreateCameraEntityIfNotExists();
       EditorMainWindow* mMainWindow;
       dtEntity::EntityManager* mEntityManager;
       osg::ref_ptr<osgViewer::Viewer> mViewer;
