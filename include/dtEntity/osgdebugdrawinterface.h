@@ -43,7 +43,7 @@ namespace dtEntity
     * execute the draw each frame.
     * Warning: To use, first do SetEnabled(true), it is off by default!
     */
-   class DT_ENTITY_EXPORT OSGDebugDrawInterface : DebugDrawInterface
+   class DT_ENTITY_EXPORT OSGDebugDrawInterface : public DebugDrawInterface
    {
    public:      
 
@@ -229,7 +229,7 @@ namespace dtEntity
       void AddDrawable(osg::Drawable* drawable, float duration = 0, bool depthTestEnabled = true);
 
       /**
-       * DebugDrawManager is disabled by default, enable it!
+       * DebugDrawInterface is disabled by default, enable it!
        */
       void SetEnabled(bool enabled);
       bool IsEnabled() const;

@@ -22,7 +22,7 @@
 
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/debugdrawmanager.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/property.h>
 #include <dtEntity/nodecomponent.h>
 #include <osgManipulator/Dragger>
@@ -209,8 +209,6 @@ namespace dtEntitySimulation
 
       dtEntity::DynamicArrayProperty mOperators;
       dtEntity::ArrayProperty mOperatorsVal;
-
-      dtEntity::DebugDrawManager* mDebugDrawManager;
 
    };
 

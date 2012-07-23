@@ -347,7 +347,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRCloseWindow(const Arguments& args)
    {     
-      dtEntity::EntityManager* entityManager = GetEntityManager(args.This()->CreationContext());
       dtEntity::GetWindowInterface()->CloseWindow(ToStdString(args[0]));
       return Undefined();
    }

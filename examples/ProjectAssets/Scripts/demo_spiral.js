@@ -3,6 +3,8 @@ include_once("Scripts/stdlib.js");
 var spiralEntityIds = [];
 var spiralTransforms = [];
 var NUM_SPIRAL_ACTORS = 100;
+var ddm = new DebugDrawManager();
+ddm.setEnabled(true);
 
 function updateSpiral(msgname, params) {       
   var time = params.SimulationTime;
@@ -12,8 +14,10 @@ function updateSpiral(msgname, params) {
     entityTransform = spiralTransforms[i];
     var x = Math.sin(val * 10 + time) * radius * val + Math.sin(val * 20 + time * 10);
     var z = Math.cos(val * 10  + time) * radius * val + Math.cos(val * 20 + time * 10);
-    entityTransform.Position = [x, 0, z];      
+    entityTransform.Position = [x, 0, z];
+    ddm.addLine([0,0,0], [x, 0, z], 1, [1,0,0,01])  ;
   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

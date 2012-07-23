@@ -113,7 +113,6 @@ int main(int argc, char** argv)
    entityManager.EmitMessage(*msg);
    delete msg;
 
-   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    dtEntity::ApplicationSystem* appsys;
    entityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
    dtEntity::OSGWindowInterface* windowinterface = static_cast<dtEntity::OSGWindowInterface*>(dtEntity::GetWindowInterface());

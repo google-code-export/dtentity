@@ -434,7 +434,6 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void OSGInputInterface::GetKeyNames(std::map<std::string, unsigned int>& v) const
    {
-      size_t count = 0;
       for(KeyNames::const_iterator i = mKeyNames.begin(); i != mKeyNames.end(); ++i)
       {
          v[i->first] = i->second;
