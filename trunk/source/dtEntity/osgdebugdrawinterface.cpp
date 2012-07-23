@@ -102,7 +102,7 @@ namespace dtEntity
       bool found = ls->GetByName(layerName, layer);
       if(!found)
       {
-         LOG_ERROR("Error initializing DebugDrawManager: Layer not found!");
+         LOG_ERROR("Error initializing OSGDebugDrawInterface: Layer not found!");
       }
       else
       {
@@ -111,7 +111,6 @@ namespace dtEntity
       }
 
       mEntityManager->RegisterForMessages(EnableDebugDrawingMessage::TYPE, mEnableFunctor);
-      SetEnabled(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +143,7 @@ namespace dtEntity
 
       if(enabled)
       {
-         mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor, "DebugDrawManager::Update");
+         mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor, "OSGDebugDrawInterface::Update");
          mGroupDepthTest->setNodeMask(ALL_BITS);
          mGroupNoDepthTest->setNodeMask(ALL_BITS);
       }

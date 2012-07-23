@@ -20,6 +20,8 @@
 
 #include <dtEntitySimulation/particlecomponent.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/debugdrawinterface.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <osgParticle/MultiSegmentPlacer>
@@ -116,7 +118,6 @@ namespace dtEntitySimulation
            dtEntity::DynamicBoolProperty::SetValueCB(this, &ParticleComponent::SetDebugOn),
            dtEntity::DynamicBoolProperty::GetValueCB(this, &ParticleComponent::GetDebugOn)
         )
-      , mDebugOnVal(false)
       , mPlacer(
            dtEntity::DynamicGroupProperty::SetValueCB(this, &ParticleComponent::SetPlacer),
            dtEntity::DynamicGroupProperty::GetValueCB(this, &ParticleComponent::GetPlacer)
@@ -148,7 +149,6 @@ namespace dtEntitySimulation
       , mOperators(dtEntity::DynamicArrayProperty::SetValueCB(this, &ParticleComponent::SetOperators),
                    dtEntity::DynamicArrayProperty::GetValueCB(this, &ParticleComponent::GetOperators)
         )
-      , mDebugDrawManager(NULL)
    {      
       Register(AlphaRangeId, &mAlphaRange);
       Register(ColorRangeMinId, &mColorRangeMin);
@@ -234,7 +234,6 @@ namespace dtEntitySimulation
    ////////////////////////////////////////////////////////////////////////////
    ParticleComponent::~ParticleComponent()
    {
-      delete mDebugDrawManager;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -408,20 +407,9 @@ namespace dtEntitySimulation
 
    ////////////////////////////////////////////////////////////////////////////
    void ParticleComponent::SetDebugOn(bool v)
-   {
+   {      
       mDebugOnVal = v;
-      if(v)
-      {
-         mDebugDrawManager = new dtEntity::DebugDrawManager(mEntity->GetEntityManager());
-      }
-      else
-      {
-         if(mDebugDrawManager)
-         {
-            delete mDebugDrawManager;
-            mDebugDrawManager = NULL;
-         }
-      }
+      dtEntity::GetDebugDrawInterface()->SetEnabled(v);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -514,10 +502,8 @@ namespace dtEntitySimulation
    {
       mOperatorsVal.Set(arr);
 
-      if(mDebugDrawManager)
-      {
-         mDebugDrawManager->Clear();
-      }
+      dtEntity::GetDebugDrawInterface()->Clear();
+
       while(mProgram->numOperators() > 0)
       {
          mProgram->removeOperator(0);
@@ -546,20 +532,17 @@ namespace dtEntitySimulation
                   osg::Vec3 normal = selprops[NormalId]->Vec3Value();
                   float dist = selprops[DistId]->FloatValue();
                   bo->addPlaneDomain(osg::Plane(normal, dist));
-                  if(mDebugDrawManager)
-                  {
-                     mDebugDrawManager->AddCircle(osg::Vec3(0, 0, -dist), normal,  10, osg::Vec4(0,1,0,1), FLT_MAX);
-                  }
+
+                  dtEntity::GetDebugDrawInterface()->AddCircle(osg::Vec3(0, 0, -dist), normal,  10, osg::Vec4(0,1,0,1), FLT_MAX);
+
                }
                else if(domainsel == SphereDomainId)
                {
                    osg::Vec3 pos = selprops[CenterId]->Vec3Value();
                    float radius = selprops[RadiusId]->FloatValue();
                    bo->addSphereDomain(pos, radius);
-                   if(mDebugDrawManager)
-                   {
-                      mDebugDrawManager->AddSphere(pos, radius, osg::Vec4(0,1,0,1), FLT_MAX);
-                   }
+                   dtEntity::GetDebugDrawInterface()->AddSphere(pos, radius, osg::Vec4(0,1,0,1), FLT_MAX);
+
                }
 
             }

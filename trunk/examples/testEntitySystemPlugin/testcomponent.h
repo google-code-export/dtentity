@@ -1,7 +1,6 @@
 #pragma once
 
 #include <dtEntity/component.h>
-#include <dtEntity/debugdrawmanager.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
 #include <osg/ref_ptr>
@@ -142,6 +141,4 @@ private:
    // The message functor is used to register and deregister for a specific message
    dtEntity::MessageFunctor mTickFunctor;
 
-   // A debug draw manager is a simple way to draw primitive shapes to the scene
-   dtEntity::DebugDrawManager mDebugDrawManager;
 };

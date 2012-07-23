@@ -305,7 +305,6 @@ namespace dtEntityEditor
    {
       dtEntity::ApplicationSystem* appsys;
       GetEntityManager().GetES(appsys);
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
       while(!mViewer->done())
       {

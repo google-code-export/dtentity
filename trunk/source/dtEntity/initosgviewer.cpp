@@ -27,13 +27,13 @@
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/matrixtransformcomponent.h>
+#include <dtEntity/osgdebugdrawinterface.h>
 #include <dtEntity/osginputinterface.h>
 #include <dtEntity/osgsysteminterface.h>
+#include <dtEntity/osgwindowinterface.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/osgwindowinterface.h>
-
 #include <osg/Notify>
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
@@ -180,10 +180,6 @@ namespace dtEntity
                       bool addConsoleLog,
                       osg::Group* pSceneNode)
    {
-      SetSystemInterface(new OSGSystemInterface());
-      SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
-      SetWindowInterface(new OSGWindowInterface(em));
-
       if(pSceneNode == NULL)
       {
          pSceneNode = new osg::Group();
@@ -197,12 +193,15 @@ namespace dtEntity
          LogManager::GetInstance().AddListener(new ConsoleLogHandler());
       }
 
-      
-
       SetupDataPaths(argc, argv, checkPaths);
 
+      SetSystemInterface(new OSGSystemInterface());
+      SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
+      SetWindowInterface(new OSGWindowInterface(em));
+
       AddDefaultEntitySystemsAndFactories(argc, argv, em);
-     
+
+
       // give application system access to viewer
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
       iface->SetViewer(&viewer);
@@ -214,7 +213,10 @@ namespace dtEntity
       }
 
       SetupSceneGraph(viewer, em, pSceneNode);
-    
+
+      // need layer system for debug draw interface, so set it up now
+      SetDebugDrawInterface(new OSGDebugDrawInterface(em));
+
       if(addStatsHandler)
       {
          osgViewer::ViewerBase::Views views;

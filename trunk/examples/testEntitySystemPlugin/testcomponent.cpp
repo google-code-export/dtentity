@@ -1,5 +1,7 @@
 #include "testcomponent.h"
 
+#include <dtEntity/core.h>
+#include <dtEntity/debugdrawinterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/stringid.h>
@@ -90,7 +92,6 @@ void TestComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
 */
 TestSystem::TestSystem(dtEntity::EntityManager& em)
    : BaseClass(em)
-   , mDebugDrawManager(dtEntity::DebugDrawManager(em))
 {
    /*
      Register the method TestEntitySystem::Tick to be called
@@ -104,7 +105,7 @@ TestSystem::TestSystem(dtEntity::EntityManager& em)
    /*
      The debug draw manager is not automatically enabled, so do this here
   */
-   mDebugDrawManager.SetEnabled(true);
+   dtEntity::GetDebugDrawInterface()->SetEnabled(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -160,7 +161,7 @@ void TestSystem::Tick(const dtEntity::Message& msg)
          // A duration value of 0 means the text is only rendered once.
          // Because the AddString method is called each frame this is
          // perfect.
-         mDebugDrawManager.AddString(position, label, color, 0, true);
+         dtEntity::GetDebugDrawInterface()->AddString(position, label, color, 0, true);
       }
    }
 }

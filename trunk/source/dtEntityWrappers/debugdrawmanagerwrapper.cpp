@@ -20,9 +20,10 @@
 
 #include <dtEntityWrappers/debugdrawmanagerwrapper.h>
 
+#include <dtEntity/core.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
-#include <dtEntity/debugdrawmanager.h>
+#include <dtEntity/debugdrawinterface.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <iostream>
@@ -39,28 +40,27 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerToString(const Arguments& args)
    {
-      return String::New("<DebugDrawManager>");
+      return String::New("<DebugDrawInterface>");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerSetEnabled(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
-      ddm->SetEnabled(args[0]->BooleanValue());
+      dtEntity::GetDebugDrawInterface()->SetEnabled(args[0]->BooleanValue());
       return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerIsEnabled(const Arguments& args)
-   {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
-      return Boolean::New(ddm->IsEnabled());
+   {      
+      return Boolean::New(dtEntity::GetDebugDrawInterface()->IsEnabled());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddLine(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
+
       if(!ddm->IsEnabled() )
       {
          return Undefined();
@@ -110,7 +110,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddLines(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -167,7 +167,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddAABB(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -217,7 +217,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddCross(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -258,7 +258,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddCircle(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -298,7 +298,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddSphere(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -338,7 +338,7 @@ namespace dtEntityWrappers
 	////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddString(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -378,7 +378,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerAddTriangle(const Arguments& args)
    {
-      dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
+      dtEntity::DebugDrawInterface* ddm = dtEntity::GetDebugDrawInterface();
 
       if(!ddm->IsEnabled() )
       {
@@ -419,46 +419,13 @@ namespace dtEntityWrappers
       return Undefined();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-	void DebugDrawManager_destroy(Persistent<Value> v, void* ptr) {
-		HandleScope scope;
-		Handle<Object> o = Handle<Object>::Cast(v);
-		dtEntity::DebugDrawManager * ddm = 
-         reinterpret_cast<dtEntity::DebugDrawManager*>(o->GetPointerFromInternalField(0));
-		delete ddm;
-		v.Dispose();
-	}
+
 
    ////////////////////////////////////////////////////////////////////////////////
 	Handle<Value> DebugDrawManagerClear(const Arguments& args) 
    {
-		dtEntity::DebugDrawManager* ddm; GetInternal(args.This(), 0, ddm);
-      ddm->Clear();
+      dtEntity::GetDebugDrawInterface()->Clear();
       return Undefined();
-	}
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DebugDrawManagerDestructor(v8::Persistent<Value> v, void* scriptsysnull)
-   {      
-      Handle<External> ext = Handle<External>::Cast(v);
-      assert(!ext.IsEmpty());
-      dtEntity::DebugDrawManager* ddm = reinterpret_cast<dtEntity::DebugDrawManager*>(ext->Value());
-      delete ddm;
-      v.Dispose();
-   }
-   
-   ////////////////////////////////////////////////////////////////////////////////
-	Handle<Value> DebugDrawManager_create(const Arguments& args) {
-      v8::HandleScope handle_scope;
-      Handle<Context> context = args.This()->CreationContext();
-     
-		Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
-      dtEntity::EntityManager* em = UnwrapEntityManager(emh);
-      Handle<External> ext = External::New(new dtEntity::DebugDrawManager(*em));
-      args.This()->SetInternalField(0, ext);
-      Persistent<External> p = Persistent<External>::New(ext);
-      p.MakeWeak(NULL, &DebugDrawManagerDestructor);
-      return args.This();
 	}
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -470,7 +437,7 @@ namespace dtEntityWrappers
       if(templt.IsEmpty())
       {
 
-        templt = FunctionTemplate::New(DebugDrawManager_create);
+        templt = FunctionTemplate::New();
         templt->SetClassName(String::New("DebugDrawManager"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 

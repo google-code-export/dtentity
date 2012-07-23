@@ -30,12 +30,12 @@ namespace dtEntity
 
    /**
     * Can be used to add simple debug geometry to the scene. Each debug graphics primitive is added
-    * together with a lifetime /  duration. 
+    * together with a lifetime /  duration.
     * If you want to do per-frame drawing, simply set a duration of 0 and
     * execute the draw each frame.
     * Warning: To use, first do SetEnabled(true), it is off by default!
     */
-    class DT_ENTITY_EXPORT DebugDrawInterface
+   class DT_ENTITY_EXPORT DebugDrawInterface
    {
    public:      
 
@@ -198,7 +198,7 @@ namespace dtEntity
       
       
       /**
-       * DebugDrawManager is disabled by default, enable it!
+       * DebugDrawInterface is disabled by default, enable it!
        */
       virtual void SetEnabled(bool enabled) = 0;
       virtual bool IsEnabled() const = 0;
