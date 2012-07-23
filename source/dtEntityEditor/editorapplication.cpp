@@ -31,6 +31,7 @@
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/osginputinterface.h>
+#include <dtEntity/osgdebugdrawinterface.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
@@ -69,6 +70,7 @@ namespace dtEntityEditor
       dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface());
       dtEntity::SetWindowInterface(new dtEntity::OSGWindowInterface(*mEntityManager));
       dtEntity::SetInputInterface(new dtEntity::OSGInputInterface(mEntityManager->GetMessagePump()));
+
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
       dtEntity::SetupDataPaths(argc,argv, false);
@@ -116,6 +118,8 @@ namespace dtEntityEditor
       emit DataPathsChanged(newpathsqt);
 
       dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, *mEntityManager);
+
+      dtEntity::SetDebugDrawInterface(new dtEntity::OSGDebugDrawInterface(*mEntityManager));
 
       // default plugin dir
       mPluginPaths.push_back("plugins");
@@ -379,48 +383,6 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorApplication::CreateCameraEntityIfNotExists()
-   {
-      dtEntity::CameraSystem* camsys;
-      GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
-      if(camsys->GetNumComponents() == 0)
-      {
-         std::string cameramapname = "maps/default.dtemap";
-
-         dtEntity::MapSystem* mapSystem;
-         GetEntityManager().GetEntitySystem(dtEntity::MapComponent::TYPE, mapSystem);
-
-         if(!mapSystem->GetLoadedMaps().empty())
-         {
-            cameramapname = mapSystem->GetLoadedMaps().front();
-         }
-
-         // create a main camera entity if it was not loaded from map
-
-         dtEntity::Entity* entity;
-         mEntityManager->CreateEntity(entity);
-         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-         unsigned int contextId = iface->GetPrimaryWindow()->getState()->getContextID();
-         dtEntity::CameraComponent* camcomp;
-         entity->CreateComponent(camcomp);
-         camcomp->SetContextId(contextId);
-         camcomp->SetClearColor(osg::Vec4(0,0,0,1));
-         camcomp->Finished();
-
-         dtEntity::MapComponent* mapcomp;
-         entity->CreateComponent(mapcomp);
-         std::ostringstream os;
-         os << "cam_" << contextId;
-         mapcomp->SetEntityName(os.str());
-         mapcomp->SetUniqueId(os.str());
-         mapcomp->SetMapName(cameramapname);
-         mapcomp->Finished();
-         GetEntityManager().AddToScene(entity->GetId());
-      }
-   }
-
-
-   ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::NewScene()
    {
       dtEntity::MapSystem* mapSystem;
@@ -438,8 +400,6 @@ namespace dtEntityEditor
       mapSystem->UnloadScene();
 
       mapSystem->LoadScene(path.toStdString());
-
-      //CreateCameraEntityIfNotExists();
       
       emit SceneLoaded(path);
 
