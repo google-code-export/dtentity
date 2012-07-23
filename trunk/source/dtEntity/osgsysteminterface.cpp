@@ -20,10 +20,16 @@
 
 #include <dtEntity/osgsysteminterface.h>
 
+#include <dtEntity/messagepump.h>
+#include <dtEntity/systemmessages.h>
 #include <osg/NodeCallback>
 #include <osg/Timer>
 #include <osg/FrameStamp>
 #include <osg/NodeVisitor>
+#include <osgViewer/View>
+#include <osgViewer/GraphicsWindow>
+#include <osgViewer/Viewer>
+#include <osgViewer/CompositeViewer>
 #include <assert.h>
 
 namespace dtEntity
@@ -100,8 +106,9 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   OSGSystemInterface::OSGSystemInterface()
-      : mImpl(new Impl())
+   OSGSystemInterface::OSGSystemInterface(dtEntity::MessagePump& mp)
+      : mMessagePump(&mp)
+      , mImpl(new Impl())
    {
    }
 
@@ -170,12 +177,44 @@ namespace dtEntity
    void OSGSystemInterface::SetTimeScale(float v)
    {
       mImpl->mUpdateCallback->mTimeScale = v;
+      TimeChangedMessage msg;
+      msg.SetSimulationTime(GetSimulationTime());
+      msg.SetSimulationClockTime(GetSimulationClockTime());
+      msg.SetTimeScale(GetTimeScale());
+      mMessagePump->EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double OSGSystemInterface::GetSimulationTime() const
    {
       return mImpl->mUpdateCallback->mSimTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::SetSimulationTime(double newTime)
+   {
+      Timer_t newstarttick = osg::Timer::instance()->tick() - newTime / osg::Timer::instance()->getSecondsPerTick();
+
+      osgViewer::CompositeViewer* cv = dynamic_cast<osgViewer::CompositeViewer*>(GetViewer());
+      if(cv)
+      {
+         cv->setStartTick(newstarttick);
+         // calendar time is ignored for now
+      }
+      else
+      {
+         osgViewer::Viewer* v = dynamic_cast<osgViewer::Viewer*>(GetViewer());
+         if(v != NULL)
+         {
+            v->setStartTick(newstarttick);
+         }
+      }
+
+      TimeChangedMessage msg;
+      msg.SetSimulationTime(GetSimulationTime());
+      msg.SetSimulationClockTime(GetSimulationClockTime());
+      msg.SetTimeScale(GetTimeScale());
+      mMessagePump->EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -188,6 +227,12 @@ namespace dtEntity
    void OSGSystemInterface::SetSimulationClockTime(Timer_t t)
    {
       mImpl->mUpdateCallback->SetSimulationClockTime(t);
+
+      TimeChangedMessage msg;
+      msg.SetSimulationTime(GetSimulationTime());
+      msg.SetSimulationClockTime(GetSimulationClockTime());
+      msg.SetTimeScale(GetTimeScale());
+      mMessagePump->EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

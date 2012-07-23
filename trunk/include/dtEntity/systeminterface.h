@@ -38,6 +38,7 @@ namespace dtEntity
       virtual float GetTimeScale() const = 0;
       virtual void SetTimeScale(float) = 0;
       virtual double GetSimulationTime() const = 0;
+      virtual void SetSimulationTime(double) = 0;
       virtual Timer_t GetSimulationClockTime() const = 0;
       virtual void SetSimulationClockTime(Timer_t) = 0;
       virtual Timer_t GetRealClockTime() = 0;

@@ -23,8 +23,6 @@
 */
 
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
@@ -96,11 +94,10 @@ int main(int argc, char** argv)
 
    // create spawner for entity
 
-   dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    // skybox screws up OSG initial position, set manually
-   iface->GetPrimaryView()->setCameraManipulator(new osgGA::TrackballManipulator());
-   iface->GetPrimaryView()->getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
-   iface->GetPrimaryView()->getCameraManipulator()->home(0);
+   viewer.setCameraManipulator(new osgGA::TrackballManipulator());
+   viewer.getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
+   viewer.getCameraManipulator()->home(0);
 
    dtEntity::ApplicationSystem* appsys;
    em.GetES(appsys);

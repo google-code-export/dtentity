@@ -51,8 +51,6 @@ namespace dtEntity
       
       virtual void CloseWindow(const std::string& name);
 
-      void OnCloseWindow(const Message& msg);
-
       /**
        * Get pick ray at given screen position
        */
@@ -67,7 +65,6 @@ namespace dtEntity
       void SetTraits(osg::GraphicsContext::Traits* traits) { mTraits = traits; }
       osg::GraphicsContext::Traits* GetTraits() const { return mTraits; }
 
-      virtual void ProcessQueuedMessages() { mMessagePump.EmitQueuedMessages(FLT_MAX); }
 
    protected:
 
@@ -75,9 +72,7 @@ namespace dtEntity
 
    private:
 
-      MessagePump mMessagePump;
       EntityManager* mEntityManager;
-      MessageFunctor mCloseWindowFunctor;
 
       struct WindowPos
       {

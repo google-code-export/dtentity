@@ -25,12 +25,13 @@
 
 namespace dtEntity
 {     
+   class MessagePump;
 
    class DT_ENTITY_EXPORT OSGSystemInterface : public SystemInterface
    {
    public:
 
-      OSGSystemInterface();
+      OSGSystemInterface(dtEntity::MessagePump&);
       ~OSGSystemInterface();
 
       void InstallUpdateCallback(osg::Node* node);
@@ -46,6 +47,7 @@ namespace dtEntity
       virtual float GetDeltaRealTime() const;
       virtual Timer_t GetRealClockTime();
       virtual double GetSimulationTime() const;
+      void SetSimulationTime(double);
 
       virtual float GetTimeScale() const;
       virtual void SetTimeScale(float v);
@@ -55,7 +57,7 @@ namespace dtEntity
 
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
-
+      dtEntity::MessagePump* mMessagePump;
       class Impl;
       Impl* mImpl;
    };
