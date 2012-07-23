@@ -32,9 +32,6 @@
 #include <dtEntity/stringid.h>
 #include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntityPhysX/pagedterraincullvisitor.h>
-#include <dtEntityPhysX/physxcomponent.h>
-#include <dtEntityPhysX/physxpagedterraincomponent.h>
 #include <osgViewer/Renderer>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
