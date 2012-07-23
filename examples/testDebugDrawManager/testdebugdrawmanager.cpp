@@ -34,9 +34,6 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <dtEntityPhysX/pagedterraincullvisitor.h>
-#include <dtEntityPhysX/physxcomponent.h>
-#include <dtEntityPhysX/physxpagedterraincomponent.h>
 #include <osgViewer/Renderer>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
