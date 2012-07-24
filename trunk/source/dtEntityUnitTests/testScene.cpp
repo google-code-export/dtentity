@@ -21,6 +21,8 @@
 
 #include <UnitTest++.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/applicationcomponent.h>
@@ -36,6 +38,7 @@ struct SceneFixture
    SceneFixture()
    {
       SetupDataPaths(0, NULL, true);
+      SetSystemInterface(new OSGSystemInterface(mEntityManager.GetMessagePump()));
       AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }

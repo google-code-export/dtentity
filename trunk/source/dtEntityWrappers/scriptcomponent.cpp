@@ -161,11 +161,13 @@ namespace dtEntityWrappers
       tmplt->SetClassName(String::New("ScriptSystem"));
 
       dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
-
-      if(window)
+      if(iface)
       {
-         context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
+         osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
+         if(window)
+         {
+            context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
+         }
       }
 
       dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
