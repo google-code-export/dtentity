@@ -43,6 +43,8 @@ namespace dtEntity
       osgViewer::GraphicsWindow* GetPrimaryWindow() const;
       osg::Camera* GetPrimaryCamera() const;
 
+      virtual void EmitTickMessagesAndQueuedMessages();
+
       virtual float GetDeltaSimTime() const;
       virtual float GetDeltaRealTime() const;
       virtual Timer_t GetRealClockTime();

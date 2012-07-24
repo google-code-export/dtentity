@@ -126,6 +126,46 @@ namespace dtEntity
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::EmitTickMessagesAndQueuedMessages()
+   {
+      float deltasimtime = GetDeltaSimTime();
+      float deltarealtime = GetDeltaRealTime();
+      float simtimescale = GetTimeScale();
+      double simulationtime = GetSimulationTime();
+
+
+      {
+         dtEntity::PostFrameMessage msg;
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
+         mMessagePump->EmitMessage(msg);
+      }
+
+      {
+         dtEntity::TickMessage msg;
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
+         mMessagePump->EmitMessage(msg);
+      }
+
+      mMessagePump->EmitQueuedMessages(simulationtime);
+
+      {
+         dtEntity::EndOfFrameMessage msg;
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
+         mMessagePump->EmitMessage(msg);
+      }
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    osgViewer::View* OSGSystemInterface::GetPrimaryView() const
    {
       osgViewer::ViewerBase::Views views;

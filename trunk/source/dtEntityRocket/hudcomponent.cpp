@@ -24,7 +24,6 @@
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/transformcomponent.h>
 #include <Rocket/Core/Context.h>

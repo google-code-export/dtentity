@@ -94,48 +94,6 @@ namespace dtEntity
       GetEntityManager().UnregisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor);
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::EmitTickMessagesAndQueuedMessages()
-   {
-      SystemInterface* iface = GetSystemInterface();
-      float deltasimtime = iface->GetDeltaSimTime();
-      float deltarealtime = iface->GetDeltaRealTime();
-      float simtimescale = iface->GetTimeScale();
-      double simulationtime = iface->GetSimulationTime();
-
-      EntityManager& em = GetEntityManager();
-      
-      {
-         dtEntity::PostFrameMessage msg;
-         msg.SetDeltaSimTime(deltasimtime);
-         msg.SetDeltaRealTime(deltarealtime);
-         msg.SetSimTimeScale(simtimescale);
-         msg.SetSimulationTime(simulationtime);
-         em.EmitMessage(msg);
-      }
-
-      {
-         dtEntity::TickMessage msg;
-         msg.SetDeltaSimTime(deltasimtime);
-         msg.SetDeltaRealTime(deltarealtime);
-         msg.SetSimTimeScale(simtimescale);
-         msg.SetSimulationTime(simulationtime);
-         em.EmitMessage(msg);
-      }
-
-      em.EmitQueuedMessages(simulationtime);
-
-      {
-         dtEntity::EndOfFrameMessage msg;
-         msg.SetDeltaSimTime(deltasimtime);
-         msg.SetDeltaRealTime(deltarealtime);
-         msg.SetSimTimeScale(simtimescale);
-         msg.SetSimulationTime(simulationtime);
-         em.EmitMessage(msg);
-      }
-
-   }
-
    ///////////////////////////////////////////////////////////////////////////////
    float ApplicationSystem::GetTimeScale() const
    {

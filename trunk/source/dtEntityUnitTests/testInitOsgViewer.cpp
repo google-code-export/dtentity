@@ -22,7 +22,6 @@
 #include <dtEntity/core.h>
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/initosgviewer.h>

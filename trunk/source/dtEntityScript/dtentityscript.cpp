@@ -22,7 +22,6 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
@@ -30,6 +29,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/systeminterface.h>
 #include <iostream>
 #include <osgDB/FileUtils>
 #include <osgViewer/CompositeViewer>
@@ -112,8 +112,7 @@ int main(int argc, char** argv)
    entityManager.EmitMessage(*msg);
    delete msg;
 
-   dtEntity::ApplicationSystem* appsys;
-   entityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
+   dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
 
    if(profiling_enabled)
    {
@@ -138,7 +137,7 @@ int main(int argc, char** argv)
          CProfileManager::Stop_Profile();
 
          CProfileManager::Start_Profile(frameUpTrId);
-         appsys->EmitTickMessagesAndQueuedMessages();
+         iface->EmitTickMessagesAndQueuedMessages();
          viewer.updateTraversal();
          CProfileManager::Stop_Profile();
 
@@ -161,9 +160,8 @@ int main(int argc, char** argv)
       while (!viewer.done())
       {
          viewer.advance(DBL_MAX);
-
          viewer.eventTraversal();
-         appsys->EmitTickMessagesAndQueuedMessages();
+         iface->EmitTickMessagesAndQueuedMessages();
          viewer.updateTraversal();
          viewer.renderingTraversals();
       }

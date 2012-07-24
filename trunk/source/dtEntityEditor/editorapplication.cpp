@@ -21,7 +21,6 @@
 #include <dtEntityEditor/editorapplication.h>
 
 #include <assert.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/core.h>
@@ -307,8 +306,7 @@ namespace dtEntityEditor
    ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::StepGame()
    {
-      dtEntity::ApplicationSystem* appsys;
-      GetEntityManager().GetES(appsys);
+      dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
 
       while(!mViewer->done())
       {
@@ -318,7 +316,7 @@ namespace dtEntityEditor
 
          mViewer->eventTraversal();
 
-         appsys->EmitTickMessagesAndQueuedMessages();
+         iface->EmitTickMessagesAndQueuedMessages();
 
          mViewer->updateTraversal();
          mViewer->renderingTraversals();

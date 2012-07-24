@@ -51,9 +51,6 @@ namespace dtEntity
 
       ComponentType GetComponentType() const { return TYPE; }
 
-      void EmitTickMessagesAndQueuedMessages();
-
-
       /// Returns the UniqueID of this ApplicationSystem
       std::string GetUniqueID() { return mApplicationSystemInfo.mUniqueID; }
 

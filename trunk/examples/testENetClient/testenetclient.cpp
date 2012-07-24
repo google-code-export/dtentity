@@ -22,14 +22,15 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/commandmessages.h>
+#include <dtEntity/core.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/logmanager.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntityNet/messages.h>
 #include <dtEntityNet/enetcomponent.h>
 #include <dtEntityNet/deadreckoningreceivercomponent.h>
@@ -99,13 +100,13 @@ int main(int argc, char** argv)
    viewer.getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
    viewer.getCameraManipulator()->home(0);
 
-   dtEntity::ApplicationSystem* appsys;
-   em.GetES(appsys);
+   dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
+
    while (!viewer.done())
    {
       viewer.advance(DBL_MAX);
       viewer.eventTraversal();
-      appsys->EmitTickMessagesAndQueuedMessages();
+      iface->EmitTickMessagesAndQueuedMessages();
       viewer.updateTraversal();
       viewer.renderingTraversals();
    }

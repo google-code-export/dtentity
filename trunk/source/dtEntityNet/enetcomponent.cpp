@@ -23,8 +23,6 @@
 #include <dtEntityNet/messages.h>
 #include <dtEntityNet/deadreckoningreceivercomponent.h>
 #include <dtEntityNet/deadreckoningsendercomponent.h>
-
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>

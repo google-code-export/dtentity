@@ -22,7 +22,6 @@
 #include <dtEntity/core.h>
 #include <dtEntity/osgwindowinterface.h>
 #include <dtEntity/osgsysteminterface.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
