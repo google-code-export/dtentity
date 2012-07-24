@@ -27,6 +27,7 @@
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/osginputinterface.h>
 #include <dtEntity/systemmessages.h>
 
 #include <osgViewer/View>
@@ -337,6 +338,29 @@ namespace dtEntity
                // enqueueing instead of emitting, this way recipients can be sure that
                // camera entity is fully constructed
                mEntity->GetEntityManager().EnqueueMessage(msg);
+
+               // add input interface as event listener to view
+               OSGInputInterface* wface = static_cast<OSGInputInterface*>(GetInputInterface());
+               osgViewer::View::EventHandlers& eh = view->getEventHandlers();
+               if(std::find(eh.begin(), eh.end(), wface) ==  eh.end())
+               {
+                  eh.push_back(wface);
+               }
+
+               LayerAttachPointSystem* lsys;
+               mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
+               if(GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
+               {
+                  LayerAttachPointComponent* lc;
+                  if(lsys->GetByName(GetLayerAttachPoint(), lc))
+                  {
+                     static_cast<OSGSystemInterface*>(GetSystemInterface())->InstallUpdateCallback(lc->GetNode());
+                  }
+                  else
+                  {
+                     LOG_ERROR("Cannot install update callback for layer attach point " << GetStringFromSID(GetLayerAttachPoint()));
+                  }
+               }
 
                const osg::GraphicsContext::Traits& traits = *newcam->getGraphicsContext()->getTraits();
                

@@ -90,9 +90,6 @@ namespace dtEntity
 	  /** Functor reacting to SetSystemPropertiesMessageandling is not perfect; the  */
       void OnSetSystemProperties(const Message& msg);
 
-      /** adds input callback to cameras */
-      void OnCameraAdded(const Message& msg);      
-
       void AddCmdLineArg(const std::string& arg)
       {
          mArgvArray.Add(new StringProperty(arg));
@@ -149,7 +146,6 @@ namespace dtEntity
       MessageFunctor mSetComponentPropertiesFunctor;
       MessageFunctor mSetSystemPropertiesFunctor;
       MessageFunctor mResetSystemFunctor;
-      MessageFunctor mCameraAddedFunctor;
       
    };
 }
