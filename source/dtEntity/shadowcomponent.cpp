@@ -20,7 +20,6 @@
 
 #include <dtEntity/shadowcomponent.h>
 
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entitymanager.h>

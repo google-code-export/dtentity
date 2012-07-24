@@ -19,7 +19,6 @@
 */
 
 #include <dtEntityQtWidgets/spawnerstore.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/core.h>
@@ -404,9 +403,7 @@ namespace dtEntityQtWidgets
          return;
       }
 
-      dtEntity::ApplicationSystem* appsys;
-      mEntityManager->GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-      
+
       dtEntity::WindowInterface* iface = dtEntity::GetWindowInterface();
       osg::Vec3 pickray = iface->GetPickRay("defaultView", pos.x(), pos.y());
       

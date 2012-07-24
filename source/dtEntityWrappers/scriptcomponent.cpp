@@ -23,7 +23,6 @@
 
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
@@ -161,24 +160,20 @@ namespace dtEntityWrappers
 
       tmplt->SetClassName(String::New("ScriptSystem"));
 
-      dtEntity::ApplicationSystem* as;
-      if(GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, as))
-      {
-         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-         osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
 
-         if(window)
-         {
-            context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
-         }
-         
-         dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
-         if(ipiface)
-         {
-            context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
-            context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
-            context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
-         }
+      if(window)
+      {
+         context->Global()->Set(String::New("Screen"), WrapScreen(this, iface->GetPrimaryView(), window));
+      }
+
+      dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
+      if(ipiface)
+      {
+         context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
+         context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
+         context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
       }
 
       context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());

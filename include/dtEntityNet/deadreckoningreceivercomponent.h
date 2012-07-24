@@ -31,7 +31,6 @@
 
 namespace dtEntity
 {
-   class ApplicationSystem;
    class MapSystem;
    class TransformComponent;
    class DynamicsComponent;
@@ -111,8 +110,6 @@ namespace dtEntityNet
       dtEntity::Property* ScriptConnect(const dtEntity::PropertyArgs& args);
       void Tick(const dtEntity::Message& m);
 
-
-      dtEntity::ApplicationSystem* mApplicationSystem;
       dtEntity::MapSystem* mMapSystem;
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::BoolProperty mSpawnFromEntityType;

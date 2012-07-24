@@ -21,7 +21,6 @@
 *
 * Martin Scheffler
 */
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/core.h>
 #include <dtEntity/debugdrawinterface.h>
@@ -33,6 +32,7 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systeminterface.h>
 #include <osgViewer/Renderer>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -53,9 +53,6 @@ int main(int argc, char** argv)
    dtEntity::EntityManager em;
    
    dtEntity::InitOSGViewer(argc, argv, viewer, em, false);   
-   
-   dtEntity::ApplicationSystem* appsystem;
-   em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsystem);
 
    dtEntity::DebugDrawInterface* debugdraw = dtEntity::GetDebugDrawInterface();
 
@@ -100,12 +97,14 @@ int main(int argc, char** argv)
 
    float time = 0;
 
+   dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
+
    while (!viewer.done())
    {
       viewer.advance(DBL_MAX);
       viewer.eventTraversal();
 
-      appsystem->EmitTickMessagesAndQueuedMessages();
+      iface->EmitTickMessagesAndQueuedMessages();
 
       viewer.updateTraversal();
       

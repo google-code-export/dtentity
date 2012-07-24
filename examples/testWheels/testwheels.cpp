@@ -21,8 +21,8 @@
 *
 * Martin Scheffler
 */
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/component.h>
+#include <dtEntity/core.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
@@ -31,6 +31,7 @@
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/staticmeshcomponent.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <osgViewer/Renderer>
 #include <osgViewer/Viewer>
@@ -240,15 +241,13 @@ int main(int argc, char** argv)
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
    mSystem->LoadScene("Scenes/wheels.dtescene");
 
-
-   dtEntity::ApplicationSystem* appsys;
-   em.GetES(appsys);
+   dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
 
    while (!viewer.done())
    {
       viewer.advance(DBL_MAX);
       viewer.eventTraversal();
-      appsys->EmitTickMessagesAndQueuedMessages();
+      iface->EmitTickMessagesAndQueuedMessages();
       viewer.updateTraversal();
       viewer.renderingTraversals();
    }

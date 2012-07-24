@@ -23,7 +23,6 @@
 */
 
 #include <osgDB/FileUtils>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/component.h>
 #include <dtEntity/layerattachpointcomponent.h>
@@ -36,6 +35,7 @@
 #include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <osgGA/TrackballManipulator>
 #include <osgViewer/CompositeViewer>
@@ -68,9 +68,6 @@ int main(int argc, char** argv)
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
-
-   dtEntity::ApplicationSystem* appsys;
-   em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
 
    dtEntity::MapSystem* mSystem;
    em.GetEntitySystem(dtEntity::MapComponent::TYPE, mSystem);
@@ -143,17 +140,20 @@ int main(int argc, char** argv)
    viewer.getCameraManipulator()->setHomePosition(osg::Vec3(0, -50, 5), osg::Vec3(), osg::Vec3(0,0,1),false);
    viewer.getCameraManipulator()->home(0);
 
-   double lastTime = appsys->GetSimulationTime();
+   dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
+
+   double lastTime = dtEntity::GetSystemInterface()->GetSimulationTime();
    while (!viewer.done())
    {
-      double dt = appsys->GetSimulationTime() - lastTime;
-      lastTime = appsys->GetSimulationTime();
+      double simtime = dtEntity::GetSystemInterface()->GetSimulationTime();
+      double dt = simtime - lastTime;
+      lastTime = simtime;
       viewer.advance(DBL_MAX);
       viewer.eventTraversal();
-      appsys->EmitTickMessagesAndQueuedMessages();
-
+      iface->EmitTickMessagesAndQueuedMessages();
       dtEntity::PositionAttitudeTransformComponent* pos;
       dtEntity::DynamicsComponent* dyn;
+
       for(unsigned int i = 0; i < entityids.size(); ++i)
       {
          unsigned int id = entityids[i];

@@ -20,16 +20,17 @@
 
 #include <dtEntityNet/deadreckoningreceivercomponent.h>
 
-#include <dtEntityNet/messages.h>
-#include <dtEntity/applicationcomponent.h>
+#include <dtEntity/core.h>
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/protobufmapencoder.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/transformcomponent.h>
 #include <dtEntity/uniqueid.h>
+#include <dtEntityNet/messages.h>
 
 namespace dtEntityNet
 {
@@ -57,13 +58,11 @@ namespace dtEntityNet
 
    DeadReckoningReceiverSystem::DeadReckoningReceiverSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
-      , mApplicationSystem(NULL)
       , mMapSystem(NULL)
    {
       mTickFunctor = dtEntity::MessageFunctor(this, &DeadReckoningReceiverSystem::Tick);
 
       em.GetES(mMapSystem);
-      em.GetES(mApplicationSystem);
 
       Register(SpawnFromEntityTypeId, &mSpawnFromEntityType);
       mSpawnFromEntityType.Set(true);
@@ -265,8 +264,8 @@ namespace dtEntityNet
          mMapSystem->AddToScene(id);
       }
 
-      assert(mApplicationSystem != NULL);
-      comp->mTimeLastReceive = mApplicationSystem->GetSimulationTime();
+
+      comp->mTimeLastReceive = dtEntity::GetSystemInterface()->GetSimulationTime();
       comp->mPosition = msg.GetPosition();
       comp->mOrientation = msg.GetOrientation();
       comp->mVelocity = msg.GetVelocity();
