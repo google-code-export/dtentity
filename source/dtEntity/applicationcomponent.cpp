@@ -20,7 +20,6 @@
 
 #include <dtEntity/applicationcomponent.h>
 
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntity/core.h>
 #include <dtEntity/commandmessages.h>
@@ -80,10 +79,6 @@ namespace dtEntity
       mSetSystemPropertiesFunctor = MessageFunctor(this, &ApplicationSystem::OnSetSystemProperties);
       em.RegisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor, "ApplicationSystem::OnSetSystemPropertie");
 
-      mCameraAddedFunctor = MessageFunctor(this, &ApplicationSystem::OnCameraAdded);
-      em.RegisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor, "ApplicationSystem::OnCameraAdded");
-
-
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -91,7 +86,6 @@ namespace dtEntity
    {
       GetEntityManager().UnregisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor);
       GetEntityManager().UnregisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor);
-      GetEntityManager().UnregisterForMessages(CameraAddedMessage::TYPE, mCameraAddedFunctor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -223,51 +217,5 @@ namespace dtEntity
       
    }
 
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ApplicationSystem::OnCameraAdded(const Message& m)
-   {
-      const CameraAddedMessage& msg = static_cast<const CameraAddedMessage&>(m);
-      CameraComponent* camcomp;
-
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(GetSystemInterface());
-      OSGInputInterface* wface = static_cast<OSGInputInterface*>(GetInputInterface());
-      
-      if(!GetEntityManager().GetComponent(msg.GetAboutEntityId(), camcomp))
-      {
-         LOG_ERROR("Camera not found!");
-         return;
-      }
-      
-      osgViewer::View* view = dynamic_cast<osgViewer::View*>(camcomp->GetCamera()->getView());
-      if(view)
-      {
-         osgViewer::View::EventHandlers& eh = view->getEventHandlers();
-         if(std::find(eh.begin(), eh.end(), wface) ==  eh.end())
-         {
-            eh.push_back(wface);
-         }
-      }
-      else
-      {
-         LOG_ERROR("Encountered unknown view type!");
-      }
-
-      LayerAttachPointSystem* lsys;
-      GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-      if(camcomp->GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
-      {
-         LayerAttachPointComponent* lc;
-         if(lsys->GetByName(camcomp->GetLayerAttachPoint(), lc))
-         {
-
-            iface->InstallUpdateCallback(lc->GetNode());
-         }
-         else
-         {
-            LOG_ERROR("Cannot install update callback for layer attach point " << GetStringFromSID(camcomp->GetLayerAttachPoint()));
-         }
-      }
-   }
 
 }
