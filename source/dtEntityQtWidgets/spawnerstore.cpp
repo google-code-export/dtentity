@@ -22,7 +22,6 @@
 #include <dtEntity/cameracomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>

@@ -19,14 +19,15 @@
 */
 
 #include <dtEntityWrappers/screenwrapper.h>
-#include <dtEntity/core.h>
-#include <dtEntity/osgwindowinterface.h>
-#include <dtEntity/osgsysteminterface.h>
+
 #include <dtEntity/cameracomponent.h>
+#include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
-#include <dtEntity/nodemasks.h>
 #include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntity/nodemasks.h>
+#include <dtEntity/osgsysteminterface.h>
+#include <dtEntity/osgwindowinterface.h>
 #include <dtEntity/windowinterface.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/scriptcomponent.h>
@@ -70,7 +71,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void SCRSetShowCursor(Local<String> propname, Local<Value> value, const AccessorInfo& info)
    {
-      osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
       bool showCursor = value->BooleanValue();
       if(showCursor)
       {
@@ -99,7 +101,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetWidth(Local<String> propname, const AccessorInfo& info)
    {
-     osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+     osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
      int x, y, w, h;
      window->getWindowRectangle(x, y, w, h);
      return Integer::New(w);
@@ -108,7 +111,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetHeight(Local<String> propname, const AccessorInfo& info)
    {
-     osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+     osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
      int x, y, w, h;
      window->getWindowRectangle(x, y, w, h);
      return Integer::New(h);
@@ -117,7 +121,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetFullScreen(Local<String> propname, const AccessorInfo& info)
    {
-      osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+     osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
 
       unsigned int contextId = window->getState()->getContextID();
       return Boolean::New(dtEntity::GetWindowInterface()->GetFullscreen(contextId));
@@ -126,7 +131,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void SCRSetFullScreen(Local<String> propname, Local<Value> value, const AccessorInfo& info)
    {
-      osgViewer::GraphicsWindow* window = UnwrapScreenWindow(info.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+     osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
 
       unsigned int contextId = window->getState()->getContextID();
       dtEntity::GetWindowInterface()->SetFullscreen(contextId, value->BooleanValue());
@@ -292,7 +298,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRConvertWorldToScreenCoords(const Arguments& args)
    {
-      osgViewer::View* view = UnwrapScreenView(args.This());
+      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::View* view = iface->GetPrimaryView();
       osg::Camera* cam = view->getCamera();
 
       osg::Vec4d screenXYZ(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue(), 1);
@@ -392,7 +399,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss, osgViewer::View* v, osgViewer::GraphicsWindow* w)
+   v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss)
    {
       HandleScope handle_scope;
       Handle<Context> context = ss->GetGlobalContext();
@@ -400,7 +407,6 @@ namespace dtEntityWrappers
 
       Handle<FunctionTemplate> templt = FunctionTemplate::New();
       templt->SetClassName(String::New("Screen"));
-      templt->InstanceTemplate()->SetInternalFieldCount(2);
 
       Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
@@ -415,8 +421,6 @@ namespace dtEntityWrappers
       proto->Set("setWindowGeometry", FunctionTemplate::New(SCRSetWindowGeometry));
 
       Local<Object> instance = templt->GetFunction()->NewInstance();
-      instance->SetInternalField(0, External::New(v));
-      instance->SetInternalField(1, External::New(w));
 
       instance->SetAccessor(String::New("lockCursor"), SCRGetLockCursor, SCRSetLockCursor);
       instance->SetAccessor(String::New("showCursor"), SCRGetShowCursor, SCRSetShowCursor);
@@ -427,22 +431,5 @@ namespace dtEntityWrappers
       return handle_scope.Close(instance);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   osgViewer::View* UnwrapScreenView(Handle<Value> val)
-   {
-      Handle<Object> obj = Handle<Object>::Cast(val);
-      osgViewer::View* v;
-      GetInternal(obj, 0, v);
-      return v;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osgViewer::GraphicsWindow* UnwrapScreenWindow(Handle<Value> val)
-   {
-      Handle<Object> obj = Handle<Object>::Cast(val);
-      osgViewer::GraphicsWindow* v;
-      GetInternal(obj, 1, v);
-      return v;
-   }
 
 }

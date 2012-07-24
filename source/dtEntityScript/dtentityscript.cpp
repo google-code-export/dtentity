@@ -23,7 +23,6 @@
 */
 
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>

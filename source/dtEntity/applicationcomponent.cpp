@@ -28,8 +28,7 @@
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/uniqueid.h>
-#include <dtEntity/osgsysteminterface.h>
-#include <dtEntity/osginputinterface.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
 #include <sstream>
