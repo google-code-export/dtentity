@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/pickshapecomponent.h>
+#include <dtEntityOSG/pickshapecomponent.h>
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -27,29 +27,29 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PickShapeComponent::TYPE(dtEntity::SID("PickShape"));
-   const StringId PickShapeComponent::MinBoundsId(dtEntity::SID("MinBounds"));
-   const StringId PickShapeComponent::MaxBoundsId(dtEntity::SID("MaxBounds"));
-   const StringId PickShapeComponent::VisibleId(dtEntity::SID("Visible"));
+   const dtEntity::StringId PickShapeComponent::TYPE(dtEntity::SID("PickShape"));
+   const dtEntity::StringId PickShapeComponent::MinBoundsId(dtEntity::SID("MinBounds"));
+   const dtEntity::StringId PickShapeComponent::MaxBoundsId(dtEntity::SID("MaxBounds"));
+   const dtEntity::StringId PickShapeComponent::VisibleId(dtEntity::SID("Visible"));
    
    ////////////////////////////////////////////////////////////////////////////
    PickShapeComponent::PickShapeComponent()
       : BaseClass(new osg::Geode())
       , mMinBounds(
-           DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMinBounds),
-           DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMinBounds)
+           dtEntity::DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMinBounds),
+           dtEntity::DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMinBounds)
         )
       , mMaxBounds(
-           DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMaxBounds),
-           DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMaxBounds)
+           dtEntity::DynamicVec3Property::SetValueCB(this, &PickShapeComponent::SetMaxBounds),
+           dtEntity::DynamicVec3Property::GetValueCB(this, &PickShapeComponent::GetMaxBounds)
         )
       , mVisible(
-           DynamicBoolProperty::SetValueCB(this, &PickShapeComponent::SetVisible),
-           DynamicBoolProperty::GetValueCB(this, &PickShapeComponent::GetVisible)
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &PickShapeComponent::SetVisible),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &PickShapeComponent::GetVisible)
         )
       , mBox(new osg::Box())      
       , mMinBoundsVal(osg::Vec3(-0.5f, -0.5f, -0.5f))
@@ -108,26 +108,26 @@ namespace dtEntity
    {
       if(v)
       {
-         GetNode()->setNodeMask(NodeMasks::VISIBLE | NodeMasks::PICKABLE);
+         GetNode()->setNodeMask(dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::PICKABLE);
       }
       else
       {
-         GetNode()->setNodeMask(NodeMasks::PICKABLE);
+         GetNode()->setNodeMask(dtEntity::NodeMasks::PICKABLE);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
    bool PickShapeComponent::GetVisible() const
    {
-      return ((GetNode()->getNodeMask() & NodeMasks::VISIBLE) != 0);
+      return ((GetNode()->getNodeMask() & dtEntity::NodeMasks::VISIBLE) != 0);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PickShapeSystem::TYPE(dtEntity::SID("PickShape"));
+   const dtEntity::StringId PickShapeSystem::TYPE(dtEntity::SID("PickShape"));
 
    ////////////////////////////////////////////////////////////////////////////
-   PickShapeSystem::PickShapeSystem(EntityManager& em)
+   PickShapeSystem::PickShapeSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<PickShapeComponent>(em)
    {
 

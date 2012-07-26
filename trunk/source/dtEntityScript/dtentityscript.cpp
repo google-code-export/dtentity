@@ -29,6 +29,7 @@
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/systeminterface.h>
+#include <dtEntityOSG/componentfactories.h>
 #include <iostream>
 #include <osgDB/FileUtils>
 #include <osgViewer/CompositeViewer>
@@ -78,6 +79,8 @@ int main(int argc, char** argv)
       LOG_ERROR("Error setting up dtEntity!");
       return 0;
    }
+
+   dtEntityOSG::RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
    
    dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
    pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);

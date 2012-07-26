@@ -35,6 +35,7 @@
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/osgwindowinterface.h>
+#include <dtEntityOSG/componentfactories.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
@@ -117,6 +118,7 @@ namespace dtEntityEditor
       emit DataPathsChanged(newpathsqt);
 
       dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, *mEntityManager);
+      dtEntityOSG::RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
 
       dtEntity::SetDebugDrawInterface(new dtEntity::OSGDebugDrawInterface(*mEntityManager));
 

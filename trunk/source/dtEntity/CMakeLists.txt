@@ -89,7 +89,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/osgsysteminterface.h
   ${HEADER_PATH}/osgwindowinterface.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
-  ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/profile.h
   ${HEADER_PATH}/property.h
   ${HEADER_PATH}/propertycontainer.h
@@ -133,7 +132,6 @@ SET(LIB_REPLACE
   osgdebugdrawinterface.cpp
   osginputinterface.cpp
   osgsysteminterface.cpp
-  pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
   shadercomponent.cpp
   shadowcomponent.cpp
@@ -146,6 +144,7 @@ SET(LIB_REPLACE
 )
 
 SET(LIB_SOURCES
+  cameracomponent.cpp
   componentfactories.cpp
   componentpluginmanager.cpp
   dynamicscomponent.cpp

@@ -59,8 +59,9 @@ TARGET_LINK_LIBRARIES(${APP_NAME}
                            ${ADDITIONAL_LIBS}
                            ${OPENTHREADS_LIBRARIES}
                            dtEntity
-						   dtEntityQtWidgets
-						   ${DTENTITY_PLUGINS}
+                           dtEntityOSG
+                           dtEntityQtWidgets
+                           ${DTENTITY_PLUGINS}
 )
 
 SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
