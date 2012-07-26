@@ -551,11 +551,15 @@ namespace osgLibRocket
     {
       case(osgGA::GUIEventAdapter::KEYDOWN):
       {
-        Rocket::Core::Input::KeyIdentifier key = GetKeyCode(ea.getKey());
-        int modifiers = GetKeyModifiers(ea.getModKeyMask());
-        _context->ProcessTextInput((char)ea.getKey());
-        _context->ProcessKeyDown(key, modifiers);
-        return (_camera != NULL && _contextEventListener->_keys_handled);
+         Rocket::Core::Input::KeyIdentifier key = GetKeyCode(ea.getKey());
+         int modifiers = GetKeyModifiers(ea.getModKeyMask());
+         
+         if(ea.getKey() != osgGA::GUIEventAdapter::KEY_BackSpace)
+         {
+            _context->ProcessTextInput((char)ea.getKey());
+         }
+         _context->ProcessKeyDown(key, modifiers);
+         return (_camera != NULL && _contextEventListener->_keys_handled);
 
       }
       case(osgGA::GUIEventAdapter::KEYUP):
