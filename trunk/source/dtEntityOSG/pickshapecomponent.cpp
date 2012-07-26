@@ -25,7 +25,6 @@
 #include <dtEntity/nodemasks.h>
 #include <assert.h>
 #include <osg/Geode>
-#include <osg/ShapeDrawable>
 
 namespace dtEntityOSG
 {
