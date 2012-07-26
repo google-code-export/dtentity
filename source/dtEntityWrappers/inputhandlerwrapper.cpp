@@ -512,14 +512,14 @@ namespace dtEntityWrappers
       Handle<Object> obj = Object::New();
       
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      obj->Set(String::New("MouseX"), String::New(dtEntity::InputHandler::MouseXId.c_str()));
-      obj->Set(String::New("MouseY"), String::New(dtEntity::InputHandler::MouseYId.c_str()));
-      obj->Set(String::New("MouseXRaw"), String::New(dtEntity::InputHandler::MouseXRawId.c_str()));
-      obj->Set(String::New("MouseYRaw"), String::New(dtEntity::InputHandler::MouseYRawId.c_str()));
-      obj->Set(String::New("MouseDeltaX"), String::New(dtEntity::InputHandler::MouseDeltaXId.c_str()));
-      obj->Set(String::New("MouseDeltaY"), String::New(dtEntity::InputHandler::MouseDeltaYId.c_str()));
-      obj->Set(String::New("MouseDeltaXRaw"), String::New(dtEntity::InputHandler::MouseDeltaXRawId.c_str()));
-      obj->Set(String::New("MouseDeltaYRaw"), String::New(dtEntity::InputHandler::MouseDeltaYRawId.c_str()));
+      obj->Set(String::New("MouseX"), String::New(dtEntity::InputInterface::MouseXId.c_str()));
+      obj->Set(String::New("MouseY"), String::New(dtEntity::InputInterface::MouseYId.c_str()));
+      obj->Set(String::New("MouseXRaw"), String::New(dtEntity::InputInterface::MouseXRawId.c_str()));
+      obj->Set(String::New("MouseYRaw"), String::New(dtEntity::InputInterface::MouseYRawId.c_str()));
+      obj->Set(String::New("MouseDeltaX"), String::New(dtEntity::InputInterface::MouseDeltaXId.c_str()));
+      obj->Set(String::New("MouseDeltaY"), String::New(dtEntity::InputInterface::MouseDeltaYId.c_str()));
+      obj->Set(String::New("MouseDeltaXRaw"), String::New(dtEntity::InputInterface::MouseDeltaXRawId.c_str()));
+      obj->Set(String::New("MouseDeltaYRaw"), String::New(dtEntity::InputInterface::MouseDeltaYRawId.c_str()));
 #else
       obj->Set(String::New("MouseX"), Uint32::New(dtEntity::InputInterface::MouseXId));
       obj->Set(String::New("MouseY"), Uint32::New(dtEntity::InputInterface::MouseYId));
