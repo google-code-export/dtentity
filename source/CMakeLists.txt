@@ -1,6 +1,6 @@
 ADD_SUBDIRECTORY(dtEntity)
 ADD_SUBDIRECTORY(dtEntitySimulation)
-
+ADD_SUBDIRECTORY(dtEntityOSG)
 OPTION(BUILD_QT "Build Qt widgets" OFF)
 
 OPTION(BUILD_LIBROCKET "Build LibRocket bindings" OFF)

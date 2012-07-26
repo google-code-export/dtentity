@@ -1,6 +1,4 @@
-#pragma once
-
-/* -*-c++-*-
+/*
 * dtEntity Game and Simulation Engine
 *
 * This library is free software; you can redistribute it and/or modify it under
@@ -20,10 +18,15 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/componentfactories.h>
+#include <dtEntity/componentpluginmanager.h>
+#include <dtEntity/dtentity_config.h>
+#include <dtEntityOSG/pickshapecomponent.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
-   class ComponentPluginManager;
-   void DT_ENTITY_EXPORT RegisterStandardFactories(dtEntity::ComponentPluginManager& pluginManager);
+   void RegisterStandardFactories(dtEntity::ComponentPluginManager& pluginManager)
+   {
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));
+   }
 }

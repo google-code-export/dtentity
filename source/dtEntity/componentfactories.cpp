@@ -29,7 +29,6 @@
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/lightcomponent.h>
 #include <dtEntity/osganimationcomponent.h>
-#include <dtEntity/pickshapecomponent.h>
 #include <dtEntity/shadercomponent.h>
 #include <dtEntity/shadowcomponent.h>
 #include <dtEntity/skyboxcomponent.h>
@@ -48,10 +47,9 @@
 namespace dtEntity
 {
 
-	void RegisterStandardFactories(ComponentPluginManager& pluginManager)
+   void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<DynamicsSystem>("Dynamics"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<SkyBoxSystem>("SkyBox"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<ShadowSystem>("Shadow"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<ShaderSystem>("Shader"));
@@ -59,7 +57,7 @@ namespace dtEntity
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<OSGAnimationSystem>("OSGAnimation"));
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<LightSystem>("Light"));
-      
+
 #if BUILD_CAL3D
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<AnimationSystem>("Animation"));
 #endif

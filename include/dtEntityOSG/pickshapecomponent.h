@@ -21,7 +21,7 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/nodecomponent.h>
@@ -33,7 +33,7 @@ namespace osg
    class Box;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ///////////////////////////////////////////////////////////////////////////
@@ -41,22 +41,22 @@ namespace dtEntity
    /**
     * Adds a pickable shape to the transform of the entity
     */
-   class DT_ENTITY_EXPORT PickShapeComponent
-      : public NodeComponent
+   class DTENTITY_OSG_EXPORT PickShapeComponent
+      : public dtEntity::NodeComponent
    {
    public:
 
-      typedef NodeComponent BaseClass;
+      typedef dtEntity::NodeComponent BaseClass;
 
-      static const ComponentType TYPE;
-      static const StringId MinBoundsId;
-      static const StringId MaxBoundsId;
-      static const StringId VisibleId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId MinBoundsId;
+      static const dtEntity::StringId MaxBoundsId;
+      static const dtEntity::StringId VisibleId;
     
       PickShapeComponent();
       virtual ~PickShapeComponent();
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
 
       void SetMinBounds(const osg::Vec3& v);
       osg::Vec3 GetMinBounds() const { return mMinBoundsVal; }
@@ -72,10 +72,10 @@ namespace dtEntity
       void UpdatePickShape();
 
       // path to loaded script file
-      StringProperty mMeshPathProperty;
-      DynamicVec3Property mMinBounds;
-      DynamicVec3Property mMaxBounds;
-      DynamicBoolProperty mVisible;
+      dtEntity::StringProperty mMeshPathProperty;
+      dtEntity::DynamicVec3Property mMinBounds;
+      dtEntity::DynamicVec3Property mMaxBounds;
+      dtEntity::DynamicBoolProperty mVisible;
       osg::ref_ptr<osg::Box> mBox;
       osg::Vec3 mMinBoundsVal;
       osg::Vec3 mMaxBoundsVal;
@@ -85,14 +85,14 @@ namespace dtEntity
 
    //////////////////////////////////////////////////////////
 
-   class DT_ENTITY_EXPORT PickShapeSystem
-      : public DefaultEntitySystem<PickShapeComponent>
+   class DTENTITY_OSG_EXPORT PickShapeSystem
+      : public dtEntity::DefaultEntitySystem<PickShapeComponent>
    {
    public:
 
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
 
-      PickShapeSystem(EntityManager& em);
+      PickShapeSystem(dtEntity::EntityManager& em);
       ~PickShapeSystem();
    private:
    };

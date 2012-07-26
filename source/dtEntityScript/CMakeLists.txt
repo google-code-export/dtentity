@@ -23,7 +23,8 @@ IF(DTENTITY_LIBRARY_STATIC)
 ENDIF(DTENTITY_LIBRARY_STATIC)
 
 TARGET_LINK_LIBRARIES(${APP_NAME}  
-					  dtEntity       
+            dtEntity
+            dtEntityOSG
             ${OPENSCENEGRAPH_LIBRARIES}
 					  ${DTENTITY_PLUGINS}
 )
