@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/nodecomponent.h>
@@ -28,46 +28,46 @@
 #include <dtEntity/scriptaccessor.h>
 #include <osgText/Text>
 
-namespace dtEntity
+namespace dtEntityOSG
 {      
    class Entity;
    class TextLabelSystem;
       
-   class DT_ENTITY_EXPORT TextLabelComponent : public dtEntity::NodeComponent
+   class DTENTITY_OSG_EXPORT TextLabelComponent : public dtEntity::NodeComponent
    {
 
-      typedef NodeComponent BaseClass;
+      typedef dtEntity::NodeComponent BaseClass;
 
    public:
 
       typedef std::vector<osg::ref_ptr<osgText::Text> >::size_type size_type;
       
-      static const ComponentType TYPE;
-      static const StringId TextsId;
-      static const StringId AlwaysOnTopId;
-      static const StringId TextId;
-      static const StringId ColorId;
-      static const StringId BackdropColorId;
-      static const StringId VisibleId;
-      static const StringId HighlightedId;
-      static const StringId OffsetId;
-      static const StringId CharacterHeightId;
-      static const StringId FontId;
-      static const StringId AlignmentId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId TextsId;
+      static const dtEntity::StringId AlwaysOnTopId;
+      static const dtEntity::StringId TextId;
+      static const dtEntity::StringId ColorId;
+      static const dtEntity::StringId BackdropColorId;
+      static const dtEntity::StringId VisibleId;
+      static const dtEntity::StringId HighlightedId;
+      static const dtEntity::StringId OffsetId;
+      static const dtEntity::StringId CharacterHeightId;
+      static const dtEntity::StringId FontId;
+      static const dtEntity::StringId AlignmentId;
       
       TextLabelComponent();
       virtual ~TextLabelComponent();
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
       
-      virtual bool IsInstanceOf(ComponentType id) const
+      virtual bool IsInstanceOf(dtEntity::ComponentType id) const
       { 
          return (id == TYPE); 
       }      
 
       virtual void Finished();
 
-      void OnAddedToEntity(Entity& entity);
+      void OnAddedToEntity(dtEntity::Entity& entity);
 
       size_type GetNumTexts() const { return mTextEntries.size(); }
       void Create(size_type textid);
@@ -110,11 +110,11 @@ namespace dtEntity
 
    private:
 
-      void SetTexts(const PropertyArray& texts);
-      PropertyArray GetTexts() const;
-      DynamicArrayProperty mTexts;
-      ArrayProperty mTextsVal;
-      DynamicBoolProperty mAlwaysOnTop;
+      void SetTexts(const dtEntity::PropertyArray& texts);
+      dtEntity::PropertyArray GetTexts() const;
+      dtEntity::DynamicArrayProperty mTexts;
+      dtEntity::ArrayProperty mTextsVal;
+      dtEntity::DynamicBoolProperty mAlwaysOnTop;
       bool mAlwaysOnTopVal;
       typedef std::vector<osg::ref_ptr<osgText::Text> > TextEntries;
       TextEntries mTextEntries;
@@ -124,7 +124,7 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////
    
-   class DT_ENTITY_EXPORT TextLabelSystem
+   class DTENTITY_OSG_EXPORT TextLabelSystem
       : public dtEntity::DefaultEntitySystem<TextLabelComponent>
       , public dtEntity::ScriptAccessor
    {
@@ -142,16 +142,16 @@ namespace dtEntity
 
    private:
 
-      DynamicBoolProperty mEnabled;
+      dtEntity::DynamicBoolProperty mEnabled;
       bool mEnabledVal;
-      Property* ScriptCreate(const PropertyArgs& args);
-      Property* ScriptDestroy(const PropertyArgs& args);
-      Property* ScriptSetText(const PropertyArgs& args);
-      Property* ScriptSetOffset(const PropertyArgs& args);
-      Property* ScriptSetAlignment(const PropertyArgs& args);
-      Property* ScriptSetColor(const PropertyArgs& args);
-      Property* ScriptSetBackdropColor(const PropertyArgs& args);
-      Property* ScriptSetHighlighted(const PropertyArgs& args);
+      dtEntity::Property* ScriptCreate(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptDestroy(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetText(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetOffset(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetAlignment(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetColor(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetBackdropColor(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetHighlighted(const dtEntity::PropertyArgs& args);
 
    };
 }

@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/skyboxcomponent.h>
+#include <dtEntityOSG/skyboxcomponent.h>
 
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
@@ -44,7 +44,7 @@
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
    
-namespace dtEntity
+namespace dtEntityOSG
 {
    ////////////////////////////////////////////////////////////////////////////////
    class MoveEarthySkyWithEyePointTransform : public osg::Transform
@@ -178,13 +178,13 @@ namespace dtEntity
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SkyBoxComponent::TYPE(dtEntity::SID("SkyBox"));      
-   const StringId SkyBoxComponent::TextureUpId(dtEntity::SID("TextureUp"));   
-   const StringId SkyBoxComponent::TextureDownId(dtEntity::SID("TextureDown"));   
-   const StringId SkyBoxComponent::TextureNorthId(dtEntity::SID("TextureNorth"));   
-   const StringId SkyBoxComponent::TextureSouthId(dtEntity::SID("TextureSouth"));   
-   const StringId SkyBoxComponent::TextureEastId(dtEntity::SID("TextureEast"));   
-   const StringId SkyBoxComponent::TextureWestId(dtEntity::SID("TextureWest"));   
+   const dtEntity::StringId SkyBoxComponent::TYPE(dtEntity::SID("SkyBox"));
+   const dtEntity::StringId SkyBoxComponent::TextureUpId(dtEntity::SID("TextureUp"));
+   const dtEntity::StringId SkyBoxComponent::TextureDownId(dtEntity::SID("TextureDown"));
+   const dtEntity::StringId SkyBoxComponent::TextureNorthId(dtEntity::SID("TextureNorth"));
+   const dtEntity::StringId SkyBoxComponent::TextureSouthId(dtEntity::SID("TextureSouth"));
+   const dtEntity::StringId SkyBoxComponent::TextureEastId(dtEntity::SID("TextureEast"));
+   const dtEntity::StringId SkyBoxComponent::TextureWestId(dtEntity::SID("TextureWest"));
 
    ////////////////////////////////////////////////////////////////////////////
    SkyBoxComponent::SkyBoxComponent()
@@ -258,7 +258,7 @@ namespace dtEntity
       osg::Drawable* drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),10000));
 
       mSkyboxGeode = new osg::Geode;
-      mSkyboxGeode->setNodeMask(NodeMasks::VISIBLE);
+      mSkyboxGeode->setNodeMask(dtEntity::NodeMasks::VISIBLE);
       mSkyboxGeode->setCullingActive(false);
       mSkyboxGeode->setStateSet( stateset );
       mSkyboxGeode->addDrawable(drawable);
@@ -298,10 +298,10 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId SkyBoxSystem::TYPE(dtEntity::SID("SkyBox"));
+   const dtEntity::StringId SkyBoxSystem::TYPE(dtEntity::SID("SkyBox"));
 
    ////////////////////////////////////////////////////////////////////////////
-   SkyBoxSystem::SkyBoxSystem(EntityManager& em)
+   SkyBoxSystem::SkyBoxSystem(dtEntity::EntityManager& em)
       : DefaultEntitySystem<SkyBoxComponent>(em)
    {
    }

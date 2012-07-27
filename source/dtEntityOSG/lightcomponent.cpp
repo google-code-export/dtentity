@@ -18,14 +18,14 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/lightcomponent.h>
+#include <dtEntityOSG/lightcomponent.h>
 
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/stringid.h>
 #include <osg/Light>
 #include <osg/LightSource>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    const dtEntity::StringId LightComponent::TYPE(dtEntity::SID("Light"));
    const dtEntity::StringId LightComponent::LightNumId(dtEntity::SID("LightNum"));
@@ -44,6 +44,8 @@ namespace dtEntity
    LightComponent::LightComponent()
       : dtEntity::NodeComponent(new osg::LightSource())
    {      
+      using namespace dtEntity;
+
       mLight = new osg::Light();
       osg::LightSource* lightSource = static_cast<osg::LightSource*>(GetNode());
       lightSource->setLight(mLight);

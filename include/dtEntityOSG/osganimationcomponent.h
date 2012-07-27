@@ -22,30 +22,30 @@
 
 #include <osg/ref_ptr>
 #include <osgAnimation/BasicAnimationManager>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ///////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT OSGAnimationComponent : public Component
+   class DTENTITY_OSG_EXPORT OSGAnimationComponent : public dtEntity::Component
    {
 
    public:
       
-      static const ComponentType TYPE;
-      static const StringId EnabledId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId EnabledId;
       
       OSGAnimationComponent();
       virtual ~OSGAnimationComponent();
 
-      virtual ComponentType GetType() const { return TYPE; }
-      virtual void OnAddedToEntity(Entity& entity);
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
+      virtual void OnAddedToEntity(dtEntity::Entity& entity);
 
       osgAnimation::BasicAnimationManager* GetAnimationManager() const
       {
@@ -64,8 +64,8 @@ namespace dtEntity
    private:
 
       osg::ref_ptr<osgAnimation::BasicAnimationManager> mAnimationManager;
-      Entity* mEntity;
-      DynamicBoolProperty mEnabled;
+      dtEntity::Entity* mEntity;
+      dtEntity::DynamicBoolProperty mEnabled;
       bool mEnabledVal;      
  
    };
@@ -73,21 +73,21 @@ namespace dtEntity
   
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT OSGAnimationSystem
-      : public DefaultEntitySystem<OSGAnimationComponent>
-      , public ScriptAccessor
+   class DTENTITY_OSG_EXPORT OSGAnimationSystem
+      : public dtEntity::DefaultEntitySystem<OSGAnimationComponent>
+      , public dtEntity::ScriptAccessor
    {
    public:
 
-      static const ComponentType TYPE;
-      static const StringId VertexShaderId;
-      static const StringId FragmentShaderId;
-      static const StringId EnabledId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId VertexShaderId;
+      static const dtEntity::StringId FragmentShaderId;
+      static const dtEntity::StringId EnabledId;
 
-      OSGAnimationSystem(EntityManager& em);
+      OSGAnimationSystem(dtEntity::EntityManager& em);
       ~OSGAnimationSystem();
 
-      void OnMeshChanged(const Message&);
+      void OnMeshChanged(const dtEntity::Message&);
 
       void SetVertexShader(const std::string& v) { mVertexShader.Set(v); }
       std::string GetVertexShader() const { return mVertexShader.Get(); }
@@ -100,20 +100,20 @@ namespace dtEntity
 
    private:
 
-      bool GetAnimationList(EntityId id, const osgAnimation::AnimationList*& list,
+      bool GetAnimationList(dtEntity::EntityId id, const osgAnimation::AnimationList*& list,
                             osgAnimation::BasicAnimationManager*& manager);
-      Property* ScriptPlayAnimation(const PropertyArgs& args);
-      Property* ScriptStopAnimation(const PropertyArgs& args);
-      Property* ScriptGetAnimations(const PropertyArgs& args);
-      Property* ScriptGetAnimationLength(const PropertyArgs& args);
-      Property* ScriptGetAnimationPlayMode(const PropertyArgs& args);
-      Property* ScriptSetAnimationPlayMode(const PropertyArgs& args);
-      Property* ScriptAddAttachment(const PropertyArgs& args);
-      Property* ScriptRemoveAttachments(const PropertyArgs& args);
+      dtEntity::Property* ScriptPlayAnimation(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptStopAnimation(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptGetAnimations(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptGetAnimationLength(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptGetAnimationPlayMode(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptSetAnimationPlayMode(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptAddAttachment(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptRemoveAttachments(const dtEntity::PropertyArgs& args);
 
-      MessageFunctor mMeshChangedFunctor;
-      StringProperty mVertexShader;
-      StringProperty mFragmentShader;
+      dtEntity::MessageFunctor mMeshChangedFunctor;
+      dtEntity::StringProperty mVertexShader;
+      dtEntity::StringProperty mFragmentShader;
       bool mEnabledVal;
       dtEntity::DynamicBoolProperty mEnabled;
    };

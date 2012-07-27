@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/textlabelcomponent.h>
+#include <dtEntityOSG/textlabelcomponent.h>
 
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/stringid.h>
@@ -37,7 +37,7 @@
 #include <osg/PolygonOffset>
 #include <osgText/Text>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
@@ -61,12 +61,12 @@ namespace dtEntity
    TextLabelComponent::TextLabelComponent()
       : dtEntity::NodeComponent(new osg::Geode())      
       , mTexts(
-           DynamicArrayProperty::SetValueCB(this, &TextLabelComponent::SetTexts),
-           DynamicArrayProperty::GetValueCB(this, &TextLabelComponent::GetTexts)
+           dtEntity::DynamicArrayProperty::SetValueCB(this, &TextLabelComponent::SetTexts),
+           dtEntity::DynamicArrayProperty::GetValueCB(this, &TextLabelComponent::GetTexts)
         )
       , mAlwaysOnTop(
-         DynamicBoolProperty::SetValueCB(this, &TextLabelComponent::SetAlwaysOnTop),
-         DynamicBoolProperty::GetValueCB(this, &TextLabelComponent::GetAlwaysOnTop)
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &TextLabelComponent::SetAlwaysOnTop),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &TextLabelComponent::GetAlwaysOnTop)
         )
       , mAlwaysOnTopVal(true)
       , mTextLabelSystem(NULL)
@@ -99,7 +99,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void TextLabelComponent::SetTexts(const PropertyArray& texts)
+   void TextLabelComponent::SetTexts(const dtEntity::PropertyArray& texts)
    {
       mTextsVal.Set(texts);
 
@@ -143,7 +143,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   PropertyArray TextLabelComponent::GetTexts() const
+   dtEntity::PropertyArray TextLabelComponent::GetTexts() const
    {
       return mTextsVal.Get();
    }
@@ -609,8 +609,8 @@ namespace dtEntity
    TextLabelSystem::TextLabelSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<TextLabelComponent>(em)
       , mEnabled(
-           DynamicBoolProperty::SetValueCB(this, &TextLabelSystem::SetEnabled),
-           DynamicBoolProperty::GetValueCB(this, &TextLabelSystem::GetEnabled)
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &TextLabelSystem::SetEnabled),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &TextLabelSystem::GetEnabled)
         )
       , mEnabledVal(true)
    {

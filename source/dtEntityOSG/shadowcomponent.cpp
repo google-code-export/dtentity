@@ -18,12 +18,12 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/shadowcomponent.h>
+#include <dtEntityOSG/shadowcomponent.h>
 
 #include <dtEntity/core.h>
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/lightcomponent.h>
+#include <dtEntityOSG/lightcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/entity.h>
 #include <assert.h>
@@ -35,32 +35,32 @@
 #include <osgShadow/LightSpacePerspectiveShadowMap>
 #include <osgViewer/View>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
   
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId ShadowComponent::TYPE(dtEntity::SID("Shadow"));   
-   const StringId ShadowComponent::ShadowTechniqueId(dtEntity::SID("ShadowTechnique"));    
-   const StringId ShadowComponent::MinLightMarginId(dtEntity::SID("MinLightMargin"));    
-   const StringId ShadowComponent::MaxFarPlaneId(dtEntity::SID("MaxFarPlane"));    
-   const StringId ShadowComponent::TexSizeId(dtEntity::SID("TexSize"));    
-   const StringId ShadowComponent::BaseTexUnitId(dtEntity::SID("BaseTexUnit"));    
-   const StringId ShadowComponent::ShadowTexUnitId(dtEntity::SID("ShadowTexUnit"));
-   const StringId ShadowComponent::ShadowTexCoordIndexId(dtEntity::SID("ShadowTexCoordIndex"));   
-   const StringId ShadowComponent::BaseTexCoordIndexId(dtEntity::SID("BaseTexCoordIndex"));   
-   const StringId ShadowComponent::MapCountId(dtEntity::SID("MapCount"));
-   const StringId ShadowComponent::MapResId(dtEntity::SID("MapRes"));
-   const StringId ShadowComponent::DebugColorOnId(dtEntity::SID("DebugColorOn"));
-   const StringId ShadowComponent::MinNearSplitId(dtEntity::SID("MinNearSplit"));
-   const StringId ShadowComponent::MaxFarDistId(dtEntity::SID("MaxFarDist"));
-   const StringId ShadowComponent::MoveVCamFactorId(dtEntity::SID("MoveVCamFactor"));
-   const StringId ShadowComponent::PolyOffsetFactorId(dtEntity::SID("PolyOffsetFactor"));
-   const StringId ShadowComponent::PolyOffsetUnitId(dtEntity::SID("PolyOffsetUnit"));
-   const StringId ShadowComponent::EnabledId(dtEntity::SID("Enabled"));
-   const StringId ShadowComponent::ShadowTypeId(dtEntity::SID("ShadowType"));
-   const StringId ShadowComponent::LISPId(dtEntity::SID("LISP"));
-   const StringId ShadowComponent::PSSMId(dtEntity::SID("PSSM"));
-   const StringId ShadowComponent::__SELECTED__Id(dtEntity::SID("__SELECTED__"));
+   const dtEntity::StringId ShadowComponent::TYPE(dtEntity::SID("Shadow"));
+   const dtEntity::StringId ShadowComponent::ShadowTechniqueId(dtEntity::SID("ShadowTechnique"));
+   const dtEntity::StringId ShadowComponent::MinLightMarginId(dtEntity::SID("MinLightMargin"));
+   const dtEntity::StringId ShadowComponent::MaxFarPlaneId(dtEntity::SID("MaxFarPlane"));
+   const dtEntity::StringId ShadowComponent::TexSizeId(dtEntity::SID("TexSize"));
+   const dtEntity::StringId ShadowComponent::BaseTexUnitId(dtEntity::SID("BaseTexUnit"));
+   const dtEntity::StringId ShadowComponent::ShadowTexUnitId(dtEntity::SID("ShadowTexUnit"));
+   const dtEntity::StringId ShadowComponent::ShadowTexCoordIndexId(dtEntity::SID("ShadowTexCoordIndex"));
+   const dtEntity::StringId ShadowComponent::BaseTexCoordIndexId(dtEntity::SID("BaseTexCoordIndex"));
+   const dtEntity::StringId ShadowComponent::MapCountId(dtEntity::SID("MapCount"));
+   const dtEntity::StringId ShadowComponent::MapResId(dtEntity::SID("MapRes"));
+   const dtEntity::StringId ShadowComponent::DebugColorOnId(dtEntity::SID("DebugColorOn"));
+   const dtEntity::StringId ShadowComponent::MinNearSplitId(dtEntity::SID("MinNearSplit"));
+   const dtEntity::StringId ShadowComponent::MaxFarDistId(dtEntity::SID("MaxFarDist"));
+   const dtEntity::StringId ShadowComponent::MoveVCamFactorId(dtEntity::SID("MoveVCamFactor"));
+   const dtEntity::StringId ShadowComponent::PolyOffsetFactorId(dtEntity::SID("PolyOffsetFactor"));
+   const dtEntity::StringId ShadowComponent::PolyOffsetUnitId(dtEntity::SID("PolyOffsetUnit"));
+   const dtEntity::StringId ShadowComponent::EnabledId(dtEntity::SID("Enabled"));
+   const dtEntity::StringId ShadowComponent::ShadowTypeId(dtEntity::SID("ShadowType"));
+   const dtEntity::StringId ShadowComponent::LISPId(dtEntity::SID("LISP"));
+   const dtEntity::StringId ShadowComponent::PSSMId(dtEntity::SID("PSSM"));
+   const dtEntity::StringId ShadowComponent::__SELECTED__Id(dtEntity::SID("__SELECTED__"));
 
 
 
@@ -69,6 +69,8 @@ namespace dtEntity
       : BaseClass(new osgShadow::ShadowedScene())
       , mEntity(NULL)
    {
+      using namespace dtEntity;
+
       Register(EnabledId, &mEnabled);
       Register(ShadowTypeId, &mShadowType);
 
@@ -104,7 +106,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShadowComponent::OnAddedToEntity(Entity& entity)
+   void ShadowComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       mEntity = &entity;
       BaseClass::OnAddedToEntity(entity);
@@ -114,6 +116,8 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void ShadowComponent::Finished()
    { 
+      using namespace dtEntity;
+
       BaseClass::Finished();
       assert(mEntity != NULL);
 
@@ -211,15 +215,15 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId ShadowSystem::TYPE(dtEntity::SID("Shadow"));
-   const StringId ShadowSystem::EnabledId(dtEntity::SID("Enabled"));
+   const dtEntity::StringId ShadowSystem::TYPE(dtEntity::SID("Shadow"));
+   const dtEntity::StringId ShadowSystem::EnabledId(dtEntity::SID("Enabled"));
 
    ////////////////////////////////////////////////////////////////////////////
-   ShadowSystem::ShadowSystem(EntityManager& em)
-      : DefaultEntitySystem<ShadowComponent>(em)
+   ShadowSystem::ShadowSystem(dtEntity::EntityManager& em)
+      : dtEntity::DefaultEntitySystem<ShadowComponent>(em)
       , mEnabled(
-           DynamicBoolProperty::SetValueCB(this, &ShadowSystem::SetEnabled),
-           DynamicBoolProperty::GetValueCB(this, &ShadowSystem::GetEnabled)
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &ShadowSystem::SetEnabled),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &ShadowSystem::GetEnabled)
           )
       , mEnabledVal(true)
    {

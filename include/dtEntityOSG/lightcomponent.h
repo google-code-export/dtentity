@@ -21,7 +21,7 @@
 
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>
@@ -35,10 +35,10 @@ namespace osg
    class LightSource;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {      
   
-   class DT_ENTITY_EXPORT LightComponent : public dtEntity::NodeComponent
+   class DTENTITY_OSG_EXPORT LightComponent : public dtEntity::NodeComponent
    {
 
       typedef dtEntity::NodeComponent BaseClass;
@@ -80,23 +80,23 @@ namespace dtEntity
       osg::Vec3 GetDirection() const;
 
       osg::Light* mLight;
-      DynamicIntProperty mLightNum;
-      DynamicVec4Property mAmbient;
-      DynamicVec4Property mDiffuse;
-      DynamicVec4Property mSpecular;
-      DynamicVec4Property mPosition;
-      DynamicVec3Property mDirection;
-      DynamicFloatProperty mConstantAttenuation;
-      DynamicFloatProperty mLinearAttenuation;
-      DynamicFloatProperty mQuadraticAttenuation;
-      DynamicFloatProperty mSpotExponent;
-      DynamicFloatProperty mSpotCutOff;
+      dtEntity::DynamicIntProperty mLightNum;
+      dtEntity::DynamicVec4Property mAmbient;
+      dtEntity::DynamicVec4Property mDiffuse;
+      dtEntity::DynamicVec4Property mSpecular;
+      dtEntity::DynamicVec4Property mPosition;
+      dtEntity::DynamicVec3Property mDirection;
+      dtEntity::DynamicFloatProperty mConstantAttenuation;
+      dtEntity::DynamicFloatProperty mLinearAttenuation;
+      dtEntity::DynamicFloatProperty mQuadraticAttenuation;
+      dtEntity::DynamicFloatProperty mSpotExponent;
+     dtEntity:: DynamicFloatProperty mSpotCutOff;
    };
    
    
    ////////////////////////////////////////////////////////////////////////////
    
-   class DT_ENTITY_EXPORT LightSystem
+   class DTENTITY_OSG_EXPORT LightSystem
       : public dtEntity::DefaultEntitySystem<LightComponent>
    {
       typedef dtEntity::DefaultEntitySystem<LightComponent> BaseClass;

@@ -70,7 +70,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/inputinterface.h
   ${HEADER_PATH}/layerattachpointcomponent.h
   ${HEADER_PATH}/layercomponent.h
-  ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/log.h
   ${HEADER_PATH}/logmanager.h
   ${HEADER_PATH}/mapcomponent.h
@@ -83,7 +82,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemasks.h
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
-  ${HEADER_PATH}/osganimationcomponent.h
   ${HEADER_PATH}/osgdebugdrawinterface.h
   ${HEADER_PATH}/osginputinterface.h
   ${HEADER_PATH}/osgsysteminterface.h
@@ -97,15 +95,10 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/scriptaccessor.h
   ${HEADER_PATH}/singleton.h
   ${HEADER_PATH}/spawner.h
-  ${HEADER_PATH}/shadercomponent.h
-  ${HEADER_PATH}/shadowcomponent.h
-  ${HEADER_PATH}/skyboxcomponent.h
   ${HEADER_PATH}/staticmeshcomponent.h
   ${HEADER_PATH}/stringid.h
   ${HEADER_PATH}/systeminterface.h
   ${HEADER_PATH}/systemmessages.h
-  ${HEADER_PATH}/textlabelcomponent.h
-  ${HEADER_PATH}/texturelabelcomponent.h
   ${HEADER_PATH}/threadsafequeue.h
   ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/uniqueid.h
@@ -124,22 +117,15 @@ SET(LIB_REPLACE
   inputinterface.cpp
   layerattachpointcomponent.cpp
   layercomponent.cpp
-  lightcomponent.cpp
   mapcomponent.cpp
   matrixtransformcomponent.cpp
   nodecomponent.cpp
-  osganimationcomponent.cpp
   osgdebugdrawinterface.cpp
   osginputinterface.cpp
   osgsysteminterface.cpp
   positionattitudetransformcomponent.cpp
-  shadercomponent.cpp
-  shadowcomponent.cpp
   staticmeshcomponent.cpp
-  skyboxcomponent.cpp
   systemmessages.cpp
-  textlabelcomponent.cpp
-  texturelabelcomponent.cpp
   transformcomponent.cpp
 )
 

@@ -11,16 +11,29 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/export.h
+  ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
+  ${HEADER_PATH}/shadercomponent.h
+  ${HEADER_PATH}/shadowcomponent.h
+  ${HEADER_PATH}/skyboxcomponent.h
+  ${HEADER_PATH}/textlabelcomponent.h
+  ${HEADER_PATH}/texturelabelcomponent.h
+  ${HEADER_PATH}/osganimationcomponent.h
 )
 
 SET(LIB_SOURCES
   componentfactories.cpp
-	pickshapecomponent.cpp
 )
 
 SET(LIB_SOURCES_REPLACE  
+  lightcomponent.cpp
 	pickshapecomponent.cpp
+  shadercomponent.cpp
+  shadowcomponent.cpp
+  skyboxcomponent.cpp
+  textlabelcomponent.cpp
+  texturelabelcomponent.cpp
+  osganimationcomponent.cpp
 )
 
 
