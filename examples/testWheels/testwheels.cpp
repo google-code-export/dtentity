@@ -30,9 +30,9 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
+#include <dtEntityOSG/staticmeshcomponent.h>
 #include <osgViewer/Renderer>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
@@ -143,7 +143,7 @@ public:
 
       assert(mEntity != NULL);
 
-      StaticMeshComponent* smc; 
+      dtEntityOSG::StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc))
       {
          LOG_ERROR("Error setting up wheel component: Please add mesh component first");

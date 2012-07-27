@@ -32,7 +32,6 @@
 #include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/osgwindowinterface.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
-#include <dtEntity/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <osg/Notify>
 #include <osgDB/FileNameUtils>
@@ -379,7 +378,6 @@ namespace dtEntity
       em.AddEntitySystem(*new CameraSystem(em));
       em.AddEntitySystem(*new LayerSystem(em));
       em.AddEntitySystem(*new GroupSystem(em));
-      em.AddEntitySystem(*new StaticMeshSystem(em));
       em.AddEntitySystem(*new TransformSystem(em));
       em.AddEntitySystem(*new MatrixTransformSystem(em));
       em.AddEntitySystem(*new PositionAttitudeTransformSystem(em));

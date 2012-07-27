@@ -21,10 +21,11 @@ ADD_EXECUTABLE(${APP_NAME}
 
 TARGET_LINK_LIBRARIES(${APP_NAME}     
 		      dtEntity
-		      ${DTUTIL_LIBRARIES}
-			  ${DTCORE_LIBRARIES}                                      
-			  ${DTABC_LIBRARIES}                                      
-                      )
+          dtEntityOSG
+          ${DTUTIL_LIBRARIES}
+          ${DTCORE_LIBRARIES}
+          ${DTABC_LIBRARIES}
+)
                      
 INCLUDE(ModuleInstall OPTIONAL)
 

@@ -19,12 +19,13 @@ ADD_EXECUTABLE(${APP_NAME}
 )
 
 TARGET_LINK_LIBRARIES(${APP_NAME}     
-					  dtEntity                   
-                      ${OPENSCENEGRAPH_LIBRARIES}
-                      ${DTUTIL_LIBRARIES}
+            dtEntity
+            dtEntityOSG
+            ${OPENSCENEGRAPH_LIBRARIES}
+            ${DTUTIL_LIBRARIES}
 					  ${DTCORE_LIBRARIES}            
 					  ${DTABC_LIBRARIES}
-                      )
+)
                      
 INCLUDE(ModuleInstall OPTIONAL)
 
