@@ -25,7 +25,7 @@
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <osgViewer/Viewer>
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
@@ -54,7 +54,7 @@ TEST(InitOsgViewer)
    args[0] = getenv("DTENTITY_BASEASSETS");
    args[1] = getenv("DTENTITY_PROJECTASSETS");
 
-   bool success = dtEntity::InitOSGViewer(2, args, viewer, em, true, true, true, root);
+   bool success = dtEntityOSG::InitOSGViewer(2, args, viewer, em, true, true, true, root);
    CHECK(success);
 
    CHECK(em.HasEntitySystem(dtEntity::SID("Application")));

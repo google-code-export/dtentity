@@ -11,6 +11,7 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/export.h
+  ${HEADER_PATH}/initosgviewer.h
   ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/osganimationcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
@@ -25,6 +26,7 @@ SET(LIB_PUBLIC_HEADERS
 
 SET(LIB_SOURCES
   componentfactories.cpp
+  initosgviewer.cpp
 )
 
 SET(LIB_SOURCES_REPLACE  

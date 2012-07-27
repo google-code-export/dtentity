@@ -27,7 +27,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
@@ -265,7 +265,7 @@ int main(int argc, char** argv)
    
    osg::Group* root = new osg::Group();
 
-   if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
+   if(!dtEntityOSG::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

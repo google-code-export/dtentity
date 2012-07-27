@@ -26,9 +26,10 @@
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/applicationcomponent.h>
+#include <dtEntity/init.h>
 #include <dtEntity/entitymanager.h>
 #include <osgDB/FileUtils>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 
 using namespace UnitTest;
 using namespace dtEntity;

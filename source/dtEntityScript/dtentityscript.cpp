@@ -24,7 +24,7 @@
 
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 
    dtEntity::EntityManager entityManager;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, viewer, entityManager, true, true))
+   if(!dtEntityOSG::InitOSGViewer(argc, argv, viewer, entityManager, true, true))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

@@ -26,7 +26,7 @@
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntity/init.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/osginputinterface.h>
@@ -36,6 +36,7 @@
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/osgwindowinterface.h>
 #include <dtEntityOSG/componentfactories.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
@@ -181,14 +182,14 @@ namespace dtEntityEditor
       iface->SetViewer(mViewer);
 
 
-      bool success = dtEntity::DoScreenSetup(0, NULL, *mViewer, GetEntityManager());
+      bool success = dtEntityOSG::DoScreenSetup(0, NULL, *mViewer, GetEntityManager());
       if(!success)
       {
          LOG_ERROR("Error setting up screens! exiting");
          return;
       }
 
-      dtEntity::SetupSceneGraph(*mViewer, GetEntityManager(), new osg::Group());
+      dtEntityOSG::SetupSceneGraph(*mViewer, GetEntityManager(), new osg::Group());
     
       osgViewer::ViewerBase::Views views;
       mViewer->getViews(views);

@@ -25,6 +25,7 @@ SET(LIB_SOURCES
 SET(LIBS ${OPENSCENEGRAPH_LIBRARIES}
                ${OPENTHREADS_LIBRARIES}
                dtEntity
+               dtEntityOSG
                UnitTestPP
 )
 

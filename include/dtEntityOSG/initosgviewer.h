@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/logmanager.h>
 
 namespace osg
@@ -36,14 +36,10 @@ namespace osgViewer
 namespace dtEntity
 {
    class EntityManager;
+}
 
-   class DT_ENTITY_EXPORT ConsoleLogHandler
-      : public LogListener
-   {
-    public:
-      virtual void LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
-                      const std::string& msg);
-   };
+namespace dtEntityOSG
+{
 
    /**
     * Convenience setup function for dtEntity.
@@ -60,19 +56,10 @@ namespace dtEntity
     * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
     *        the main update callback that drives dtEntity is installed to this node. If this is NULL, a new osg::Group is created
     */
-   bool DT_ENTITY_EXPORT InitOSGViewer(int argc, char** argv, 
+   bool DTENTITY_OSG_EXPORT InitOSGViewer(int argc, char** argv,
       osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em,
       bool addStatsHandler = true, bool checkPaths = true, bool addConsoleLog = true, osg::Group* pSceneNode = 0);
 
-   /**
-    * adds required entity systems to entity manager, including map, camera, layer, layerattachpoint.
-    * Registers a number of factories for entity systems that should be started lazily.
-    * Creates application system, passes it the viewer and installs update callback of app system to scene node.
-    * @param argc number of command line args
-    * @param standard c command line args    
-    * @param em a valid entity manager
-    */
-   void DT_ENTITY_EXPORT AddDefaultEntitySystemsAndFactories(int argc, char** argv, dtEntity::EntityManager& em);
 
    /**
     * Sets scene graph root node and adds callbacks
@@ -80,16 +67,12 @@ namespace dtEntity
     * @param pSceneNode An osg group that is used as scene graph root node. This is added as scene node to the main scene, also
     *        the main update callback that drives dtEntity is installed to this node. 
     */
-   void DT_ENTITY_EXPORT SetupSceneGraph(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
+   void DTENTITY_OSG_EXPORT SetupSceneGraph(osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em, osg::Group* pSceneNode);
 
-   /**
-    * sets osg data paths from command line args or environment variables
-    */
-   bool DT_ENTITY_EXPORT SetupDataPaths(int argc, char** argv, bool checkPaths);
 
    /** 
      * analyze command line and open OSG window with correct traits
      * @return true if success
      */
-   bool DT_ENTITY_EXPORT DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
+   bool DTENTITY_OSG_EXPORT DoScreenSetup(int argc, char** argv, osgViewer::ViewerBase& viewer, dtEntity::EntityManager& em);
 }

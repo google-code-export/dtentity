@@ -20,6 +20,7 @@ ADD_EXECUTABLE(${APP_NAME}
 TARGET_LINK_LIBRARIES(${APP_NAME}     
 						dtEntity
             dtEntityNet
+            dtEntityOSG
 )
                      
 INCLUDE(ModuleInstall OPTIONAL)
