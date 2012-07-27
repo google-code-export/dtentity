@@ -27,7 +27,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
    osgViewer::Viewer viewer(arguments);
    dtEntity::EntityManager em;
    
-   dtEntity::InitOSGViewer(argc, argv, viewer, em, false);   
+   dtEntityOSG::InitOSGViewer(argc, argv, viewer, em, false);
 
    dtEntity::DebugDrawInterface* debugdraw = dtEntity::GetDebugDrawInterface();
 

@@ -23,7 +23,7 @@
 */
 #include <dtEntity/component.h>
 #include <dtEntity/core.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -230,7 +230,7 @@ int main(int argc, char** argv)
    osgViewer::Viewer viewer(arguments);
    dtEntity::EntityManager em;
    
-   if(!dtEntity::InitOSGViewer(argc, argv, viewer, em))
+   if(!dtEntityOSG::InitOSGViewer(argc, argv, viewer, em))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

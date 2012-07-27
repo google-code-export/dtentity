@@ -20,7 +20,7 @@
 
 
 #include <UnitTest++.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntity/init.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/entitymanager.h> 
@@ -35,7 +35,7 @@ struct MapFixture
    MapFixture()
    {
       SetupDataPaths(0, NULL, true);
-      AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
+      dtEntity::AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager);
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
 

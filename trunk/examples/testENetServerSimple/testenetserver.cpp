@@ -26,10 +26,9 @@
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/logmanager.h>
-#include <dtEntity/initosgviewer.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntityNet/enetcomponent.h>
-
+#include <dtEntity/init.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -44,7 +43,7 @@ int main()
 {
    using namespace dtEntity;
 
-   LogManager::GetInstance().AddListener(new ConsoleLogHandler());
+   LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
 
 
    EntityManager em;

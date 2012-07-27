@@ -27,7 +27,7 @@
 #include <dtEntity/core.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/logmanager.h>
-#include <dtEntity/initosgviewer.h>
+#include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/systeminterface.h>
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
    dtEntityNet::RegisterMessageTypes(dtEntity::MessageFactory::GetInstance());
    osg::Group* root = new osg::Group();
 
-   if(!dtEntity::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
+   if(!dtEntityOSG::InitOSGViewer(argc, argv, viewer, em, true, true, true, root))
    {
       LOG_ERROR("Error setting up dtEntity!");
       return 0;

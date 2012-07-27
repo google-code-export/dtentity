@@ -66,7 +66,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/FastDelegate.h
   ${HEADER_PATH}/FastDelegateBind.h
   ${HEADER_PATH}/groupcomponent.h
-  ${HEADER_PATH}/initosgviewer.h
+  ${HEADER_PATH}/init.h
   ${HEADER_PATH}/inputinterface.h
   ${HEADER_PATH}/layerattachpointcomponent.h
   ${HEADER_PATH}/layercomponent.h
@@ -135,7 +135,7 @@ SET(LIB_SOURCES
   entity.cpp
   entitymanager.cpp
   hash.cpp
-  initosgviewer.cpp
+  init.cpp
   inputinterface.cpp
   logmanager.cpp
   messagefactory.cpp
