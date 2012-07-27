@@ -12,13 +12,15 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/lightcomponent.h
+  ${HEADER_PATH}/osganimationcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
+  ${HEADER_PATH}/staticmeshcomponent.h
   ${HEADER_PATH}/textlabelcomponent.h
   ${HEADER_PATH}/texturelabelcomponent.h
-  ${HEADER_PATH}/osganimationcomponent.h
+
 )
 
 SET(LIB_SOURCES
@@ -31,6 +33,7 @@ SET(LIB_SOURCES_REPLACE
   shadercomponent.cpp
   shadowcomponent.cpp
   skyboxcomponent.cpp
+  staticmeshcomponent.cpp
   textlabelcomponent.cpp
   texturelabelcomponent.cpp
   osganimationcomponent.cpp

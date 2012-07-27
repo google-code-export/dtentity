@@ -24,7 +24,7 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/staticmeshcomponent.h>
+#include <dtEntityOSG/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
 #include <osg/Geode>
@@ -165,7 +165,7 @@ namespace dtEntityOSG
       ShaderComponent* comp = GetComponent(eid);
       if(!comp) return;
 
-      dtEntity::StaticMeshComponent* smc;
+      dtEntityOSG::StaticMeshComponent* smc;
       if(GetEntityManager().GetComponent(eid, smc, true))
       {
          if(comp->GetTopLevelMaterialName() != "")
@@ -285,7 +285,7 @@ namespace dtEntityOSG
 
       dtEntity::EntityId eid = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
-      dtEntity::StaticMeshComponent* smc;
+      dtEntityOSG::StaticMeshComponent* smc;
       if(!GetEntityManager().GetComponent(eid, smc, true))
       {
          return NULL;

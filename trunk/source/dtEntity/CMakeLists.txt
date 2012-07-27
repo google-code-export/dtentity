@@ -95,7 +95,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/scriptaccessor.h
   ${HEADER_PATH}/singleton.h
   ${HEADER_PATH}/spawner.h
-  ${HEADER_PATH}/staticmeshcomponent.h
   ${HEADER_PATH}/stringid.h
   ${HEADER_PATH}/systeminterface.h
   ${HEADER_PATH}/systemmessages.h
@@ -124,7 +123,6 @@ SET(LIB_REPLACE
   osginputinterface.cpp
   osgsysteminterface.cpp
   positionattitudetransformcomponent.cpp
-  staticmeshcomponent.cpp
   systemmessages.cpp
   transformcomponent.cpp
 )

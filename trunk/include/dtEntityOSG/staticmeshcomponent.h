@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/dynamicproperty.h>
@@ -28,7 +28,7 @@
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    
@@ -36,28 +36,28 @@ namespace dtEntity
    /**
     * Loads a static mesh from a path
     */
-   class DT_ENTITY_EXPORT StaticMeshComponent 
-      : public NodeComponent
+   class DTENTITY_OSG_EXPORT StaticMeshComponent
+      : public dtEntity::NodeComponent
    {
    public:
 
-      typedef NodeComponent BaseClass;
+      typedef dtEntity::NodeComponent BaseClass;
 
-      static const ComponentType TYPE;
-      static const StringId MeshId;
-      static const StringId CacheHintId;
-      static const StringId OptimizeId;
-      static const StringId IsTerrainId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId MeshId;
+      static const dtEntity::StringId CacheHintId;
+      static const dtEntity::StringId OptimizeId;
+      static const dtEntity::StringId IsTerrainId;
 
-      static const StringId CacheNoneId;
-      static const StringId CacheAllId;
-      static const StringId CacheNodesId;
-      static const StringId CacheHardwareMeshesId;
+      static const dtEntity::StringId CacheNoneId;
+      static const dtEntity::StringId CacheAllId;
+      static const dtEntity::StringId CacheNodesId;
+      static const dtEntity::StringId CacheHardwareMeshesId;
       
       StaticMeshComponent();     
       virtual ~StaticMeshComponent();
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
 
       virtual void Finished();
 
@@ -72,10 +72,10 @@ namespace dtEntity
       /**
        * Load mesh from path
        */
-      virtual void SetMesh(const std::string& path, StringId cacheHint = CacheAllId);
+      virtual void SetMesh(const std::string& path, dtEntity::StringId cacheHint = CacheAllId);
 
-      void SetCacheHint(StringId v) { mCacheHint.Set(v); }
-      StringId GetCacheHint() const { return mCacheHint.Get(); }
+      void SetCacheHint(dtEntity::StringId v) { mCacheHint.Set(v); }
+      dtEntity::StringId GetCacheHint() const { return mCacheHint.Get(); }
 
       bool GetOptimize() const { return mOptimize.Get(); }
       void SetOptimize(bool v) { mOptimize.Set(v); }
@@ -86,10 +86,10 @@ namespace dtEntity
    protected:
      
       // path to loaded script file
-      StringProperty mMeshPathProperty;
-      StringIdProperty mCacheHint;
-      BoolProperty mOptimize;
-      DynamicBoolProperty mIsTerrain;
+      dtEntity::StringProperty mMeshPathProperty;
+      dtEntity::StringIdProperty mCacheHint;
+      dtEntity::BoolProperty mOptimize;
+      dtEntity::DynamicBoolProperty mIsTerrain;
       bool mIsTerrainVal;
       std::string mLoadedMesh;
    };
@@ -97,19 +97,19 @@ namespace dtEntity
 
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT StaticMeshSystem
-      : public DefaultEntitySystem<StaticMeshComponent>
+   class DTENTITY_OSG_EXPORT StaticMeshSystem
+      : public dtEntity::DefaultEntitySystem<StaticMeshComponent>
    {
    public:
 
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
 
-      StaticMeshSystem(EntityManager& em);
+      StaticMeshSystem(dtEntity::EntityManager& em);
       ~StaticMeshSystem();
 
-      void OnResourceChanged(const Message& msg);
+      void OnResourceChanged(const dtEntity::Message& msg);
 
    private:
-      MessageFunctor mResourceChangedFunctor;
+      dtEntity::MessageFunctor mResourceChangedFunctor;
    };
 }

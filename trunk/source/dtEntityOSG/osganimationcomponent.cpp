@@ -25,7 +25,7 @@
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/staticmeshcomponent.h>
+#include <dtEntityOSG/staticmeshcomponent.h>
 #include <osg/Geode>
 #include <osgAnimation/RigGeometry>
 #include <osgAnimation/RigTransformHardware>
@@ -258,7 +258,7 @@ namespace dtEntityOSG
    void OSGAnimationComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       mEntity = &entity;
-      dtEntity::StaticMeshComponent* smc;
+      StaticMeshComponent* smc;
       if(mEntity->GetComponent(smc))
       {
          SetupMesh(smc->GetNode());
@@ -268,7 +268,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationComponent::AddAttachment(const std::string& boneName, osg::Node* node, const osg::Matrix& m)
    {
-      dtEntity::StaticMeshComponent* smc;
+      StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -296,7 +296,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationComponent::RemoveAtachment(const std::string& boneName, osg::Node* node)
    {
-      dtEntity::StaticMeshComponent* smc;
+      StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -327,7 +327,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationComponent::RemoveAtachments(const std::string& boneName)
    {
-      dtEntity::StaticMeshComponent* smc;
+      StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -391,7 +391,7 @@ namespace dtEntityOSG
 
       if(mAnimationManager)
       {         
-         dtEntity::StaticMeshComponent* smc;
+         StaticMeshComponent* smc;
          if(mEntity->GetComponent(smc, true))
          {
             OSGAnimationSystem* sys;
@@ -502,7 +502,7 @@ namespace dtEntityOSG
      OSGAnimationComponent* comp = GetComponent(id);
      if(comp)
      {
-       dtEntity::StaticMeshComponent* smc;
+       StaticMeshComponent* smc;
        if(GetEntityManager().GetComponent(id, smc, true))
        {
           comp->SetupMesh(smc->GetNode());

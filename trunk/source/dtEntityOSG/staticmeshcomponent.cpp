@@ -18,34 +18,35 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/staticmeshcomponent.h>
+#include <dtEntityOSG/staticmeshcomponent.h>
 
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 #include <osgDB/FileUtils>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId StaticMeshComponent::TYPE(dtEntity::SID("StaticMesh"));
-   const StringId StaticMeshComponent::MeshId(dtEntity::SID("Mesh"));
-   const StringId StaticMeshComponent::OptimizeId(dtEntity::SID("Optimize"));
-   const StringId StaticMeshComponent::IsTerrainId(dtEntity::SID("IsTerrain"));
-   const StringId StaticMeshComponent::CacheHintId(dtEntity::SID("CacheHint"));
+   const dtEntity::StringId StaticMeshComponent::TYPE(dtEntity::SID("StaticMesh"));
+   const dtEntity::StringId StaticMeshComponent::MeshId(dtEntity::SID("Mesh"));
+   const dtEntity::StringId StaticMeshComponent::OptimizeId(dtEntity::SID("Optimize"));
+   const dtEntity::StringId StaticMeshComponent::IsTerrainId(dtEntity::SID("IsTerrain"));
+   const dtEntity::StringId StaticMeshComponent::CacheHintId(dtEntity::SID("CacheHint"));
 
-   const StringId StaticMeshComponent::CacheNoneId(dtEntity::SID("None"));
-   const StringId StaticMeshComponent::CacheAllId(dtEntity::SID("All"));
-   const StringId StaticMeshComponent::CacheNodesId(dtEntity::SID("Nodes"));
-   const StringId StaticMeshComponent::CacheHardwareMeshesId(dtEntity::SID("CacheHardwareMeshes"));
+   const dtEntity::StringId StaticMeshComponent::CacheNoneId(dtEntity::SID("None"));
+   const dtEntity::StringId StaticMeshComponent::CacheAllId(dtEntity::SID("All"));
+   const dtEntity::StringId StaticMeshComponent::CacheNodesId(dtEntity::SID("Nodes"));
+   const dtEntity::StringId StaticMeshComponent::CacheHardwareMeshesId(dtEntity::SID("CacheHardwareMeshes"));
 
    ////////////////////////////////////////////////////////////////////////////
    StaticMeshComponent::StaticMeshComponent()
       : BaseClass(new osg::Node())
       , mCacheHint(CacheNoneId)   
-      , mIsTerrain(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &StaticMeshComponent::SetIsTerrain),
-           DynamicBoolProperty::GetValueCB(this, &StaticMeshComponent::GetIsTerrain)))
+      , mIsTerrain(dtEntity::DynamicBoolProperty(
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &StaticMeshComponent::SetIsTerrain),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &StaticMeshComponent::GetIsTerrain)))
       , mIsTerrainVal(false)
    {
       Register(MeshId, &mMeshPathProperty);
@@ -55,10 +56,10 @@ namespace dtEntity
       
       GetNode()->setName("StaticMeshComponent Initial");
       GetNode()->setNodeMask(
-         NodeMasks::VISIBLE  |
-         NodeMasks::PICKABLE |
-         NodeMasks::RECEIVES_SHADOWS |
-         NodeMasks::CASTS_SHADOWS
+         dtEntity::NodeMasks::VISIBLE  |
+         dtEntity::NodeMasks::PICKABLE |
+         dtEntity::NodeMasks::RECEIVES_SHADOWS |
+         dtEntity::NodeMasks::CASTS_SHADOWS
       );
    }
 
@@ -80,16 +81,16 @@ namespace dtEntity
       mIsTerrainVal = v; 
       if(mIsTerrainVal)
       {
-         SetNodeMask(GetNode()->getNodeMask() | NodeMasks::TERRAIN);
+         SetNodeMask(GetNode()->getNodeMask() | dtEntity::NodeMasks::TERRAIN);
       }
       else
       {
-         SetNodeMask(GetNode()->getNodeMask() & ~NodeMasks::TERRAIN);
+         SetNodeMask(GetNode()->getNodeMask() & ~dtEntity::NodeMasks::TERRAIN);
       }
    }
    
    ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshComponent::SetMesh(const std::string& path, StringId cacheHint)
+   void StaticMeshComponent::SetMesh(const std::string& path, dtEntity::StringId cacheHint)
    {
       if(mLoadedMesh == path)
       {
@@ -105,25 +106,26 @@ namespace dtEntity
       }
       else
       {
-         unsigned int options = ResourceManagerOptions::DeepCopy;
+         unsigned int options = dtEntity::ResourceManagerOptions::DeepCopy;
          if(cacheHint == CacheAllId)
          {
-           options = ResourceManagerOptions::ShallowCopy;
+           options = dtEntity::ResourceManagerOptions::ShallowCopy;
          }
          else if(cacheHint == CacheNodesId)
          {
-            options = ResourceManagerOptions::CopyNodes;
+            options = dtEntity::ResourceManagerOptions::CopyNodes;
          }
          else if(cacheHint == CacheHardwareMeshesId)
          {
-            options = ResourceManagerOptions::CopyHardwareMeshes;
+            options = dtEntity::ResourceManagerOptions::CopyHardwareMeshes;
          }
          if(GetOptimize())
          {
-            options |= ResourceManagerOptions::DoOptimization;
+            options |= dtEntity::ResourceManagerOptions::DoOptimization;
          }
 
-         osg::ref_ptr<osg::Node> meshnode = ResourceManager::GetInstance().GetNode(mEntity->GetEntityManager(), path, options);
+         dtEntity::ResourceManager& rm = dtEntity::ResourceManager::GetInstance();
+         osg::ref_ptr<osg::Node> meshnode = rm.GetNode(mEntity->GetEntityManager(), path, options);
          if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
@@ -138,7 +140,7 @@ namespace dtEntity
          SetStaticMesh(meshnode);    
       }
 
-      MeshChangedMessage msg;
+      dtEntity::MeshChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());
       msg.SetFilePath(path);
       mEntity->GetEntityManager().EmitMessage(msg);
@@ -156,11 +158,11 @@ namespace dtEntity
       assert(mEntity != NULL);
 
       unsigned int nm = node->getNodeMask() |
-            NodeMasks::VISIBLE | NodeMasks::PICKABLE |
-             NodeMasks::CASTS_SHADOWS | NodeMasks::RECEIVES_SHADOWS;
+            dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::PICKABLE |
+             dtEntity::NodeMasks::CASTS_SHADOWS | dtEntity::NodeMasks::RECEIVES_SHADOWS;
       if(mIsTerrainVal)
       {
-         nm |= NodeMasks::TERRAIN;
+         nm |= dtEntity::NodeMasks::TERRAIN;
       }
       else
       {
@@ -174,27 +176,27 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId StaticMeshSystem::TYPE(dtEntity::SID("StaticMesh"));
+   const dtEntity::StringId StaticMeshSystem::TYPE(dtEntity::SID("StaticMesh"));
 
    ////////////////////////////////////////////////////////////////////////////
-   StaticMeshSystem::StaticMeshSystem(EntityManager& em)
-      : DefaultEntitySystem<StaticMeshComponent>(em, NodeComponent::TYPE)
+   StaticMeshSystem::StaticMeshSystem(dtEntity::EntityManager& em)
+      : DefaultEntitySystem<StaticMeshComponent>(em, dtEntity::NodeComponent::TYPE)
    {
-      mResourceChangedFunctor = MessageFunctor(this, &StaticMeshSystem::OnResourceChanged);
-      em.RegisterForMessages(ResourceChangedMessage::TYPE, mResourceChangedFunctor, "StaticMeshSystem::OnResourceChanged");
+      mResourceChangedFunctor = dtEntity::MessageFunctor(this, &StaticMeshSystem::OnResourceChanged);
+      em.RegisterForMessages(dtEntity::ResourceChangedMessage::TYPE, mResourceChangedFunctor, "StaticMeshSystem::OnResourceChanged");
       
    }
 
    ////////////////////////////////////////////////////////////////////////////
    StaticMeshSystem::~StaticMeshSystem()
    {
-      GetEntityManager().UnregisterForMessages(ResourceChangedMessage::TYPE, mResourceChangedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::ResourceChangedMessage::TYPE, mResourceChangedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void StaticMeshSystem::OnResourceChanged(const Message& m)
+   void StaticMeshSystem::OnResourceChanged(const dtEntity::Message& m)
    {
-      const ResourceChangedMessage& msg = static_cast<const ResourceChangedMessage&>(m);
+      const dtEntity::ResourceChangedMessage& msg = static_cast<const dtEntity::ResourceChangedMessage&>(m);
 
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
       {

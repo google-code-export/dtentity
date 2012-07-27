@@ -21,6 +21,7 @@ ADD_EXECUTABLE(${APP_NAME}
 
 TARGET_LINK_LIBRARIES(${APP_NAME}     
 						dtEntity
+            dtEntityOSG
             ${OPENSCENEGRAPH_LIBRARIES}
 						${OPENTHREADS_LIBRARIES}
 )
