@@ -21,50 +21,50 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/stringid.h>
 #include <osg/Geode>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    /**
     * Holds a single OSG node.
     */
-   class DT_ENTITY_EXPORT SkyBoxComponent : public GroupComponent
+   class DTENTITY_OSG_EXPORT SkyBoxComponent : public dtEntity::GroupComponent
    {
 
-      typedef GroupComponent BaseClass;
+      typedef dtEntity::GroupComponent BaseClass;
 
    public:
       
-      static const ComponentType TYPE;
-      static const StringId TextureUpId;
-      static const StringId TextureDownId;
-      static const StringId TextureNorthId;
-      static const StringId TextureSouthId;
-      static const StringId TextureEastId;
-      static const StringId TextureWestId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId TextureUpId;
+      static const dtEntity::StringId TextureDownId;
+      static const dtEntity::StringId TextureNorthId;
+      static const dtEntity::StringId TextureSouthId;
+      static const dtEntity::StringId TextureEastId;
+      static const dtEntity::StringId TextureWestId;
       
       SkyBoxComponent();
       virtual ~SkyBoxComponent();
 
       virtual void Finished();
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
 
       virtual osg::Group* GetAttachmentGroup() const { return mDrawables; }
    
    private:
       osg::ref_ptr<osg::Geode> mSkyboxGeode;
-      StringProperty mTextureUp;
-      StringProperty mTextureDown;
-      StringProperty mTextureNorth;
-      StringProperty mTextureSouth;
-      StringProperty mTextureEast;
-      StringProperty mTextureWest;
+      dtEntity::StringProperty mTextureUp;
+      dtEntity::StringProperty mTextureDown;
+      dtEntity::StringProperty mTextureNorth;
+      dtEntity::StringProperty mTextureSouth;
+      dtEntity::StringProperty mTextureEast;
+      dtEntity::StringProperty mTextureWest;
       osg::ref_ptr<osg::Group> mDrawables;
    };
 
@@ -72,12 +72,12 @@ namespace dtEntity
    //////////////////////////////////////////////////////////
 
    // storage only
-   class DT_ENTITY_EXPORT SkyBoxSystem
-      : public DefaultEntitySystem<SkyBoxComponent>
+   class DTENTITY_OSG_EXPORT SkyBoxSystem
+      : public dtEntity::DefaultEntitySystem<SkyBoxComponent>
    {
    public:
-      static const ComponentType TYPE;
-      SkyBoxSystem(EntityManager& em);
+      static const dtEntity::ComponentType TYPE;
+      SkyBoxSystem(dtEntity::EntityManager& em);
    };
 
 }

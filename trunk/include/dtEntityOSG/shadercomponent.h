@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
@@ -30,26 +30,26 @@ namespace osg
    class Program;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
-   class DT_ENTITY_EXPORT ShaderComponent : public Component
+   class DTENTITY_OSG_EXPORT ShaderComponent : public dtEntity::Component
    {
 
-      typedef Component BaseClass;
+      typedef dtEntity::Component BaseClass;
 
    public:
       
-      static const ComponentType TYPE;
-      static const StringId MaterialNamePrefixId;
-      static const StringId TopLevelMaterialNameId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId MaterialNamePrefixId;
+      static const dtEntity::StringId TopLevelMaterialNameId;
 
       ShaderComponent();
       virtual ~ShaderComponent();
 
-      void OnAddedToEntity(Entity& entity);
+      void OnAddedToEntity(dtEntity::Entity& entity);
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
 
       std::string GetMaterialNamePrefix() const { return mMaterialNamePrefix.Get(); }
       void SetMaterialNamePrefix(const std::string& s) { mMaterialNamePrefix.Set(s); }
@@ -58,8 +58,8 @@ namespace dtEntity
       void SetTopLevelMaterialName(const std::string& s) { mTopLevelMaterialName.Set(s); }
 
    private:
-      StringProperty mMaterialNamePrefix;
-      StringProperty mTopLevelMaterialName;
+      dtEntity::StringProperty mMaterialNamePrefix;
+      dtEntity::StringProperty mTopLevelMaterialName;
 
    };
 
@@ -67,34 +67,34 @@ namespace dtEntity
    //////////////////////////////////////////////////////////
 
    // storage only
-   class DT_ENTITY_EXPORT ShaderSystem
-      : public DefaultEntitySystem<ShaderComponent>
-      , public ScriptAccessor
+   class DTENTITY_OSG_EXPORT ShaderSystem
+      : public dtEntity::DefaultEntitySystem<ShaderComponent>
+      , public dtEntity::ScriptAccessor
    {
-      typedef DefaultEntitySystem<ShaderComponent> BaseClass;
+      typedef dtEntity::DefaultEntitySystem<ShaderComponent> BaseClass;
 
    public:
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
 
-      ShaderSystem(EntityManager& em);
+      ShaderSystem(dtEntity::EntityManager& em);
       ~ShaderSystem();
 
       void AddProgram(const std::string& name, osg::Program* prg);
       osg::Program* GetProgram(const std::string& name) const;
 
-      virtual bool CreateComponent(EntityId eid, Component*& component);
+      virtual bool CreateComponent(dtEntity::EntityId eid, dtEntity::Component*& component);
 
    private:
 
       typedef std::map<std::string, osg::ref_ptr<osg::Program> > ProgramMap;
       ProgramMap mPrograms;
-      MessageFunctor mChangedMeshFunctor;
+      dtEntity::MessageFunctor mChangedMeshFunctor;
 
-      void OnChangedMesh(const Message& msg);
-      void ApplyShader(EntityId);
-      Property* ScriptAddProgram(const PropertyArgs& args);
-      Property* ScriptAddUniform(const PropertyArgs& args);
-      Property* ScriptRemoveUniform(const PropertyArgs& args);
+      void OnChangedMesh(const dtEntity::Message& msg);
+      void ApplyShader(dtEntity::EntityId);
+      dtEntity::Property* ScriptAddProgram(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptAddUniform(const dtEntity::PropertyArgs& args);
+      dtEntity::Property* ScriptRemoveUniform(const dtEntity::PropertyArgs& args);
 
    };
 

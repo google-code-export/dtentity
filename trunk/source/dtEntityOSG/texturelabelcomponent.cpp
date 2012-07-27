@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/texturelabelcomponent.h>
+#include <dtEntityOSG/texturelabelcomponent.h>
 
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/stringid.h>
@@ -39,7 +39,7 @@
 #include <osg/PolygonOffset>
 #include <osgDB/ReadFile>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    
 
@@ -58,17 +58,17 @@ namespace dtEntity
    TextureLabelComponent::TextureLabelComponent()
       : dtEntity::NodeComponent(new osg::Geode())
       , mOffset(
-         DynamicVec3Property::SetValueCB(this, &TextureLabelComponent::SetOffset),
-         DynamicVec3Property::GetValueCB(this, &TextureLabelComponent::GetOffset)
+         dtEntity::DynamicVec3Property::SetValueCB(this, &TextureLabelComponent::SetOffset),
+         dtEntity::DynamicVec3Property::GetValueCB(this, &TextureLabelComponent::GetOffset)
       )
       , mColor(
-         DynamicVec4Property::SetValueCB(this, &TextureLabelComponent::SetColor),
-         DynamicVec4Property::GetValueCB(this, &TextureLabelComponent::GetColor)
+         dtEntity::DynamicVec4Property::SetValueCB(this, &TextureLabelComponent::SetColor),
+         dtEntity::DynamicVec4Property::GetValueCB(this, &TextureLabelComponent::GetColor)
       )
       , mColorVal(osg::Vec4(1,1,1,1))
       , mVisible(
-         DynamicBoolProperty::SetValueCB(this, &TextureLabelComponent::SetVisible),
-         DynamicBoolProperty::GetValueCB(this, &TextureLabelComponent::GetVisible)
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &TextureLabelComponent::SetVisible),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &TextureLabelComponent::GetVisible)
       )
       , mLabelSystem(NULL)
    {
@@ -191,8 +191,8 @@ namespace dtEntity
    TextureLabelSystem::TextureLabelSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<TextureLabelComponent>(em)
       , mEnabled(
-         DynamicBoolProperty::SetValueCB(this, &TextureLabelSystem::SetEnabled),
-         DynamicBoolProperty::GetValueCB(this, &TextureLabelSystem::GetEnabled)
+         dtEntity::DynamicBoolProperty::SetValueCB(this, &TextureLabelSystem::SetEnabled),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &TextureLabelSystem::GetEnabled)
       )
       , mEnabledVal(true)
    {

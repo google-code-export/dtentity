@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/shadercomponent.h>
+#include <dtEntityOSG/shadercomponent.h>
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -32,7 +32,7 @@
 #include <osg/NodeVisitor>
 #include <osg/Program>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
   
    class MaterialVisitor : public osg::NodeVisitor
@@ -97,9 +97,9 @@ namespace dtEntity
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId ShaderComponent::TYPE(dtEntity::SID("Shader"));
-   const StringId ShaderComponent::MaterialNamePrefixId(dtEntity::SID("MaterialNamePrefix"));
-   const StringId ShaderComponent::TopLevelMaterialNameId(dtEntity::SID("TopLevelMaterialName"));
+   const dtEntity::StringId ShaderComponent::TYPE(dtEntity::SID("Shader"));
+   const dtEntity::StringId ShaderComponent::MaterialNamePrefixId(dtEntity::SID("MaterialNamePrefix"));
+   const dtEntity::StringId ShaderComponent::TopLevelMaterialNameId(dtEntity::SID("TopLevelMaterialName"));
 
    ////////////////////////////////////////////////////////////////////////////
    ShaderComponent::ShaderComponent()
@@ -115,34 +115,34 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShaderComponent::OnAddedToEntity(Entity& entity)
+   void ShaderComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       BaseClass::OnAddedToEntity(entity);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId ShaderSystem::TYPE(dtEntity::SID("Shader"));
+   const dtEntity::StringId ShaderSystem::TYPE(dtEntity::SID("Shader"));
 
    ////////////////////////////////////////////////////////////////////////////
-   ShaderSystem::ShaderSystem(EntityManager& em)
+   ShaderSystem::ShaderSystem(dtEntity::EntityManager& em)
       : DefaultEntitySystem<ShaderComponent>(em)
    {
-      AddScriptedMethod("addProgram", ScriptMethodFunctor(this, &ShaderSystem::ScriptAddProgram));
-      AddScriptedMethod("addUniform", ScriptMethodFunctor(this, &ShaderSystem::ScriptAddUniform));
-      AddScriptedMethod("removeUniform", ScriptMethodFunctor(this, &ShaderSystem::ScriptRemoveUniform));
+      AddScriptedMethod("addProgram", dtEntity::ScriptMethodFunctor(this, &ShaderSystem::ScriptAddProgram));
+      AddScriptedMethod("addUniform", dtEntity::ScriptMethodFunctor(this, &ShaderSystem::ScriptAddUniform));
+      AddScriptedMethod("removeUniform", dtEntity::ScriptMethodFunctor(this, &ShaderSystem::ScriptRemoveUniform));
 
-      mChangedMeshFunctor = MessageFunctor(this, &ShaderSystem::OnChangedMesh);
-      em.RegisterForMessages(MeshChangedMessage::TYPE, mChangedMeshFunctor, "ShaderSystem::OnChangedMesh");
+      mChangedMeshFunctor = dtEntity::MessageFunctor(this, &ShaderSystem::OnChangedMesh);
+      em.RegisterForMessages(dtEntity::MeshChangedMessage::TYPE, mChangedMeshFunctor, "ShaderSystem::OnChangedMesh");
    }
 
    ////////////////////////////////////////////////////////////////////////////
    ShaderSystem::~ShaderSystem()
    {
-      GetEntityManager().UnregisterForMessages(MeshChangedMessage::TYPE, mChangedMeshFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::MeshChangedMessage::TYPE, mChangedMeshFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool ShaderSystem::CreateComponent(EntityId eid, Component*& component)
+   bool ShaderSystem::CreateComponent(dtEntity::EntityId eid, dtEntity::Component*& component)
    {
       bool success = BaseClass::CreateComponent(eid, component);
       if(success)
@@ -153,19 +153,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShaderSystem::OnChangedMesh(const Message& m)
+   void ShaderSystem::OnChangedMesh(const dtEntity::Message& m)
    {
-      const MeshChangedMessage& msg = static_cast<const MeshChangedMessage&>(m);
+      const dtEntity::MeshChangedMessage& msg = static_cast<const dtEntity::MeshChangedMessage&>(m);
       ApplyShader(msg.GetAboutEntityId());
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ShaderSystem::ApplyShader(EntityId eid)
+   void ShaderSystem::ApplyShader(dtEntity::EntityId eid)
    {
       ShaderComponent* comp = GetComponent(eid);
       if(!comp) return;
 
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(GetEntityManager().GetComponent(eid, smc, true))
       {
          if(comp->GetTopLevelMaterialName() != "")
@@ -182,7 +182,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* ShaderSystem::ScriptAddProgram(const PropertyArgs& args)
+   dtEntity::Property* ShaderSystem::ScriptAddProgram(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 3)
       {
@@ -224,16 +224,16 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* ShaderSystem::ScriptAddUniform(const PropertyArgs& args)
+   dtEntity::Property* ShaderSystem::ScriptAddUniform(const dtEntity::PropertyArgs& args)
    {
        if(args.size() < 3)
       {
          LOG_ERROR("Usage: addUniform(eid, name, value)");
          return NULL;
       }
-      EntityId eid = args[0]->UIntValue();
+      dtEntity::EntityId eid = args[0]->UIntValue();
       const char* name = args[1]->StringValue().c_str();
-      LayerComponent* lc;
+      dtEntity::LayerComponent* lc;
       if(!GetEntityManager().GetComponent(eid, lc) || lc->GetAttachedComponentNode() == NULL)
       {
          return NULL;
@@ -252,14 +252,14 @@ namespace dtEntity
       const dtEntity::Property* prop = args[2];
       switch(prop->GetDataType())
       {
-      case DataType::BOOL: uniform = new osg::Uniform(name, prop->BoolValue()); break;
-      case DataType::DOUBLE:
-      case DataType::FLOAT: uniform = new osg::Uniform(name, prop->FloatValue()); break;
-      case DataType::INT: uniform = new osg::Uniform(name, prop->IntValue()); break;
-      case DataType::UINT: uniform = new osg::Uniform(name, prop->UIntValue()); break;
-      case DataType::VEC2D: uniform = new osg::Uniform(name, prop->Vec2dValue()); break;
-      case DataType::VEC3D: uniform = new osg::Uniform(name, prop->Vec3dValue()); break;
-      case DataType::VEC4D: uniform = new osg::Uniform(name, prop->Vec4dValue()); break;
+      case dtEntity::DataType::BOOL: uniform = new osg::Uniform(name, prop->BoolValue()); break;
+      case dtEntity::DataType::DOUBLE:
+      case dtEntity::DataType::FLOAT: uniform = new osg::Uniform(name, prop->FloatValue()); break;
+      case dtEntity::DataType::INT: uniform = new osg::Uniform(name, prop->IntValue()); break;
+      case dtEntity::DataType::UINT: uniform = new osg::Uniform(name, prop->UIntValue()); break;
+      case dtEntity::DataType::VEC2D: uniform = new osg::Uniform(name, prop->Vec2dValue()); break;
+      case dtEntity::DataType::VEC3D: uniform = new osg::Uniform(name, prop->Vec3dValue()); break;
+      case dtEntity::DataType::VEC4D: uniform = new osg::Uniform(name, prop->Vec4dValue()); break;
       default:
          {
          LOG_ERROR("Unhandled uniform input value: " << prop->GetDataType());
@@ -275,7 +275,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* ShaderSystem::ScriptRemoveUniform(const PropertyArgs& args)
+   dtEntity::Property* ShaderSystem::ScriptRemoveUniform(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 2)
       {
@@ -283,9 +283,9 @@ namespace dtEntity
          return NULL;
       }
 
-      EntityId eid = args[0]->UIntValue();
+      dtEntity::EntityId eid = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(!GetEntityManager().GetComponent(eid, smc, true))
       {
          return NULL;

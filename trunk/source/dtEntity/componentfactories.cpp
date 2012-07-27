@@ -27,14 +27,6 @@
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/layercomponent.h>
 #include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/lightcomponent.h>
-#include <dtEntity/osganimationcomponent.h>
-#include <dtEntity/shadercomponent.h>
-#include <dtEntity/shadowcomponent.h>
-#include <dtEntity/skyboxcomponent.h>
-#include <dtEntity/textlabelcomponent.h>
-#include <dtEntity/texturelabelcomponent.h>
-
 
 #if BUILD_OPENAL
   #include <dtEntity/soundcomponent.h>
@@ -50,13 +42,6 @@ namespace dtEntity
    void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<DynamicsSystem>("Dynamics"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<SkyBoxSystem>("SkyBox"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<ShadowSystem>("Shadow"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<ShaderSystem>("Shader"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<TextLabelSystem>("TextLabel"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<OSGAnimationSystem>("OSGAnimation"));
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<LightSystem>("Light"));
 
 #if BUILD_CAL3D
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<AnimationSystem>("Animation"));

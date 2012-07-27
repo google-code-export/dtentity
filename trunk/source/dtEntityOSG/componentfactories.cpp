@@ -21,12 +21,27 @@
 #include <dtEntityOSG/componentfactories.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/dtentity_config.h>
+
+#include <dtEntityOSG/lightcomponent.h>
 #include <dtEntityOSG/pickshapecomponent.h>
+#include <dtEntityOSG/shadercomponent.h>
+#include <dtEntityOSG/shadowcomponent.h>
+#include <dtEntityOSG/skyboxcomponent.h>
+#include <dtEntityOSG/textlabelcomponent.h>
+#include <dtEntityOSG/texturelabelcomponent.h>
+#include <dtEntityOSG/osganimationcomponent.h>
 
 namespace dtEntityOSG
 {
    void RegisterStandardFactories(dtEntity::ComponentPluginManager& pluginManager)
    {
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LightSystem>("Light"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ShadowSystem>("Shadow"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ShaderSystem>("Shader"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<SkyBoxSystem>("SkyBox"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextLabelSystem>("TextLabel"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<OSGAnimationSystem>("OSGAnimation"));
    }
 }

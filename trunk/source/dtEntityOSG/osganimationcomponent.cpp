@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/osganimationcomponent.h>
+#include <dtEntityOSG/osganimationcomponent.h>
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
@@ -36,7 +36,7 @@
 #include <osg/ShapeDrawable>
 #include <osgDB/FileUtils>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -233,14 +233,15 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId OSGAnimationComponent::TYPE(dtEntity::SID("OSGAnimation"));
-   const StringId OSGAnimationComponent::EnabledId(dtEntity::SID("Enabled"));
+   const dtEntity::StringId OSGAnimationComponent::TYPE(dtEntity::SID("OSGAnimation"));
+   const dtEntity::StringId OSGAnimationComponent::EnabledId(dtEntity::SID("Enabled"));
    
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationComponent::OSGAnimationComponent()
       : mEntity(NULL)
-      , mEnabled(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &OSGAnimationComponent::SetEnabled),
-           DynamicBoolProperty::GetValueCB(this, &OSGAnimationComponent::GetEnabled)))
+      , mEnabled(dtEntity::DynamicBoolProperty(
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &OSGAnimationComponent::SetEnabled),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &OSGAnimationComponent::GetEnabled)))
       , mEnabledVal(true)
 
    {
@@ -254,10 +255,10 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void OSGAnimationComponent::OnAddedToEntity(Entity& entity)
+   void OSGAnimationComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       mEntity = &entity;
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(mEntity->GetComponent(smc))
       {
          SetupMesh(smc->GetNode());
@@ -267,7 +268,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationComponent::AddAttachment(const std::string& boneName, osg::Node* node, const osg::Matrix& m)
    {
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -295,7 +296,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool OSGAnimationComponent::RemoveAtachment(const std::string& boneName, osg::Node* node)
    {
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -326,7 +327,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void OSGAnimationComponent::RemoveAtachments(const std::string& boneName)
    {
-      StaticMeshComponent* smc;
+      dtEntity::StaticMeshComponent* smc;
       if(!mEntity->GetComponent(smc, true))
       {
          LOG_ERROR("Cannot attach, no static mesh component found!");
@@ -390,7 +391,7 @@ namespace dtEntity
 
       if(mAnimationManager)
       {         
-         StaticMeshComponent* smc;
+         dtEntity::StaticMeshComponent* smc;
          if(mEntity->GetComponent(smc, true))
          {
             OSGAnimationSystem* sys;
@@ -416,17 +417,18 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const StringId OSGAnimationSystem::TYPE(dtEntity::SID("OSGAnimation"));
-   const StringId OSGAnimationSystem::VertexShaderId(dtEntity::SID("VertexShader"));
-   const StringId OSGAnimationSystem::FragmentShaderId(dtEntity::SID("FragmentShader"));
-   const StringId OSGAnimationSystem::EnabledId(dtEntity::SID("Enabled"));
+   const dtEntity::StringId OSGAnimationSystem::TYPE(dtEntity::SID("OSGAnimation"));
+   const dtEntity::StringId OSGAnimationSystem::VertexShaderId(dtEntity::SID("VertexShader"));
+   const dtEntity::StringId OSGAnimationSystem::FragmentShaderId(dtEntity::SID("FragmentShader"));
+   const dtEntity::StringId OSGAnimationSystem::EnabledId(dtEntity::SID("Enabled"));
    
    ////////////////////////////////////////////////////////////////////////////
-   OSGAnimationSystem::OSGAnimationSystem(EntityManager& em)
-     : DefaultEntitySystem<OSGAnimationComponent>(em)
+   OSGAnimationSystem::OSGAnimationSystem(dtEntity::EntityManager& em)
+     : dtEntity::DefaultEntitySystem<OSGAnimationComponent>(em)
      , mEnabledVal(true)
-     , mEnabled(DynamicBoolProperty(DynamicBoolProperty::SetValueCB(this, &OSGAnimationSystem::SetEnabled),
-           DynamicBoolProperty::GetValueCB(this, &OSGAnimationSystem::GetEnabled)))
+     , mEnabled(dtEntity::DynamicBoolProperty(
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &OSGAnimationSystem::SetEnabled),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &OSGAnimationSystem::GetEnabled)))
    {
       Register(VertexShaderId, &mVertexShader);
       Register(FragmentShaderId, &mFragmentShader);
@@ -435,23 +437,23 @@ namespace dtEntity
       mVertexShader.Set("shaders/osganimationskinning.vert");
       mFragmentShader.Set("shaders/osganimationskinning.frag");
 
-      mMeshChangedFunctor = MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
-      em.RegisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor,
-                            FilterOptions::ORDER_DEFAULT, "OSGAnimationSystem::OnMeshChanged");
-      AddScriptedMethod("playAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptPlayAnimation));
-      AddScriptedMethod("stopAnimation", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptStopAnimation));
-      AddScriptedMethod("getAnimations", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimations));
-      AddScriptedMethod("getAnimationLength", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationLength));
-      AddScriptedMethod("getAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationPlayMode));
-      AddScriptedMethod("setAnimationPlayMode", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptSetAnimationPlayMode));
-      AddScriptedMethod("addAttachment", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptAddAttachment));
-      AddScriptedMethod("removeAttachments", ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptRemoveAttachments));
+      mMeshChangedFunctor = dtEntity::MessageFunctor(this, &OSGAnimationSystem::OnMeshChanged);
+      em.RegisterForMessages(dtEntity::MeshChangedMessage::TYPE, mMeshChangedFunctor,
+                            dtEntity::FilterOptions::ORDER_DEFAULT, "OSGAnimationSystem::OnMeshChanged");
+      AddScriptedMethod("playAnimation", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptPlayAnimation));
+      AddScriptedMethod("stopAnimation", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptStopAnimation));
+      AddScriptedMethod("getAnimations", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimations));
+      AddScriptedMethod("getAnimationLength", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationLength));
+      AddScriptedMethod("getAnimationPlayMode", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptGetAnimationPlayMode));
+      AddScriptedMethod("setAnimationPlayMode", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptSetAnimationPlayMode));
+      AddScriptedMethod("addAttachment", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptAddAttachment));
+      AddScriptedMethod("removeAttachments", dtEntity::ScriptMethodFunctor(this, &OSGAnimationSystem::ScriptRemoveAttachments));
    }
 
    ////////////////////////////////////////////////////////////////////////////
    OSGAnimationSystem::~OSGAnimationSystem()
    {
-      GetEntityManager().UnregisterForMessages(MeshChangedMessage::TYPE, mMeshChangedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::MeshChangedMessage::TYPE, mMeshChangedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -473,7 +475,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool OSGAnimationSystem::GetAnimationList(EntityId id, const osgAnimation::AnimationList*& list, osgAnimation::BasicAnimationManager*& manager)
+   bool OSGAnimationSystem::GetAnimationList(dtEntity::EntityId id, const osgAnimation::AnimationList*& list, osgAnimation::BasicAnimationManager*& manager)
    {
 
       OSGAnimationComponent* comp;
@@ -493,14 +495,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void OSGAnimationSystem::OnMeshChanged(const Message& m)
+   void OSGAnimationSystem::OnMeshChanged(const dtEntity::Message& m)
    {
-     const MeshChangedMessage& msg = static_cast<const MeshChangedMessage&>(m);
-     EntityId id = msg.GetAboutEntityId();
+     const dtEntity::MeshChangedMessage& msg = static_cast<const dtEntity::MeshChangedMessage&>(m);
+     dtEntity::EntityId id = msg.GetAboutEntityId();
      OSGAnimationComponent* comp = GetComponent(id);
      if(comp)
      {
-       StaticMeshComponent* smc;
+       dtEntity::StaticMeshComponent* smc;
        if(GetEntityManager().GetComponent(id, smc, true))
        {
           comp->SetupMesh(smc->GetNode());
@@ -509,7 +511,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptPlayAnimation(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptPlayAnimation(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 2)
       {
@@ -518,7 +520,7 @@ namespace dtEntity
       }
       float priority = (args.size() > 2) ? args[2]->FloatValue() : 0;
       float weight = (args.size() > 3) ? args[3]->FloatValue() : 1;
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
 
       osgAnimation::BasicAnimationManager* manager;
@@ -541,14 +543,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptStopAnimation(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptStopAnimation(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 2)
       {
          LOG_ERROR("Usage: stopAnimation(entityid, name)");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
 
       osgAnimation::BasicAnimationManager* manager;
@@ -571,7 +573,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptGetAnimations(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptGetAnimations(const dtEntity::PropertyArgs& args)
    {
       if(args.size() != 1)
       {
@@ -579,7 +581,7 @@ namespace dtEntity
          return NULL;
       }
 
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
 
       osgAnimation::BasicAnimationManager* manager;
       const osgAnimation::AnimationList* list;
@@ -588,24 +590,24 @@ namespace dtEntity
          return NULL;
       }
 
-      ArrayProperty* arr = new ArrayProperty();
+      dtEntity::ArrayProperty* arr = new dtEntity::ArrayProperty();
 
       for(osgAnimation::AnimationList::const_iterator i = list->begin(); i != list->end(); ++i)
       {
-         arr->Add(new StringProperty((*i)->getName()));
+         arr->Add(new dtEntity::StringProperty((*i)->getName()));
       }
       return arr;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptGetAnimationLength(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptGetAnimationLength(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 2)
       {
          LOG_ERROR("Usage: getAnimationLength(entityid, name)");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
 
       osgAnimation::BasicAnimationManager* manager;
@@ -627,7 +629,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptGetAnimationPlayMode(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptGetAnimationPlayMode(const dtEntity::PropertyArgs& args)
    {
 
       if(args.size() < 2)
@@ -635,7 +637,7 @@ namespace dtEntity
          LOG_ERROR("Usage: getAnimationPlayMode(entityid, name)");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
 
       osgAnimation::BasicAnimationManager* manager;
@@ -663,7 +665,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptSetAnimationPlayMode(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptSetAnimationPlayMode(const dtEntity::PropertyArgs& args)
    {
       // WARNING: THIS METHOD SEEMS TO SCREW UP RUNNING ANIMATIONS SOMEHOW,
       // MAYBE A THREAD ISSUE!!!
@@ -674,7 +676,7 @@ namespace dtEntity
          LOG_ERROR("Usage: setAnimationPlayMode(entityid, name, mode=[LOOP|ONCE|STAY|PPONG])");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string name = args[1]->StringValue();
       std::string mode = args[2]->StringValue();
 
@@ -723,7 +725,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptAddAttachment(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptAddAttachment(const dtEntity::PropertyArgs& args)
    {
 
       if(args.size() < 3)
@@ -731,7 +733,7 @@ namespace dtEntity
          LOG_ERROR("Usage: addAttachment(entityid, bone name, mesh path, [vec3 trans, quat rot])");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string bonename = args[1]->StringValue();
       std::string meshpath = args[2]->StringValue();
       osg::Vec3 trans;
@@ -775,7 +777,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* OSGAnimationSystem::ScriptRemoveAttachments(const PropertyArgs& args)
+   dtEntity::Property* OSGAnimationSystem::ScriptRemoveAttachments(const dtEntity::PropertyArgs& args)
    {
 
       if(args.size() < 2)
@@ -783,7 +785,7 @@ namespace dtEntity
          LOG_ERROR("Usage: removeAttachments(entityid, bone name)");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       std::string bonename = args[1]->StringValue();
 
       OSGAnimationComponent* comp = GetComponent(id);
