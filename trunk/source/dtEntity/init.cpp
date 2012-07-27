@@ -34,6 +34,11 @@
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
+
 namespace dtEntity
 {
 

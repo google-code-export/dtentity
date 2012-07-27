@@ -26,6 +26,7 @@
 #include <dtEntity/groupcomponent.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
+#include <osg/Group>
 
 namespace dtEntity
 { 

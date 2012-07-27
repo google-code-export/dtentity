@@ -172,15 +172,20 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    const StringId SoundSystem::TYPE(dtEntity::SID("Sound"));
    const StringId SoundSystem::ListenerGainId(dtEntity::SID("ListenerGain"));
-   const StringId SoundSystem::ListenerLinkToCameraId(dtEntity::SID("ListenerLinkToCamera"));
+   const StringId SoundSystem::ListenerEntityId(dtEntity::SID("ListenerEntity"));
 
    ////////////////////////////////////////////////////////////////////////////////
    SoundSystem::SoundSystem(EntityManager& em)
       : DefaultEntitySystem<SoundComponent>(em)
-      , mListenerLinkToCamera(true)
+      , mListenerEntity(
+           DynamicUIntProperty::SetValueCB(this, &SoundSystem::SetListenerEntity),
+           DynamicUIntProperty::GetValueCB(this, &SoundSystem::GetListenerEntity)
+        )
+     , mListenerEntityTrans(0)
+     , mListenerEntityVal(NULL)
    {
       Register(ListenerGainId, &mListenerGain);
-      Register(ListenerLinkToCameraId, &mListenerLinkToCamera);
+      Register(ListenerEntityId, &mListenerEntity);
 
       mListenerGain = 1.0f;
 
@@ -192,9 +197,6 @@ namespace dtEntity
 
       mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
       em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
-
-      mWindowClosedFunctor = MessageFunctor(this, &SoundSystem::OnWindowClosed);
-      em.RegisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor, "SoundSystem::OnWindowClosed");
 
       dtEntity::AudioManager::GetInstance().Init();
 
@@ -210,10 +212,8 @@ namespace dtEntity
    void SoundSystem::Finished()
    {
       BaseClass::Finished();
-      if (mListenerLinkToCamera.Get())
-      {
-         CopyCamTransformToListener();
-      }
+      
+      CopyEntityTransformToListener();      
      
       // set global gain
       dtEntity::AudioManager::GetListener()->SetGain(mListenerGain.Get());
@@ -257,20 +257,11 @@ namespace dtEntity
       {  
          sc->FreeSound();
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnWindowClosed(const Message& m)
-   {
-
-      const WindowClosedMessage& msg = static_cast<const WindowClosedMessage&>(m);
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osg::Camera* currCam = iface->GetPrimaryCamera();
-      if(currCam == NULL || msg.GetName() == currCam->getGraphicsContext()->getName())
+      if(eid == mListenerEntityVal)
       {
-         mListenerLinkToCamera.Set(false);
+         mListenerEntityVal = 0;
+         mListenerEntityTrans = 0;
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -285,11 +276,9 @@ namespace dtEntity
       // 2 - update sound component (set position, flush commands)
       const dtEntity::TickMessage& tm = static_cast<const dtEntity::TickMessage&>(msg);
 
-      if (mListenerLinkToCamera.Get())
-      {
-	      // copy current camera position to listener...
-         CopyCamTransformToListener();
-      } 
+      // copy current camera position to listener...
+      CopyEntityTransformToListener();
+       
 
       // update all sound components now
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
@@ -340,24 +329,54 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::CopyCamTransformToListener()
+   void SoundSystem::CopyEntityTransformToListener()
    {
-      dtEntity::ApplicationSystem* pAppSys;
-      if (GetEntityManager().GetEntitySystem(dtEntity::ApplicationSystem::TYPE, pAppSys) )
-      {
-         dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-         osg::Camera* currCam = iface->GetPrimaryCamera();
-         if(currCam == NULL)
-         {
-            LOG_ERROR("Cannot copy cam transform to audio listener, no primary camera set!");
-            return;
-         }
-         osg::Vec3 camPos, camLookAt, camUp;
-         currCam->getViewMatrixAsLookAt(camPos, camLookAt, camUp);
-         dtEntity::AudioManager::GetListener()->SetPosition(camPos);
-         dtEntity::AudioManager::GetListener()->SetOrientation(camLookAt - camPos, camUp);
+      static const StringId possid = dtEntity::SID("Position");
+      static const StringId attsid = dtEntity::SID("Attitude");
+      static const StringId eyedirsid = dtEntity::SID("EyeDirection");
+      static const StringId upsid = dtEntity::SID("Up");
 
-         // TODO add velocity to listener
+      if(mListenerEntityTrans)
+      {
+         osg::Vec3d pos = mListenerEntityTrans->GetVec3d(possid);
+         dtEntity::AudioManager::GetListener()->SetPosition(pos);
+         
+         if(mListenerEntityTrans->Has(attsid))
+         {
+            osg::Quat att = mListenerEntityTrans->GetQuat(attsid);
+            osg::Vec3 eyedir = att * osg::Vec3(0,1,0);
+            osg::Vec3 up = att * osg::Vec3(0,0,1);
+            dtEntity::AudioManager::GetListener()->SetOrientation(eyedir, up);
+         }
+         else if(mListenerEntityTrans->Has(eyedirsid) &&
+            mListenerEntityTrans->Has(upsid))
+         {
+            osg::Vec3d eyedir = mListenerEntityTrans->GetVec3d(eyedirsid);
+            osg::Vec3d up = mListenerEntityTrans->GetVec3d(upsid);
+            dtEntity::AudioManager::GetListener()->SetOrientation(eyedir, up);
+         }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SoundSystem::SetListenerEntity(EntityId id)  
+   { 
+      
+      bool success = GetEntityManager().GetComponent(id, dtEntity::SID("Transform"), mListenerEntityTrans, true);
+      if(success)
+      {  
+         mListenerEntityVal = id; 
+      }
+      else
+      {
+         mListenerEntityTrans = NULL;
+         mListenerEntityVal = 0;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   EntityId SoundSystem::GetListenerEntity() const 
+   { 
+      return mListenerEntityVal; 
    }
 }

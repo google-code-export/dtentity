@@ -24,6 +24,7 @@
 #include <osg/ref_ptr>
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
+#include <dtEntity/dynamicproperty.h>
 #include <dtEntity/nodecomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/message.h>
@@ -118,14 +119,13 @@ namespace dtEntity
       ~SoundSystem();
 
       static const StringId ListenerGainId;
-      static const StringId ListenerLinkToCameraId;
+      static const StringId ListenerEntityId;
 
       //void OnAddedToEntityManager(dtEntity::EntityManager& em)
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
       void OnEnterWorld(const Message&);
       void OnLeaveWorld(const Message&);
       void OnTick(const Message& msg);
-      void OnWindowClosed(const Message& msg);
 
       /// Override base class behavior to save system properties to file
       virtual bool StorePropertiesToScene() const { return true; }
@@ -137,21 +137,22 @@ namespace dtEntity
       void PlaySound(EntityId eid);
       void StopSound(EntityId eid);
 
-      void SetListenerLinkToCamera(const bool val)  { mListenerLinkToCamera.Set(val); }
-      bool GetListenerLinkToCamera() const { return mListenerLinkToCamera.Get(); }
-
+      void SetListenerEntity(EntityId id);
+      EntityId GetListenerEntity() const;
       
    private:
 
       /// Internal util that copies current camera position and orientation to listener
-      void CopyCamTransformToListener();
+      void CopyEntityTransformToListener();
 
       MessageFunctor mEnterWorldFunctor;
       MessageFunctor mLeaveWorldFunctor;
       MessageFunctor mTickFunctor;
       MessageFunctor mWindowClosedFunctor;
       FloatProperty mListenerGain;
-      BoolProperty mListenerLinkToCamera;
+      DynamicUIntProperty mListenerEntity;
+      Component* mListenerEntityTrans;
+      EntityId mListenerEntityVal;
    };
 }
 

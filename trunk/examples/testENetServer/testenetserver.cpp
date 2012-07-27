@@ -32,7 +32,6 @@
 #include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/positionattitudetransformcomponent.h>
-#include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systeminterface.h>

@@ -33,7 +33,6 @@
 #include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/skyboxcomponent.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <osgGA/TrackballManipulator>
