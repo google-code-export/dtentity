@@ -14,5 +14,9 @@ function editorOnCameraAdded(name, params) {
         c.finished();
      }
   }
+  var soundsys = getEntitySystem("Sound");
+  if(soundsys) {
+    soundsys.ListenerEntity = camid;
+  }
 }
 EntityManager.registerForMessages("CameraAddedMessage", editorOnCameraAdded);

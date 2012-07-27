@@ -36,10 +36,6 @@
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
-#ifdef _WIN32
-#include <direct.h>
-#endif
-
 namespace dtEntityOSG
 {
 
