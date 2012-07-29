@@ -21,13 +21,19 @@
  */
 
 #include <dtEntity/systeminterface.h>
+#include <dtEntityOSG/export.h>
 #include <osgViewer/ViewerBase>
+#include <vector>
 
 namespace dtEntity
-{     
+{
    class MessagePump;
+}
 
-   class DT_ENTITY_EXPORT OSGSystemInterface : public SystemInterface
+namespace dtEntityOSG
+{     
+   
+   class DTENTITY_OSG_EXPORT OSGSystemInterface : public dtEntity::SystemInterface
    {
    public:
 
@@ -47,15 +53,20 @@ namespace dtEntity
 
       virtual float GetDeltaSimTime() const;
       virtual float GetDeltaRealTime() const;
-      virtual Timer_t GetRealClockTime();
+      virtual dtEntity::Timer_t GetRealClockTime();
       virtual double GetSimulationTime() const;
       void SetSimulationTime(double);
 
       virtual float GetTimeScale() const;
       virtual void SetTimeScale(float v);
 
-      virtual Timer_t GetSimulationClockTime() const;
-      virtual void SetSimulationClockTime(Timer_t t);
+      virtual dtEntity::Timer_t GetSimulationClockTime() const;
+      virtual void SetSimulationClockTime(dtEntity::Timer_t t);
+
+      virtual bool GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end, 
+         std::vector<dtEntity::SystemInterface::Intersection>& isects,
+         unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN
+         ) const;
 
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      

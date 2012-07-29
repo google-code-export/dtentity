@@ -20,7 +20,8 @@
  * Martin Scheffler
  */
 
-#include <dtEntity/export.h>
+#include <dtEntity/nodemasks.h>
+#include <dtEntity/property.h>
 
 namespace dtEntity
 {     
@@ -30,7 +31,7 @@ namespace dtEntity
        typedef unsigned long long Timer_t;
    #endif
 
-   class DT_ENTITY_EXPORT SystemInterface
+   class SystemInterface
    {
    public:
 
@@ -90,6 +91,24 @@ namespace dtEntity
        */
       virtual Timer_t GetRealClockTime() = 0;
 
+      /**
+       * Holds intersection info
+       */
+      struct Intersection
+      {
+         Vec3d mPosition;
+         Vec3f mNormal;
+         EntityId mEntityId;
+      };
+
+      typedef std::vector<Intersection> Intersections;
+      /**
+       * Get intersections between start and end and add them to isects vector
+       */
+      virtual bool GetIntersections(const Vec3d& start, const Vec3d& end, 
+         std::vector<Intersection>& isects, 
+         unsigned int nodemask = NodeMasks::PICKABLE | NodeMasks::TERRAIN
+         ) const = 0;
 
    };
   

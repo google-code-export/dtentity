@@ -21,7 +21,6 @@
 #include <dtEntityEditor/editorapplication.h>
 
 #include <assert.h>
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
@@ -29,12 +28,12 @@
 #include <dtEntity/init.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/osginputinterface.h>
-#include <dtEntity/osgdebugdrawinterface.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osginputinterface.h>
+#include <dtEntityOSG/osgdebugdrawinterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/osgwindowinterface.h>
+#include <dtEntityOSG/osgwindowinterface.h>
 #include <dtEntityOSG/componentfactories.h>
 #include <dtEntityOSG/initosgviewer.h>
 #include <dtEntityEditor/editormainwindow.h>
@@ -68,9 +67,9 @@ namespace dtEntityEditor
       , mTimeScale(1)
       , mFileSystemWatcher(new QFileSystemWatcher())
    {
-      dtEntity::SetSystemInterface(new dtEntity::OSGSystemInterface(mEntityManager->GetMessagePump()));
-      dtEntity::SetWindowInterface(new dtEntity::OSGWindowInterface(*mEntityManager));
-      dtEntity::SetInputInterface(new dtEntity::OSGInputInterface(mEntityManager->GetMessagePump()));
+      dtEntity::SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager->GetMessagePump()));
+      dtEntity::SetWindowInterface(new dtEntityOSG::OSGWindowInterface(*mEntityManager));
+      dtEntity::SetInputInterface(new dtEntityOSG::OSGInputInterface(mEntityManager->GetMessagePump()));
 
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       
@@ -120,8 +119,6 @@ namespace dtEntityEditor
 
       dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, *mEntityManager);
       dtEntityOSG::RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
-
-      dtEntity::SetDebugDrawInterface(new dtEntity::OSGDebugDrawInterface(*mEntityManager));
 
       // default plugin dir
       mPluginPaths.push_back("plugins");
@@ -178,7 +175,7 @@ namespace dtEntityEditor
       assert(mMainWindow != NULL);
 
       // give application system access to viewer
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
       iface->SetViewer(mViewer);
 
 
@@ -200,6 +197,9 @@ namespace dtEntityEditor
          stats->setKeyEventPrintsOutStats(osgGA::GUIEventAdapter::KEY_Undo);
          (*i)->addEventHandler(stats);
       }
+
+      dtEntity::SetDebugDrawInterface(new dtEntityOSG::OSGDebugDrawInterface(*mEntityManager));
+
       
       ////////////////////
       

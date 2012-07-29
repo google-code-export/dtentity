@@ -21,13 +21,17 @@
 */
 
 #include <dtEntity/inputinterface.h>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <osgGA/GUIEventHandler>
 #include <sstream>
 
 namespace dtEntity
 {
    class MessagePump;
+}
+
+namespace dtEntityOSG
+{
 
    ////////////////////////////////////////////////////////////////////////////////
    // for use with GuiEventAdapter user event
@@ -38,7 +42,7 @@ namespace dtEntity
    };
    
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT OSGInputInterface
+   class DTENTITY_OSG_EXPORT OSGInputInterface
       : public osgGA::GUIEventHandler
       , public dtEntity::InputInterface
    {
@@ -53,8 +57,8 @@ namespace dtEntity
       //virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
       virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*) ;
 
-      virtual void AddInputCallback(InputCallbackInterface*);
-      virtual bool RemoveInputCallback(InputCallbackInterface*);
+      virtual void AddInputCallback(dtEntity::InputCallbackInterface*);
+      virtual bool RemoveInputCallback(dtEntity::InputCallbackInterface*);
 
       /**
        * Stores if current system is multitouch-capable
@@ -73,7 +77,7 @@ namespace dtEntity
       /**
        * Multitouch interface: return touch points
        */
-      virtual std::vector<TouchPoint> GetTouches() const { return mTouches; }
+      virtual std::vector<dtEntity::TouchPoint> GetTouches() const { return mTouches; }
 
       /**
        * Return true if key is pressed, else false
@@ -122,7 +126,7 @@ namespace dtEntity
        * Return axis value from -1 to 1
        * @TODO: Axes are currently hard coded
        */
-      virtual double GetAxis(StringId axisname) const;
+      virtual double GetAxis(dtEntity::StringId axisname) const;
 
       /**
        * Return current mouse wheel state. -1 = down, 1 = up, 0 = no motion
@@ -165,9 +169,9 @@ namespace dtEntity
       bool mMultiTouchEnabled;
       bool mLockCursor;
       size_t mNumTouches;
-      std::vector<TouchPoint> mTouches;
+      std::vector<dtEntity::TouchPoint> mTouches;
 
-      typedef std::vector<InputCallbackInterface*> Callbacks;
+      typedef std::vector<dtEntity::InputCallbackInterface*> Callbacks;
       Callbacks mCallbacks;
       
       // pair of context id, key

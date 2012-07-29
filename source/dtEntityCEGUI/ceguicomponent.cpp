@@ -32,7 +32,7 @@
 #include <osgDB/FileNameUtils>
 #include <osgViewer/GraphicsWindow>
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>  // for base class
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
@@ -186,7 +186,7 @@ namespace dtEntityCEGUI
    ////////////////////////////////////////////////////////////////////////////////
    void CEGUISystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
    {
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
       iface->GetPrimaryView()->addEventHandler(this);
       iface->GetPrimaryWindow()->makeCurrent();
@@ -201,7 +201,7 @@ namespace dtEntityCEGUI
    ////////////////////////////////////////////////////////////////////////////////
    void CEGUISystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
       iface->GetPrimaryView()->removeEventHandler(this);
 
       if (mCamera.valid() && mInternalGraph.valid())

@@ -22,6 +22,7 @@
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/dtentity_config.h>
 
+#include <dtEntityOSG/cameracomponent.h>
 #include <dtEntityOSG/lightcomponent.h>
 #include <dtEntityOSG/pickshapecomponent.h>
 #include <dtEntityOSG/shadercomponent.h>
@@ -36,6 +37,7 @@ namespace dtEntityOSG
 {
    void RegisterStandardFactories(dtEntity::ComponentPluginManager& pluginManager)
    {
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<CameraSystem>("Camera"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LightSystem>("Light"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<OSGAnimationSystem>("OSGAnimation"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));

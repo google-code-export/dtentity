@@ -21,7 +21,6 @@
 #include <dtEntity/soundcomponent.h>
 
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/audiomanager.h>
 #include <dtEntity/sound.h>
 #include <dtEntity/entity.h>

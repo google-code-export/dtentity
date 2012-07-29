@@ -20,23 +20,26 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/message.h>
 #include <dtEntity/messagepump.h>
+#include <dtEntity/property.h>
 #include <dtEntity/windowinterface.h>
 #include <osg/GraphicsContext>
 
 namespace dtEntity
 { 
-
-   ////////////////////////////////////////////////////////////////////////////////
    class EntityManager;
+}
 
-   class DT_ENTITY_EXPORT OSGWindowInterface : public WindowInterface
+namespace dtEntityOSG
+{
+
+   class DTENTITY_OSG_EXPORT OSGWindowInterface : public dtEntity::WindowInterface
    {     
    public:
 
-      OSGWindowInterface(EntityManager& em);
+      OSGWindowInterface(dtEntity::EntityManager& em);
       ~OSGWindowInterface();
 
       /**
@@ -54,17 +57,22 @@ namespace dtEntity
       /**
        * Get pick ray at given screen position
        */
-      Vec3f GetPickRay(const std::string& name, float x, float y, bool usePixels = false);
+      dtEntity::Vec3f GetPickRay(const std::string& name, float x, float y, bool usePixels = false) const;
       
-      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height);
+      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) const;
       virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height);
 
       virtual void SetFullscreen(unsigned int contextid, bool fullscreen);
       virtual bool GetFullscreen(unsigned int contextid) const;
 
+      virtual dtEntity::EntityId PickEntity(double x, double y, unsigned int nodemask, unsigned int contextid) const;
+
       void SetTraits(osg::GraphicsContext::Traits* traits) { mTraits = traits; }
       osg::GraphicsContext::Traits* GetTraits() const { return mTraits; }
 
+      virtual void SetShowCursor(bool);
+
+      virtual dtEntity::Vec3d ConvertWorldToScreenCoords(unsigned int contextid, const dtEntity::Vec3d& coord);
 
    protected:
 
@@ -72,7 +80,7 @@ namespace dtEntity
 
    private:
 
-      EntityManager* mEntityManager;
+      dtEntity::EntityManager* mEntityManager;
 
       struct WindowPos
       {

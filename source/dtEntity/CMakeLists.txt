@@ -46,7 +46,6 @@ configure_file (
 
 SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/applicationcomponent.h
-  ${HEADER_PATH}/cameracomponent.h
   ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/component.h
   ${HEADER_PATH}/componentfactories.h
@@ -82,10 +81,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/nodemasks.h
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
-  ${HEADER_PATH}/osgdebugdrawinterface.h
-  ${HEADER_PATH}/osginputinterface.h
-  ${HEADER_PATH}/osgsysteminterface.h
-  ${HEADER_PATH}/osgwindowinterface.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/profile.h
   ${HEADER_PATH}/property.h
@@ -108,7 +103,6 @@ SET(LIB_PUBLIC_HEADERS
 
 SET(LIB_REPLACE
   applicationcomponent.cpp
-  cameracomponent.cpp
   commandmessages.cpp
   core.cpp
   dynamicscomponent.cpp
@@ -118,17 +112,13 @@ SET(LIB_REPLACE
   layercomponent.cpp
   mapcomponent.cpp
   matrixtransformcomponent.cpp
-  nodecomponent.cpp
-  osgdebugdrawinterface.cpp
-  osginputinterface.cpp
-  osgsysteminterface.cpp
+  nodecomponent.cpp  
   positionattitudetransformcomponent.cpp
   systemmessages.cpp
   transformcomponent.cpp
 )
 
 SET(LIB_SOURCES
-  cameracomponent.cpp
   componentfactories.cpp
   componentpluginmanager.cpp
   dynamicscomponent.cpp
@@ -140,7 +130,6 @@ SET(LIB_SOURCES
   logmanager.cpp
   messagefactory.cpp
   messagepump.cpp
-  osgwindowinterface.cpp
   profile.cpp
   property.cpp
   propertycontainer.cpp

@@ -18,16 +18,16 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/cameracomponent.h>
+#include <dtEntityOSG/cameracomponent.h>
 
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/osginputinterface.h>
+#include <dtEntityOSG/osginputinterface.h>
 #include <dtEntity/systemmessages.h>
 
 #include <osgViewer/View>
@@ -36,80 +36,80 @@
 #include <osgViewer/GraphicsWindow>
 #include <sstream>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId CameraComponent::TYPE(dtEntity::SID("Camera"));
+   const dtEntity::StringId CameraComponent::TYPE(dtEntity::SID("Camera"));
 
-   const StringId CameraComponent::ContextIdId(dtEntity::SID("ContextId"));
-   const StringId CameraComponent::LayerAttachPointId(dtEntity::SID("LayerAttachPoint"));
+   const dtEntity::StringId CameraComponent::ContextIdId(dtEntity::SID("ContextId"));
+   const dtEntity::StringId CameraComponent::LayerAttachPointId(dtEntity::SID("LayerAttachPoint"));
 
-   const StringId CameraComponent::CullingModeId(dtEntity::SID("CullingMode"));
-   const StringId CameraComponent::NoAutoNearFarCullingId(dtEntity::SID("NoAutoNearFarCulling"));
-   const StringId CameraComponent::BoundingVolumeNearFarCullingId(dtEntity::SID("BoundingVolumeNearFarCulling"));
-   const StringId CameraComponent::PrimitiveNearFarCullingId(dtEntity::SID("PrimitiveNearFarCulling"));
-   const StringId CameraComponent::FieldOfViewId(dtEntity::SID("FieldOfView"));
-   const StringId CameraComponent::AspectRatioId(dtEntity::SID("AspectRatio"));
-   const StringId CameraComponent::NearClipId(dtEntity::SID("NearClip"));
-   const StringId CameraComponent::FarClipId(dtEntity::SID("FarClip"));
-   const StringId CameraComponent::ClearColorId(dtEntity::SID("ClearColor"));
-   const StringId CameraComponent::LODScaleId(dtEntity::SID("LODScale"));
-   const StringId CameraComponent::PositionId(dtEntity::SID("Position"));
-   const StringId CameraComponent::UpId(dtEntity::SID("Up"));
-   const StringId CameraComponent::EyeDirectionId(dtEntity::SID("EyeDirection"));
-   const StringId CameraComponent::CullMaskId(dtEntity::SID("CullMask"));
+   const dtEntity::StringId CameraComponent::CullingModeId(dtEntity::SID("CullingMode"));
+   const dtEntity::StringId CameraComponent::NoAutoNearFarCullingId(dtEntity::SID("NoAutoNearFarCulling"));
+   const dtEntity::StringId CameraComponent::BoundingVolumeNearFarCullingId(dtEntity::SID("BoundingVolumeNearFarCulling"));
+   const dtEntity::StringId CameraComponent::PrimitiveNearFarCullingId(dtEntity::SID("PrimitiveNearFarCulling"));
+   const dtEntity::StringId CameraComponent::FieldOfViewId(dtEntity::SID("FieldOfView"));
+   const dtEntity::StringId CameraComponent::AspectRatioId(dtEntity::SID("AspectRatio"));
+   const dtEntity::StringId CameraComponent::NearClipId(dtEntity::SID("NearClip"));
+   const dtEntity::StringId CameraComponent::FarClipId(dtEntity::SID("FarClip"));
+   const dtEntity::StringId CameraComponent::ClearColorId(dtEntity::SID("ClearColor"));
+   const dtEntity::StringId CameraComponent::LODScaleId(dtEntity::SID("LODScale"));
+   const dtEntity::StringId CameraComponent::PositionId(dtEntity::SID("Position"));
+   const dtEntity::StringId CameraComponent::UpId(dtEntity::SID("Up"));
+   const dtEntity::StringId CameraComponent::EyeDirectionId(dtEntity::SID("EyeDirection"));
+   const dtEntity::StringId CameraComponent::CullMaskId(dtEntity::SID("CullMask"));
 
-   const StringId CameraComponent::ProjectionModeId(dtEntity::SID("ProjectionMode"));
-   const StringId CameraComponent::ModePerspectiveId(dtEntity::SID("ModePerspective"));
-   const StringId CameraComponent::ModeOrthoId(dtEntity::SID("ModeOrtho"));
+   const dtEntity::StringId CameraComponent::ProjectionModeId(dtEntity::SID("ProjectionMode"));
+   const dtEntity::StringId CameraComponent::ModePerspectiveId(dtEntity::SID("ModePerspective"));
+   const dtEntity::StringId CameraComponent::ModeOrthoId(dtEntity::SID("ModeOrtho"));
 
-   const StringId CameraComponent::OrthoLeftId(dtEntity::SID("OrthoLeft"));
-   const StringId CameraComponent::OrthoRightId(dtEntity::SID("OrthoRight"));
-   const StringId CameraComponent::OrthoBottomId(dtEntity::SID("OrthoBottom"));
-   const StringId CameraComponent::OrthoTopId(dtEntity::SID("OrthoTop"));
-   const StringId CameraComponent::OrthoZNearId(dtEntity::SID("OrthoZNear"));
-   const StringId CameraComponent::OrthoZFarId(dtEntity::SID("OrthoZFar"));
+   const dtEntity::StringId CameraComponent::OrthoLeftId(dtEntity::SID("OrthoLeft"));
+   const dtEntity::StringId CameraComponent::OrthoRightId(dtEntity::SID("OrthoRight"));
+   const dtEntity::StringId CameraComponent::OrthoBottomId(dtEntity::SID("OrthoBottom"));
+   const dtEntity::StringId CameraComponent::OrthoTopId(dtEntity::SID("OrthoTop"));
+   const dtEntity::StringId CameraComponent::OrthoZNearId(dtEntity::SID("OrthoZNear"));
+   const dtEntity::StringId CameraComponent::OrthoZFarId(dtEntity::SID("OrthoZFar"));
 
    ////////////////////////////////////////////////////////////////////////////
    CameraComponent::CameraComponent()
       : BaseClass(new osg::Camera())
       , mContextId(
-           DynamicIntProperty::SetValueCB(this, &CameraComponent::SetContextId),
-           DynamicIntProperty::GetValueCB(this, &CameraComponent::GetContextId)
+           dtEntity::DynamicIntProperty::SetValueCB(this, &CameraComponent::SetContextId),
+           dtEntity::DynamicIntProperty::GetValueCB(this, &CameraComponent::GetContextId)
         )
       , mContextIdVal(-1)
       , mCullingMode (
-           DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
-           DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
         )
       , mFieldOfView(
-           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFieldOfView),
-           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFieldOfView)
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFieldOfView),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFieldOfView)
         )
       , mAspectRatio(
-           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetAspectRatio),
-           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetAspectRatio)
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetAspectRatio),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetAspectRatio)
         )
       , mNearClip(
-           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetNearClip),
-           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetNearClip)
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetNearClip),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetNearClip)
         )
       , mFarClip (
-           DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFarClip),
-           DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFarClip)
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFarClip),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFarClip)
         )      
       , mClearColor (
-           DynamicVec4Property::SetValueCB(this, &CameraComponent::SetClearColor),
-           DynamicVec4Property::GetValueCB(this, &CameraComponent::GetClearColor)
+           dtEntity::DynamicVec4Property::SetValueCB(this, &CameraComponent::SetClearColor),
+           dtEntity::DynamicVec4Property::GetValueCB(this, &CameraComponent::GetClearColor)
         )
       , mLODScale (
-           DynamicFloatProperty::SetValueCB(this, &CameraComponent::SetLODScale),
-           DynamicFloatProperty::GetValueCB(this, &CameraComponent::GetLODScale)
+           dtEntity::DynamicFloatProperty::SetValueCB(this, &CameraComponent::SetLODScale),
+           dtEntity::DynamicFloatProperty::GetValueCB(this, &CameraComponent::GetLODScale)
         )
       , mCullMask (
-           DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
-           DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
+           dtEntity::DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
+           dtEntity::DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
         )
    {
 
@@ -136,10 +136,10 @@ namespace dtEntity
       Register(OrthoZNearId, &mOrthoZNear);
       Register(OrthoZFarId, &mOrthoZFar);
 
-      mLayerAttachPoint.Set(SID("root"));
+      mLayerAttachPoint.Set(dtEntity::SID("root"));
 
       GetCamera()->setProjectionMatrixAsPerspective(45, 1, 1, 100000);
-      GetCamera()->setCullMask(NodeMasks::VISIBLE);
+      GetCamera()->setCullMask(dtEntity::NodeMasks::VISIBLE);
       mUp.Set(osg::Vec3(0, 0, 1));
       mEyeDirection.Set(osg::Vec3(0, 1, 0));
 
@@ -164,16 +164,16 @@ namespace dtEntity
    }
    
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::OnAddedToEntity(Entity& entity)
+   void CameraComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       BaseClass::OnAddedToEntity(entity);
       TryAssignContext();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::OnRemovedFromEntity(Entity& entity)
+   void CameraComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
    {
-      CameraRemovedMessage msg;
+      dtEntity::CameraRemovedMessage msg;
       msg.SetAboutEntityId(entity.GetId());
       mEntity->GetEntityManager().EmitMessage(msg);
       
@@ -272,7 +272,7 @@ namespace dtEntity
    {
       if(mEntity == NULL || mContextId.Get() == -1) return;
 
-      osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(GetSystemInterface())->GetViewer();
+      osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->GetViewer();
 
       osgViewer::View* view;
             
@@ -331,7 +331,7 @@ namespace dtEntity
 
                viewer->startThreading();
 
-               CameraAddedMessage msg;
+               dtEntity::CameraAddedMessage msg;
                msg.SetAboutEntityId(mEntity->GetId());
                msg.SetContextId(mContextId.Get());
 
@@ -340,25 +340,25 @@ namespace dtEntity
                mEntity->GetEntityManager().EnqueueMessage(msg);
 
                // add input interface as event listener to view
-               OSGInputInterface* wface = static_cast<OSGInputInterface*>(GetInputInterface());
+               OSGInputInterface* wface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
                osgViewer::View::EventHandlers& eh = view->getEventHandlers();
                if(std::find(eh.begin(), eh.end(), wface) ==  eh.end())
                {
                   eh.push_back(wface);
                }
 
-               LayerAttachPointSystem* lsys;
-               mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
-               if(GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
+               dtEntity::LayerAttachPointSystem* lsys;
+               mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, lsys);
+               if(GetLayerAttachPoint() != dtEntity::LayerAttachPointSystem::RootId)
                {
-                  LayerAttachPointComponent* lc;
+                  dtEntity::LayerAttachPointComponent* lc;
                   if(lsys->GetByName(GetLayerAttachPoint(), lc))
                   {
-                     static_cast<OSGSystemInterface*>(GetSystemInterface())->InstallUpdateCallback(lc->GetNode());
+                     static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->InstallUpdateCallback(lc->GetNode());
                   }
                   else
                   {
-                     LOG_ERROR("Cannot install update callback for layer attach point " << GetStringFromSID(GetLayerAttachPoint()));
+                     LOG_ERROR("Cannot install update callback for layer attach point " << dtEntity::GetStringFromSID(GetLayerAttachPoint()));
                   }
                }
 
@@ -399,13 +399,13 @@ namespace dtEntity
         
       }
       
-      LayerAttachPointSystem* layersys;
-      bool success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
+      dtEntity::LayerAttachPointSystem* layersys;
+      bool success = mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
       assert(success);
 
-      LayerAttachPointComponent* lcomp;
+      dtEntity::LayerAttachPointComponent* lcomp;
 
-      if(mLayerAttachPoint.Get() == LayerAttachPointSystem::RootId)
+      if(mLayerAttachPoint.Get() == dtEntity::LayerAttachPointSystem::RootId)
       {
          view->setSceneData(layersys->GetSceneGraphRoot());
       }
@@ -414,7 +414,7 @@ namespace dtEntity
          bool found = layersys->GetByName(mLayerAttachPoint.Get(), lcomp);
          if(!found)
          {
-            LOG_ERROR("Cannot attach scene to camera view, layer attach point not found: " << GetStringFromSID(mLayerAttachPoint.Get()));
+            LOG_ERROR("Cannot attach scene to camera view, layer attach point not found: " << dtEntity::GetStringFromSID(mLayerAttachPoint.Get()));
             return;
          }
          view->setSceneData(lcomp->GetNode());
@@ -437,14 +437,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::SetProjectionMode(StringId v)
+   void CameraComponent::SetProjectionMode(dtEntity::StringId v)
    {
       mProjectionMode.Set(v);
       UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraComponent::SetCullingMode(StringId v)
+   void CameraComponent::SetCullingMode(dtEntity::StringId v)
    {
       mCullingModeVal = v;
       if(v == NoAutoNearFarCullingId)
@@ -461,7 +461,7 @@ namespace dtEntity
       }
       else
       {
-         LOG_ERROR("Unknown culling mode: " + GetStringFromSID(v));
+         LOG_ERROR("Unknown culling mode: " + dtEntity::GetStringFromSID(v));
       }
    }
 
@@ -555,35 +555,35 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId CameraSystem::TYPE(dtEntity::SID("Camera"));
+   const dtEntity::StringId CameraSystem::TYPE(dtEntity::SID("Camera"));
 
    ////////////////////////////////////////////////////////////////////////////
-   CameraSystem::CameraSystem(EntityManager& em)
-      : DefaultEntitySystem<CameraComponent>(em, dtEntity::TransformComponent::TYPE)
+   CameraSystem::CameraSystem(dtEntity::EntityManager& em)
+      : dtEntity::DefaultEntitySystem<CameraComponent>(em, dtEntity::TransformComponent::TYPE)
    {
-      mWindowCreatedFunctor  = MessageFunctor(this, &CameraSystem::OnWindowCreated);
-      em.RegisterForMessages(WindowCreatedMessage::TYPE, mWindowCreatedFunctor, "CameraSystem::OnWindowCreated");
+      mWindowCreatedFunctor  = dtEntity::MessageFunctor(this, &CameraSystem::OnWindowCreated);
+      em.RegisterForMessages(dtEntity::WindowCreatedMessage::TYPE, mWindowCreatedFunctor, "CameraSystem::OnWindowCreated");
    }
 
    ////////////////////////////////////////////////////////////////////////////
    CameraSystem::~CameraSystem()
    {
-      GetEntityManager().UnregisterForMessages(WindowCreatedMessage::TYPE, mWindowCreatedFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::WindowCreatedMessage::TYPE, mWindowCreatedFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void CameraSystem::OnWindowCreated(const Message& m)
+   void CameraSystem::OnWindowCreated(const dtEntity::Message& m)
    {
-      const WindowCreatedMessage& msg = static_cast<const WindowCreatedMessage&>(m);
-      EntityId cameid = GetCameraEntityByContextId(msg.GetContextId());
-      if(cameid != EntityId())
+      const dtEntity::WindowCreatedMessage& msg = static_cast<const dtEntity::WindowCreatedMessage&>(m);
+      dtEntity::EntityId cameid = GetCameraEntityByContextId(msg.GetContextId());
+      if(cameid != dtEntity::EntityId())
       {
          GetComponent(cameid)->TryAssignContext();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   EntityId CameraSystem::GetCameraEntityByContextId(int id)
+   dtEntity::EntityId CameraSystem::GetCameraEntityByContextId(int id)
    {
 
       for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
@@ -593,6 +593,6 @@ namespace dtEntity
             return i->first;
          }
       }
-      return EntityId();
+      return dtEntity::EntityId();
    }
 }

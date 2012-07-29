@@ -20,13 +20,11 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
 #include <dtEntity/property.h>
 
 
 namespace dtEntity
 {
-
 
    /**
     * Can be used to add simple debug geometry to the scene. Each debug graphics primitive is added
@@ -35,7 +33,7 @@ namespace dtEntity
     * execute the draw each frame.
     * Warning: To use, first do SetEnabled(true), it is off by default!
     */
-   class DT_ENTITY_EXPORT DebugDrawInterface
+   class DebugDrawInterface
    {
    public:      
 

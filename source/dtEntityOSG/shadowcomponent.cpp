@@ -21,7 +21,7 @@
 #include <dtEntityOSG/shadowcomponent.h>
 
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityOSG/lightcomponent.h>
 #include <dtEntity/nodemasks.h>

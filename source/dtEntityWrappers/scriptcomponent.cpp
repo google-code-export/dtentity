@@ -22,7 +22,6 @@
 
 
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>

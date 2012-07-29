@@ -26,7 +26,7 @@
 
 #include <dtEntity/entity.h>
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <iostream>
 #include <osgLibRocket/GuiNode>
@@ -209,7 +209,7 @@ namespace dtEntityRocket
      osgLibRocket::GuiNode* gui = dynamic_cast<osgLibRocket::GuiNode*>(GetNode());
      if(gui)
      {
-       dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+       dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
        iface->GetPrimaryView()->removeEventHandler(gui->GetGUIEventHandler());
      }
    }
@@ -235,7 +235,7 @@ namespace dtEntityRocket
      osgLibRocket::GuiNode* gui = new osgLibRocket::GuiNode(mContextName.Get(), mDebug.Get());
      SetNode(gui);
 
-     dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+     dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
      iface->GetPrimaryView()->getEventHandlers().push_front(gui->GetGUIEventHandler());
 
      if(mFullScreen.Get())
