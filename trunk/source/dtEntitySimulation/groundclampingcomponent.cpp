@@ -20,7 +20,6 @@
 
 #include <dtEntitySimulation/groundclampingcomponent.h>
 
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
@@ -148,8 +147,8 @@ namespace dtEntitySimulation
       }
       else
       {
-         dtEntity::CameraSystem* camsys;
-         GetEntityManager().GetEntitySystem(dtEntity::CameraComponent::TYPE, camsys);
+         dtEntityOSG::CameraSystem* camsys;
+         GetEntityManager().GetEntitySystem(dtEntityOSG::CameraComponent::TYPE, camsys);
          if(camsys->GetNumComponents() != 0)
          {
             mCamera = camsys->begin()->second;

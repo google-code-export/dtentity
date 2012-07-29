@@ -21,7 +21,6 @@
 #include <dtEntity/componentfactories.h>
 
 #include <dtEntity/dtentity_config.h>
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/dynamicscomponent.h>

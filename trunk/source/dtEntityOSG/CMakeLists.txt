@@ -9,11 +9,16 @@ INCLUDE_DIRECTORIES(
 SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../include/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS
+  ${HEADER_PATH}/cameracomponent.h
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/initosgviewer.h
   ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/osganimationcomponent.h
+  ${HEADER_PATH}/osgdebugdrawinterface.h
+  ${HEADER_PATH}/osginputinterface.h
+  ${HEADER_PATH}/osgsysteminterface.h
+  ${HEADER_PATH}/osgwindowinterface.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
@@ -30,15 +35,20 @@ SET(LIB_SOURCES
 )
 
 SET(LIB_SOURCES_REPLACE  
+  cameracomponent.cpp
   lightcomponent.cpp
-	pickshapecomponent.cpp
+  osganimationcomponent.cpp
+  osgdebugdrawinterface.cpp
+  osginputinterface.cpp
+  osgsysteminterface.cpp
+  osgwindowinterface.cpp
+  pickshapecomponent.cpp
   shadercomponent.cpp
   shadowcomponent.cpp
   skyboxcomponent.cpp
   staticmeshcomponent.cpp
   textlabelcomponent.cpp
-  texturelabelcomponent.cpp
-  osganimationcomponent.cpp
+  texturelabelcomponent.cpp  
 )
 
 

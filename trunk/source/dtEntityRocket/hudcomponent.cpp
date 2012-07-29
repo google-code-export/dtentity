@@ -21,7 +21,7 @@
 #include "hudcomponent.h"
 #include "rocketcomponent.h"
 #include <dtEntity/core.h>
-#include <dtEntity/osgsysteminterface.h>
+#include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/nodemasks.h>
@@ -328,7 +328,7 @@ namespace dtEntityRocket
          return;
       }
 
-      dtEntity::OSGSystemInterface* iface = static_cast<dtEntity::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
       osg::Camera* cam = iface->GetPrimaryCamera();
       if(cam == NULL)

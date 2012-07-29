@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/osginputinterface.h>
+#include <dtEntityOSG/osginputinterface.h>
 #include <dtEntity/messagepump.h>
 #include <dtEntity/log.h>
 #include <dtEntity/systemmessages.h>
@@ -26,7 +26,7 @@
 #include <osg/Referenced>
 #include <osgViewer/GraphicsWindow>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
 
@@ -275,13 +275,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGInputInterface::AddInputCallback(InputCallbackInterface* cb)
+   void OSGInputInterface::AddInputCallback(dtEntity::InputCallbackInterface* cb)
    {
       mCallbacks.push_back(cb);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool OSGInputInterface::RemoveInputCallback(InputCallbackInterface* cb)
+   bool OSGInputInterface::RemoveInputCallback(dtEntity::InputCallbackInterface* cb)
    {
       for(Callbacks::iterator i = mCallbacks.begin(); i != mCallbacks.end(); ++i)
       {
@@ -356,7 +356,7 @@ namespace dtEntity
          case osgGA::GUIEventAdapter::CLOSE_WINDOW:
          {
             const osg::GraphicsContext* gc = ea.getGraphicsContext();
-            WindowClosedMessage msg;
+            dtEntity::WindowClosedMessage msg;
             msg.SetName(gc->getName());
             mMessagePump->EmitMessage(msg);
          }
@@ -609,14 +609,14 @@ namespace dtEntity
       osgGA::GUIEventAdapter::TouchData* data = ea.getTouchData();
       mNumTouches = 0;
 
-      std::vector<TouchPoint>::size_type numtouches =
-            static_cast<std::vector<TouchPoint>::size_type>(data->getNumTouchPoints());
+      std::vector<dtEntity::TouchPoint>::size_type numtouches =
+            static_cast<std::vector<dtEntity::TouchPoint>::size_type>(data->getNumTouchPoints());
       mTouches.resize(numtouches);
 
-      for(std::vector<TouchPoint>::size_type i = 0; i < numtouches; ++i)
+      for(std::vector<dtEntity::TouchPoint>::size_type i = 0; i < numtouches; ++i)
       {
          osgGA::GUIEventAdapter::TouchData::TouchPoint tp = data->get(i);
-         TouchPoint mypt;
+         dtEntity::TouchPoint mypt;
          mypt.mId = tp.id;
          mypt.mX = tp.x;
          mypt.mY = tp.y;
@@ -625,22 +625,22 @@ namespace dtEntity
          switch(tp.phase)
          {
          case osgGA::GUIEventAdapter::TOUCH_UNKNOWN: 
-            mypt.mTouchPhase = TouchPhase::UNKNOWN; 
+            mypt.mTouchPhase = dtEntity::TouchPhase::UNKNOWN; 
             break;
          case osgGA::GUIEventAdapter::TOUCH_BEGAN: 
-            mypt.mTouchPhase = TouchPhase::BEGAN;
+            mypt.mTouchPhase = dtEntity::TouchPhase::BEGAN;
             ++mNumTouches;
             break;
          case osgGA::GUIEventAdapter::TOUCH_MOVED: 
-            mypt.mTouchPhase = TouchPhase::MOVED; 
+            mypt.mTouchPhase = dtEntity::TouchPhase::MOVED; 
             ++mNumTouches;
             break;
          case osgGA::GUIEventAdapter::TOUCH_STATIONERY: 
-            mypt.mTouchPhase = TouchPhase::STATIONARY; 
+            mypt.mTouchPhase = dtEntity::TouchPhase::STATIONARY; 
             ++mNumTouches;
             break;
          case osgGA::GUIEventAdapter::TOUCH_ENDED: 
-            mypt.mTouchPhase = TouchPhase::ENDED; 
+            mypt.mTouchPhase = dtEntity::TouchPhase::ENDED; 
             break;
          }
          mTouches[i] = mypt;
@@ -725,7 +725,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double OSGInputInterface::GetAxis(StringId axisname) const
+   double OSGInputInterface::GetAxis(dtEntity::StringId axisname) const
    {
       if(axisname == MouseXId)
       {
@@ -759,7 +759,7 @@ namespace dtEntity
       {
          return mMouseDeltaYRaw;
       }
-      LOG_ERROR("Unknown axis:" + GetStringFromSID(axisname));
+      LOG_ERROR("Unknown axis:" + dtEntity::GetStringFromSID(axisname));
       return 0;
    }
 

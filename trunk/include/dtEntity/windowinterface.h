@@ -20,14 +20,12 @@
 * Martin Scheffler
 */
 
-
-#include <dtEntity/export.h>
 #include <dtEntity/property.h>
 
 namespace dtEntity
 { 
    ////////////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT WindowInterface
+   class WindowInterface
    {     
    public:
 
@@ -50,13 +48,19 @@ namespace dtEntity
        * Get pick ray at given screen position
 	   * @param usePixels if true, use x-y screen coordinates, if false use values from -1 to 1
        */
-      virtual Vec3f GetPickRay(const std::string& name, float x, float y, bool usePixels = false) = 0;
+      virtual Vec3f GetPickRay(const std::string& name, float x, float y, bool usePixels = false) const = 0;
 
-      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) = 0;
+      virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) const = 0;
       virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height) = 0;
 
       virtual void SetFullscreen(unsigned int contextid, bool fullscreen) = 0;
       virtual bool GetFullscreen(unsigned int contextid) const = 0;
+
+      virtual EntityId PickEntity(double x, double y, unsigned int nodemask, unsigned int contextid) const = 0;
+
+      virtual void SetShowCursor(bool) = 0;
+      virtual Vec3d ConvertWorldToScreenCoords(unsigned int contextid, const Vec3d& coord) = 0;
+
    };	
 
 }

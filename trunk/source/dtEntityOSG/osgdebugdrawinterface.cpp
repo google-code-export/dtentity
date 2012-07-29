@@ -19,7 +19,7 @@
 */
 
 
-#include <dtEntity/osgdebugdrawinterface.h>
+#include <dtEntityOSG/osgdebugdrawinterface.h>
 
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
@@ -39,19 +39,17 @@
 
 #define ALL_BITS 0xFFFFFFFF
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    class TimedGeode : public osg::Geode
    {
    public:
       float mTimeOfDeath;
-   };
-
- 
+   }; 
 
    ////////////////////////////////////////////////////////////////////////////////
-   OSGDebugDrawInterface::OSGDebugDrawInterface(dtEntity::EntityManager& em, StringId layerName)
+   OSGDebugDrawInterface::OSGDebugDrawInterface(dtEntity::EntityManager& em, dtEntity::StringId layerName)
    : mEnabled(false)
    , mGroupDepthTest(new osg::Group)
    , mGroupNoDepthTest(new osg::Group)
@@ -61,8 +59,8 @@ namespace dtEntity
    , mTickFunctor(this, &OSGDebugDrawInterface::Tick)
    , mLayerName(layerName)
    {
-      mGroupDepthTest->setNodeMask(NodeMasks::VISIBLE);
-      mGroupNoDepthTest->setNodeMask(NodeMasks::VISIBLE);
+      mGroupDepthTest->setNodeMask(dtEntity::NodeMasks::VISIBLE);
+      mGroupNoDepthTest->setNodeMask(dtEntity::NodeMasks::VISIBLE);
 
 	   {
 			osg::ref_ptr<osg::StateSet> ss = mGroupDepthTest->getOrCreateStateSet();
@@ -96,9 +94,9 @@ namespace dtEntity
 			ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 
 	   }
-      LayerAttachPointSystem* ls;
-      em.GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
-      LayerAttachPointComponent* layer;
+      dtEntity::LayerAttachPointSystem* ls;
+      em.GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, ls);
+      dtEntity::LayerAttachPointComponent* layer;
       bool found = ls->GetByName(layerName, layer);
       if(!found)
       {
@@ -110,13 +108,13 @@ namespace dtEntity
 		   layer->GetAttachmentGroup()->addChild(mGroupNoDepthTest);         
       }
 
-      mEntityManager->RegisterForMessages(EnableDebugDrawingMessage::TYPE, mEnableFunctor);
+      mEntityManager->RegisterForMessages(dtEntity::EnableDebugDrawingMessage::TYPE, mEnableFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    OSGDebugDrawInterface::~OSGDebugDrawInterface()
    {
-      mEntityManager->UnregisterForMessages(EnableDebugDrawingMessage::TYPE, mEnableFunctor);
+      mEntityManager->UnregisterForMessages(dtEntity::EnableDebugDrawingMessage::TYPE, mEnableFunctor);
       SetEnabled(false);
       while(mGroupDepthTest->getNumParents() > 0)
       {
@@ -164,15 +162,15 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::OnEnable(const Message& m)
+   void OSGDebugDrawInterface::OnEnable(const dtEntity::Message& m)
    {
-      SetEnabled(m.GetBool(EnableDebugDrawingMessage::EnableId));
+      SetEnabled(m.GetBool(dtEntity::EnableDebugDrawingMessage::EnableId));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::Tick(const Message& m)
+   void OSGDebugDrawInterface::Tick(const dtEntity::Message& m)
    {
-      const PostFrameMessage& msg = static_cast<const PostFrameMessage&>(m);
+      const dtEntity::PostFrameMessage& msg = static_cast<const dtEntity::PostFrameMessage&>(m);
       float dt = msg.GetDeltaRealTime();
 
       mCurrentTime += dt;
@@ -205,7 +203,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddPoint(const Vec3f& position, const Vec4f& color, int size,
+   void OSGDebugDrawInterface::AddPoint(const dtEntity::Vec3f& position, const dtEntity::Vec4f& color, int size,
       float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -238,8 +236,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddPoints(const std::vector<osg::Vec3f>& positions,
-      const Vec4f& color, int size, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddPoints(const std::vector<dtEntity::Vec3f>& positions,
+      const dtEntity::Vec4f& color, int size, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -267,8 +265,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddLine(const Vec3f& start, const Vec3f& end,
-      const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddLine(const dtEntity::Vec3f& start, const dtEntity::Vec3f& end,
+      const dtEntity::Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -297,8 +295,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddLines(const std::vector<Vec3f>& lines,
-      const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddLines(const std::vector<dtEntity::Vec3f>& lines,
+      const dtEntity::Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled || lines.empty())
          return;
@@ -329,7 +327,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddCross(const Vec3f& position, const Vec4f& color,
+   void OSGDebugDrawInterface::AddCross(const dtEntity::Vec3f& position, const dtEntity::Vec4f& color,
       float size, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
@@ -362,8 +360,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddSphere(const Vec3f& position, float radius,
-      const Vec4f& color, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddSphere(const dtEntity::Vec3f& position, float radius,
+      const dtEntity::Vec4f& color, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -384,8 +382,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddMesh(osg::Geometry* mesh, const Vec3f& position, 
-      const Vec4f& lineColor, int lineWidth, const Vec4f& faceColor, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddMesh(osg::Geometry* mesh, const dtEntity::Vec3f& position, 
+      const dtEntity::Vec4f& lineColor, int lineWidth,
+      const dtEntity::Vec4f& faceColor, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -514,7 +513,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddDrawable(osg::Drawable* drawable, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddDrawable(osg::Drawable* drawable, float duration, 
+      bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -535,8 +535,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddTriangle(const Vec3f& vert0, const Vec3f& vert1, 
-      const Vec3f& vert2, const Vec4f& color, int linewidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddTriangle(const dtEntity::Vec3f& vert0, const dtEntity::Vec3f& vert1, 
+      const dtEntity::Vec3f& vert2, const dtEntity::Vec4f& color, int linewidth, 
+      float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -566,8 +567,8 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddTriangles(const std::vector<Vec3f>& tris, const Vec4f& color,
-      int lineWidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddTriangles(const std::vector<dtEntity::Vec3f>& tris, 
+      const dtEntity::Vec4f& color, int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -597,7 +598,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddCircle(const Vec3f& position, const Vec3f& planeNormal, float radius, const Vec4f& color, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddCircle(const dtEntity::Vec3f& position, 
+      const dtEntity::Vec3f& planeNormal, float radius, const dtEntity::Vec4f& color,
+      float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -630,7 +633,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddString(const Vec3f& position, const std::string& str, const Vec4f& color, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddString(const dtEntity::Vec3f& position,
+      const std::string& str, const dtEntity::Vec4f& color, float duration, 
+      bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -653,7 +658,9 @@ namespace dtEntity
    }      
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddAABB(const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddAABB(const dtEntity::Vec3f& minCoords, 
+      const dtEntity::Vec3f& maxCoords, const dtEntity::Vec4f& color,
+      int lineWidth, float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -687,7 +694,9 @@ namespace dtEntity
    }      
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddOBB(const Matrix& m, const Vec3f& minCoords, const Vec3f& maxCoords, const Vec4f& color, int lineWidth, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddOBB(const dtEntity::Matrix& m, const dtEntity::Vec3f& minCoords, 
+      const dtEntity::Vec3f& maxCoords, const dtEntity::Vec4f& color, int lineWidth, 
+      float duration, bool depthTestEnabled)
    {
       if(!mEnabled)
          return;
@@ -730,7 +739,8 @@ namespace dtEntity
    }
       
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGDebugDrawInterface::AddAxes(const Matrix& m, const Vec4f& color, float size, float duration, bool depthTestEnabled)
+   void OSGDebugDrawInterface::AddAxes(const dtEntity::Matrix& m, const dtEntity::Vec4f& color, 
+      float size, float duration, bool depthTestEnabled)
    {
       float arroww = 0.1f;
       osg::Vec3 p0(0, 0, 0);

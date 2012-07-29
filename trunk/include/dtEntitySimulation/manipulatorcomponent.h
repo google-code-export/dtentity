@@ -85,7 +85,7 @@ namespace dtEntitySimulation
       osg::Vec3d GetOffsetFromStart() const { return mOffsetFromStartVal; }
 
       void SetUseLocalCoords(bool v);
-      bool GetUseLocalCoords() const { return mUseLocalCoords.Get(); }
+      bool GetUseLocalCoords() const { return mUseLocalCoordsVal; }
 
       void SetKeepSizeConstant(bool v);
       bool GetKeepSizeConstant() const { return mKeepSizeConstantVal; }

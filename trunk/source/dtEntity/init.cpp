@@ -21,7 +21,6 @@
 #include <dtEntity/init.h>
 
 #include <dtEntity/applicationcomponent.h>
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/componentfactories.h>
 #include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/layercomponent.h>
@@ -171,8 +170,6 @@ namespace dtEntity
       // this is a required component system, so add it immediately
       MapSystem* mapSystem = new MapSystem(em);
       em.AddEntitySystem(*mapSystem);
-
-      em.AddEntitySystem(*new CameraSystem(em));
       em.AddEntitySystem(*new LayerSystem(em));
       em.AddEntitySystem(*new GroupSystem(em));
       em.AddEntitySystem(*new TransformSystem(em));

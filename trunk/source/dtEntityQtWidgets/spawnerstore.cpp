@@ -19,7 +19,6 @@
 */
 
 #include <dtEntityQtWidgets/spawnerstore.h>
-#include <dtEntity/cameracomponent.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
@@ -406,9 +405,9 @@ namespace dtEntityQtWidgets
       dtEntity::WindowInterface* iface = dtEntity::GetWindowInterface();
       osg::Vec3 pickray = iface->GetPickRay("defaultView", pos.x(), pos.y());
       
-      dtEntity::CameraComponent* cam;
-      mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), cam);
-      osg::Vec3 start = cam->GetPosition();
+      dtEntity::Component* cam;
+      mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), dtEntity::SID("Camera"), cam);
+      osg::Vec3d start = cam->GetVec3d(dtEntity::SID("Position"));
      
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi = new osgUtil::LineSegmentIntersector(start, start + pickray * 100000);
 
@@ -445,10 +444,11 @@ namespace dtEntityQtWidgets
          mc->SetMapName(targetMap.toStdString());
       }
 
-      dtEntity::TransformComponent* tcomp;
-      if(mEntityManager->GetComponent(entity->GetId(), tcomp, true))
+      dtEntity::Component* tcomp;
+      if(mEntityManager->GetComponent(entity->GetId(), dtEntity::SID("Transform"), tcomp, true) &&
+         tcomp->Has(dtEntity::SID("Position")))
       {
-         tcomp->SetTranslation(spawnPosition);
+         tcomp->SetVec3d(dtEntity::SID("Position"), spawnPosition);
       }
 
       {

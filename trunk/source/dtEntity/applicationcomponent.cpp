@@ -32,9 +32,6 @@
 #include <dtEntity/systemmessages.h>
 #include <assert.h>
 #include <sstream>
-#include <osg/NodeCallback>
-#include <osg/NodeVisitor>
-#include <osgViewer/View>
 #include <iostream>
 
 namespace dtEntity

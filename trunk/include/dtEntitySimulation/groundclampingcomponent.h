@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/cameracomponent.h>
+#include <dtEntityOSG/cameracomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
@@ -179,7 +179,7 @@ namespace dtEntitySimulation
       dtEntity::BoolProperty mFetchLODs;
 
       osgSim::LineOfSight mLos;
-      dtEntity::CameraComponent* mCamera;
+      dtEntityOSG::CameraComponent* mCamera;
 
    };
 }
