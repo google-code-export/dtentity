@@ -26,6 +26,7 @@
 #include <dtEntity/init.h>
 
 #include <dtEntity/componentpluginmanager.h>
+#include <dtEntityOSG/cameracomponent.h>
 #include <dtEntityOSG/osgdebugdrawinterface.h>
 #include <dtEntityOSG/osginputinterface.h>
 #include <dtEntityOSG/osgsysteminterface.h>
@@ -137,6 +138,7 @@ namespace dtEntityOSG
 
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerAttachPointSystem::TYPE);
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerSystem::TYPE);
+      dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, CameraSystem::TYPE);
 
       // create an entity holding the scene graph root as an attach point
       LayerAttachPointSystem* layerattachsys;
