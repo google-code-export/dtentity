@@ -25,13 +25,13 @@
 #include <osgDB/FileUtils>
 #include <dtEntity/core.h>
 #include <dtEntity/component.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systeminterface.h>
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
       bool success = spawner->Spawn(*spawned);
       assert(success);
       // set a start position
-      dtEntity::PositionAttitudeTransformComponent* trans;
+      dtEntityOSG::PositionAttitudeTransformComponent* trans;
       success = em.GetComponent(spawned->GetId(), trans);
       assert(success);
       trans->SetPosition(osg::Vec3(i * 3, 0.0f, 0.5f));
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
       viewer.advance(DBL_MAX);
       viewer.eventTraversal();
       iface->EmitTickMessagesAndQueuedMessages();
-      dtEntity::PositionAttitudeTransformComponent* pos;
+      dtEntityOSG::PositionAttitudeTransformComponent* pos;
       dtEntity::DynamicsComponent* dyn;
 
       for(unsigned int i = 0; i < entityids.size(); ++i)

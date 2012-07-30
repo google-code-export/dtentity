@@ -21,14 +21,14 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/Node>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ///////////////////////////////////////////////////////////////////////////
@@ -37,21 +37,21 @@ namespace dtEntity
     * derived from osg::Node. NodeComponent instances can be attached to
     * the scene by the Layer system.
     */
-   class DT_ENTITY_EXPORT NodeComponent : public Component
+   class DTENTITY_OSG_EXPORT NodeComponent : public dtEntity::Component
    {
 
    public:
       
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
       
       NodeComponent();
       NodeComponent(osg::Node* node);
       virtual ~NodeComponent();
 
-      virtual ComponentType GetType() const { return TYPE; }
+      virtual dtEntity::ComponentType GetType() const { return TYPE; }
 
-      virtual void OnAddedToEntity(Entity& entity);
-      virtual void OnRemovedFromEntity(Entity& entity);
+      virtual void OnAddedToEntity(dtEntity::Entity& entity);
+      virtual void OnRemovedFromEntity(dtEntity::Entity& entity);
 
       /**
        * returns encapsulated node
@@ -69,32 +69,32 @@ namespace dtEntity
        * type of compponent that this node component is attached to.
        * Is 0 if not attached to a parent
        */
-      ComponentType GetParentComponent() const { return mParentComponent; }
-      void SetParentComponent(ComponentType c) { mParentComponent = c; }
+      dtEntity::ComponentType GetParentComponent() const { return mParentComponent; }
+      void SetParentComponent(dtEntity::ComponentType c) { mParentComponent = c; }
 
       void SetNodeMask(unsigned int nodemask, bool recursive = false);
       unsigned int GetNodeMask() const;
 
    protected:
 
-      Entity* mEntity;
+      dtEntity::Entity* mEntity;
 
    private:
 
       osg::ref_ptr<osg::Node> mNode;
-      ComponentType mParentComponent;
+      dtEntity::ComponentType mParentComponent;
       
    };
 
   
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT NodeSystem
-      : public DefaultEntitySystem<NodeComponent>
+   class DTENTITY_OSG_EXPORT NodeSystem
+      : public dtEntity::DefaultEntitySystem<NodeComponent>
    {
    public:
-      NodeSystem(EntityManager& em)
-         : DefaultEntitySystem<NodeComponent>(em)
+      NodeSystem(dtEntity::EntityManager& em)
+         : dtEntity::DefaultEntitySystem<NodeComponent>(em)
       {
 
       }

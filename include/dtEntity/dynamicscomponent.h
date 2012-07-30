@@ -50,21 +50,21 @@ namespace dtEntity
 
       void OnAddedToEntity(Entity &entity) { mEntity = &entity; }
 
-      osg::Vec3 GetVelocity() const { return mVelocityVal; }
-      void SetVelocity(const osg::Vec3& v);
+      Vec3f GetVelocity() const { return mVelocityVal; }
+      void SetVelocity(const Vec3f& v);
 
-      const osg::Quat& GetAngularVelocity() const { return mAngularVelocity.GetAsQuat(); }
-      void SetAngularVelocity(const osg::Quat& v) { mAngularVelocity.Set(v); }
+      const Quat& GetAngularVelocity() const { return mAngularVelocity.GetAsQuat(); }
+      void SetAngularVelocity(const Quat& v) { mAngularVelocity.Set(v); }
 
-      const osg::Vec3& GetAcceleration() const { return mAcceleration.GetAsVec3(); }
-      void SetAcceleration(const osg::Vec3& v) { mAcceleration.Set(v); }
+      const Vec3f& GetAcceleration() const { return mAcceleration.GetAsVec3(); }
+      void SetAcceleration(const Vec3f& v) { mAcceleration.Set(v); }
 
    protected:
       Entity* mEntity;
      
       // path to loaded script file
       DynamicVec3Property mVelocity;
-      osg::Vec3 mVelocityVal;
+      Vec3f mVelocityVal;
       QuatProperty mAngularVelocity;
       Vec3Property mAcceleration;
       bool mIsMoving;

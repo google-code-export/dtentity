@@ -24,15 +24,15 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/scriptaccessor.h>
 
 namespace dtEntitySimulation
 {
 
-   class PathComponent : public dtEntity::NodeComponent
+   class PathComponent : public dtEntityOSG::NodeComponent
    {
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef dtEntityOSG::NodeComponent BaseClass;
 
    public:
       

@@ -37,7 +37,7 @@ namespace dtEntity
          dtEntity::DynamicVec3Property::SetValueCB(this, &DynamicsComponent::SetVelocity),
          dtEntity::DynamicVec3Property::GetValueCB(this, &DynamicsComponent::GetVelocity)
       )
-      , mAngularVelocity(osg::Quat(0,0,0,1))
+      , mAngularVelocity(Quat(0,0,0,1))
       , mIsMoving(false)
    {
       Register(VelocityId, &mVelocity);
@@ -51,7 +51,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void DynamicsComponent::SetVelocity(const osg::Vec3& v)
+   void DynamicsComponent::SetVelocity(const Vec3f& v)
    {
       mVelocityVal = v;
       float delta = 0.0001f;

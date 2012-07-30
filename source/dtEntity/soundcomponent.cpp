@@ -27,7 +27,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/transformcomponent.h>
 #include <osg/Camera>
 #include <assert.h>
 #include <iostream>
@@ -55,8 +54,6 @@ namespace dtEntity
       Register(PitchId, &mPitch);
       Register(RollOffId, &mRollOff);
       Register(LoopingId, &mLooping);
-
-      GetNode()->setName("SoundComponent");
 
       mGain.Set(1.0f);
       mPitch.Set(1.0f);
@@ -103,16 +100,32 @@ namespace dtEntity
       }
 
       // retrieve current PAT and set it to OpenAL
-      dtEntity::TransformComponent* comp;
-	  if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), comp, true))
+      static const dtEntity::StringId patsid = dtEntity::SID("PositionAttitudeTransform");
+      static const dtEntity::StringId matrixsid = dtEntity::SID("MatrixTransform");
+      static const dtEntity::StringId possid = dtEntity::SID("Position");
+      static const dtEntity::StringId matsid = dtEntity::SID("Matrix");
+      dtEntity::Component* comp;
+      if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), patsid, comp, true))
       {
-        osg::Vec3 currPos = comp->GetTranslation();
-        osg::Vec3 oldPos = mCurrentSound->GetPosition();
-        osg::Vec3 velocity = (currPos - oldPos) * (1 / dt);
+        Vec3d currPos = comp->GetVec3d(possid);
+        Vec3f oldPos = mCurrentSound->GetPosition();
+        Vec3f velocity = (currPos - oldPos) * (1 / dt);
         mCurrentSound->SetVelocity(velocity);
         mCurrentSound->SetPosition(currPos);
         // TODO - need to set orientation as well...
          
+      }
+      else if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), matrixsid, comp, true))
+      {
+        Matrix mat = comp->GetMatrix(matsid);
+
+        Vec3d currPos = mat.getTrans();
+        Vec3f oldPos = mCurrentSound->GetPosition();
+        Vec3f velocity = (currPos - oldPos) * (1 / dt);
+        mCurrentSound->SetVelocity(velocity);
+        mCurrentSound->SetPosition(currPos);
+        // TODO - need to set orientation as well...
+
       }
       // also flush all sound commands
       mCurrentSound->RunAllCommandsInQueue();
@@ -181,7 +194,7 @@ namespace dtEntity
            DynamicUIntProperty::GetValueCB(this, &SoundSystem::GetListenerEntity)
         )
      , mListenerEntityTrans(0)
-     , mListenerEntityVal(NULL)
+     , mListenerEntityVal(0)
    {
       Register(ListenerGainId, &mListenerGain);
       Register(ListenerEntityId, &mListenerEntity);

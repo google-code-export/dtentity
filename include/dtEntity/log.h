@@ -23,8 +23,6 @@
 #include <dtEntity/logmanager.h>
 #include <sstream>
 
-#include <osg/Notify>
-
 #define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
 
 #define LOG_DEBUG(msg)\

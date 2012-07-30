@@ -26,7 +26,7 @@
 #include <dtEntity/entityid.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 
 
 namespace osg
@@ -38,10 +38,10 @@ namespace osg
 namespace dtEntityOSG
 {      
   
-   class DTENTITY_OSG_EXPORT LightComponent : public dtEntity::NodeComponent
+   class DTENTITY_OSG_EXPORT LightComponent : public NodeComponent
    {
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
    public:
       

@@ -180,7 +180,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////
    StaticMeshSystem::StaticMeshSystem(dtEntity::EntityManager& em)
-      : DefaultEntitySystem<StaticMeshComponent>(em, dtEntity::NodeComponent::TYPE)
+      : dtEntity::DefaultEntitySystem<StaticMeshComponent>(em, NodeComponent::TYPE)
    {
       mResourceChangedFunctor = dtEntity::MessageFunctor(this, &StaticMeshSystem::OnResourceChanged);
       em.RegisterForMessages(dtEntity::ResourceChangedMessage::TYPE, mResourceChangedFunctor, "StaticMeshSystem::OnResourceChanged");

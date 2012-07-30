@@ -18,14 +18,14 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <osg/LineWidth>
 #include <osg/PolygonMode>
@@ -37,35 +37,35 @@
 #include <sstream>
 #include <osg/ComputeBoundsVisitor>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
 
-   const StringId LayerComponent::TYPE(dtEntity::SID("Layer"));
-   const StringId LayerComponent::LayerId(dtEntity::SID("Layer"));
-   const StringId LayerComponent::AttachedComponentId(dtEntity::SID("AttachedComponent"));
-   const StringId LayerComponent::VisibleId(dtEntity::SID("Visible"));   
+   const dtEntity::StringId LayerComponent::TYPE(dtEntity::SID("Layer"));
+   const dtEntity::StringId LayerComponent::LayerId(dtEntity::SID("Layer"));
+   const dtEntity::StringId LayerComponent::AttachedComponentId(dtEntity::SID("AttachedComponent"));
+   const dtEntity::StringId LayerComponent::VisibleId(dtEntity::SID("Visible"));
    
    ////////////////////////////////////////////////////////////////////////////
    LayerComponent::LayerComponent()
       : mEntity(NULL)
       , mVisible(
-           DynamicBoolProperty::SetValueCB(this, &LayerComponent::SetVisible),
-           DynamicBoolProperty::GetValueCB(this, &LayerComponent::IsVisible)
+           dtEntity::DynamicBoolProperty::SetValueCB(this, &LayerComponent::SetVisible),
+           dtEntity::DynamicBoolProperty::GetValueCB(this, &LayerComponent::IsVisible)
         )
       , mVisibleVal(true)
       , mLayer(
-           DynamicStringIdProperty::SetValueCB(this, &LayerComponent::SetLayer),
-           DynamicStringIdProperty::GetValueCB(this, &LayerComponent::GetLayer)
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &LayerComponent::SetLayer),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &LayerComponent::GetLayer)
         )
       , mLayerVal(dtEntity::SIDHash("default"))
       , mAttachedComponent(
-           DynamicStringIdProperty::SetValueCB(this, &LayerComponent::SetAttachedComponent),
-           DynamicStringIdProperty::GetValueCB(this, &LayerComponent::GetAttachedComponent)
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &LayerComponent::SetAttachedComponent),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &LayerComponent::GetAttachedComponent)
         )
-      , mAttachedComponentVal(StringId())
+      , mAttachedComponentVal(dtEntity::StringId())
       , mAddedToScene(false)
    {
       Register(LayerId, &mLayer);
@@ -80,19 +80,19 @@ namespace dtEntity
    }
  
    ////////////////////////////////////////////////////////////////////////////
-   void LayerComponent::OnAddedToEntity(Entity &entity)
+   void LayerComponent::OnAddedToEntity(dtEntity::Entity &entity)
    {
       mEntity = &entity;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   StringId LayerComponent::GetLayer() const
+   dtEntity::StringId LayerComponent::GetLayer() const
    {
       return mLayerVal;;
    }
    
    ////////////////////////////////////////////////////////////////////////////
-   void LayerComponent::SetLayer(StringId layername)
+   void LayerComponent::SetLayer(dtEntity::StringId layername)
    {
       if(mLayerVal == layername)
       {
@@ -109,7 +109,7 @@ namespace dtEntity
          mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layerattsystem);
                
          LayerAttachPointComponent* current;
-         if(mLayerVal != StringId() && layerattsystem->GetByName(mLayerVal, current))
+         if(mLayerVal != dtEntity::StringId() && layerattsystem->GetByName(mLayerVal, current))
          {
             current->GetGroup()->removeChild(attachedNode);           
          }
@@ -125,9 +125,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerComponent::SetAttachedComponent(ComponentType handle)
+   void LayerComponent::SetAttachedComponent(dtEntity::ComponentType handle)
    {
-      if(mLayerVal == StringId()) 
+      if(mLayerVal == dtEntity::StringId())
       {
          mAttachedComponentVal = handle;
          return;
@@ -145,12 +145,12 @@ namespace dtEntity
       if(!layerattsystem->GetByName(mLayerVal, current))
       {
          LOG_WARNING(os << "Cannot detach node from scene graph. Attach point is "
-          << GetStringFromSID(mLayerVal));
+          << dtEntity::GetStringFromSID(mLayerVal));
          return;
       }
 
       // remove old attachment
-      if(mAddedToScene && mLayerVal != StringId())
+      if(mAddedToScene && mLayerVal != dtEntity::StringId())
       {
          // remove old attachment
          osg::Node* attachedNode = GetAttachedComponentNode();
@@ -179,7 +179,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   ComponentType LayerComponent::GetAttachedComponent() const
+   dtEntity::ComponentType LayerComponent::GetAttachedComponent() const
    {
       return mAttachedComponentVal;
    }
@@ -188,13 +188,13 @@ namespace dtEntity
    osg::Node* LayerComponent::GetAttachedComponentNode() const
    {
       assert(mEntity != NULL);
-      if(mAttachedComponentVal == StringId()) return NULL;
+      if(mAttachedComponentVal == dtEntity::StringId()) return NULL;
       Component* ac;
-      bool found = mEntity->GetComponent(static_cast<ComponentType>(mAttachedComponentVal), ac);
+      bool found = mEntity->GetComponent(static_cast<dtEntity::ComponentType>(mAttachedComponentVal), ac);
       if(!found)
       {
          LOG_DEBUG("LayerComponent: Attached component does not exist: " 
-            + GetStringFromSID(mAttachedComponentVal));
+            + dtEntity::GetStringFromSID(mAttachedComponentVal));
          return NULL;
       }
       NodeComponent* nc = dynamic_cast<NodeComponent*>(ac);
@@ -203,7 +203,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool LayerComponent::GetBoundingBox(osg::Vec3d& min, osg::Vec3d& max)
+   bool LayerComponent::GetBoundingBox(dtEntity::Vec3d& min, dtEntity::Vec3d& max)
    {
       osg::Node* att = GetAttachedComponentNode();
       if(att == NULL)
@@ -240,7 +240,7 @@ namespace dtEntity
          GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~dtEntity::NodeMasks::VISIBLE);
       }
 
-      VisibilityChangedMessage msg;
+      dtEntity::VisibilityChangedMessage msg;
       msg.SetAboutEntityId(mEntity->GetId());
       msg.SetVisible(visible);
       mEntity->GetEntityManager().EmitMessage(msg);
@@ -253,14 +253,14 @@ namespace dtEntity
       mAddedToScene = true;
 
       LayerAttachPointComponent* current = NULL;
-      if(mLayerVal != StringId() && mEntity != NULL)
+      if(mLayerVal != dtEntity::StringId() && mEntity != NULL)
       {
          LayerAttachPointSystem* ls;
          mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
          ls->GetByName(mLayerVal, current);
       }
 
-      if(current != NULL && mAttachedComponent.Get() != StringId())
+      if(current != NULL && mAttachedComponent.Get() != dtEntity::StringId())
       {  
          osg::Node* attachedNode = GetAttachedComponentNode();
 #ifdef _DEBUG
@@ -268,14 +268,14 @@ namespace dtEntity
          {
 
             LOG_WARNING("LayerSystem: Cannot attach entity, node to attach is not selected!"
-             << " ComponentType: " << GetStringFromSID(mAttachedComponentVal));
+             << " ComponentType: " << dtEntity::GetStringFromSID(mAttachedComponentVal));
          }
          if(attachedNode != NULL && (attachedNode->getUserData() == NULL ||
-             dynamic_cast<Entity*>(attachedNode->getUserData()) == NULL))
+             dynamic_cast<dtEntity::Entity*>(attachedNode->getUserData()) == NULL))
          {
 
             LOG_ERROR("Attaching node with no user data to scene graph!"
-             << " ComponentType: " << GetStringFromSID(mAttachedComponentVal));
+             << " ComponentType: " << dtEntity::GetStringFromSID(mAttachedComponentVal));
          }
 #endif
 
@@ -284,7 +284,7 @@ namespace dtEntity
             bool success = current->GetAttachmentGroup()->addChild(attachedNode);
             assert(success);
             Component* ac;
-            if(mEntity->GetComponent(static_cast<ComponentType>(mAttachedComponent.Get()), ac))
+            if(mEntity->GetComponent(static_cast<dtEntity::ComponentType>(mAttachedComponent.Get()), ac))
             {
                static_cast<NodeComponent*>(ac)->SetParentComponent(LayerComponent::TYPE);
             }
@@ -298,7 +298,7 @@ namespace dtEntity
    {
       if(!mAddedToScene) return;
 
-      if(mLayerVal != StringId() && mAttachedComponentVal != StringId())
+      if(mLayerVal != dtEntity::StringId() && mAttachedComponentVal != dtEntity::StringId())
       {
          osg::Node* attachedNode = GetAttachedComponentNode();
          LayerAttachPointSystem* ls;
@@ -389,42 +389,36 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId LayerSystem::TYPE(dtEntity::SID("Layer"));
-
+   const dtEntity::StringId LayerSystem::TYPE(dtEntity::SID("Layer"));
 
    ////////////////////////////////////////////////////////////////////////////
-   LayerSystem::LayerSystem(EntityManager& em)
-      : DefaultEntitySystem<LayerComponent>(em)
+   LayerSystem::LayerSystem(dtEntity::EntityManager& em)
+      : dtEntity::DefaultEntitySystem<LayerComponent>(em)
    {
-      mEnterWorldFunctor = MessageFunctor(this, &LayerSystem::OnEnterWorld);
-      em.RegisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor,"LayerSystem::OnEnterWorld");
+      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &LayerSystem::OnEnterWorld);
+      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor,"LayerSystem::OnEnterWorld");
 
-      mLeaveWorldFunctor = MessageFunctor(this, &LayerSystem::OnLeaveWorld);
-      em.RegisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "LayerSystem::OnLeaveWorld");
+      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &LayerSystem::OnLeaveWorld);
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "LayerSystem::OnLeaveWorld");
 
-      AddScriptedMethod("addVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
-      AddScriptedMethod("removeVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
-      AddScriptedMethod("removeAllBoundingBoxes", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveAllBoundingBoxes));
-      AddScriptedMethod("getBoundingSphere", ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
+      AddScriptedMethod("addVisibleBoundingBox", dtEntity::ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
+      AddScriptedMethod("removeVisibleBoundingBox", dtEntity::ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
+      AddScriptedMethod("removeAllBoundingBoxes", dtEntity::ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveAllBoundingBoxes));
+      AddScriptedMethod("getBoundingSphere", dtEntity::ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
    }
 
    ////////////////////////////////////////////////////////////////////////////
    LayerSystem::~LayerSystem()
    {
-      GetEntityManager().UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
+      GetEntityManager().UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
 
-      GetEntityManager().UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
-
-      AddScriptedMethod("addVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptAddVisibleBoundingBox));
-      AddScriptedMethod("removeVisibleBoundingBox", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveVisibleBoundingBox));
-      AddScriptedMethod("removeAllBoundingBoxes", ScriptMethodFunctor(this, &LayerSystem::ScriptRemoveAllBoundingBoxes));
-      AddScriptedMethod("getBoundingSphere", ScriptMethodFunctor(this, &LayerSystem::ScriptGetBoundingSphere));
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerSystem::OnEnterWorld(const Message& m)
+   void LayerSystem::OnEnterWorld(const dtEntity::Message& m)
    {
-      const EntityAddedToSceneMessage& msg = static_cast<const EntityAddedToSceneMessage&>(m);
+      const dtEntity::EntityAddedToSceneMessage& msg = static_cast<const dtEntity::EntityAddedToSceneMessage&>(m);
 
       ComponentStore::iterator i = mComponents.find(msg.GetAboutEntityId());
       if(i != mComponents.end())
@@ -434,9 +428,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerSystem::OnLeaveWorld(const Message& m)
+   void LayerSystem::OnLeaveWorld(const dtEntity::Message& m)
    {
-      const EntityRemovedFromSceneMessage& msg = static_cast<const EntityRemovedFromSceneMessage&>(m);
+      const dtEntity::EntityRemovedFromSceneMessage& msg = static_cast<const dtEntity::EntityRemovedFromSceneMessage&>(m);
 
       ComponentStore::iterator i = mComponents.find(msg.GetAboutEntityId());
       if(i != mComponents.end())
@@ -568,7 +562,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void LayerSystem::RemoveVisibleBoundingBox(dtEntity::EntityId id)
    {
-      dtEntity::TransformComponent* tcomp;
+      TransformComponent* tcomp;
       if(!GetEntityManager().GetComponent(id, tcomp, true))
       {
          return;
@@ -592,8 +586,8 @@ namespace dtEntity
       }
 
 
-      dtEntity::LayerAttachPointSystem* ls;
-      GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, ls);
+      LayerAttachPointSystem* ls;
+      GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
       grp = ls->GetDefaultLayer()->GetNode()->asGroup();
 
       for(unsigned int i = 0; i < grp->getNumChildren(); ++i)
@@ -617,14 +611,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Property* LayerSystem::ScriptGetBoundingSphere(const PropertyArgs& args)
+   dtEntity::Property* LayerSystem::ScriptGetBoundingSphere(const dtEntity::PropertyArgs& args)
    {
       if(args.size() < 1)
       {
          LOG_ERROR("Usage: getBoundingSphere(entityid)");
          return NULL;
       }
-      EntityId id = args[0]->UIntValue();
+      dtEntity::EntityId id = args[0]->UIntValue();
       LayerComponent* lc = GetComponent(id);
       if(lc == NULL)
       {
@@ -634,11 +628,11 @@ namespace dtEntity
       bool success = lc->GetBoundingBox(min, max);
       if(!success)
       {
-         return new Vec4dProperty(osg::Vec4d());
+         return new dtEntity::Vec4dProperty(osg::Vec4d());
       }
       osg::Vec3d center = (min + max) * 0.5;
       double radius = (max - min).length();
-      return new Vec4dProperty(center[0], center[1], center[2], radius);
+      return new dtEntity::Vec4dProperty(center[0], center[1], center[2], radius);
 
    }
 }

@@ -21,7 +21,7 @@
 #pragma once
 
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <Rocket/Core/Variant.h>
 #include <v8.h>
@@ -44,9 +44,9 @@ namespace dtEntityRocket
 
    Rocket::Core::String ToRocketString(const v8::Handle<v8::Value>&);
    
-   class RocketComponent : public dtEntity::NodeComponent
+   class RocketComponent : public dtEntityOSG::NodeComponent
    {
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef dtEntityOSG::NodeComponent BaseClass;
 
    public:
       

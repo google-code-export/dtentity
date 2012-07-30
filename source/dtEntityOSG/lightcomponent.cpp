@@ -42,7 +42,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////
    LightComponent::LightComponent()
-      : dtEntity::NodeComponent(new osg::LightSource())
+      : NodeComponent(new osg::LightSource())
    {      
       using namespace dtEntity;
 

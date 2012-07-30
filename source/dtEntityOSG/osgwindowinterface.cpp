@@ -24,7 +24,7 @@
 #include <dtEntityOSG/cameracomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/systemmessages.h>
@@ -396,9 +396,9 @@ namespace dtEntityOSG
       iv.setUseKdTreeWhenAvailable(true);
       iv.setTraversalMask(nodemask); 
 
-      dtEntity::LayerAttachPointSystem* laps;
-      mEntityManager->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, laps);
-      dtEntity::LayerAttachPointComponent* sceneLayer = laps->GetDefaultLayer();
+      LayerAttachPointSystem* laps;
+      mEntityManager->GetEntitySystem(LayerAttachPointComponent::TYPE, laps);
+      LayerAttachPointComponent* sceneLayer = laps->GetDefaultLayer();
       sceneLayer->GetGroup()->accept(iv);
 
       if(!lsi->containsIntersections())

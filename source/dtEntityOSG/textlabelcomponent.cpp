@@ -59,7 +59,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////
    TextLabelComponent::TextLabelComponent()
-      : dtEntity::NodeComponent(new osg::Geode())      
+      : NodeComponent(new osg::Geode())
       , mTexts(
            dtEntity::DynamicArrayProperty::SetValueCB(this, &TextLabelComponent::SetTexts),
            dtEntity::DynamicArrayProperty::GetValueCB(this, &TextLabelComponent::GetTexts)

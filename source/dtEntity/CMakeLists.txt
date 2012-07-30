@@ -63,25 +63,18 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/entitysystem.h
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/FastDelegate.h
-  ${HEADER_PATH}/FastDelegateBind.h
-  ${HEADER_PATH}/groupcomponent.h
+  ${HEADER_PATH}/FastDelegateBind.h  
   ${HEADER_PATH}/init.h
   ${HEADER_PATH}/inputinterface.h
-  ${HEADER_PATH}/layerattachpointcomponent.h
-  ${HEADER_PATH}/layercomponent.h
   ${HEADER_PATH}/log.h
   ${HEADER_PATH}/logmanager.h
   ${HEADER_PATH}/mapcomponent.h
   ${HEADER_PATH}/mapencoder.h
-  ${HEADER_PATH}/matrixtransformcomponent.h
   ${HEADER_PATH}/message.h
   ${HEADER_PATH}/messagefactory.h
   ${HEADER_PATH}/messagepump.h
-  ${HEADER_PATH}/nodecomponent.h
   ${HEADER_PATH}/nodemasks.h
-  ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/objectfactory.h
-  ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/profile.h
   ${HEADER_PATH}/property.h
   ${HEADER_PATH}/propertycontainer.h
@@ -94,34 +87,26 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/systeminterface.h
   ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/threadsafequeue.h
-  ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/uniqueid.h
   ${HEADER_PATH}/windowinterface.h
   ${DTENTITY_CONFIG_HEADER}
 
 )
 
+
 SET(LIB_REPLACE
   applicationcomponent.cpp
   commandmessages.cpp
   core.cpp
   dynamicscomponent.cpp
-  groupcomponent.cpp
   inputinterface.cpp
-  layerattachpointcomponent.cpp
-  layercomponent.cpp
   mapcomponent.cpp
-  matrixtransformcomponent.cpp
-  nodecomponent.cpp  
-  positionattitudetransformcomponent.cpp
   systemmessages.cpp
-  transformcomponent.cpp
 )
 
 SET(LIB_SOURCES
   componentfactories.cpp
-  componentpluginmanager.cpp
-  dynamicscomponent.cpp
+  componentpluginmanager.cpp  
   entity.cpp
   entitymanager.cpp
   hash.cpp

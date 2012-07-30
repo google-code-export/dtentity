@@ -26,7 +26,7 @@
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/messagepump.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntityNet/deadreckoning.h>
 #include <dtEntityNet/export.h>
 
@@ -78,7 +78,7 @@ namespace dtEntityNet
    private:
       dtEntity::DynamicStringProperty mDeadReckoningAlgorithm;
       DeadReckoningAlgorithm::e mDeadReck;
-      dtEntity::TransformComponent* mTransformComponent;
+      dtEntityOSG::TransformComponent* mTransformComponent;
       dtEntity::DynamicsComponent* mDynamicsComponent;
       double mTimeLastSend;
       osg::Vec3d mLastPosition;

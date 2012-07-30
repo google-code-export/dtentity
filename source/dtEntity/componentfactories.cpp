@@ -24,16 +24,12 @@
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/dynamicscomponent.h>
-#include <dtEntity/layercomponent.h>
-#include <dtEntity/layerattachpointcomponent.h>
+
 
 #if BUILD_OPENAL
   #include <dtEntity/soundcomponent.h>
 #endif
 
-#if BUILD_CAL3D
-  #include <dtEntity/animationcomponent.h>
-#endif
 
 namespace dtEntity
 {
@@ -41,10 +37,6 @@ namespace dtEntity
    void RegisterStandardFactories(ComponentPluginManager& pluginManager)
    {
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<DynamicsSystem>("Dynamics"));
-
-#if BUILD_CAL3D
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<AnimationSystem>("Animation"));
-#endif
 
 #if BUILD_OPENAL
       pluginManager.AddFactory(new ComponentPluginFactoryImpl<SoundSystem>("Sound"));

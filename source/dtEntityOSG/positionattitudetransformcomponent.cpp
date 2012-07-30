@@ -18,33 +18,33 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <osg/PositionAttitudeTransform>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId PositionAttitudeTransformComponent::TYPE(dtEntity::SID("PositionAttitudeTransform"));
-   const StringId PositionAttitudeTransformComponent::PositionId(dtEntity::SID("Position"));
-   const StringId PositionAttitudeTransformComponent::AttitudeId(dtEntity::SID("Attitude"));
-   const StringId PositionAttitudeTransformComponent::ScaleId(dtEntity::SID("Scale"));
+   const dtEntity::StringId PositionAttitudeTransformComponent::TYPE(dtEntity::SID("PositionAttitudeTransform"));
+   const dtEntity::StringId PositionAttitudeTransformComponent::PositionId(dtEntity::SID("Position"));
+   const dtEntity::StringId PositionAttitudeTransformComponent::AttitudeId(dtEntity::SID("Attitude"));
+   const dtEntity::StringId PositionAttitudeTransformComponent::ScaleId(dtEntity::SID("Scale"));
    
    ////////////////////////////////////////////////////////////////////////////
    PositionAttitudeTransformComponent::PositionAttitudeTransformComponent()
       : BaseClass(new osg::PositionAttitudeTransform())
       , mPosition(
-           DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetPosition),
-           DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetPosition)
+           dtEntity::DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetPosition),
+           dtEntity::DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetPosition)
         )
       , mScale(
-           DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetScale),
-           DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetScale)
+           dtEntity::DynamicVec3dProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetScale),
+           dtEntity::DynamicVec3dProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetScale)
         )
       , mAttitude(
-           DynamicQuatProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetAttitude),
-           DynamicQuatProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetAttitude)
+           dtEntity::DynamicQuatProperty::SetValueCB(this, &PositionAttitudeTransformComponent::SetAttitude),
+           dtEntity::DynamicQuatProperty::GetValueCB(this, &PositionAttitudeTransformComponent::GetAttitude)
         )
    {
       Register(PositionId, &mPosition);
@@ -61,7 +61,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Matrix PositionAttitudeTransformComponent::GetMatrix() const
+   dtEntity::Matrix PositionAttitudeTransformComponent::GetMatrix() const
    {
       osg::Matrix t;
       t.makeTranslate(GetTranslation());
@@ -72,7 +72,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetMatrix(const osg::Matrix& mat)
+   void PositionAttitudeTransformComponent::SetMatrix(const dtEntity::Matrix& mat)
    {
       osg::Vec3d trans, scale;
       osg::Quat rot, so;
@@ -96,37 +96,37 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d PositionAttitudeTransformComponent::GetPosition() const
+   dtEntity::Vec3d PositionAttitudeTransformComponent::GetPosition() const
    {
       return GetPositionAttitudeTransform()->getPosition();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetPosition(const osg::Vec3d& p)
+   void PositionAttitudeTransformComponent::SetPosition(const dtEntity::Vec3d& p)
    {
       GetPositionAttitudeTransform()->setPosition(p);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Quat PositionAttitudeTransformComponent::GetAttitude() const
+   dtEntity::Quat PositionAttitudeTransformComponent::GetAttitude() const
    {
       return GetPositionAttitudeTransform()->getAttitude();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetAttitude(const osg::Quat& p)
+   void PositionAttitudeTransformComponent::SetAttitude(const dtEntity::Quat& p)
    {
       GetPositionAttitudeTransform()->setAttitude(p);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d PositionAttitudeTransformComponent::GetScale() const
+   dtEntity::Vec3d PositionAttitudeTransformComponent::GetScale() const
    {
       return GetPositionAttitudeTransform()->getScale();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void PositionAttitudeTransformComponent::SetScale(const osg::Vec3d& s)
+   void PositionAttitudeTransformComponent::SetScale(const dtEntity::Vec3d& s)
    {
       GetPositionAttitudeTransform()->setScale(s);
    }

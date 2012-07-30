@@ -18,22 +18,22 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/matrixtransformcomponent.h>
+#include <dtEntityOSG/matrixtransformcomponent.h>
 #include <osg/MatrixTransform>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId MatrixTransformComponent::TYPE(dtEntity::SID("MatrixTransform"));
-   const StringId MatrixTransformComponent::MatrixId(dtEntity::SID("Matrix"));
+   const dtEntity::StringId MatrixTransformComponent::TYPE(dtEntity::SID("MatrixTransform"));
+   const dtEntity::StringId MatrixTransformComponent::MatrixId(dtEntity::SID("Matrix"));
    
    ////////////////////////////////////////////////////////////////////////////
    MatrixTransformComponent::MatrixTransformComponent()
       : BaseClass(new osg::MatrixTransform())
       , mMatrix(
-           DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
-           DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
+           dtEntity::DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
+           dtEntity::DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
         )
    {
       Register(MatrixId, &mMatrix);
@@ -44,8 +44,8 @@ namespace dtEntity
    MatrixTransformComponent::MatrixTransformComponent(osg::MatrixTransform* trans)
       : BaseClass(trans)
       , mMatrix(
-           DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
-           DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
+           dtEntity::DynamicMatrixProperty::SetValueCB(this, &MatrixTransformComponent::SetMatrix),
+           dtEntity::DynamicMatrixProperty::GetValueCB(this, &MatrixTransformComponent::GetMatrix)
         )
    {
       Register(MatrixId, &mMatrix);
@@ -70,13 +70,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Matrix MatrixTransformComponent::GetMatrix() const
+   dtEntity::Matrix MatrixTransformComponent::GetMatrix() const
    {
       return GetMatrixTransform()->getMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void MatrixTransformComponent::SetMatrix(const osg::Matrix& m)
+   void MatrixTransformComponent::SetMatrix(const dtEntity::Matrix& m)
    {
       GetMatrixTransform()->setMatrix(m);
    }

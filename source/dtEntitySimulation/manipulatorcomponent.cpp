@@ -22,9 +22,9 @@
 
 #include <dtEntitySimulation/manipulators.h>
 #include <osg/MatrixTransform>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <osgManipulator/TabBoxDragger>
 #include <osgManipulator/TabBoxTrackballDragger>
 #include <osgManipulator/TabPlaneDragger>
@@ -45,7 +45,7 @@ namespace dtEntitySimulation
    {
    public:
 
-      DraggerCallback(dtEntity::TransformComponent* tc)
+      DraggerCallback(dtEntityOSG::TransformComponent* tc)
          : mTransform(tc)
       {
       }
@@ -99,7 +99,7 @@ namespace dtEntitySimulation
       }
 
    private:
-      dtEntity::TransformComponent* mTransform;
+      dtEntityOSG::TransformComponent* mTransform;
 
       osg::Matrix _startMotionMatrix;
       osg::Matrix _localToWorld;
@@ -112,7 +112,7 @@ namespace dtEntitySimulation
    class DraggerContainer : public osg::Group
    {
    public:
-       DraggerContainer(osgManipulator::Dragger* dragger, dtEntity::TransformComponent* transform)
+       DraggerContainer(osgManipulator::Dragger* dragger, dtEntityOSG::TransformComponent* transform)
           : _dragger(dragger)
           , mTransform(transform)
           , _draggerSize(140.0f)
@@ -206,7 +206,7 @@ namespace dtEntitySimulation
 
    protected:
        osg::ref_ptr<osgManipulator::Dragger> _dragger;
-       dtEntity::TransformComponent* mTransform;
+       dtEntityOSG::TransformComponent* mTransform;
        float _draggerSize;
        bool _keepSizeConstant;
        bool _useLocalCoords;
@@ -341,10 +341,10 @@ namespace dtEntitySimulation
       }
       assert(mEntity != NULL);
 
-      dtEntity::LayerAttachPointSystem* layerattsystem;
-      mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layerattsystem);
+      dtEntityOSG::LayerAttachPointSystem* layerattsystem;
+      mEntity->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
 
-      dtEntity::LayerAttachPointComponent* current;
+      dtEntityOSG::LayerAttachPointComponent* current;
       if(layerattsystem->GetByName(mAttachPoint, current))
       {
          current->GetGroup()->removeChild(mDraggerContainer);
@@ -360,13 +360,13 @@ namespace dtEntitySimulation
 
       assert(mAttachPoint == dtEntity::StringId());
 
-      dtEntity::LayerAttachPointSystem* layerattsystem;
-      mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layerattsystem);
+      dtEntityOSG::LayerAttachPointSystem* layerattsystem;
+      mEntity->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
 
-      dtEntity::LayerAttachPointComponent* next;
+      dtEntityOSG::LayerAttachPointComponent* next;
       if(layerattsystem->GetByName(mLayerProperty.Get(), next))
       {
-         dtEntity::TransformComponent* tcomp;
+         dtEntityOSG::TransformComponent* tcomp;
          if(mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true))
          {
 
@@ -509,7 +509,7 @@ namespace dtEntitySimulation
          dragger->removeDraggerCallback(mDraggerCallback);
       }
 
-      dtEntity::TransformComponent* tcomp;
+      dtEntityOSG::TransformComponent* tcomp;
       if(mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true))
       {
          mDraggerCallback = new DraggerCallback(tcomp);

@@ -20,11 +20,11 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
@@ -33,7 +33,7 @@ namespace osg
    class MatrixTransform;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
 
@@ -41,22 +41,22 @@ namespace dtEntity
    /**
     * holds a single matrix transform
     */
-   class DT_ENTITY_EXPORT MatrixTransformComponent 
+   class DTENTITY_OSG_EXPORT MatrixTransformComponent
       : public TransformComponent
    {
       typedef TransformComponent BaseClass;
 
    public:
 
-      static const ComponentType TYPE;
-      static const StringId MatrixId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId MatrixId;
       
       MatrixTransformComponent();
       MatrixTransformComponent(osg::MatrixTransform* trans);
      
       virtual ~MatrixTransformComponent();
 
-      virtual ComponentType GetType() const { 
+      virtual dtEntity::ComponentType GetType() const {
          return TYPE; 
       }
 
@@ -64,62 +64,62 @@ namespace dtEntity
       const osg::MatrixTransform* GetMatrixTransform() const;
       osg::MatrixTransform* GetMatrixTransform();
 
-      virtual osg::Matrix GetMatrix() const;
-      virtual void SetMatrix(const osg::Matrix& m);
+      virtual dtEntity::Matrix GetMatrix() const;
+      virtual void SetMatrix(const dtEntity::Matrix& m);
       
-      virtual osg::Vec3d GetTranslation() const
+      virtual dtEntity::Vec3d GetTranslation() const
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          return m.getTrans();
       }
 
-      virtual void SetTranslation(const osg::Vec3d& t)
+      virtual void SetTranslation(const dtEntity::Vec3d& t)
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          m.setTrans(t);
          SetMatrix(m);
       }
 
-      virtual osg::Quat GetRotation() const
+      virtual dtEntity::Quat GetRotation() const
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          return m.getRotate();
       }
 
-      virtual void SetRotation(const osg::Quat& q)
+      virtual void SetRotation(const dtEntity::Quat& q)
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          m.setRotate(q);
          SetMatrix(m);
       }
 
-      virtual osg::Vec3d GetScale() const
+      virtual dtEntity::Vec3d GetScale() const
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          return m.getScale();
       }
 
-      virtual void SetScale(const osg::Vec3d& v)
+      virtual void SetScale(const dtEntity::Vec3d& v)
       {
-         osg::Matrix m = GetMatrix();
+         dtEntity::Matrix m = GetMatrix();
          m = m.scale(v);
          SetMatrix(m);
       }
 
    private:
 
-      DynamicMatrixProperty mMatrix;
+      dtEntity::DynamicMatrixProperty mMatrix;
    };
 
    
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT MatrixTransformSystem
-      : public DefaultEntitySystem<MatrixTransformComponent>
+   class DTENTITY_OSG_EXPORT MatrixTransformSystem
+      : public dtEntity::DefaultEntitySystem<MatrixTransformComponent>
    {
    public:
-      MatrixTransformSystem(EntityManager& em)
-         : DefaultEntitySystem<MatrixTransformComponent>(em, TransformComponent::TYPE)
+      MatrixTransformSystem(dtEntity::EntityManager& em)
+         : dtEntity::DefaultEntitySystem<MatrixTransformComponent>(em, TransformComponent::TYPE)
       {
 
       }

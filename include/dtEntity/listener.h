@@ -24,7 +24,7 @@
 #include <dtEntity/export.h>
 
 #include <osg/Referenced>
-#include <osg/Vec3>
+#include <dtEntity/property.h>
 
 namespace dtEntity
 {
@@ -65,22 +65,22 @@ namespace dtEntity
       public:
 
          /// Set listener position 
-         void SetPosition(const osg::Vec3& position);
+         void SetPosition(const Vec3f& position);
          /// Set listener orientation
          /**
          *  Requires an "at" vector (listening direction) and an "up" vector
             (defining the UP dir)
          */
-         void SetOrientation(const osg::Vec3& atVec, const osg::Vec3& upVec);
+         void SetOrientation(const Vec3f& atVec, const Vec3f& upVec);
          /// Set listener velocity
-         void SetVelocity(const osg::Vec3f& velocity);
+         void SetVelocity(const Vec3f& velocity);
 
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
-         void GetVelocity(osg::Vec3f& velocity) const;
+         void GetVelocity(Vec3f& velocity) const;
 
          /**
           * Sets the master volume of the listener.
@@ -102,10 +102,10 @@ namespace dtEntity
 
    protected:
 
-      osg::Vec3               mPosition;
-      osg::Vec3               mDirection;
-      osg::Vec3               mUpVector;
-      osg::Vec3               mVelocity;      
+      Vec3f               mPosition;
+      Vec3f               mDirection;
+      Vec3f               mUpVector;
+      Vec3f               mVelocity;
 
    };
 } // namespace dtEntity

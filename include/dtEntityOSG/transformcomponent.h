@@ -21,56 +21,56 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
-#include <dtEntity/groupcomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ///////////////////////////////////////////////////////////////////////////
    /**
     * abstract base class for transform components
     */
-   class DT_ENTITY_EXPORT TransformComponent
+   class DTENTITY_OSG_EXPORT TransformComponent
       : public GroupComponent
    {
       typedef GroupComponent BaseClass;
 
    public:
 
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
 
       TransformComponent(osg::Transform* trans);
 
       virtual ~TransformComponent();
 
-      virtual ComponentType GetType() const {
+      virtual dtEntity::ComponentType GetType() const {
          return TYPE;
       }
 
 
-      virtual Vec3d GetTranslation() const = 0;
-      virtual void SetTranslation(const Vec3d&) = 0;
+      virtual dtEntity::Vec3d GetTranslation() const = 0;
+      virtual void SetTranslation(const dtEntity::Vec3d&) = 0;
 
-      virtual Vec3d GetScale() const { return Vec3d(1,1,1); }
-      virtual void SetScale(const Vec3d&) {}
+      virtual dtEntity::Vec3d GetScale() const { return dtEntity::Vec3d(1,1,1); }
+      virtual void SetScale(const dtEntity::Vec3d&) {}
 
-      virtual Quat GetRotation() const = 0;
-      virtual void SetRotation(const Quat&) = 0;
+      virtual dtEntity::Quat GetRotation() const = 0;
+      virtual void SetRotation(const dtEntity::Quat&) = 0;
 
-      virtual Matrix GetMatrix() const
+      virtual dtEntity::Matrix GetMatrix() const
       {
-         Matrix matrix;
+         dtEntity::Matrix matrix;
          matrix.setTrans(GetTranslation());
          matrix.setRotate(GetRotation());
          return matrix;
       }
 
-      virtual void SetMatrix(const Matrix& mat)
+      virtual void SetMatrix(const dtEntity::Matrix& mat)
       {
          SetTranslation(mat.getTrans());
          SetRotation(mat.getRotate());
@@ -82,16 +82,16 @@ namespace dtEntity
    };
 
    ///////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT TransformSystem
-      : public EntitySystem
+   class DTENTITY_OSG_EXPORT TransformSystem
+      : public dtEntity::EntitySystem
    {
    public:
-      TransformSystem(EntityManager& em)
-         : EntitySystem(em)
+      TransformSystem(dtEntity::EntityManager& em)
+         : dtEntity::EntitySystem(em)
       {
       }
 
-      ComponentType GetComponentType() const { return TransformComponent::TYPE; }
+      dtEntity::ComponentType GetComponentType() const { return TransformComponent::TYPE; }
    };
 
 }

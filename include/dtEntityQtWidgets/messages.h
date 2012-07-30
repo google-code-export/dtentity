@@ -163,8 +163,8 @@ namespace dtEntityQtWidgets
       void SetAboutEntityId(dtEntity::EntityId id) { mAboutEntity.Set(id); }
       dtEntity::EntityId GetAboutEntityId() const { return mAboutEntity.Get(); }
 
-      void SetPosition(const osg::Vec3& p) { mPosition.Set(p); }
-      osg::Vec3 GetPosition() const { return mPosition.Get(); }
+      void SetPosition(const dtEntity::Vec3f& p) { mPosition.Set(p); }
+      dtEntity::Vec3f GetPosition() const { return mPosition.Get(); }
 
    private:
 

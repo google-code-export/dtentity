@@ -24,7 +24,7 @@
 #include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 #include <osg/ShapeDrawable>
@@ -38,11 +38,11 @@ namespace dtEntityOSG
     * Adds a pickable shape to the transform of the entity
     */
    class DTENTITY_OSG_EXPORT PickShapeComponent
-      : public dtEntity::NodeComponent
+      : public NodeComponent
    {
    public:
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
       static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId MinBoundsId;

@@ -23,11 +23,11 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/scriptaccessor.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 { 
 
    class LayerAttachPointComponent;
@@ -37,23 +37,23 @@ namespace dtEntity
     * Each visible entity has to have a layer component. The layer component
     * defines which node component of the entity is attached to which layer.
     */
-   class DT_ENTITY_EXPORT LayerComponent 
-      : public Component
+   class DTENTITY_OSG_EXPORT LayerComponent
+      : public dtEntity::Component
    {
    
       friend class LayerSystem;
 
    public:
 
-      static const ComponentType TYPE;
-      static const StringId LayerId;
-      static const StringId AttachedComponentId;
-      static const StringId VisibleId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId LayerId;
+      static const dtEntity::StringId AttachedComponentId;
+      static const dtEntity::StringId VisibleId;
       
       LayerComponent();
       virtual ~LayerComponent();
 
-      virtual ComponentType GetType() const
+      virtual dtEntity::ComponentType GetType() const
       {
          return TYPE; 
       }
@@ -63,10 +63,10 @@ namespace dtEntity
        * to the layer. A component with this type has to be present on
        * the entity and it has to derive from NodeComponent.
        */
-      void SetAttachedComponent(ComponentType ctype);
-      ComponentType GetAttachedComponent() const;
+      void SetAttachedComponent(dtEntity::ComponentType ctype);
+      dtEntity::ComponentType GetAttachedComponent() const;
 
-      virtual void OnAddedToEntity(Entity &entity);
+      virtual void OnAddedToEntity(dtEntity::Entity &entity);
       
       void OnAddedToScene();
       void OnRemovedFromScene();
@@ -74,8 +74,8 @@ namespace dtEntity
       /**
        * Attach the entity to the layer with this name. Default value is DefaultLayerId
        */
-      StringId GetLayer() const;
-      void SetLayer(StringId);
+      dtEntity::StringId GetLayer() const;
+      void SetLayer(dtEntity::StringId);
 
       /**
        * Is the AttachedComponent currently attached to the layer node?
@@ -101,17 +101,17 @@ namespace dtEntity
       /**
        * @return bool if geometry is attached to layer component
        */
-      bool GetBoundingBox(osg::Vec3d& min, osg::Vec3d& max);
+      bool GetBoundingBox(dtEntity::Vec3d& min, dtEntity::Vec3d& max);
 
    private:
 
-      Entity* mEntity;
-      DynamicBoolProperty mVisible;
+      dtEntity::Entity* mEntity;
+      dtEntity::DynamicBoolProperty mVisible;
       bool mVisibleVal;
-      DynamicStringIdProperty mLayer;
-      StringId mLayerVal;
-      DynamicStringIdProperty mAttachedComponent;
-      StringId mAttachedComponentVal;
+      dtEntity::DynamicStringIdProperty mLayer;
+      dtEntity::StringId mLayerVal;
+      dtEntity::DynamicStringIdProperty mAttachedComponent;
+      dtEntity::StringId mAttachedComponentVal;
       bool mAddedToScene;
 
    };
@@ -119,19 +119,19 @@ namespace dtEntity
    
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_EXPORT LayerSystem
-      : public DefaultEntitySystem<LayerComponent>
-      , public ScriptAccessor
+   class DTENTITY_OSG_EXPORT LayerSystem
+      : public dtEntity::DefaultEntitySystem<LayerComponent>
+      , public dtEntity::ScriptAccessor
    {
    public:
       
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
 
-      LayerSystem(EntityManager& em);
+      LayerSystem(dtEntity::EntityManager& em);
       ~LayerSystem();
 
-      void OnEnterWorld(const Message&);
-      void OnLeaveWorld(const Message&);
+      void OnEnterWorld(const dtEntity::Message&);
+      void OnLeaveWorld(const dtEntity::Message&);
 
       void AddVisibleBoundingBox(dtEntity::EntityId id);
       void RemoveVisibleBoundingBox(dtEntity::EntityId id);
@@ -139,28 +139,28 @@ namespace dtEntity
 
    private:
 
-      Property* ScriptAddVisibleBoundingBox(const PropertyArgs& args)
+      dtEntity::Property* ScriptAddVisibleBoundingBox(const dtEntity::PropertyArgs& args)
       {
          AddVisibleBoundingBox(args[0]->UIntValue());
          return NULL;
       }
 
-      Property* ScriptRemoveVisibleBoundingBox(const PropertyArgs& args)
+      dtEntity::Property* ScriptRemoveVisibleBoundingBox(const dtEntity::PropertyArgs& args)
       {
          RemoveVisibleBoundingBox(args[0]->UIntValue());
          return NULL;
       }
 
-      Property* ScriptRemoveAllBoundingBoxes(const PropertyArgs& args)
+      dtEntity::Property* ScriptRemoveAllBoundingBoxes(const dtEntity::PropertyArgs& args)
       {
          RemoveAllBoundingBoxes();
          return NULL;
       }
 
-      Property* ScriptGetBoundingSphere(const PropertyArgs& args);
+      dtEntity::Property* ScriptGetBoundingSphere(const dtEntity::PropertyArgs& args);
 
-      MessageFunctor mEnterWorldFunctor;
-      MessageFunctor mLeaveWorldFunctor;
+      dtEntity::MessageFunctor mEnterWorldFunctor;
+      dtEntity::MessageFunctor mLeaveWorldFunctor;
       
    };
 }

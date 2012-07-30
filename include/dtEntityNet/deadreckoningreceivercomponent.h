@@ -32,8 +32,12 @@
 namespace dtEntity
 {
    class MapSystem;
-   class TransformComponent;
    class DynamicsComponent;
+}
+
+namespace dtEntityOSG
+{
+   class TransformComponent;
 }
 
 namespace dtEntityNet
@@ -61,13 +65,13 @@ namespace dtEntityNet
       }
 
    private:
-      dtEntity::TransformComponent* mTransformComponent;
+      dtEntityOSG::TransformComponent* mTransformComponent;
       dtEntity::DynamicsComponent* mDynamicsComponent;
       double mTimeLastReceive;
-      osg::Vec3d mPosition;
-      osg::Vec3 mOrientation;
-      osg::Vec3 mVelocity;
-      osg::Vec3 mAngularVelocity;
+      dtEntity::Vec3d mPosition;
+      dtEntity::Vec3f mOrientation;
+      dtEntity::Vec3f mVelocity;
+      dtEntity::Vec3f mAngularVelocity;
       std::string mEntityType;
       dtEntity::StringProperty mUniqueId;
       DeadReckoningAlgorithm::e mDeadRecAlg;

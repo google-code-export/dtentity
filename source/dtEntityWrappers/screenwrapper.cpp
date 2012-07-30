@@ -23,7 +23,6 @@
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
-#include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/windowinterface.h>
@@ -199,10 +198,14 @@ namespace dtEntityWrappers
    Handle<Value> SCROpenWindow(const Arguments& args)
    {
      // std::string name = ToStdString(args[0]);
-      dtEntity::StringId layername = dtEntity::LayerAttachPointSystem::DefaultLayerId;
+      dtEntity::StringId layername;
       if(args.Length() > 1)
       {
          layername = dtEntity::SIDHash(ToStdString(args[1]));
+      }
+      else
+      {
+         layername = dtEntity::SID("default");
       }
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();

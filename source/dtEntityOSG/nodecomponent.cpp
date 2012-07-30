@@ -18,25 +18,25 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/nodecomponent.h>
-#include <dtEntity/groupcomponent.h>
-#include <dtEntity/layercomponent.h>
-#include <dtEntity/nodemaskvisitor.h>
+#include <dtEntityOSG/nodecomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
+#include <dtEntityOSG/layercomponent.h>
+#include <dtEntityOSG/nodemaskvisitor.h>
 #include <osg/NodeVisitor>
 #include <osg/Group>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId NodeComponent::TYPE(dtEntity::SID("Node"));   
+   const dtEntity::StringId NodeComponent::TYPE(dtEntity::SID("Node"));
    
    ////////////////////////////////////////////////////////////////////////////
    NodeComponent::NodeComponent()
       : mEntity(NULL)
       , mNode(new osg::Node())
-      , mParentComponent(StringId())
+      , mParentComponent(dtEntity::StringId())
    {
       GetNode()->setName("NodeComponent");
    }
@@ -45,7 +45,7 @@ namespace dtEntity
    NodeComponent::NodeComponent(osg::Node* node)
       : mEntity(NULL)
       , mNode(node)
-      , mParentComponent(StringId())
+      , mParentComponent(dtEntity::StringId())
    {
    }
     
@@ -55,7 +55,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::OnAddedToEntity(Entity& entity)
+   void NodeComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       mEntity = &entity;
 
@@ -64,14 +64,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::OnRemovedFromEntity(Entity& entity)
+   void NodeComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
    {
-      if(GetParentComponent() != StringId())
+      if(GetParentComponent() != dtEntity::StringId())
       {
          dtEntity::Component* comp;
          if(entity.GetComponent(GetParentComponent(), comp))
          {
-            dtEntity::GroupComponent* grp = dynamic_cast<GroupComponent*>(comp);
+            GroupComponent* grp = dynamic_cast<GroupComponent*>(comp);
             if(grp)
             {
                grp->GetAttachmentGroup()->removeChild(GetNode());
@@ -92,14 +92,14 @@ namespace dtEntity
    {
       GroupComponent* parent = NULL;
       // remove from parent
-      if(mNode.valid() && mEntity != NULL && GetParentComponent() != StringId())
+      if(mNode.valid() && mEntity != NULL && GetParentComponent() != dtEntity::StringId())
       {
          Component* comp;
          if(mEntity->GetComponent(GetParentComponent(), comp))
          {
             if(GetParentComponent() == LayerComponent::TYPE)
             {
-               static_cast<LayerComponent*>(comp)->SetAttachedComponent(StringId());
+               static_cast<LayerComponent*>(comp)->SetAttachedComponent(dtEntity::StringId());
             }
             else
             {
@@ -133,7 +133,7 @@ namespace dtEntity
    {
       if(recursive)
       {
-         dtEntity::NodeMaskVisitor nv(nodemask);
+         NodeMaskVisitor nv(nodemask);
          GetNode()->accept(nv);
       }
       else

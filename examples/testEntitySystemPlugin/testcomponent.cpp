@@ -3,10 +3,10 @@
 #include <dtEntity/core.h>
 #include <dtEntity/debugdrawinterface.h>
 #include <dtEntity/entity.h>
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <sstream>
 
 
@@ -144,7 +144,7 @@ void TestSystem::Tick(const dtEntity::Message& msg)
         Get access to a component of type PositionAttitudeTransform on the same entity.
         If it does not exist then ignore component
       */
-      dtEntity::PositionAttitudeTransformComponent* pcomp;
+      dtEntityOSG::PositionAttitudeTransformComponent* pcomp;
       if(GetEntityManager().GetComponent(id, pcomp))
       {
          // Get position property from transform component

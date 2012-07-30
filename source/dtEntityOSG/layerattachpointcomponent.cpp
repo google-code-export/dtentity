@@ -18,9 +18,9 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
@@ -29,20 +29,20 @@
 #include <osgDB/ReadFile>
 #include <assert.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
 
-   const StringId LayerAttachPointComponent::TYPE(dtEntity::SID("LayerAttachPoint"));
-   const StringId LayerAttachPointComponent::NameId(dtEntity::SID("Name"));
+   const dtEntity::StringId LayerAttachPointComponent::TYPE(dtEntity::SID("LayerAttachPoint"));
+   const dtEntity::StringId LayerAttachPointComponent::NameId(dtEntity::SID("Name"));
    
    ////////////////////////////////////////////////////////////////////////////
    LayerAttachPointComponent::LayerAttachPointComponent()    
       : mEntityManager(NULL)
-      , mCurrentName(StringId())
+      , mCurrentName(dtEntity::StringId())
    {      
       Register(NameId, &mName);
    }
@@ -53,7 +53,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointComponent::OnAddedToEntity(Entity& entity)
+   void LayerAttachPointComponent::OnAddedToEntity(dtEntity::Entity& entity)
    {
       BaseClass::OnAddedToEntity(entity);
       mEntityManager = &entity.GetEntityManager();
@@ -71,7 +71,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointComponent::SetName(StringId name) 
+   void LayerAttachPointComponent::SetName(dtEntity::StringId name)
    {      
       mName.Set(name);
       mCurrentName = name;
@@ -87,14 +87,14 @@ namespace dtEntity
          for(unsigned int i = 0; i < previous->GetGroup()->getNumChildren(); ++i)
          {
             osg::Node* child = previous->GetAttachmentGroup()->getChild(i);
-            Entity* entity = dynamic_cast<Entity*>(child->getUserData());
+            dtEntity::Entity* entity = dynamic_cast<dtEntity::Entity*>(child->getUserData());
             if(entity != NULL)
             {
                LayerComponent* lc;
                if(entity->GetComponent(lc) &&
                   lc->GetLayer() == name) 
                {
-                  MapComponent* mc;
+                  dtEntity::MapComponent* mc;
                   entity->GetComponent(mc);
                   childentities.push_back(entity->GetId());
                }
@@ -139,10 +139,10 @@ namespace dtEntity
 
       LayerSystem* ls;
       mEntityManager->GetEntitySystem(LayerComponent::TYPE, ls);
-      std::list<EntityId> eids;
+      std::list<dtEntity::EntityId> eids;
       ls->GetEntitiesInSystem(eids);
 
-      for(std::list<EntityId>::iterator i = eids.begin(); i != eids.end(); ++i)
+      for(std::list<dtEntity::EntityId>::iterator i = eids.begin(); i != eids.end(); ++i)
       {
          LayerComponent* comp;
          mEntityManager->GetComponent(*i, comp);
@@ -155,17 +155,17 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId LayerAttachPointSystem::TYPE(dtEntity::SID("LayerAttachPoint"));
-   const StringId LayerAttachPointSystem::DefaultLayerId(dtEntity::SID("default"));
-   const StringId LayerAttachPointSystem::RootId(dtEntity::SID("root"));
+   const dtEntity::StringId LayerAttachPointSystem::TYPE(dtEntity::SID("LayerAttachPoint"));
+   const dtEntity::StringId LayerAttachPointSystem::DefaultLayerId(dtEntity::SID("default"));
+   const dtEntity::StringId LayerAttachPointSystem::RootId(dtEntity::SID("root"));
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   LayerAttachPointSystem::LayerAttachPointSystem(EntityManager& em)
+   LayerAttachPointSystem::LayerAttachPointSystem(dtEntity::EntityManager& em)
       : DefaultEntitySystem<LayerAttachPointComponent>(em)
       , mBaseEntityId(0)
    {
-      AddScriptedMethod("getByName", ScriptMethodFunctor(this, &LayerAttachPointSystem::ScriptGetByName));
+      AddScriptedMethod("getByName", dtEntity::ScriptMethodFunctor(this, &LayerAttachPointSystem::ScriptGetByName));
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool LayerAttachPointSystem::GetByName(StringId name, LayerAttachPointComponent*& recipient)
+   bool LayerAttachPointSystem::GetByName(dtEntity::StringId name, LayerAttachPointComponent*& recipient)
    {
       LayerByNameMap::iterator i = mLayerByNameMap.find(name);
       if(i == mLayerByNameMap.end())
@@ -222,11 +222,12 @@ namespace dtEntity
      mSceneGraphRoot = root;
       if(mBaseEntityId == 0 || !GetEntityManager().EntityExists(mBaseEntityId))
       {
-         Entity* base;
+         dtEntity::Entity* base;
          GetEntityManager().CreateEntity(base);
          mBaseEntityId = base->GetId();
          LayerAttachPointComponent* layerattach;
-         GetEntityManager().CreateComponent(mBaseEntityId, layerattach);
+         bool success = GetEntityManager().CreateComponent(mBaseEntityId, layerattach);
+         assert(success);
          layerattach->SetName(RootId);
          layerattach->SetNode(root);
          RegisterByName(DefaultLayerId, layerattach);
@@ -242,20 +243,20 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointSystem::RegisterByName(StringId id, LayerAttachPointComponent* c)
+   void LayerAttachPointSystem::RegisterByName(dtEntity::StringId id, LayerAttachPointComponent* c)
    {
       mLayerByNameMap[id] = c;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   Property* LayerAttachPointSystem::ScriptGetByName(const PropertyArgs& args)
+   dtEntity::Property* LayerAttachPointSystem::ScriptGetByName(const dtEntity::PropertyArgs& args)
    {
       std::string name = args[0]->StringValue();
       LayerByNameMap::iterator i = mLayerByNameMap.find(dtEntity::SID(name));
       if(i == mLayerByNameMap.end())
       {
-         return new StringIdProperty(0);
+         return new dtEntity::StringIdProperty(0);
       }
-      return new StringIdProperty(i->first);
+      return new dtEntity::StringIdProperty(i->first);
    }
 }

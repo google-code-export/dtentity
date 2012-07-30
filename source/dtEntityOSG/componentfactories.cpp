@@ -23,6 +23,13 @@
 #include <dtEntity/dtentity_config.h>
 
 #include <dtEntityOSG/cameracomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/matrixtransformcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntityOSG/lightcomponent.h>
 #include <dtEntityOSG/pickshapecomponent.h>
 #include <dtEntityOSG/shadercomponent.h>
@@ -47,6 +54,14 @@ namespace dtEntityOSG
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<StaticMeshSystem>("StaticMesh"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextLabelSystem>("TextLabel"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
+
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<GroupSystem>("Group"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<NodeSystem>("Node"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TransformSystem>("Transform"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PositionAttitudeTransformSystem>("PositionAttitudeTransform"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<MatrixTransformSystem>("MatrixTransform"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerAttachPointSystem>("LayerAttachPoint"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerSystem>("Layer"));
 
    }
 }

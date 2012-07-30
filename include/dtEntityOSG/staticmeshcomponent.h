@@ -24,7 +24,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/groupcomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
@@ -37,11 +37,11 @@ namespace dtEntityOSG
     * Loads a static mesh from a path
     */
    class DTENTITY_OSG_EXPORT StaticMeshComponent
-      : public dtEntity::NodeComponent
+      : public NodeComponent
    {
    public:
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
       static const dtEntity::ComponentType TYPE;
       static const dtEntity::StringId MeshId;

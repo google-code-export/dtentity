@@ -22,7 +22,7 @@
 
 #include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntity/stringid.h>
 
 namespace osg
@@ -40,10 +40,10 @@ namespace dtEntityOSG
 	* The camera component holds properties for the osg::Camera object
    */
    class DTENTITY_OSG_EXPORT CameraComponent 
-      : public dtEntity::TransformComponent
+      : public TransformComponent
    {
   
-      typedef dtEntity::TransformComponent BaseClass;
+      typedef TransformComponent BaseClass;
 
    public:
 

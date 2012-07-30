@@ -133,9 +133,9 @@ namespace dtEntity
       , mUserDefinedSource(false)
    {
 
-      SetPosition(osg::Vec3(0.0f, 0.0f, 0.0f));
-      SetDirection(osg::Vec3(0.0f, 0.0f, 0.0f));
-      SetVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
+      SetPosition(Vec3f(0.0f, 0.0f, 0.0f));
+      SetDirection(Vec3f(0.0f, 0.0f, 0.0f));
+      SetVelocity(Vec3f(0.0f, 0.0f, 0.0f));
 
       SetGain(1.0f);
       SetPitch(1.0f);
@@ -707,7 +707,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetPosition(const osg::Vec3& pos)
+   void Sound::SetPosition(const Vec3f& pos)
    {
       if (IsSource(mSource) == AL_TRUE)
       {
@@ -719,19 +719,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetPosition(osg::Vec3& pos) const
+   void Sound::GetPosition(Vec3f& pos) const
    {
       pos = mPosition;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3& Sound::GetPosition()
+   Vec3f& Sound::GetPosition()
    {
       return mPosition;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetDirection(const osg::Vec3& dir)
+   void Sound::SetDirection(const Vec3f& dir)
    {
       if (IsSource(mSource) == AL_TRUE)
       {   
@@ -743,19 +743,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetDirection(osg::Vec3& dir) const
+   void Sound::GetDirection(Vec3f& dir) const
    {
       dir = mDirection;   
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Sound::GetDirection()
+   osg::Vec3f Sound::GetDirection()
    {
       return mDirection;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetVelocity(const osg::Vec3& vel)
+   void Sound::SetVelocity(const Vec3f& vel)
    {
       if (IsSource(mSource) == AL_TRUE)
       {
@@ -767,13 +767,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetVelocity(osg::Vec3& vel) const
+   void Sound::GetVelocity(Vec3f& vel) const
    {
       vel = mVelocity;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Sound::GetVelocity()
+   Vec3f Sound::GetVelocity()
    {
       return mVelocity;
    }
