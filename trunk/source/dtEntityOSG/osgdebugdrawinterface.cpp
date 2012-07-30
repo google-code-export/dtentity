@@ -94,9 +94,9 @@ namespace dtEntityOSG
 			ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 
 	   }
-      dtEntity::LayerAttachPointSystem* ls;
-      em.GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, ls);
-      dtEntity::LayerAttachPointComponent* layer;
+      LayerAttachPointSystem* ls;
+      em.GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
+      LayerAttachPointComponent* layer;
       bool found = ls->GetByName(layerName, layer);
       if(!found)
       {

@@ -56,7 +56,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////
    TextureLabelComponent::TextureLabelComponent()
-      : dtEntity::NodeComponent(new osg::Geode())
+      : NodeComponent(new osg::Geode())
       , mOffset(
          dtEntity::DynamicVec3Property::SetValueCB(this, &TextureLabelComponent::SetOffset),
          dtEntity::DynamicVec3Property::GetValueCB(this, &TextureLabelComponent::GetOffset)

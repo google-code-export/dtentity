@@ -22,7 +22,7 @@
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntityOSG/staticmeshcomponent.h>
 #include <dtEntity/systemmessages.h>
@@ -233,7 +233,7 @@ namespace dtEntityOSG
       }
       dtEntity::EntityId eid = args[0]->UIntValue();
       const char* name = args[1]->StringValue().c_str();
-      dtEntity::LayerComponent* lc;
+      LayerComponent* lc;
       if(!GetEntityManager().GetComponent(eid, lc) || lc->GetAttachedComponentNode() == NULL)
       {
          return NULL;

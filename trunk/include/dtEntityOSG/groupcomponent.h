@@ -20,10 +20,10 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
@@ -32,19 +32,19 @@ namespace osg
    class Group;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    /**
     * Holds a single OSG group.
     */
-   class DT_ENTITY_EXPORT GroupComponent : public NodeComponent
+   class DTENTITY_OSG_EXPORT GroupComponent : public NodeComponent
    {
    public:
 
       typedef NodeComponent BaseClass;
 
-      static const ComponentType TYPE;      
-      static const StringId ChildrenId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId ChildrenId;
    
       /**
        * CTor, creates a new group component
@@ -58,7 +58,7 @@ namespace dtEntity
 
       virtual ~GroupComponent();
 
-      virtual ComponentType GetType() const 
+      virtual dtEntity::ComponentType GetType() const
       { 
          return TYPE; 
       }
@@ -68,34 +68,34 @@ namespace dtEntity
       // return group to attach children to
       virtual osg::Group* GetAttachmentGroup() const { return GetGroup(); }
 
-      bool AddChildComponent(ComponentType c);
-      bool RemoveChildComponent(ComponentType c);
+      bool AddChildComponent(dtEntity::ComponentType c);
+      bool RemoveChildComponent(dtEntity::ComponentType c);
 
       /**
        * Expects an array of stringid properties containing component types
        * of children. These will be attached.
        */
-      void SetChildren(const PropertyArray& arr);
-      PropertyArray GetChildren() const { return mChildrenVal.Get(); }
+      void SetChildren(const dtEntity::PropertyArray& arr);
+      dtEntity::PropertyArray GetChildren() const { return mChildrenVal.Get(); }
 
    private:
 
       // to prevent redundant code in constructors
       void Init();
 
-      DynamicArrayProperty mChildren;
-      ArrayProperty mChildrenVal;
+      dtEntity::DynamicArrayProperty mChildren;
+      dtEntity::ArrayProperty mChildrenVal;
    };
 
 
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT GroupSystem
-      : public DefaultEntitySystem<GroupComponent>
+   class DTENTITY_OSG_EXPORT GroupSystem
+      : public dtEntity::DefaultEntitySystem<GroupComponent>
    {
    public:
-      GroupSystem(EntityManager& em)
-         : DefaultEntitySystem<GroupComponent>(em, NodeComponent::TYPE)
+      GroupSystem(dtEntity::EntityManager& em)
+         : dtEntity::DefaultEntitySystem<GroupComponent>(em, NodeComponent::TYPE)
       {
 
       }

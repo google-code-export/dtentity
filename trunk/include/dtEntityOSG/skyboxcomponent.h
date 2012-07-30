@@ -23,7 +23,7 @@
 #include <osg/ref_ptr>
 #include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/groupcomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
 #include <dtEntity/stringid.h>
 #include <osg/Geode>
 
@@ -33,10 +33,10 @@ namespace dtEntityOSG
    /**
     * Holds a single OSG node.
     */
-   class DTENTITY_OSG_EXPORT SkyBoxComponent : public dtEntity::GroupComponent
+   class DTENTITY_OSG_EXPORT SkyBoxComponent : public GroupComponent
    {
 
-      typedef dtEntity::GroupComponent BaseClass;
+      typedef GroupComponent BaseClass;
 
    public:
       

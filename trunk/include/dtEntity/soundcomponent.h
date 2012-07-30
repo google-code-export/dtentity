@@ -25,7 +25,6 @@
 #include <dtEntity/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/nodecomponent.h>
 #include <dtEntity/component.h>
 #include <dtEntity/message.h>
 #include <dtEntity/stringid.h>
@@ -38,11 +37,12 @@ namespace dtEntity
 
    class SoundSystem;
 
-   class DT_ENTITY_EXPORT SoundComponent : public NodeComponent
+   class DT_ENTITY_EXPORT SoundComponent : public Component
    {
    
       friend class SoundSystem;
-      typedef NodeComponent BaseClass;
+      typedef Component BaseClass;
+
    public:
 
       static const ComponentType TYPE;

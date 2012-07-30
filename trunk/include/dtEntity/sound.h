@@ -41,7 +41,7 @@
 #endif
 
 #include <osg/Referenced>
-#include <osg/Vec3>
+#include <dtEntity/property.h>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -415,20 +415,20 @@ namespace dtEntity
        *
        * @param position to set
        */
-      void SetPosition(const osg::Vec3& position);
+      void SetPosition(const Vec3f& position);
 
       /**
        * Get the position of sound.
        *
        * @param position to get
        */
-      void GetPosition(osg::Vec3& position) const;
+      void GetPosition(Vec3f& position) const;
 
       /**
        * Returns the position of the Sound.
        *       
        */
-      osg::Vec3& GetPosition();
+      Vec3f& GetPosition();
 
       /**
        * Set the direction of sound.
@@ -439,7 +439,7 @@ namespace dtEntity
        *
        * @param direction to set
        */
-      void SetDirection(const osg::Vec3& direction);
+      void SetDirection(const Vec3f& direction);
 
 
       /**
@@ -447,29 +447,29 @@ namespace dtEntity
        *
        * @param direction to get
        */
-      void GetDirection(osg::Vec3& direction) const;
+      void GetDirection(Vec3f& direction) const;
 
       /*
        * Return the direction of the Sound
        */
-      osg::Vec3 GetDirection();
+      Vec3f GetDirection();
 
       /**
        * Set the velocity of sound.
        *
        * @param velocity to set
        */
-      void SetVelocity(const osg::Vec3& velocity);
+      void SetVelocity(const Vec3f& velocity);
 
       /**
        * Get the velocity of sound.
        *
        * @param velocity to get
        */
-      void GetVelocity(osg::Vec3& velocity) const;
+      void GetVelocity(Vec3f& velocity) const;
 
       /// Returns the velocity vector of the Sound.
-      osg::Vec3 GetVelocity();
+      Vec3f GetVelocity();
 
       /**
        * Sets the distance where there will no longer be any attenuation of
@@ -604,9 +604,9 @@ namespace dtEntity
       ALfloat                 mMinGain;
       ALfloat                 mMaxGain;
       bool                    mListenerRelative;
-      osg::Vec3               mPosition;
-      osg::Vec3               mDirection;
-      osg::Vec3               mVelocity;      
+      Vec3f                   mPosition;
+      Vec3f                   mDirection;
+      Vec3f                   mVelocity;
 
       bool                    mUserDefinedSource;
    };

@@ -10,12 +10,13 @@
 
 #include <dtEntity/profile.h>
 #include <stdio.h>
+#include <osg/Timer>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #define DBL_EPSILON    2.2204460492503131e-016
-inline void Profile_Get_Ticks(osg::Timer_t * ticks)
+inline void Profile_Get_Ticks(dtEntity::Timer_t * ticks)
 {
 	osg::Timer timer;
 	 *ticks = timer.tick();

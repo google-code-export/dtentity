@@ -1,6 +1,4 @@
-#pragma once
-
-/* -*-c++-*-
+/*
 * dtEntity Game and Simulation Engine
 *
 * This library is free software; you can redistribute it and/or modify it under
@@ -20,30 +18,25 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/export.h>
-#include <osg/Group>
-#include <osg/NodeVisitor>
+#include <dtEntityOSG/transformcomponent.h>
+#include <osg/Transform>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
-   class DT_ENTITY_EXPORT NodeMaskVisitor : public osg::NodeVisitor
+
+   ////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
+   const dtEntity::StringId TransformComponent::TYPE(dtEntity::SID("Transform"));
+
+   ////////////////////////////////////////////////////////////////////////////
+   TransformComponent::TransformComponent(osg::Transform* t)
+      : BaseClass(t)
    {
-   public:
+   }
 
-      NodeMaskVisitor(unsigned int mask) : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      {
-         mMask = mask;
-      }
-      
-      virtual void apply(osg::Group& node)
-      {
-        node.setNodeMask(mMask);
-        this->traverse(node);
-      }
-      
-   private:
+   ////////////////////////////////////////////////////////////////////////////
+   TransformComponent::~TransformComponent()
+   {
+   }
 
-      unsigned int mMask;
-   };
 }
-

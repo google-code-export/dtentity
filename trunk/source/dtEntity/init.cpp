@@ -22,11 +22,7 @@
 
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentfactories.h>
-#include <dtEntity/layerattachpointcomponent.h>
-#include <dtEntity/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/matrixtransformcomponent.h>
-#include <dtEntity/positionattitudetransformcomponent.h>
 #include <dtEntity/property.h>
 
 #include <osg/Notify>
@@ -170,12 +166,6 @@ namespace dtEntity
       // this is a required component system, so add it immediately
       MapSystem* mapSystem = new MapSystem(em);
       em.AddEntitySystem(*mapSystem);
-      em.AddEntitySystem(*new LayerSystem(em));
-      em.AddEntitySystem(*new GroupSystem(em));
-      em.AddEntitySystem(*new TransformSystem(em));
-      em.AddEntitySystem(*new MatrixTransformSystem(em));
-      em.AddEntitySystem(*new PositionAttitudeTransformSystem(em));
-      em.AddEntitySystem(*new LayerAttachPointSystem(em));
 
       ApplicationSystem* appsystem = new ApplicationSystem(em);
       em.AddEntitySystem(*appsystem);

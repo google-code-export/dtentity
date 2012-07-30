@@ -23,7 +23,7 @@
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/spawner.h>
@@ -415,9 +415,9 @@ namespace dtEntityQtWidgets
       iv.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
       iv.setUseKdTreeWhenAvailable(true);
 
-      dtEntity::LayerAttachPointSystem* layersys;
-      mEntityManager->GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
+      dtEntityOSG::LayerAttachPointSystem* layersys;
+      mEntityManager->GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layersys);
+      dtEntityOSG::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
       osg::Node* sceneNode = sceneLayer->GetGroup();
       sceneNode->accept(iv);
 

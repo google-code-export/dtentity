@@ -23,11 +23,6 @@
 #include <dtEntity/export.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
-#include <osg/Matrix>
-#include <osg/Vec2>
-#include <osg/Vec3>
-#include <osg/Vec4>
-#include <osg/Quat>
 #include <vector>
 #include <map>
 #include <dtEntity/dtentity_config.h>

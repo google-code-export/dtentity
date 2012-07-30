@@ -24,14 +24,14 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <dtEntity/spawner.h>
 #include <UnitTest++.h>
 
 
 using namespace UnitTest;
 using namespace dtEntity;
-
+using namespace dtEntityOSG;
 
 TEST(SpawnComponent)
 {
@@ -40,8 +40,8 @@ TEST(SpawnComponent)
    #endif
    
    EntityManager* em = new EntityManager();
-   em->AddEntitySystem(*new dtEntity::MapSystem(*em));
-   em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
+   em->AddEntitySystem(*new MapSystem(*em));
+   em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
 
    Spawner* spawner = new Spawner("mymap", "");
 
@@ -80,8 +80,8 @@ TEST(SpawnHierarchy)
    childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
 
    EntityManager* em = new EntityManager();
-   em->AddEntitySystem(*new dtEntity::MapSystem(*em));
-   em->AddEntitySystem(*new dtEntity::PositionAttitudeTransformSystem(*em));
+   em->AddEntitySystem(*new MapSystem(*em));
+   em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
 
    CHECK(childSpawner->GetParent() == parentSpawner);
    

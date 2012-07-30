@@ -301,7 +301,6 @@ namespace dtEntityOSG
       }
 
       osgUtil::LineSegmentIntersector::Intersections::iterator i;
-      unsigned int count = 0;
       for(i = lsi->getIntersections().begin(); i != lsi->getIntersections().end(); ++i)
       {
          osgUtil::LineSegmentIntersector::Intersection isect = *i;

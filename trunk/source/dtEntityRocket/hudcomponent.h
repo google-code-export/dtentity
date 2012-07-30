@@ -21,12 +21,12 @@
 #pragma once
 
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/dynamicproperty.h>
 #include <Rocket/Core/Element.h>
 #include <v8.h>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    class TransformComponent;
 }
@@ -36,11 +36,11 @@ namespace dtEntityRocket
 
    class HUDSystem;
    
-   class HUDComponent : public dtEntity::NodeComponent
+   class HUDComponent : public dtEntityOSG::NodeComponent
    {
       friend class HUDSystem;
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef dtEntityOSG::NodeComponent BaseClass;
 
    public:
       
@@ -116,7 +116,7 @@ namespace dtEntityRocket
       dtEntity::DynamicStringIdProperty mAlignment;
       dtEntity::StringId mAlignmentVal;
       dtEntity::BoolProperty mHideWhenNormalPointsAway;
-      dtEntity::TransformComponent* mTransformComponent;
+      dtEntityOSG::TransformComponent* mTransformComponent;
       osg::Vec3 mRelPosition;
    };
 

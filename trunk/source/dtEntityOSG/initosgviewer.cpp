@@ -25,10 +25,13 @@
 #include <dtEntity/core.h>
 #include <dtEntity/init.h>
 
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntityOSG/osgdebugdrawinterface.h>
 #include <dtEntityOSG/osginputinterface.h>
 #include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntityOSG/osgwindowinterface.h>
+#include <dtEntityOSG/layercomponent.h>
+#include <dtEntityOSG/componentfactories.h>
 #include <dtEntity/systemmessages.h>
 
 #include <osgGA/GUIEventAdapter>
@@ -65,15 +68,15 @@ namespace dtEntityOSG
 
       dtEntity::SetupDataPaths(argc, argv, checkPaths);
 
-      dtEntity::SetSystemInterface(new dtEntityOSG::OSGSystemInterface(em.GetMessagePump()));
-      dtEntity::SetInputInterface(new dtEntityOSG::OSGInputInterface(em.GetMessagePump()));
-      dtEntity::SetWindowInterface(new dtEntityOSG::OSGWindowInterface(em));
+      dtEntity::SetSystemInterface(new OSGSystemInterface(em.GetMessagePump()));
+      dtEntity::SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
+      dtEntity::SetWindowInterface(new OSGWindowInterface(em));
 
       dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, em);
-
+      RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
 
       // give application system access to viewer
-      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
       iface->SetViewer(&viewer);
       bool success = DoScreenSetup(argc, argv, viewer, em);
       if(!success)
@@ -85,7 +88,7 @@ namespace dtEntityOSG
       SetupSceneGraph(viewer, em, pSceneNode);
 
       // need layer system for debug draw interface, so set it up now
-      dtEntity::SetDebugDrawInterface(new dtEntityOSG::OSGDebugDrawInterface(em));
+      dtEntity::SetDebugDrawInterface(new OSGDebugDrawInterface(em));
 
       if(addStatsHandler)
       {
@@ -110,7 +113,7 @@ namespace dtEntityOSG
    {
       assert(pSceneNode != NULL);
 
-      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
 
       if(iface->GetViewer() == NULL)
       {
@@ -129,12 +132,15 @@ namespace dtEntityOSG
 
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
-      dtEntityOSG::OSGInputInterface* ipface = static_cast<dtEntityOSG::OSGInputInterface*>(dtEntity::GetInputInterface());
+      OSGInputInterface* ipface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
       views.front()->addEventHandler(ipface);
 
+      dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerAttachPointSystem::TYPE);
+      dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerSystem::TYPE);
+
       // create an entity holding the scene graph root as an attach point
-      dtEntity::LayerAttachPointSystem* layerattachsys;
-      bool found = em.GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layerattachsys);
+      LayerAttachPointSystem* layerattachsys;
+      bool found = em.GetEntitySystem(LayerAttachPointComponent::TYPE, layerattachsys);
       assert(found);
       layerattachsys->CreateSceneGraphRootEntity(pSceneNode);
    }
@@ -221,7 +227,7 @@ namespace dtEntityOSG
       
 
       dtEntity::WindowInterface* wface = dtEntity::GetWindowInterface();
-      dtEntityOSG::OSGWindowInterface* o = static_cast<dtEntityOSG::OSGWindowInterface*>(wface);
+      OSGWindowInterface* o = static_cast<OSGWindowInterface*>(wface);
       o->SetTraits(traits);
       unsigned int contextId;
       bool success = wface->OpenWindow("defaultView", dtEntity::SID("root"), contextId);

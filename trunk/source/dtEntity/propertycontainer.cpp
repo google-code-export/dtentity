@@ -261,6 +261,14 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Matrix PropertyContainer::GetMatrix(StringId name) const
+   {
+      const Property* prop = Get(name);
+      assert(prop && "Property with that name does not exist!");
+      return prop->MatrixValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string PropertyContainer::GetString(StringId name) const
    {
       const Property* prop = Get(name);

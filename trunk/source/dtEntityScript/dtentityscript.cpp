@@ -27,7 +27,6 @@
 #include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
-#include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntityOSG/componentfactories.h>
 #include <iostream>
@@ -80,8 +79,7 @@ int main(int argc, char** argv)
       return 0;
    }
 
-   dtEntityOSG::RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
-   
+
    dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
    pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);
    pm.AddPlugin("plugins/", "dtEntitySimulation", true);   

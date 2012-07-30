@@ -11,7 +11,7 @@
 ***************************************************************************************************/
 #include <dtEntity/export.h>
 #include <dtEntity/stringid.h>
-#include <osg/Timer>
+#include <dtEntity/systeminterface.h>
 /*
 ** A node in the Profile Hierarchy Tree
 */
@@ -37,15 +37,15 @@ public:
 
 protected:
 
-	dtEntity::StringId	Name;
-	int				TotalCalls;
-	float				TotalTime;
-        osg::Timer_t    		StartTime;
-	int				RecursionCounter;
+   dtEntity::StringId Name;
+   int				    TotalCalls;
+   float				    TotalTime;
+   dtEntity::Timer_t  StartTime;
+   int				    RecursionCounter;
 
-	CProfileNode *	Parent;
-	CProfileNode *	Child;
-	CProfileNode *	Sibling;
+   CProfileNode *	    Parent;
+   CProfileNode *	    Child;
+   CProfileNode *	    Sibling;
 };
 
 /*
@@ -103,10 +103,10 @@ public:
    static void	dumpRecursive(CProfileIterator* profileIterator, int spacing);
    static void	dumpAll();
 private:
-	static	CProfileNode			Root;
-	static	CProfileNode *			CurrentNode;
-	static	int				FrameCounter;
-        static	osg::Timer_t    		ResetTime;
+   static	CProfileNode Root;
+   static	CProfileNode* CurrentNode;
+   static	int FrameCounter;
+   static	dtEntity::Timer_t ResetTime;
 };
 
 

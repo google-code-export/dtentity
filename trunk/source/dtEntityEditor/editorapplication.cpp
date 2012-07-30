@@ -26,7 +26,6 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/init.h>
-#include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntityOSG/osginputinterface.h>
 #include <dtEntityOSG/osgdebugdrawinterface.h>

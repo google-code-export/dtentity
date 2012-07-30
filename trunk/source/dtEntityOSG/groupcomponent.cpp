@@ -18,17 +18,17 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/groupcomponent.h>
+#include <dtEntityOSG/groupcomponent.h>
 #include <osg/Group>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
-   const StringId GroupComponent::TYPE(dtEntity::SID("Group"));   
-   const StringId GroupComponent::ChildrenId(dtEntity::SID("Children"));
+   const dtEntity::StringId GroupComponent::TYPE(dtEntity::SID("Group"));
+   const dtEntity::StringId GroupComponent::ChildrenId(dtEntity::SID("Children"));
    
    ////////////////////////////////////////////////////////////////////////////
    GroupComponent::GroupComponent()
@@ -49,9 +49,9 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    void GroupComponent::Init()
    {
-      mChildren = DynamicArrayProperty(
-           DynamicArrayProperty::SetValueCB(this, &GroupComponent::SetChildren),
-           DynamicArrayProperty::GetValueCB(this, &GroupComponent::GetChildren)
+      mChildren = dtEntity::DynamicArrayProperty(
+           dtEntity::DynamicArrayProperty::SetValueCB(this, &GroupComponent::SetChildren),
+           dtEntity::DynamicArrayProperty::GetValueCB(this, &GroupComponent::GetChildren)
         );
    
       GetNode()->setName("GroupComponent");
@@ -70,9 +70,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool GroupComponent::AddChildComponent(ComponentType ct)
+   bool GroupComponent::AddChildComponent(dtEntity::ComponentType ct)
    {
-      Component* component;
+      dtEntity::Component* component;
       if(!mEntity->GetComponent(ct, component))
       {
          return false;
@@ -80,23 +80,23 @@ namespace dtEntity
       NodeComponent* nc = static_cast<NodeComponent*>(component);
       GetAttachmentGroup()->addChild(nc->GetNode());
       nc->SetParentComponent(this->GetType());
-      mChildrenVal.Add(new StringIdProperty(ct));
+      mChildrenVal.Add(new dtEntity::StringIdProperty(ct));
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool GroupComponent::RemoveChildComponent(ComponentType ct)
+   bool GroupComponent::RemoveChildComponent(dtEntity::ComponentType ct)
    {
-      Component* component;
+      dtEntity::Component* component;
       if(!mEntity->GetComponent(ct, component))
       {
          return false;
       }
       NodeComponent* nc = static_cast<NodeComponent*>(component);
       GetAttachmentGroup()->removeChild(nc->GetNode());
-      nc->SetParentComponent(StringId());
+      nc->SetParentComponent(dtEntity::StringId());
 
-      for(PropertyArray::const_iterator i = mChildrenVal.Get().begin(); i != mChildrenVal.Get().end(); ++i)
+      for(dtEntity::PropertyArray::const_iterator i = mChildrenVal.Get().begin(); i != mChildrenVal.Get().end(); ++i)
       {
          if((*i)->StringIdValue() == ct)
          {
@@ -108,7 +108,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroupComponent::SetChildren(const PropertyArray& arr)
+   void GroupComponent::SetChildren(const dtEntity::PropertyArray& arr)
    {
       mChildrenVal.Set(arr);
       
@@ -116,18 +116,18 @@ namespace dtEntity
 
       GetAttachmentGroup()->removeChild(0, GetAttachmentGroup()->getNumChildren());
 
-      PropertyArray::const_iterator it;
+      dtEntity::PropertyArray::const_iterator it;
       for(it = arr.begin(); it != arr.end(); ++it)
       {
          Property* prop = *it;
-         StringId componentType = prop->StringIdValue();
+         dtEntity::StringId componentType = prop->StringIdValue();
 
          Component* c;
          bool found = mEntity->GetComponent(componentType, c);
          if(!found)
          {
             LOG_WARNING("Could not attach component to group, not found: "
-               + GetStringFromSID(componentType));
+               + dtEntity::GetStringFromSID(componentType));
          }
          else
          {

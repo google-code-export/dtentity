@@ -29,7 +29,7 @@
 #include <dtEntity/dtentity_config.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/systemmessages.h>
@@ -1750,11 +1750,11 @@ namespace dtEntityQtWidgets
 
       // special case: If layer component was created, send layer system
       // message informing it to add the entity to its layer
-      if(ctype == dtEntity::LayerComponent::TYPE)
+      if(ctype == dtEntityOSG::LayerComponent::TYPE)
       {
          dtEntity::EntityAddedToSceneMessage m;
          m.SetAboutEntityId(id);
-         static_cast<dtEntity::LayerSystem*>(es)->OnEnterWorld(m);
+         static_cast<dtEntityOSG::LayerSystem*>(es)->OnEnterWorld(m);
       }
 
       comp->Finished();
@@ -1807,11 +1807,11 @@ namespace dtEntityQtWidgets
 
       // special case: If layer component was created, send layer system
       // message informing it to add the entity to its layer
-      if(ctype == dtEntity::LayerComponent::TYPE)
+      if(ctype == dtEntityOSG::LayerComponent::TYPE)
       {
          dtEntity::EntityRemovedFromSceneMessage m;
          m.SetAboutEntityId(id);
-         static_cast<dtEntity::LayerSystem*>(es)->OnLeaveWorld(m);
+         static_cast<dtEntityOSG::LayerSystem*>(es)->OnLeaveWorld(m);
       }
 
       found = mEntityManager->DeleteComponent(id, ctype);

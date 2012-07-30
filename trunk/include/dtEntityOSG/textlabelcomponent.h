@@ -23,7 +23,7 @@
 #include <dtEntityOSG/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/scriptaccessor.h>
 #include <osgText/Text>
@@ -33,10 +33,10 @@ namespace dtEntityOSG
    class Entity;
    class TextLabelSystem;
       
-   class DTENTITY_OSG_EXPORT TextLabelComponent : public dtEntity::NodeComponent
+   class DTENTITY_OSG_EXPORT TextLabelComponent : public NodeComponent
    {
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
    public:
 

@@ -25,7 +25,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <Rocket/Core/Context.h>
 #include <Rocket/Core/ElementDocument.h>
 #include <iostream>

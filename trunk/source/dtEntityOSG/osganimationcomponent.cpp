@@ -22,7 +22,7 @@
 
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layercomponent.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntityOSG/staticmeshcomponent.h>

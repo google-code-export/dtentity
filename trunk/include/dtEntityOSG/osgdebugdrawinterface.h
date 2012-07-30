@@ -23,7 +23,7 @@
 #include <dtEntity/debugdrawinterface.h>
 #include <dtEntityOSG/export.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <osg/ref_ptr>
 #include <osg/Group>
 
@@ -54,7 +54,7 @@ namespace dtEntityOSG
        * @param layer Add debug draw manager to layer of this name
        */
       OSGDebugDrawInterface(dtEntity::EntityManager& em,
-         dtEntity::StringId layer = dtEntity::LayerAttachPointSystem::DefaultLayerId);
+         dtEntity::StringId layer = dtEntity::StringId());
       ~OSGDebugDrawInterface();
 
       /**

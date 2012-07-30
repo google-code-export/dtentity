@@ -21,11 +21,11 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/component.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntity/property.h>
 #include <dtEntity/stringid.h>
 
@@ -34,69 +34,69 @@ namespace osg
    class PositionAttitudeTransform;
 }
 
-namespace dtEntity
+namespace dtEntityOSG
 {
 
    ///////////////////////////////////////////////////////////////////////////
    /**
     * holds a single PositionAttitude transform
     */
-   class DT_ENTITY_EXPORT PositionAttitudeTransformComponent 
+   class DTENTITY_OSG_EXPORT PositionAttitudeTransformComponent
       : public TransformComponent
    {
       typedef TransformComponent BaseClass;
 
    public:
 
-      static const ComponentType TYPE;
-      static const StringId PositionId;
-      static const StringId AttitudeId;
-      static const StringId ScaleId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId PositionId;
+      static const dtEntity::StringId AttitudeId;
+      static const dtEntity::StringId ScaleId;
       
       PositionAttitudeTransformComponent();
      
       virtual ~PositionAttitudeTransformComponent();
 
-      virtual ComponentType GetType() const { 
+      virtual dtEntity::ComponentType GetType() const {
          return TYPE; 
       }
 
       const osg::PositionAttitudeTransform* GetPositionAttitudeTransform() const;
       osg::PositionAttitudeTransform* GetPositionAttitudeTransform();
 
-      osg::Vec3d GetPosition() const;
-      void SetPosition(const osg::Vec3d& p);
+      dtEntity::Vec3d GetPosition() const;
+      void SetPosition(const dtEntity::Vec3d& p);
 
-      osg::Quat GetAttitude() const;
-      void SetAttitude(const osg::Quat& r);
+      dtEntity::Quat GetAttitude() const;
+      void SetAttitude(const dtEntity::Quat& r);
 
-      osg::Vec3d GetScale() const;
-      void SetScale(const osg::Vec3d& q);
+      dtEntity::Vec3d GetScale() const;
+      void SetScale(const dtEntity::Vec3d& q);
 
-      virtual osg::Vec3d GetTranslation() const  { return GetPosition(); }
-      virtual void SetTranslation(const osg::Vec3d& t) { SetPosition(t); }
+      virtual dtEntity::Vec3d GetTranslation() const  { return GetPosition(); }
+      virtual void SetTranslation(const dtEntity::Vec3d& t) { SetPosition(t); }
 
-      virtual osg::Quat GetRotation() const { return GetAttitude(); }
-      virtual void SetRotation(const osg::Quat& q) { SetAttitude(q); }
+      virtual dtEntity::Quat GetRotation() const { return GetAttitude(); }
+      virtual void SetRotation(const dtEntity::Quat& q) { SetAttitude(q); }
 
-      virtual osg::Matrix GetMatrix() const;
-      virtual void SetMatrix(const osg::Matrix& mat);
+      virtual dtEntity::Matrix GetMatrix() const;
+      virtual void SetMatrix(const dtEntity::Matrix& mat);
 
    private:
 
-      DynamicVec3dProperty mPosition;
-      DynamicVec3dProperty mScale;
-      DynamicQuatProperty mAttitude;
+      dtEntity::DynamicVec3dProperty mPosition;
+      dtEntity::DynamicVec3dProperty mScale;
+      dtEntity::DynamicQuatProperty mAttitude;
    };
 
    ///////////////////////////////////////////////////////////////////////////
    // storage only
-   class DT_ENTITY_EXPORT PositionAttitudeTransformSystem
-      : public DefaultEntitySystem<PositionAttitudeTransformComponent>
+   class DTENTITY_OSG_EXPORT PositionAttitudeTransformSystem
+      : public dtEntity::DefaultEntitySystem<PositionAttitudeTransformComponent>
    {
    public:
-      PositionAttitudeTransformSystem(EntityManager& em)
-         : DefaultEntitySystem<PositionAttitudeTransformComponent>(em, TransformComponent::TYPE)
+      PositionAttitudeTransformSystem(dtEntity::EntityManager& em)
+         : dtEntity::DefaultEntitySystem<PositionAttitudeTransformComponent>(em, TransformComponent::TYPE)
       {
 
       }

@@ -44,7 +44,7 @@ public:
      If the component is derived from another component then
      it may be wise to also call the IsInstaceOf method of the superclass.
      Check out dtEntity::TransformComponent and its child class
-     dtEntity::MatrixTransformComponent for an example.
+     dtEntityOSG::MatrixTransformComponent for an example.
    */
    virtual bool IsInstanceOf(dtEntity::ComponentType id) const
    {
@@ -84,7 +84,7 @@ public:
       You can also provide setters here, but make sure to sync with the
       OnPropertyChanged method.
     */
-   osg::Vec4 GetColor() const { return mColor.Get(); }
+   dtEntity::Vec4f GetColor() const { return mColor.Get(); }
    std::string GetEnum() const { return mEnum.Get(); }
 
 private:

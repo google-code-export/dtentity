@@ -27,7 +27,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/core.h>
 #include <dtEntityOSG/osgsysteminterface.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <iostream>
 #include <osgLibRocket/GuiNode>
 #include <osgViewer/CompositeViewer>
@@ -264,9 +264,9 @@ namespace dtEntityRocket
 
        
        //appsys->GetPrimaryView()->addSlave(cam, false);
-       dtEntity::LayerAttachPointSystem* layersys;
-       mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-       //dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
+       dtEntityOSG::LayerAttachPointSystem* layersys;
+       mEntity->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layersys);
+       //dtEntityOSG::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
 
        // add as first child of scene graph root. This is to make sure
        // that the rocket node is the first to handle event callback.

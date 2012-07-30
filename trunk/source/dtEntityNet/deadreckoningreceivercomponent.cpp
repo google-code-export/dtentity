@@ -28,7 +28,7 @@
 #include <dtEntity/protobufmapencoder.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
-#include <dtEntity/transformcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 #include <dtEntity/uniqueid.h>
 #include <dtEntityNet/messages.h>
 

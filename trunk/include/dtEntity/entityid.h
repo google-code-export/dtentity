@@ -20,8 +20,6 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/dtentity_config.h>
-
 namespace dtEntity
 {
    // serial ID for entities

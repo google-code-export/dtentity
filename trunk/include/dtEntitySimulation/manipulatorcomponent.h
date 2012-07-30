@@ -23,17 +23,17 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <osgManipulator/Dragger>
 
 namespace dtEntitySimulation
 {
 
    class ManipulatorComponent
-         : public dtEntity::NodeComponent
+         : public dtEntityOSG::NodeComponent
    {
 
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef dtEntityOSG::NodeComponent BaseClass;
 
 
    public:

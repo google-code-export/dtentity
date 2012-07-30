@@ -24,7 +24,7 @@
 #include <dtEntityOSG/export.h>
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/dynamicproperty.h>
 #include <osg/Geometry>
 #include <osg/Program>
@@ -34,11 +34,11 @@ namespace dtEntityOSG
 
    class TextureLabelSystem;
 
-   class DTENTITY_OSG_EXPORT TextureLabelComponent : public dtEntity::NodeComponent
+   class DTENTITY_OSG_EXPORT TextureLabelComponent : public NodeComponent
    {
 
       friend class TextureLabelSystem;
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef NodeComponent BaseClass;
 
    public:
       

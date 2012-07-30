@@ -24,7 +24,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/property.h>
-#include <dtEntity/nodecomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
 #include <osgManipulator/Dragger>
 #include <osgParticle/ParticleSystem>
 #include <osgParticle/ModularEmitter>
@@ -35,11 +35,11 @@ namespace dtEntitySimulation
 {
 
    class ParticleComponent
-         : public dtEntity::NodeComponent
+         : public dtEntityOSG::NodeComponent
    {
 
    public:
-      typedef dtEntity::NodeComponent BaseClass;
+      typedef dtEntityOSG::NodeComponent BaseClass;
 
       static const dtEntity::ComponentType TYPE;     
       

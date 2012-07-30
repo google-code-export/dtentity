@@ -25,7 +25,6 @@
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/uniqueid.h>
 #include <dtEntity/systeminterface.h>

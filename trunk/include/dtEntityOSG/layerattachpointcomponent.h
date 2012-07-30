@@ -22,68 +22,68 @@
 
 #include <osg/ref_ptr>
 #include <dtEntity/defaultentitysystem.h>
-#include <dtEntity/export.h>
-#include <dtEntity/groupcomponent.h>
+#include <dtEntityOSG/export.h>
+#include <dtEntityOSG/groupcomponent.h>
 #include <dtEntity/scriptaccessor.h>
 #include <dtEntity/stringid.h>
 #include <osg/Group>
 
-namespace dtEntity
-{ 
+namespace dtEntityOSG
+{
 
-   class DT_ENTITY_EXPORT LayerAttachPointComponent 
+   class DTENTITY_OSG_EXPORT LayerAttachPointComponent
       : public GroupComponent
    {  
     typedef GroupComponent BaseClass;
 
    public:
 
-      static const ComponentType TYPE;
-      static const StringId NameId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId NameId;
       
       LayerAttachPointComponent();
       virtual ~LayerAttachPointComponent();
       virtual void Finished();
-      void OnAddedToEntity(Entity& entity);
+      void OnAddedToEntity(dtEntity::Entity& entity);
 
       virtual void SetNode(osg::Node* node);
 
-      StringId GetName() const { return mName.Get(); }
-      void SetName(StringId name);
+      dtEntity::StringId GetName() const { return mName.Get(); }
+      void SetName(dtEntity::StringId name);
 
-      virtual ComponentType GetType() const
+      virtual dtEntity::ComponentType GetType() const
       {
          return TYPE; 
       }
 
    private:
-      EntityManager* mEntityManager;
-      StringIdProperty mName;
-      StringId mCurrentName;
+      dtEntity::EntityManager* mEntityManager;
+      dtEntity::StringIdProperty mName;
+      dtEntity::StringId mCurrentName;
    };
 
    
    ////////////////////////////////////////////////////////////////////////////////
 
-   class DT_ENTITY_EXPORT LayerAttachPointSystem
-      : public DefaultEntitySystem<LayerAttachPointComponent>
-      , public ScriptAccessor
+   class DTENTITY_OSG_EXPORT LayerAttachPointSystem
+      : public dtEntity::DefaultEntitySystem<LayerAttachPointComponent>
+      , public dtEntity::ScriptAccessor
    {
       friend class LayerAttachPointComponent;
 
-      typedef DefaultEntitySystem<LayerAttachPointComponent> BaseClass;
+      typedef dtEntity::DefaultEntitySystem<LayerAttachPointComponent> BaseClass;
 
    public:
     
-      static const ComponentType TYPE;
-      static const StringId DefaultLayerId;
-      static const StringId RootId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId DefaultLayerId;
+      static const dtEntity::StringId RootId;
 
-      LayerAttachPointSystem(EntityManager& em);   
+      LayerAttachPointSystem(dtEntity::EntityManager& em);
 
       virtual bool DeleteComponent(dtEntity::EntityId eid);
 
-      bool GetByName(StringId name, LayerAttachPointComponent*& recipient);
+      bool GetByName(dtEntity::StringId name, LayerAttachPointComponent*& recipient);
 
       LayerAttachPointComponent* GetDefaultLayer();
       LayerAttachPointComponent* GetRootLayer();
@@ -95,12 +95,12 @@ namespace dtEntity
 
       void CreateSceneGraphRootEntity(osg::Group* root);
       
-      Property* ScriptGetByName(const PropertyArgs& args);
+      dtEntity::Property* ScriptGetByName(const dtEntity::PropertyArgs& args);
       
    private:
 
-      void RegisterByName(StringId, LayerAttachPointComponent*);
-      typedef std::map<StringId, LayerAttachPointComponent*> LayerByNameMap;
+      void RegisterByName(dtEntity::StringId, LayerAttachPointComponent*);
+      typedef std::map<dtEntity::StringId, LayerAttachPointComponent*> LayerByNameMap;
       LayerByNameMap mLayerByNameMap;
       osg::ref_ptr<osg::Group> mSceneGraphRoot;
       dtEntity::EntityId mBaseEntityId;

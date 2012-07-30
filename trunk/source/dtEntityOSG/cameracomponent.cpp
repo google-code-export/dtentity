@@ -24,7 +24,7 @@
 #include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntityOSG/osginputinterface.h>
@@ -347,11 +347,11 @@ namespace dtEntityOSG
                   eh.push_back(wface);
                }
 
-               dtEntity::LayerAttachPointSystem* lsys;
-               mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, lsys);
-               if(GetLayerAttachPoint() != dtEntity::LayerAttachPointSystem::RootId)
+               LayerAttachPointSystem* lsys;
+               mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
+               if(GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
                {
-                  dtEntity::LayerAttachPointComponent* lc;
+                  LayerAttachPointComponent* lc;
                   if(lsys->GetByName(GetLayerAttachPoint(), lc))
                   {
                      static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->InstallUpdateCallback(lc->GetNode());
@@ -399,13 +399,13 @@ namespace dtEntityOSG
         
       }
       
-      dtEntity::LayerAttachPointSystem* layersys;
-      bool success = mEntity->GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      LayerAttachPointSystem* layersys;
+      bool success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
       assert(success);
 
-      dtEntity::LayerAttachPointComponent* lcomp;
+      LayerAttachPointComponent* lcomp;
 
-      if(mLayerAttachPoint.Get() == dtEntity::LayerAttachPointSystem::RootId)
+      if(mLayerAttachPoint.Get() == LayerAttachPointSystem::RootId)
       {
          view->setSceneData(layersys->GetSceneGraphRoot());
       }
@@ -559,7 +559,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////
    CameraSystem::CameraSystem(dtEntity::EntityManager& em)
-      : dtEntity::DefaultEntitySystem<CameraComponent>(em, dtEntity::TransformComponent::TYPE)
+      : dtEntity::DefaultEntitySystem<CameraComponent>(em, TransformComponent::TYPE)
    {
       mWindowCreatedFunctor  = dtEntity::MessageFunctor(this, &CameraSystem::OnWindowCreated);
       em.RegisterForMessages(dtEntity::WindowCreatedMessage::TYPE, mWindowCreatedFunctor, "CameraSystem::OnWindowCreated");

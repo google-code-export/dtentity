@@ -28,9 +28,9 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityOSG/initosgviewer.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/positionattitudetransformcomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systeminterface.h>
@@ -49,7 +49,7 @@
 // small helper function to get 2D position of an entity
 void GetEntityTranslation(dtEntity::EntityManager& em, dtEntity::EntityId eid, osg::Vec2& translation)
 {
-   dtEntity::PositionAttitudeTransformComponent* tcomp;
+   dtEntityOSG::PositionAttitudeTransformComponent* tcomp;
    bool found = em.GetComponent(eid, tcomp);
    assert(found);
    osg::Vec3 t = tcomp->GetPosition();
@@ -144,7 +144,7 @@ public:
          mcomp->SetVec2(MovementComponent::SpeedId, speed);
          mcomp->SetForce(osg::Vec2());
 
-         dtEntity::PositionAttitudeTransformComponent* tcomp;
+         dtEntityOSG::PositionAttitudeTransformComponent* tcomp;
          bool found = GetEntityManager().GetComponent(id, tcomp);
          assert(found);
          osg::Vec3 trans = tcomp->GetPosition();
@@ -310,7 +310,7 @@ int main(int argc, char** argv)
       bool success = spawner->Spawn(*spawned);
       assert(success);
       // set a start position
-      dtEntity::PositionAttitudeTransformComponent* trans;
+      dtEntityOSG::PositionAttitudeTransformComponent* trans;
       success = em.GetComponent(spawned->GetId(), trans);
       assert(success);
       trans->SetPosition(osg::Vec3(i * 3, 0.0f, 0.5f));

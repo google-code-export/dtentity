@@ -23,7 +23,7 @@
 #include <dtEntity/core.h>
 #include <dtEntity/debugdrawinterface.h>
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/layerattachpointcomponent.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <osgParticle/MultiSegmentPlacer>
 #include <osgParticle/BoxPlacer>
 #include <osgParticle/ConstantRateCounter>
@@ -240,9 +240,9 @@ namespace dtEntitySimulation
    void ParticleComponent::OnAddedToEntity(dtEntity::Entity &entity)
    {
       BaseClass::OnAddedToEntity(entity);
-      dtEntity::LayerAttachPointSystem* layersys;
-      entity.GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
-      dtEntity::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
+      dtEntityOSG::LayerAttachPointSystem* layersys;
+      entity.GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layersys);
+      dtEntityOSG::LayerAttachPointComponent* sceneLayer = layersys->GetDefaultLayer();
       sceneLayer->GetNode()->asGroup()->addChild(mGeode);
       sceneLayer->GetNode()->asGroup()->addChild(mProgram);
    }
@@ -251,8 +251,8 @@ namespace dtEntitySimulation
    void ParticleComponent::OnRemovedFromEntity(dtEntity::Entity &entity)
    {
       BaseClass::OnRemovedFromEntity(entity);
-      dtEntity::LayerAttachPointSystem* layersys;
-      entity.GetEntityManager().GetEntitySystem(dtEntity::LayerAttachPointComponent::TYPE, layersys);
+      dtEntityOSG::LayerAttachPointSystem* layersys;
+      entity.GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layersys);
       mGeode->getParent(0)->removeChild(mGeode);
       mProgram->getParent(0)->removeChild(mProgram);
    }
