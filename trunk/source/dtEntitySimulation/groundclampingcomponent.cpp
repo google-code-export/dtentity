@@ -148,7 +148,8 @@ namespace dtEntitySimulation
       else
       {
          dtEntityOSG::CameraSystem* camsys;
-         GetEntityManager().GetEntitySystem(dtEntityOSG::CameraComponent::TYPE, camsys);
+         bool success = GetEntityManager().GetES(camsys);
+         assert(success);
          if(camsys->GetNumComponents() != 0)
          {
             mCamera = camsys->begin()->second;
