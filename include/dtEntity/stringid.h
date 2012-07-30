@@ -23,6 +23,7 @@
 #include <dtEntity/export.h>
 #include <dtEntity/entityid.h>
 #include <string>
+#include <dtEntity/dtentity_config.h>
 
 namespace dtEntity
 {
