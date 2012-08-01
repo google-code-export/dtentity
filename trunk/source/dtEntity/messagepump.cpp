@@ -20,11 +20,10 @@
 
 #include <dtEntity/messagepump.h>
 
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/log.h>
 
-#define PROFILING_ENABLED
-
-#ifdef PROFILING_ENABLED
+#if DTENTITY_PROFILING_ENABLED
 #include <dtEntity/profile.h>
 #endif
 
@@ -153,11 +152,11 @@ namespace dtEntity
       FunctorsToCall::iterator j;
       for(j = functorsToCall.begin(); j != functorsToCall.end(); ++j)
       {
-#ifdef PROFILING_ENABLED
+#if DTENTITY_PROFILING_ENABLED
          CProfileManager::Start_Profile(j->second);
 #endif
          (j->first)(msg);
-#ifdef PROFILING_ENABLED
+#if DTENTITY_PROFILING_ENABLED
          CProfileManager::Stop_Profile();
 #endif
       }

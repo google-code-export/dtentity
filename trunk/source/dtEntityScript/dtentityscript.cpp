@@ -23,6 +23,7 @@
 */
 
 #include <dtEntity/core.h>
+#include <dtEntity/dtentity_config.h>
 #include <dtEntity/entity.h>
 #include <dtEntityOSG/initosgviewer.h>
 #include <dtEntity/mapcomponent.h>
@@ -33,8 +34,10 @@
 #include <osgDB/FileUtils>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
-#include <dtEntity/profile.h>
 
+#if DTENTITY_PROFILING_ENABLED
+#include <dtEntity/profile.h>
+#endif
 
 // include the plugins we need
 USE_DTENTITYPLUGIN(dtEntitySimulation)
@@ -114,6 +117,7 @@ int main(int argc, char** argv)
 
    dtEntity::SystemInterface* iface = dtEntity::GetSystemInterface();
 
+#if DTENTITY_PROFILING_ENABLED
    if(profiling_enabled)
    {
       static dtEntity::StringId frameId = dtEntity::SID("Frame");
@@ -156,6 +160,7 @@ int main(int argc, char** argv)
       }
    }
    else
+#endif
    {
       while (!viewer.done())
       {
