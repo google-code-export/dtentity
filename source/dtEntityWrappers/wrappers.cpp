@@ -36,9 +36,6 @@
 #include <dtEntity/dtentity_config.h>
 #include <v8.h>
 
-#if BUILD_CAL3D
-  #include <dtEntityWrappers/animationsystemwrapper.h>
-#endif
 
 #if BUILD_OPENAL
   #include <dtEntityWrappers/soundsystemwrapper.h>
@@ -109,9 +106,6 @@ namespace dtEntityWrappers
       InitSoundSystemWrapper(scriptsystem);
 #endif
 
-#if BUILD_CAL3D
-      InitAnimationSystemWrapper(scriptsystem);
-#endif
    }
 
 }
