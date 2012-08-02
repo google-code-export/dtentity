@@ -110,6 +110,17 @@ namespace dtEntity
          unsigned int nodemask = NodeMasks::PICKABLE | NodeMasks::TERRAIN
          ) const = 0;
 
+      /**
+       * Get absolute path from a relative file path.
+       * Returns empty string if file is not found
+       */
+      virtual std::string FindDataFile(const std::string& filename) = 0;
+
+      /**
+        * return true if a file exists
+        */
+      virtual bool FileExists(const std::string& filename) = 0;
+
    };
   
 }

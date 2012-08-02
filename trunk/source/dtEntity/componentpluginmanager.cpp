@@ -20,10 +20,12 @@
 
 #include <dtEntity/componentpluginmanager.h>
 
+#include <dtEntity/core.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systeminterface.h>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 #include <osgDB/DynamicLibrary>
@@ -118,7 +120,7 @@ namespace dtEntity
          cleanedPath = path.substr(0, path.size() - 1);
       }
 
-      if(!osgDB::fileExists(cleanedPath))
+      if(!GetSystemInterface()->FileExists(cleanedPath))
       {
          LOG_ALWAYS("Plugin folder not found! Path: " + cleanedPath);
          return;

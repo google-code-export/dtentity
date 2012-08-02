@@ -22,8 +22,10 @@
 
 #include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentfactories.h>
+#include <dtEntity/core.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/property.h>
+#include <dtEntity/systeminterface.h>
 
 #include <osg/Notify>
 #include <osgDB/FileNameUtils>
@@ -69,12 +71,12 @@ namespace dtEntity
    #else
       std::string cwd = getcwd(NULL, 0);
    #endif
-      if(osgDB::fileExists("ProjectAssets"))
+      if(GetSystemInterface()->FileExists("ProjectAssets"))
       {
          projectassets = cwd + osgDB::getNativePathSeparator() + "ProjectAssets";
       }
 
-      if(osgDB::fileExists("BaseAssets"))
+      if(GetSystemInterface()->FileExists("BaseAssets"))
       {
          baseassets = cwd + osgDB::getNativePathSeparator() + "BaseAssets";
       }

@@ -21,11 +21,13 @@
 #include <dtEntity/protobufmapencoder.h>
 
 #include <dtEntity/component.h>
+#include <dtEntity/core.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/message.h>
 #include <dtEntity/spawner.h>
+#include <dtEntity/systeminterface.h>
 #include <osg/Matrix>
 #include <osg/Quat>
 #include <osg/Vec2>
@@ -862,7 +864,7 @@ namespace dtEntity
    {
       GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-      const std::string absPath = osgDB::findDataFile(path);
+      const std::string absPath = GetSystemInterface()->FindDataFile(path);
       if(absPath == "")
       {
          LOG_ERROR("Map not found: " + path);
@@ -902,7 +904,7 @@ namespace dtEntity
    {
       GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-      const std::string absPath = osgDB::findDataFile(path);
+      const std::string absPath = GetSystemInterface()->FindDataFile(path);
       if(absPath == "")
       {
          LOG_ERROR("Scene not found: " + path);

@@ -486,7 +486,7 @@ namespace dtEntityCEGUI
                                                         const std::string& resourceToFind)
    {
       //using data file search paths, find the resource and set the resourceGroup to that path
-      const std::string fullPath = osgDB::findDataFile(resourceToFind);
+      const std::string fullPath = dtEntity::GetSystemInterface()->FindDataFile(resourceToFind);
       if (fullPath.empty())
       {
          //file not found

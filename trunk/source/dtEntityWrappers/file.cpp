@@ -20,11 +20,11 @@
 
 #include <dtEntityWrappers/file.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <iostream>
 #include <v8.h>
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 #include <sys/stat.h>
 
 using namespace v8;
@@ -60,7 +60,7 @@ namespace dtEntityWrappers
      }
 
      FILE * f;
-     std::string abspath = osgDB::findDataFile(*name);
+     std::string abspath = dtEntity::GetSystemInterface()->FindDataFile(*name);
      if(abspath == "") 
      {
         f = fopen(*name, *mode);
@@ -195,13 +195,13 @@ namespace dtEntityWrappers
 
 	////////////////////////////////////////////////////////////////////////////////
 	JS_METHOD(_exists) {
-		return JS_BOOL(osgDB::fileExists(ToStdString(LOAD_VALUE(0))));
+      return JS_BOOL(dtEntity::GetSystemInterface()->FileExists(ToStdString(LOAD_VALUE(0))));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	JS_METHOD(_isfile) {
 		v8::String::Utf8Value name(LOAD_VALUE(0));
-		return JS_BOOL(osgDB::fileExists(*name));
+      return JS_BOOL(dtEntity::GetSystemInterface()->FileExists(*name));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

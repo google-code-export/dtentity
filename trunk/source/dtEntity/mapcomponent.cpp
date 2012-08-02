@@ -20,9 +20,10 @@
 
 #include <dtEntity/mapcomponent.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/uniqueid.h>
 #include <dtEntity/rapidxmlmapencoder.h>
-
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/dtentity_config.h>
@@ -286,7 +287,7 @@ namespace dtEntity
       // get data path containing this map
       std::string scenedatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string abspath = osgDB::findDataFile(path);
+      std::string abspath = GetSystemInterface()->FindDataFile(path);
       if(abspath == "")
       {
          LOG_ERROR("Cannot find scene file: " << path);
@@ -367,7 +368,7 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////
    bool MapSystem::MapExists(const std::string& path)
    {
-      return (osgDB::findDataFile(path) != "");
+      return (GetSystemInterface()->FindDataFile(path) != "");
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -395,7 +396,7 @@ namespace dtEntity
       // get data path containing this map
       std::string mapdatapath = "";
       osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      std::string abspath = osgDB::findDataFile(path);
+      std::string abspath = GetSystemInterface()->FindDataFile(path);
       for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
       {
          std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
@@ -643,7 +644,7 @@ namespace dtEntity
       {
          return false;
       }
-      if(osgDB::findDataFile(mapname) != "")
+      if(GetSystemInterface()->FindDataFile(mapname) != "")
       {
          mLoadedMaps.push_back(MapData(mapname, dataPath, static_cast<unsigned int>(mLoadedMaps.size())));
          return false;
@@ -653,7 +654,7 @@ namespace dtEntity
       std::ostringstream os; os << dataPath << "/" << mappathrel;
       std::string mappathabs = os.str();
 
-      if(!osgDB::fileExists(mappathabs))
+      if(!GetSystemInterface()->FileExists(mappathabs))
       {
          LOG_ERROR("Cannot create map in directory " << mappathabs << "! Does it exist?");
          return false;

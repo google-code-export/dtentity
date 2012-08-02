@@ -68,6 +68,17 @@ namespace dtEntityOSG
          unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN
          ) const;
 
+      /**
+       * Get absolute path from a relative file path.
+       * Returns empty string if file is not found
+       */
+      virtual std::string FindDataFile(const std::string& filename);
+
+      /**
+        * return true if a file exists
+        */
+      virtual bool FileExists(const std::string& filename);
+
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
       dtEntity::MessagePump* mMessagePump;

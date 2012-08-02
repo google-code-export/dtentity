@@ -27,7 +27,7 @@ namespace osgLibRocket
 	Rocket::Core::FileHandle FileInterface::Open(const Rocket::Core::String& path)
 	{
 		std::string abspath = osgDB::findDataFile(path.CString());
-		if(!osgDB::fileExists(abspath))
+      if(!osgDB::fileExists(abspath))
 		{
 			return 0;
 		}

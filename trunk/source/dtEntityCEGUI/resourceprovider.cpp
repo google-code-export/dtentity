@@ -23,8 +23,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <CEGUI/CEGUIExceptions.h>
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntityCEGUI/resourceprovider.h>
-#include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 #include <dtEntity/log.h>
 
@@ -89,7 +90,7 @@ namespace dtEntityCEGUI
          {
             const std::string& path = curIter->second;
             const std::string combinedPath = osgDB::concatPaths(path, strFilename);
-            foundFilename = osgDB::findDataFile(combinedPath);
+            foundFilename = dtEntity::GetSystemInterface()->FindDataFile(combinedPath);
             if( ! foundFilename.empty())
             {
                break;

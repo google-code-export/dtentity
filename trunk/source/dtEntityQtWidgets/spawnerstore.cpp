@@ -23,12 +23,13 @@
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntityOSG/layerattachpointcomponent.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/nodemasks.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/windowinterface.h>
+#include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <osgUtil/LineSegmentIntersector>
 #include <osgViewer/View>
@@ -265,7 +266,7 @@ namespace dtEntityQtWidgets
       QListWidgetItem* item;
       if(iconpath != "")
       {
-         QString iconrealpath = osgDB::findDataFile(iconpath.toStdString()).c_str();
+         QString iconrealpath = dtEntity::GetSystemInterface()->FindDataFile(iconpath.toStdString()).c_str();
          QIcon icon(iconrealpath);
          item = new QListWidgetItem(icon, name, mSpawnerList);
       }

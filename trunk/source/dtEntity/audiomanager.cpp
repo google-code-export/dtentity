@@ -20,6 +20,8 @@
 
 
 #include <dtEntity/audiomanager.h>
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/log.h>
 
 
@@ -110,7 +112,7 @@ namespace dtEntity
          std::string ext = osgDB::getLowerCaseFileExtension(file);
          if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
 
-         if (!osgDB::fileExists(file))
+         if (!GetSystemInterface()->FileExists(file))
          {
             return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
          }
@@ -420,13 +422,13 @@ namespace dtEntity
       }
 
       std::string filename;
-      if (osgDB::fileExists(file))
+      if (GetSystemInterface()->FileExists(file))
       {
          filename = file;
       }
       else
       {
-         filename = osgDB::findDataFile(file);
+         filename = GetSystemInterface()->FindDataFile(file);
       }
 
       if (filename.empty())

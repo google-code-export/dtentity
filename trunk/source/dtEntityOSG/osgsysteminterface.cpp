@@ -27,6 +27,7 @@
 #include <osg/Timer>
 #include <osg/FrameStamp>
 #include <osg/NodeVisitor>
+#include <osgDB/FileUtils>
 #include <osgViewer/View>
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/Viewer>
@@ -321,5 +322,17 @@ namespace dtEntityOSG
          }
       }
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string OSGSystemInterface::FindDataFile(const std::string& filename)
+   {
+      return osgDB::findDataFile(filename);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OSGSystemInterface::FileExists(const std::string& filename)
+   {
+      return osgDB::fileExists(filename);
    }
 }

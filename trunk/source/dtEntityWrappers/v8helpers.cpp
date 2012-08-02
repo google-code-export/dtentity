@@ -21,7 +21,10 @@
 #include <dtEntityWrappers/v8helpers.h>
 
 #include <dtEntityWrappers/entitymanagerwrapper.h>
+
+#include <dtEntity/core.h>
 #include <dtEntity/log.h>
+#include <dtEntity/systeminterface.h>
 #include <sstream>
 #include <iostream>
 #include <osgDB/FileUtils>
@@ -107,7 +110,7 @@ namespace dtEntityWrappers
       // load file contents to string variable
       std::ostringstream stream;
 
-      std::string path = osgDB::findDataFile(fileName);
+      std::string path = dtEntity::GetSystemInterface()->FindDataFile(fileName);
 
       std::ifstream inFile;
       inFile.open(path.c_str(), std::ios::in);

@@ -26,6 +26,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
 #include <dtEntity/stringid.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntityWrappers/componentwrapper.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
@@ -401,9 +402,9 @@ namespace dtEntityWrappers
          
          osgDB::FilePathList currentPathList;
          currentPathList.push_back(autostartpath.str());
-         const std::string absPath = osgDB::findDataFile(autostartpath.str());
+         const std::string absPath = dtEntity::GetSystemInterface()->FindDataFile(autostartpath.str());
 
-         if(!osgDB::fileExists(absPath))
+         if(!dtEntity::GetSystemInterface()->FileExists(absPath))
          {
             continue;
          }         
