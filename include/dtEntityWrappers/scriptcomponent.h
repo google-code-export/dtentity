@@ -27,7 +27,7 @@
 #include <dtEntity/component.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/property.h>
-#include <osgViewer/View>
+#include <set>
 
 namespace dtEntityWrappers
 {

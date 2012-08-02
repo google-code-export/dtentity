@@ -25,11 +25,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntityWrappers/export.h>
 #include <dtEntityWrappers/bytestorage.h>
-#include <osg/Vec2>
-#include <osg/Vec3>
-#include <osg/Vec4>
-#include <osg/Quat>
-#include <osg/Matrix>
 
 
 // These macros are copied from v8cgi macros.h
@@ -186,11 +181,11 @@ namespace dtEntityWrappers
       return v8::ThrowException(v8::Exception::SyntaxError(v8::String::New(err.c_str())));
    }
 
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec2(const osg::Vec2d& v);
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec3(const osg::Vec3d& v);
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec4(const osg::Vec4d& v);
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapQuat(const osg::Quat& v);
-   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapMatrix(const osg::Matrix& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec2(const dtEntity::Vec2d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec3(const dtEntity::Vec3d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec4(const dtEntity::Vec4d& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapQuat(const dtEntity::Quat& v);
+   DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapMatrix(const dtEntity::Matrix& v);
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapSID(dtEntity::StringId sid);
 
    DTENTITY_WRAPPERS_EXPORT bool IsVec2(v8::Handle<v8::Value> v);
@@ -199,11 +194,11 @@ namespace dtEntityWrappers
    DTENTITY_WRAPPERS_EXPORT bool IsQuat(v8::Handle<v8::Value> v);
    DTENTITY_WRAPPERS_EXPORT bool IsMatrix(v8::Handle<v8::Value> v);
 
-   DTENTITY_WRAPPERS_EXPORT osg::Vec2d UnwrapVec2(v8::Handle<v8::Value> v);
-   DTENTITY_WRAPPERS_EXPORT osg::Vec3d UnwrapVec3(v8::Handle<v8::Value> v);
-   DTENTITY_WRAPPERS_EXPORT osg::Vec4d UnwrapVec4(v8::Handle<v8::Value> v);
-   DTENTITY_WRAPPERS_EXPORT osg::Quat UnwrapQuat(v8::Handle<v8::Value> v);
-   DTENTITY_WRAPPERS_EXPORT osg::Matrix UnwrapMatrix(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT dtEntity::Vec2d UnwrapVec2(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT dtEntity::Vec3d UnwrapVec3(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT dtEntity::Vec4d UnwrapVec4(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT dtEntity::Quat UnwrapQuat(v8::Handle<v8::Value> v);
+   DTENTITY_WRAPPERS_EXPORT dtEntity::Matrix UnwrapMatrix(v8::Handle<v8::Value> v);
 
    DTENTITY_WRAPPERS_EXPORT dtEntity::StringId UnwrapSID(v8::Handle<v8::Value> v);
 

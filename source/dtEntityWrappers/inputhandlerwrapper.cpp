@@ -533,19 +533,4 @@ namespace dtEntityWrappers
       return scope.Close(obj);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   v8::Handle<v8::Object> WrapMouseWheelStates()
-   {            
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
-      
-      obj->Set(String::New("None"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_NONE));
-      obj->Set(String::New("Left"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_LEFT));
-      obj->Set(String::New("Right"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_RIGHT));
-      obj->Set(String::New("Up"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_UP));
-      obj->Set(String::New("Down"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_DOWN));
-      obj->Set(String::New("2D"), Uint32::New(osgGA::GUIEventAdapter::SCROLL_2D));
-      
-      return scope.Close(obj);
-   }
 }

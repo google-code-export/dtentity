@@ -20,7 +20,6 @@
 * Martin Scheffler
 */
 
-#include <osgViewer/View>
 #include <v8.h>
 
 namespace dtEntityWrappers

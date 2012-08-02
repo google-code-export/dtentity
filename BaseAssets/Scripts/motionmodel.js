@@ -186,18 +186,10 @@ function MotionComponent(eid) {
 
       /////////////////////////////// handle mouse wheel ///////////////////////////////
       var mouseWheelState = Input.getMouseWheelState();
-
-      var wheel = 0;
-      if(mouseWheelState == MouseWheelState.Up) {
-         wheel = 1;
-      }
-      else if(mouseWheelState == MouseWheelState.Down) {
-         wheel = -1;
-      }
-
-      if(wheel != 0) {
+      
+      if(mouseWheelState != 0) {
          var fov = targetCamComp.FieldOfView;
-         fov += wheel * -self.MouseWheelFactor;
+         fov += mouseWheelState * -self.MouseWheelFactor;
          if(fov > 0 && fov < 120) {
             targetCamComp.FieldOfView = fov;
          }

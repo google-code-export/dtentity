@@ -24,6 +24,7 @@
 #include <dtEntity/entity.h>
 #include <dtEntity/inputinterface.h>
 #include <dtEntity/nodemasks.h>
+#include <dtEntity/property.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/windowinterface.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
@@ -32,6 +33,8 @@
 #include <dtEntityWrappers/v8helpers.h>
 #include <iostream>
 #include <v8.h>
+#include <osg/DisplaySettings>
+#include <osg/GraphicsContext>
 
 using namespace v8;
 
@@ -108,7 +111,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetPickRay(const Arguments& args)
    {
-      osg::Vec3 pr = dtEntity::GetWindowInterface()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
+      dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
       return WrapVec3(pr);
    }
 
@@ -154,8 +157,8 @@ namespace dtEntityWrappers
       }
       
       
-      osg::Vec3d from = UnwrapVec3(args[0]);
-      osg::Vec3d to = UnwrapVec3(args[1]);
+      dtEntity::Vec3d from = UnwrapVec3(args[0]);
+      dtEntity::Vec3d to = UnwrapVec3(args[1]);
 
       dtEntity::SystemInterface::Intersections isects;
       bool found = dtEntity::GetSystemInterface()->GetIntersections(from, to, isects, nodemask);
@@ -189,8 +192,8 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRConvertWorldToScreenCoords(const Arguments& args)
    {
-      osg::Vec3d screenXYZ(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
-      osg::Vec3d c = dtEntity::GetWindowInterface()->ConvertWorldToScreenCoords(0, screenXYZ);
+      dtEntity::Vec3d screenXYZ(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
+      dtEntity::Vec3d c = dtEntity::GetWindowInterface()->ConvertWorldToScreenCoords(0, screenXYZ);
       return WrapVec3(c);
    }
 

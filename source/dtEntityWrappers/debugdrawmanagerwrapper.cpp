@@ -71,10 +71,10 @@ namespace dtEntityWrappers
          return ThrowError("usage: addLine(Vec3 start, Vec3 end, [Vec4 color, Int lineWidth, Number duration, bool useDepthTest])");
       }
 
-      osg::Vec3f start = UnwrapVec3(args[0]);
-      osg::Vec3f end = UnwrapVec3(args[1]);
+      dtEntity::Vec3f start = UnwrapVec3(args[0]);
+      dtEntity::Vec3f end = UnwrapVec3(args[1]);
 
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
@@ -122,7 +122,7 @@ namespace dtEntityWrappers
          return ThrowError("usage: addLines(Array(Vec3) lines,[Vec4 color, Int lineWidth, Number duration, bool useDepthTest])");
       }
 
-      std::vector<osg::Vec3> lines;
+      std::vector<dtEntity::Vec3f> lines;
       HandleScope scope;
       Handle<Array> arr = Handle<Array>::Cast(args[0]);
       
@@ -132,7 +132,7 @@ namespace dtEntityWrappers
          lines.push_back(UnwrapVec3(arr->Get(i)));
       }
       
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 1 && IsVec4(args[1]))
       {
          color = UnwrapVec4(args[1]);
@@ -179,10 +179,10 @@ namespace dtEntityWrappers
          return ThrowError("usage: addAABB(Vec3 min, Vec3 max, [Vec4 color, Int lineWidth, Number duration, bool useDepthTest])");
       }
 
-      osg::Vec3f min = UnwrapVec3(args[0]);
-      osg::Vec3f max = UnwrapVec3(args[1]);
+      dtEntity::Vec3f min = UnwrapVec3(args[0]);
+      dtEntity::Vec3f max = UnwrapVec3(args[1]);
 
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 2  && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
@@ -228,9 +228,9 @@ namespace dtEntityWrappers
       {
          return ThrowError("usage: addCross(Vec3 position, Vec4 color, [int linewidth, Number duration, bool useDepthTest])");
       }
-      osg::Vec3f pos = UnwrapVec3(args[0]);
+      dtEntity::Vec3f pos = UnwrapVec3(args[0]);
 
-      osg::Vec4f color = UnwrapVec4(args[1]);
+      dtEntity::Vec4f color = UnwrapVec4(args[1]);
 
 
       int linewidth = 1;
@@ -269,11 +269,11 @@ namespace dtEntityWrappers
       {
          return ThrowError("usage: addCircle(Vec3 position, Vec3 normal, number radius, Vec4 color, [Number duration, bool useDepthTest])");
       }
-      osg::Vec3f pos = UnwrapVec3(args[0]);
-      osg::Vec3f nrml = UnwrapVec3(args[1]);
+      dtEntity::Vec3f pos = UnwrapVec3(args[0]);
+      dtEntity::Vec3f nrml = UnwrapVec3(args[1]);
       double radius = args[2]->NumberValue();
 
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 3 && IsVec4(args[3]))
       {
          color = UnwrapVec4(args[3]);
@@ -309,11 +309,11 @@ namespace dtEntityWrappers
       {
          return ThrowError("usage: addSphere(Vec3 position, number radius, Vec4 color, Number duration, bool useDepthTest])");
       }
-      osg::Vec3f pos = UnwrapVec3(args[0]);
+      dtEntity::Vec3f pos = UnwrapVec3(args[0]);
 
       float radius = args[1]->NumberValue();
 
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
@@ -349,11 +349,11 @@ namespace dtEntityWrappers
       {
          return ThrowError("usage: addString(Vec3 position, text, Vec4 color, Number duration, bool useDepthTest])");
       }
-      osg::Vec3f pos = UnwrapVec3(args[0]);
+      dtEntity::Vec3f pos = UnwrapVec3(args[0]);
 
 		std::string text = ToStdString(args[1]);
 
-      osg::Vec4f color(1,0,0,1);
+      dtEntity::Vec4f color(1,0,0,1);
       if(args.Length() > 2 && IsVec4(args[2]))
       {
          color = UnwrapVec4(args[2]);
@@ -391,11 +391,11 @@ namespace dtEntityWrappers
          return ThrowError("usage: addTriangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec4 color, [int linewidth, Number duration, bool useDepthTest])");
       }
 
-      osg::Vec3f v0 = UnwrapVec3(args[0]);
-      osg::Vec3f v1 = UnwrapVec3(args[1]);
-      osg::Vec3f v2 = UnwrapVec3(args[2]);
+      dtEntity::Vec3f v0 = UnwrapVec3(args[0]);
+      dtEntity::Vec3f v1 = UnwrapVec3(args[1]);
+      dtEntity::Vec3f v2 = UnwrapVec3(args[2]);
 
-      osg::Vec4f color = UnwrapVec4(args[3]);
+      dtEntity::Vec4f color = UnwrapVec4(args[3]);
 
       int linewidth = 1;
       if(args.Length() > 4)

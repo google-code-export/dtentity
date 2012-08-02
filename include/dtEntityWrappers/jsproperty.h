@@ -151,16 +151,16 @@ namespace dtEntityWrappers
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::QUAT; }
 
-      virtual osg::Quat QuatValue() const { return Get(); }
-      virtual void SetQuat(const osg::Quat& v) { Set(v); }
+      virtual dtEntity::Quat QuatValue() const { return Get(); }
+      virtual void SetQuat(const dtEntity::Quat& v) { Set(v); }
       virtual const std::string StringValue() const { dtEntity::QuatProperty p(Get()); return p.StringValue(); }
       virtual void SetString(const std::string& v) { dtEntity::QuatProperty p; p.SetString(v); Set(p.Get());}
       virtual Property* Clone() const { return new dtEntity::QuatProperty(Get()); }
       virtual bool operator==(const dtEntity::Property& other) const { return other.QuatValue() == Get(); }
       virtual bool SetFrom(const dtEntity::Property& other) { Set(other.QuatValue()); return true; }
 
-      osg::Quat Get() const;
-      void Set(const osg::Quat& v);
+      dtEntity::Quat Get() const;
+      void Set(const dtEntity::Quat& v);
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -193,16 +193,16 @@ namespace dtEntityWrappers
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC2D; }
 
-      virtual osg::Vec2d Vec2dValue() const { return Get(); }
-      virtual void SetVec2d(const osg::Vec2d& v) { Set(v); }
+      virtual dtEntity::Vec2d Vec2dValue() const { return Get(); }
+      virtual void SetVec2d(const dtEntity::Vec2d& v) { Set(v); }
       virtual const std::string StringValue() const { dtEntity::Vec2dProperty p(Get()); return p.StringValue(); }
       virtual void SetString(const std::string& v) { dtEntity::Vec2dProperty p; p.SetString(v); Set(p.Get());}
       virtual Property* Clone() const { return new dtEntity::Vec2dProperty(Get()); }
       virtual bool operator==(const dtEntity::Property& other) const { return other.Vec2dValue() == Get(); }
       virtual bool SetFrom(const dtEntity::Property& other) { Set(other.Vec2dValue()); return true; }
 
-      osg::Vec2d Get() const;
-      void Set(const osg::Vec2d& v);
+      dtEntity::Vec2d Get() const;
+      void Set(const dtEntity::Vec2d& v);
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -215,16 +215,16 @@ namespace dtEntityWrappers
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC3D; }
 
-      virtual osg::Vec3d Vec3dValue() const { return Get(); }
-      virtual void SetVec3d(const osg::Vec3d& v) { Set(v); }
+      virtual dtEntity::Vec3d Vec3dValue() const { return Get(); }
+      virtual void SetVec3d(const dtEntity::Vec3d& v) { Set(v); }
       virtual const std::string StringValue() const { dtEntity::Vec3dProperty p(Get()); return p.StringValue(); }
       virtual void SetString(const std::string& v) { dtEntity::Vec3dProperty p; p.SetString(v); Set(p.Get());}
       virtual Property* Clone() const { return new dtEntity::Vec3dProperty(Get()); }
       virtual bool operator==(const dtEntity::Property& other) const { return other.Vec3dValue() == Get(); }
       virtual bool SetFrom(const dtEntity::Property& other) { Set(other.Vec3dValue()); return true; }
 
-      osg::Vec3d Get() const;
-      void Set(const osg::Vec3d& v);
+      dtEntity::Vec3d Get() const;
+      void Set(const dtEntity::Vec3d& v);
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -237,15 +237,15 @@ namespace dtEntityWrappers
 
       virtual dtEntity::DataType::e GetDataType() const { return dtEntity::DataType::VEC4D; }
 
-      virtual osg::Vec4d Vec4dValue() const { return Get(); }
-      virtual void SetVec4d(const osg::Vec4d& v) { Set(v); }
+      virtual dtEntity::Vec4d Vec4dValue() const { return Get(); }
+      virtual void SetVec4d(const dtEntity::Vec4d& v) { Set(v); }
       virtual const std::string StringValue() const { dtEntity::Vec4dProperty p(Get()); return p.StringValue(); }
       virtual void SetString(const std::string& v) { dtEntity::Vec4dProperty p; p.SetString(v); Set(p.Get());}
       virtual Property* Clone() const { return new dtEntity::Vec4dProperty(Get()); }
       virtual bool operator==(const dtEntity::Property& other) const { return other.Vec4dValue() == Get(); }
       virtual bool SetFrom(const dtEntity::Property& other) { Set(other.Vec4dValue()); return true; }
 
-      osg::Vec4d Get() const;
-      void Set(const osg::Vec4d& v);
+      dtEntity::Vec4d Get() const;
+      void Set(const dtEntity::Vec4d& v);
    };
 }
