@@ -21,8 +21,10 @@
 #include <dtEntityQtWidgets/delegatefactory.h>
 #include <dtEntityQtWidgets/propertydelegate.h>
 
+#include <dtEntity/core.h>
 #include <dtEntity/log.h>
 #include <dtEntity/rapidxmlmapencoder.h>
+#include <dtEntity/systeminterface.h>
 
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
@@ -631,8 +633,8 @@ namespace dtEntityQtWidgets
       bool LoadFactoryFromFile(const QString& path, DelegateFactory*& factory, Translator*& translator)
       {
          osgDB::FilePathList l = osgDB::getDataFilePathList();
-         const std::string foundPath = osgDB::findDataFile(path.toStdString());
-         if(!osgDB::fileExists(foundPath))
+         const std::string foundPath = dtEntity::GetSystemInterface()->FindDataFile(path.toStdString());
+         if(!dtEntity::GetSystemInterface()->FileExists(foundPath))
          {
             LOG_DEBUG("Cannot load delegate factory, file not found: " + foundPath);
             return NULL;

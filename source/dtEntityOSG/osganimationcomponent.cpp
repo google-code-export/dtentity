@@ -20,10 +20,12 @@
 
 #include <dtEntityOSG/osganimationcomponent.h>
 
+#include <dtEntity/core.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntityOSG/staticmeshcomponent.h>
 #include <osg/Geode>
@@ -140,7 +142,7 @@ namespace dtEntityOSG
                program->setName("HardwareSkinning");
                if (!_shader.valid())
                {
-                   std::string shaderPath = osgDB::findDataFile(mVertexShader);
+                   std::string shaderPath = dtEntity::GetSystemInterface()->FindDataFile(mVertexShader);
                    _shader = osg::Shader::readShaderFile(osg::Shader::VERTEX, shaderPath);
 
                }
@@ -164,7 +166,7 @@ namespace dtEntityOSG
 
                program->addShader(_shader.get());
 
-               std::string shaderPath2 = osgDB::findDataFile(mFragmentShader);
+               std::string shaderPath2 = dtEntity::GetSystemInterface()->FindDataFile(mFragmentShader);
                osg::Shader* shader2 = osg::Shader::readShaderFile(osg::Shader::FRAGMENT, shaderPath2);
                if(shader2)
                {

@@ -19,8 +19,11 @@
 */
 
 #include <dtEntityWrappers/globalfunctions.h>
+
+#include <dtEntity/core.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/profile.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntityWrappers/entitymanagerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
@@ -66,7 +69,7 @@ namespace dtEntityWrappers
          return ThrowError("usage: findDataFile(string path)");
       }
       std::string path = ToStdString(args[0]);
-      std::string result = osgDB::findDataFile(path);
+      std::string result = dtEntity::GetSystemInterface()->FindDataFile(path);
       return ToJSString(result);
    }
 

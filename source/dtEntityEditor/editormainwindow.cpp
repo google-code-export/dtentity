@@ -20,8 +20,12 @@
 
 #include <dtEntityEditor/editormainwindow.h>
 
+#include <dtEntity/core.h>
 #include <dtEntity/entitymanager.h>
-
+#include <dtEntity/systeminterface.h>
+#include <dtEntity/log.h>
+#include <dtEntity/commandmessages.h>
+#include <dtEntity/systemmessages.h>
 #include <dtEntityQtWidgets/datapatheditor.h>
 #include <dtEntityEditor/editorapplication.h>
 #include <dtEntityQtWidgets/entitytree.h>
@@ -32,9 +36,7 @@
 #include <dtEntityQtWidgets/propertyeditor.h>
 #include <dtEntityQtWidgets/qtguiwindowsystemwrapper.h>
 #include <dtEntityQtWidgets/spawnerstore.h>
-#include <dtEntity/log.h>
-#include <dtEntity/commandmessages.h>
-#include <dtEntity/systemmessages.h>
+
 #include <cassert>
 #include <iostream>
 #include <QtGui/QtGui>
@@ -377,7 +379,7 @@ namespace dtEntityEditor
             static_cast<const dtEntity::SceneLoadedMessage&>(m);
 
       std::string curr = msg.GetSceneName();
-      mCurrentScene = osgDB::findDataFile(curr).c_str();
+      mCurrentScene = dtEntity::GetSystemInterface()->FindDataFile(curr).c_str();
 
       mSaveSceneAct->setEnabled(true);
 

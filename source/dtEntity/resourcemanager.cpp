@@ -20,6 +20,8 @@
 
 #include <dtEntity/resourcemanager.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/log.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/systemmessages.h>
@@ -34,7 +36,7 @@ namespace dtEntity
    {
       osg::Node* ret = NULL;
 
-      std::string abspath = osgDB::findDataFile(path);
+      std::string abspath = GetSystemInterface()->FindDataFile(path);
 
       if(abspath.empty())
       {
