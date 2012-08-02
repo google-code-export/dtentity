@@ -67,11 +67,12 @@ namespace dtEntityOSG
         dtEntity:: LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
       }
 
-      dtEntity::SetupDataPaths(argc, argv, checkPaths);
 
       dtEntity::SetSystemInterface(new OSGSystemInterface(em.GetMessagePump()));
       dtEntity::SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
       dtEntity::SetWindowInterface(new OSGWindowInterface(em));
+
+      dtEntity::SetupDataPaths(argc, argv, checkPaths);
 
       dtEntity::AddDefaultEntitySystemsAndFactories(argc, argv, em);
       RegisterStandardFactories(dtEntity::ComponentPluginManager::GetInstance());
