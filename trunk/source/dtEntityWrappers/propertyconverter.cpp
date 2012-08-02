@@ -158,7 +158,7 @@ namespace dtEntityWrappers
                double p14 = a3->Get(1)->NumberValue();
                double p15 = a3->Get(2)->NumberValue();
                double p16 = a3->Get(3)->NumberValue();
-               osg::Matrix m(p1,p2,p3,p4,p5,p6,p7,p8,
+               dtEntity::Matrix m(p1,p2,p3,p4,p5,p6,p7,p8,
                              p9,p10,p11,p12,p13,p14,p15,p16);
                return new MatrixProperty(m);
             }
@@ -286,7 +286,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts matrix values!");
          }
-         osg::Matrix mat = UnwrapMatrix(val);
+         dtEntity::Matrix mat = UnwrapMatrix(val);
          prop->SetMatrix(mat); break;
       }
       case dtEntity::DataType::QUAT:
@@ -295,7 +295,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts quat values!");
          }
-         osg::Quat q = UnwrapQuat(val);
+         dtEntity::Quat q = UnwrapQuat(val);
          prop->SetQuat(q); break;
       }
       case dtEntity::DataType::STRING:
@@ -308,7 +308,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts vec2 values!");
          }
-         osg::Vec2d vec = UnwrapVec2(val);
+         dtEntity::Vec2d vec = UnwrapVec2(val);
          prop->SetVec2(vec); break;
       }
       case dtEntity::DataType::VEC3:
@@ -317,7 +317,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts vec3 values!" + ToStdString(val));
          }
-         osg::Vec3d vec = UnwrapVec3(val);
+         dtEntity::Vec3d vec = UnwrapVec3(val);
          prop->SetVec3(vec); break;
       }
       case dtEntity::DataType::VEC4:
@@ -326,7 +326,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts vec4 values!");
          }
-         osg::Vec4d vec = UnwrapVec4(val);
+         dtEntity::Vec4d vec = UnwrapVec4(val);
          prop->SetVec4(vec); break;
       }
       case dtEntity::DataType::VEC2D:
@@ -335,7 +335,7 @@ namespace dtEntityWrappers
         {
            return ThrowError("Property only accepts vec2 values!");
         }
-         osg::Vec2d vec = UnwrapVec2(val);
+         dtEntity::Vec2d vec = UnwrapVec2(val);
          prop->SetVec2D(vec); break;
       }
       case dtEntity::DataType::VEC3D:
@@ -344,7 +344,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts vec3 values!" + ToStdString(val));
          }
-         osg::Vec3d vec = UnwrapVec3(val);
+         dtEntity::Vec3d vec = UnwrapVec3(val);
          prop->SetVec3D(vec); break;
       }
       case dtEntity::DataType::VEC4D:
@@ -353,7 +353,7 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts vec4 values!");
          }
-         osg::Vec4d vec = UnwrapVec4(val);
+         dtEntity::Vec4d vec = UnwrapVec4(val);
          prop->SetVec4D(vec); break;
       }
 
@@ -417,7 +417,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::MATRIX:
       {
-         osg::Matrix mat = prop->MatrixValue();
+         dtEntity::Matrix mat = prop->MatrixValue();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -443,7 +443,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::QUAT:
       {
-         osg::Quat v = prop->QuatValue();
+         dtEntity::Quat v = prop->QuatValue();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -457,7 +457,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC2:
       {
-         osg::Vec2 v = prop->Vec2Value();
+         dtEntity::Vec2f v = prop->Vec2Value();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -469,7 +469,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC3:
       {
-         osg::Vec3 v = prop->Vec3Value();
+         dtEntity::Vec3f v = prop->Vec3Value();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -482,7 +482,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC4:
       {
-         osg::Vec4 v = prop->Vec4Value();
+         dtEntity::Vec4f v = prop->Vec4Value();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -496,7 +496,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC2D:
       {
-         osg::Vec2d v = prop->Vec2dValue();
+         dtEntity::Vec2d v = prop->Vec2dValue();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -508,7 +508,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC3D:
       {
-         osg::Vec3d v = prop->Vec3dValue();
+         dtEntity::Vec3d v = prop->Vec3dValue();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {
@@ -521,7 +521,7 @@ namespace dtEntityWrappers
       }
       case dtEntity::DataType::VEC4D:
       {
-         osg::Vec4d v = prop->Vec4dValue();
+         dtEntity::Vec4d v = prop->Vec4dValue();
          Handle<Array> arr = Handle<Array>::Cast(val);
          if(arr.IsEmpty())
          {

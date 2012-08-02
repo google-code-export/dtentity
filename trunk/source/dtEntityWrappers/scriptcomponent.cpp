@@ -43,10 +43,6 @@
 #include <v8.h>
 #include <v8-debug.h>
 
-#include <osg/Version>
-
-#define OSG_2_9_VER (defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2 && OSG_VERSION_MINOR > 8)
-
 using namespace v8;
 
 namespace dtEntityWrappers
@@ -169,7 +165,6 @@ namespace dtEntityWrappers
          context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
       }
 
-      context->Global()->Set(String::New("MouseWheelState"), WrapMouseWheelStates());
       context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
       context->Global()->Set(String::New("Priority"), WrapPriorities());
       context->Global()->Set(String::New("Order"), WrapPriorities());

@@ -22,7 +22,7 @@ SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/file.h
 	${HEADER_PATH}/globalfunctions.h
 	${HEADER_PATH}/inputhandlerwrapper.h
-  ${HEADER_PATH}/jsproperty.h
+    ${HEADER_PATH}/jsproperty.h
 	${HEADER_PATH}/loggerwrapper.h
 	${HEADER_PATH}/mapsystemwrapper.h
 	${HEADER_PATH}/messages.h
@@ -61,8 +61,6 @@ SET(LIB_SOURCES_REPLACE
 
 SET(WRAPLIBRARIES dtEntity
                   ${V8_LIBRARIES}
-                  ${OPENSCENEGRAPH_LIBRARIES}
-                  ${OPENTHREADS_LIBRARIES}
 )
 
 

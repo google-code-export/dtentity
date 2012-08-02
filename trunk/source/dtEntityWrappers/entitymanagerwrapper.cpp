@@ -34,7 +34,6 @@
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappers.h>
-#include <osgDB/FileUtils>
 #include <iostream>
 #include <sstream>
 #include <assert.h>

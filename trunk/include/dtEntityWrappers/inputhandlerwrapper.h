@@ -21,9 +21,7 @@
 */
 
 #include <dtEntityWrappers/export.h>
-#include <osgGA/GUIEventHandler>
 #include <dtEntity/entitymanager.h>
-#include <osgGA/GUIEventHandler>
 #include <v8.h>
 
 namespace dtEntity
@@ -39,6 +37,5 @@ namespace dtEntityWrappers
    v8::Handle<v8::Object> WrapTouchPhases();
    v8::Handle<v8::Object> WrapKeys(dtEntity::InputInterface* ih);
    v8::Handle<v8::Object> WrapAxes(dtEntity::InputInterface* ih);
-   v8::Handle<v8::Object> WrapMouseWheelStates();
 
 }

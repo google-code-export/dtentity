@@ -284,7 +284,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Quat JSQuatProperty::Get() const
+   dtEntity::Quat JSQuatProperty::Get() const
    {
       HandleScope scope;
       Context::Scope context_scope(mGetter->CreationContext());
@@ -301,14 +301,14 @@ namespace dtEntityWrappers
       {
          LOG_ERROR("Wrong return value from array property getter!");
       }
-      return osg::Quat(a->Get(0)->NumberValue(),
+      return dtEntity::Quat(a->Get(0)->NumberValue(),
                        a->Get(1)->NumberValue(),
                        a->Get(2)->NumberValue(),
                        a->Get(3)->NumberValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void JSQuatProperty::Set(const osg::Quat& v)
+   void JSQuatProperty::Set(const dtEntity::Quat& v)
    {
       HandleScope scope;
       Context::Scope context_scope(mSetter->CreationContext());
@@ -376,7 +376,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2d JSVec2Property::Get() const
+   dtEntity::Vec2d JSVec2Property::Get() const
    {
       HandleScope scope;
       Context::Scope context_scope(mGetter->CreationContext());
@@ -393,12 +393,12 @@ namespace dtEntityWrappers
       {
          LOG_ERROR("Wrong return value from array property getter!");
       }
-      return osg::Vec2d(a->Get(0)->NumberValue(),
+      return dtEntity::Vec2d(a->Get(0)->NumberValue(),
                        a->Get(1)->NumberValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void JSVec2Property::Set(const osg::Vec2d& v)
+   void JSVec2Property::Set(const dtEntity::Vec2d& v)
    {
       HandleScope scope;
       Context::Scope context_scope(mSetter->CreationContext());
@@ -423,7 +423,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3d JSVec3Property::Get() const
+   dtEntity::Vec3d JSVec3Property::Get() const
    {
       HandleScope scope;
       Context::Scope context_scope(mGetter->CreationContext());
@@ -440,13 +440,13 @@ namespace dtEntityWrappers
       {
          LOG_ERROR("Wrong return value from array property getter!");
       }
-      return osg::Vec3d(a->Get(0)->NumberValue(),
+      return dtEntity::Vec3d(a->Get(0)->NumberValue(),
                         a->Get(1)->NumberValue(),
                         a->Get(2)->NumberValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void JSVec3Property::Set(const osg::Vec3d& v)
+   void JSVec3Property::Set(const dtEntity::Vec3d& v)
    {
       HandleScope scope;
       Context::Scope context_scope(mSetter->CreationContext());
@@ -472,7 +472,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4d JSVec4Property::Get() const
+   dtEntity::Vec4d JSVec4Property::Get() const
    {
       HandleScope scope;
       Context::Scope context_scope(mGetter->CreationContext());
@@ -489,14 +489,14 @@ namespace dtEntityWrappers
       {
          LOG_ERROR("Wrong return value from array property getter!");
       }
-      return osg::Vec4d(a->Get(0)->NumberValue(),
+      return dtEntity::Vec4d(a->Get(0)->NumberValue(),
                         a->Get(1)->NumberValue(),
                         a->Get(2)->NumberValue(),
                         a->Get(3)->NumberValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void JSVec4Property::Set(const osg::Vec4d& v)
+   void JSVec4Property::Set(const dtEntity::Vec4d& v)
    {
       HandleScope scope;
       Context::Scope context_scope(mSetter->CreationContext());
