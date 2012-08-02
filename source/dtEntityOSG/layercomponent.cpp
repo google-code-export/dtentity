@@ -211,8 +211,12 @@ namespace dtEntityOSG
           return false;
       }
 
+      LayerSystem* sys;
+      mEntity->GetEntityManager().GetES(sys);
+      unsigned int visiblemask = sys->GetVisibilityBits();
+
       osg::ComputeBoundsVisitor v;
-      v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+      v.setTraversalMask(visiblemask);
       att->accept(v);
       min = v.getBoundingBox()._min;
       max = v.getBoundingBox()._max;
@@ -230,14 +234,18 @@ namespace dtEntityOSG
    {      
       if(mVisibleVal == visible || GetAttachedComponentNode() == NULL) return;
 
+      LayerSystem* sys;
+      mEntity->GetEntityManager().GetES(sys);
+      unsigned int visiblemask = sys->GetVisibilityBits();
+
       mVisibleVal = visible;
       if(visible)
       {
-         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() | dtEntity::NodeMasks::VISIBLE);
+         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() | visiblemask);
       }
       else
       {
-         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~dtEntity::NodeMasks::VISIBLE);
+         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~visiblemask);
       }
 
       dtEntity::VisibilityChangedMessage msg;
@@ -326,6 +334,7 @@ namespace dtEntityOSG
    // coordinate system
    class LocalBoundingBoxVisitor : public osg::NodeVisitor
    {
+      
    public:
 
       LocalBoundingBoxVisitor()
@@ -333,13 +342,7 @@ namespace dtEntityOSG
          , mVisited(false)
       {}
 
-      virtual void apply(osg::Node& node)
-      {
-         if((node.getNodeMask() & dtEntity::NodeMasks::VISIBLE) != 0)
-         {
-            traverse(node);
-         }
-      }
+
 
       /**
       * Visits the specified geode.
@@ -390,11 +393,17 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
    const dtEntity::StringId LayerSystem::TYPE(dtEntity::SID("Layer"));
+   const dtEntity::StringId LayerSystem::VisibilityBitsId(dtEntity::SID("VisibilityBits"));
+
+   
 
    ////////////////////////////////////////////////////////////////////////////
    LayerSystem::LayerSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<LayerComponent>(em)
+      , mVisibilityBits(dtEntity::NodeMasks::VISIBLE)
    {
+      Register(VisibilityBitsId, &mVisibilityBits);
+
       mEnterWorldFunctor = dtEntity::MessageFunctor(this, &LayerSystem::OnEnterWorld);
       em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor,"LayerSystem::OnEnterWorld");
 
@@ -458,7 +467,7 @@ namespace dtEntityOSG
       }
 
       LocalBoundingBoxVisitor v;
-      v.setTraversalMask(dtEntity::NodeMasks::PICKABLE);
+      v.setTraversalMask(GetVisibilityBits());
       node->accept(v);
       if(!v.mVisited)
       {
@@ -531,7 +540,8 @@ namespace dtEntityOSG
 
       geode->addDrawable(geometry);
       geode->setName("SelectionBounds");
-      geode->setNodeMask(dtEntity::NodeMasks::VISIBLE);
+
+      geode->setNodeMask(GetVisibilityBits());
 
       // store pointer to entity to make box identifiable for removal
       dtEntity::Entity* entity;

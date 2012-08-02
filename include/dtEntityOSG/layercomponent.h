@@ -127,6 +127,8 @@ namespace dtEntityOSG
       
       static const dtEntity::ComponentType TYPE;
 
+      static const dtEntity::StringId VisibilityBitsId;
+
       LayerSystem(dtEntity::EntityManager& em);
       ~LayerSystem();
 
@@ -136,6 +138,10 @@ namespace dtEntityOSG
       void AddVisibleBoundingBox(dtEntity::EntityId id);
       void RemoveVisibleBoundingBox(dtEntity::EntityId id);
       void RemoveAllBoundingBoxes();
+
+      // set or clear these bits when visibility of component is toggled
+      void SetVisibilityBits(unsigned int bits) { mVisibilityBits.Set(bits); }
+      unsigned int GetVisibilityBits() const { return mVisibilityBits.Get(); }
 
    private:
 
@@ -161,6 +167,8 @@ namespace dtEntityOSG
 
       dtEntity::MessageFunctor mEnterWorldFunctor;
       dtEntity::MessageFunctor mLeaveWorldFunctor;
+
+      dtEntity::UIntProperty mVisibilityBits;
       
    };
 }
