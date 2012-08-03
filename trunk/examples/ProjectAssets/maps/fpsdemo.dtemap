@@ -90,6 +90,7 @@
     </component>
     <component type="StaticMesh">
       <stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+      <boolproperty name="IsTerrain" value="true" />
     </component>
   </entity>
   

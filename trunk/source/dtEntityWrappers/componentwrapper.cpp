@@ -186,6 +186,19 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> COCopyPropertyValues(const Arguments& args)
+   {
+      dtEntity::Component* co = UnwrapComponent(args.This());
+      dtEntity::StringId propname = args[0]->Uint32Value();
+      dtEntity::Property* prop = co->Get(propname);
+      if(prop == NULL)
+      {
+         return ThrowError("Component has no property named " + dtEntity::GetStringFromSID(args[0]->Uint32Value()));
+      }
+      return SetValueFromProperty(prop, args[1]);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Handle<Object> WrapComponent(Handle<Object> wrappedes, ScriptSystem* scriptsys, dtEntity::EntityId eid, dtEntity::Component* v)
    {
 
@@ -213,6 +226,7 @@ namespace dtEntityWrappers
          proto->Set("properties", FunctionTemplate::New(COProperties));
          proto->Set("toString", FunctionTemplate::New(COToString));
          proto->Set("finished", FunctionTemplate::New(COFinished));
+         proto->Set("copyPropertyValues", FunctionTemplate::New(COCopyPropertyValues));
 
          GetScriptSystem()->SetTemplateBySID(s_componentWrapper, templt);
       }
