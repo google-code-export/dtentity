@@ -210,6 +210,19 @@ namespace dtEntityWrappers
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
       return Boolean::New(sys->StorePropertiesToScene());
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> ESCopyPropertyValues(const Arguments& args)
+   {
+      dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
+      dtEntity::StringId propname = args[0]->Uint32Value();
+      dtEntity::Property* prop = es->Get(propname);
+      if(prop == NULL)
+      {
+         return ThrowError("Entity System has no property named " + dtEntity::GetStringFromSID(args[0]->Uint32Value()));
+      }
+      return SetValueFromProperty(prop, args[1]);
+   }
    
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ESFinished(const Arguments& args)
@@ -452,6 +465,7 @@ namespace dtEntityWrappers
         proto->Set("hasComponent", FunctionTemplate::New(ESHasComponent));
         proto->Set("createComponent", FunctionTemplate::New(ESCreateComponent, External::New(scriptSystem)));
         proto->Set("deleteComponent", FunctionTemplate::New(ESDeleteComponent));
+        proto->Set("copyPropertyValues", FunctionTemplate::New(ESCopyPropertyValues));
         proto->Set("finished", FunctionTemplate::New(ESFinished));
 
         proto->Set("storeComponentToMap", FunctionTemplate::New(ESStoreComponentToMap));

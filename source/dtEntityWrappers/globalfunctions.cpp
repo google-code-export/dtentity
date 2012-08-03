@@ -145,6 +145,18 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SID(const Arguments& args)
+   {
+      return Uint32::New(dtEntity::SID(ToStdString(args[0])));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> GetStringFromSID(const Arguments& args)
+   {
+      return String::New(dtEntity::GetStringFromSID(args[0]->Uint32Value()).c_str());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void RegisterGlobalFunctions(ScriptSystem* ss, Handle<Context> context)
    {
       //HandleScope handle_scope;
@@ -156,6 +168,8 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
       context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());
       context->Global()->Set(String::New("setDataFilePathList"), FunctionTemplate::New(SetDataFilePathList)->GetFunction());
+      context->Global()->Set(String::New("sid"), FunctionTemplate::New(SID)->GetFunction());
+      context->Global()->Set(String::New("getStringFromSid"), FunctionTemplate::New(GetStringFromSID)->GetFunction());
       context->Global()->Set(String::New("startProfile"), FunctionTemplate::New(StartProfile)->GetFunction());
       context->Global()->Set(String::New("stopProfile"), FunctionTemplate::New(StopProfile)->GetFunction());
    }

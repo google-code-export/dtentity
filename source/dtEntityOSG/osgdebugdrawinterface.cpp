@@ -59,6 +59,10 @@ namespace dtEntityOSG
    , mTickFunctor(this, &OSGDebugDrawInterface::Tick)
    , mLayerName(layerName)
    {
+      if(layerName == dtEntity::StringId())
+      {
+         layerName = LayerAttachPointSystem::DefaultLayerId;
+      }
       mGroupDepthTest->setNodeMask(dtEntity::NodeMasks::VISIBLE);
       mGroupNoDepthTest->setNodeMask(dtEntity::NodeMasks::VISIBLE);
 

@@ -239,24 +239,24 @@ namespace dtEntityWrappers
 
       dtEntity::Spawner* parent = NULL;
 
-      if(!vparentname.IsEmpty())
+      if(!vparentname.IsEmpty() && !vparentname->IsUndefined())
       {
          ms->GetSpawner(ToStdString(vparentname), parent);
       }
 
       osg::ref_ptr<dtEntity::Spawner> spawner = new dtEntity::Spawner(name, mapname, parent);
 
-      if(!vguicategory.IsEmpty())
+      if(!vguicategory.IsEmpty() && !vguicategory->IsUndefined())
       {
          spawner->SetGUICategory(ToStdString(vguicategory));
       }
 
-      if(!vaddtospawnerstore.IsEmpty())
+      if(!vaddtospawnerstore.IsEmpty() && !vaddtospawnerstore->IsUndefined())
       {
          spawner->SetAddToSpawnerStore(vaddtospawnerstore->BooleanValue());
       }
 
-      if(!viconpath.IsEmpty())
+      if(!viconpath.IsEmpty() && !viconpath->IsUndefined())
       {
          spawner->SetIconPath(ToStdString(viconpath));
       }
@@ -269,6 +269,8 @@ namespace dtEntityWrappers
          std::string keyname = ToStdString(key);
 
          dtEntity::StringId ctype = dtEntity::SIDHash(keyname);
+
+         dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(ms->GetEntityManager(), ctype);
 
          if(ms->GetEntityManager().HasEntitySystem(ctype))
          {
