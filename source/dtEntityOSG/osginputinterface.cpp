@@ -297,6 +297,12 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    bool OSGInputInterface::handleInternal(const osgGA::GUIEventAdapter& ea)
    {
+      // check if window was closed
+      if(ea.getGraphicsContext() == NULL || ea.getGraphicsContext()->getState() == NULL)
+      {
+         return false;
+      }
+
       switch (ea.getEventType() )
       {
          case osgGA::GUIEventAdapter::PUSH:
