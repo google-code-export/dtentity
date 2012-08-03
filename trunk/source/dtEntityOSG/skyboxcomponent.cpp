@@ -253,7 +253,7 @@ namespace dtEntityOSG
       depth->setRange(1.0,1.0);   
       stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
-      stateset->setRenderBinDetails(-1,"RenderBin");
+      stateset->setRenderBinDetails(-10000,"RenderBin");
 
       osg::Drawable* drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),10000));
 

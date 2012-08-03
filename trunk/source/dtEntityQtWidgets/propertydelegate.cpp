@@ -706,7 +706,7 @@ namespace dtEntityQtWidgets
       dtEntity::PropertyGroup::iterator sel = grp.find(dtEntity::SIDHash("__SELECTED__"));
       if(sel != grp.end())
       {
-         sel->second->SetStringId(dtEntity::SIDHash(val.toStdString()));
+         sel->second->SetString(val.toStdString());
       }
    }
 
