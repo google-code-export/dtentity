@@ -189,11 +189,11 @@ namespace dtEntityWrappers
    Handle<Value> COCopyPropertyValues(const Arguments& args)
    {
       dtEntity::Component* co = UnwrapComponent(args.This());
-      dtEntity::StringId propname = args[0]->Uint32Value();
+      dtEntity::StringId propname = UnwrapSID(args[0]);
       dtEntity::Property* prop = co->Get(propname);
       if(prop == NULL)
       {
-         return ThrowError("Component has no property named " + dtEntity::GetStringFromSID(args[0]->Uint32Value()));
+         return ThrowError("Component has no property named " + dtEntity::GetStringFromSID(UnwrapSID(args[0])));
       }
       return SetValueFromProperty(prop, args[1]);
    }

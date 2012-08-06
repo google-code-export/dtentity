@@ -215,11 +215,11 @@ namespace dtEntityWrappers
    Handle<Value> ESCopyPropertyValues(const Arguments& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
-      dtEntity::StringId propname = args[0]->Uint32Value();
+      dtEntity::StringId propname = UnwrapSID(args[0]);
       dtEntity::Property* prop = es->Get(propname);
       if(prop == NULL)
       {
-         return ThrowError("Entity System has no property named " + dtEntity::GetStringFromSID(args[0]->Uint32Value()));
+         return ThrowError("Entity System has no property named " + dtEntity::GetStringFromSID(UnwrapSID(args[0])));
       }
       return SetValueFromProperty(prop, args[1]);
    }
