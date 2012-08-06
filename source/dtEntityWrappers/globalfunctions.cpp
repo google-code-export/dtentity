@@ -147,13 +147,13 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SID(const Arguments& args)
    {
-      return Uint32::New(dtEntity::SID(ToStdString(args[0])));
+      return WrapSID(dtEntity::SID(ToStdString(args[0])));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> GetStringFromSID(const Arguments& args)
    {
-      return String::New(dtEntity::GetStringFromSID(args[0]->Uint32Value()).c_str());
+      return String::New(dtEntity::GetStringFromSID(UnwrapSID(args[0])).c_str());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
