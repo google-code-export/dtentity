@@ -34,8 +34,13 @@ namespace dtEntityRocket
 	  EventListenerInstancer(v8::Handle<v8::Context> context, dtEntity::MessagePump& p);
 	  virtual ~EventListenerInstancer();
 
-     virtual Rocket::Core::EventListener* InstanceEventListener(const Rocket::Core::String& value);
-
+	  
+   #ifndef DTENTITY_USE_LIBROCKET_GIT
+	 virtual Rocket::Core::EventListener* InstanceEventListener(const Rocket::Core::String& value, Rocket::Core::Element* element);
+   #else
+	 virtual Rocket::Core::EventListener* InstanceEventListener(const Rocket::Core::String& value);
+   #endif	    
+	 
      virtual void Release();
 
   private:
@@ -44,3 +49,4 @@ namespace dtEntityRocket
 
   };
 }
+

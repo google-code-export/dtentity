@@ -8,6 +8,10 @@ INCLUDE_DIRECTORIES(
   ../osgLibRocket/source/osgLibRocket/include
 )
 
+OPTION(DTENTITY_USE_LIBROCKET_GIT "Build using the libRocket Git. Use this if you are on Windows 64 bit, as the non-Git version of LibRocket will not build on Windows 64." OFF)
+
+
+
 SET(TARGET_H
    contextwrapper.h
    elementdocumentwrapper.h
@@ -43,3 +47,7 @@ SET(TARGET_SRC_REPLACE
 REPLACE_SIDS_IN_SOURCE(TARGET_SRC_OUT ${TARGET_SRC_REPLACE})
 SET(TARGET_SRC ${TARGET_SRC_DFTL} ${TARGET_SRC_OUT} ${TARGET_SRC_REPLACE})
 SETUP_PLUGIN(dtEntityRocket)
+
+IF(DTENTITY_USE_LIBROCKET_GIT)
+  SET_TARGET_PROPERTIES(dtEntityRocket PROPERTIES DEFINE_SYMBOL DTENTITY_USE_LIBROCKET_GIT)                     
+ENDIF(DTENTITY_USE_LIBROCKET_GIT)
