@@ -43,10 +43,16 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value)
-   {
+
+	  
+   #ifndef DTENTITY_USE_LIBROCKET_GIT
+	Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value, Rocket::Core::Element* element)
+   #else
+	Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value)
+   #endif	    
+	{
       return new EventListener(mContext, value.CString());
-   }
+	}
 
    ////////////////////////////////////////////////////////////////////////////////
    void EventListenerInstancer::Release()
