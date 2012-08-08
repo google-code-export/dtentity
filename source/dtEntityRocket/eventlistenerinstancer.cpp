@@ -45,7 +45,7 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////////
 
 	  
-   #ifndef DTENTITY_USE_LIBROCKET_GIT
+   #ifdef DTENTITY_USE_LIBROCKET_GIT
 	Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value, Rocket::Core::Element* element)
    #else
 	Rocket::Core::EventListener* EventListenerInstancer::InstanceEventListener(const Rocket::Core::String& value)
