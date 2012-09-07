@@ -217,7 +217,7 @@ void	CProfileManager::dumpRecursive(CProfileIterator* profileIterator, int spaci
 		{
 			int i;	for (i=0;i<spacing;i++)	printf(".");
 		}
-		printf("%d -- %s (%.2f %%) :: %.3f ms / frame (%d calls)\n",i, dtEntity::GetStringFromSID(profileIterator->Get_Current_Name()).c_str(), fraction,(current_total_time / (double)frames_since_reset),profileIterator->Get_Current_Total_Calls());
+		printf("%d -- %s (%.2f %%) :: %.3f s / frame (%d calls)\n",i, dtEntity::GetStringFromSID(profileIterator->Get_Current_Name()).c_str(), fraction,(current_total_time / (double)frames_since_reset),profileIterator->Get_Current_Total_Calls());
 		totalTime += current_total_time;
 		//recurse into children
 	}
@@ -227,7 +227,7 @@ void	CProfileManager::dumpRecursive(CProfileIterator* profileIterator, int spaci
 		printf("what's wrong\n");
 	}
 	for (i=0;i<spacing;i++)	printf(".");
-	printf("%s (%.3f %%) :: %.3f ms\n", "Unaccounted:",parent_time > DBL_EPSILON ? ((parent_time - accumulated_time) / parent_time) * 100 : 0.f, parent_time - accumulated_time);
+	printf("%s (%.3f %%) :: %.3f s\n", "Unaccounted:",parent_time > DBL_EPSILON ? ((parent_time - accumulated_time) / parent_time) * 100 : 0.f, parent_time - accumulated_time);
 	
 	for (i=0;i<numChildren;i++)
 	{

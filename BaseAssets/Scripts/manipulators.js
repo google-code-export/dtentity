@@ -135,32 +135,38 @@ var ToolHolder = {
          Clipboard.del();
        }
    }
+   return false;
 
   },
   keyUp : function(key, handled) {
    if (this._activeTool !== null && typeof this._activeTool.keyUp != 'undefined') {
       this._activeTool.keyUp(key, handled);
     }
+    return false;
   },
   mouseButtonDown : function(button, handled, context) {
     if (this._activeTool !== null && typeof this._activeTool.mouseButtonDown != 'undefined') {
       this._activeTool.mouseButtonDown(button, handled, context);
     }
+    return false;
   },
   mouseButtonUp : function(button, handled, context) {
     if (this._activeTool !== null && typeof this._activeTool.mouseButtonUp != 'undefined') {
       this._activeTool.mouseButtonUp(button, handled, context);
     }
+    return false;
   },
   mouseWheel : function(dir, handled, context) {
      if (this._activeTool !== null && typeof this._activeTool.mouseWheel != 'undefined') {
        this._activeTool.mouseWheel(dir, handled, context);
      }
+     return false;
   },
   mouseMove : function(x, y, handled, context) {
       if (this._activeTool !== null && typeof this._activeTool.mouseMove != 'undefined') {
         this._activeTool.mouseMove(x, y, handled, context);
       }
+      return false;
   },
   mouseEnterLeave : function(focused, displaynum, screennum) {
    if(this._focused == focused) {

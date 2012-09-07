@@ -104,14 +104,14 @@ function EditorMotionComponent(eid) {
             case "KP_Subtract": self.movespeed /= 1.1; break;
          }
       }
+      return false;
    }
 
    this.mouseButtonDown = function(button, handled, cid) {
-      if(handled) return;
-      if(!this.Enabled || cid !== this.contextId) return;
+      if(handled) return false;
+      if(!this.Enabled || cid !== this.contextId) return false;
       if(button === 1) {
          Screen.lockCursor = true;
-         return true;
       } else if(button === 2) {
          Screen.lockCursor = true;
          var mouseX = Input.getAxis(Axis.MouseXRaw);
@@ -124,18 +124,17 @@ function EditorMotionComponent(eid) {
                                                                
          } else {
            pivot = isects[0].Position;
-         }
-
-         return true;
+         } 
       }
+      return false;
    }
 
    this.mouseButtonUp = function(button, handled, cid) {
       if(!this.Enabled || cid !== this.contextId) return;
       if(button === 1 || button === 2) {
-         Screen.lockCursor = false;
-         return true;
+         Screen.lockCursor = false;         
       }
+      return false;
    }
 
    this.mouseWheel = function(dir, handled, cid) {
@@ -165,12 +164,13 @@ function EditorMotionComponent(eid) {
 
          }
       }
+      return false;
    }
 
    this.mouseMove = function(x, y, handled, cid) {
-      if(handled) return;
+      if(handled) return false;
 
-      if(camera === null || !this.Enabled || this.contextId !== cid) return;
+      if(camera === null || !this.Enabled || this.contextId !== cid) return false;
 
       var pos = camera.Position;
       var up = camera.Up;
@@ -195,7 +195,6 @@ function EditorMotionComponent(eid) {
             camera.finished();
 
          }
-         return true;
 
       } else if(Input.getMouseButton(2, this.contextId)) {
 
@@ -211,7 +210,6 @@ function EditorMotionComponent(eid) {
             osg.Vec3.normalize(pivotToCam, pivotToCam);
             camera.EyeDirection = pivotToCam;
             camera.finished();
-            return true;
 
          } else {
 
@@ -231,6 +229,7 @@ function EditorMotionComponent(eid) {
             camera.finished();
          }
       }
+      return false;
    }
 
    this.update = function() {

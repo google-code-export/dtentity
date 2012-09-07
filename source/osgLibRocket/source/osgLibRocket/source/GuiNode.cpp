@@ -52,7 +52,11 @@ namespace osgLibRocket
 
       virtual void ProcessEvent(Rocket::Core::Event& ev)
       {
-         _keys_handled = _mouse_handled = (ev.GetTargetElement() != _rootElement);
+         _keys_handled = _mouse_handled = true;
+         if(ev.GetTargetElement() == _rootElement)
+         {
+            _keys_handled = _mouse_handled = false;
+         }
          if(ev.GetTargetElement()->HasAttribute("passkeyevents"))
          {
             _keys_handled = false;
@@ -61,7 +65,7 @@ namespace osgLibRocket
          {
             _mouse_handled = false;
          }
-
+      
       }
    };
 
