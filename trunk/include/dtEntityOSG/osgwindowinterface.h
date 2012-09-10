@@ -39,6 +39,15 @@ namespace dtEntityOSG
    {     
    public:
 
+      struct WindowPos
+      {
+         int mX;
+         int mY;
+         int mW;
+         int mH;
+         bool mWindowDeco;
+      };
+
       OSGWindowInterface(dtEntity::EntityManager& em);
       ~OSGWindowInterface();
 
@@ -78,18 +87,7 @@ namespace dtEntityOSG
 
       bool OpenWindowInternal(const std::string& name, dtEntity::StringId layername, unsigned int& contextId);
 
-   private:
-
       dtEntity::EntityManager* mEntityManager;
-
-      struct WindowPos
-      {
-         int mX;
-         int mY;
-         int mW;
-         int mH;
-         bool mWindowDeco;
-      };
 
       typedef std::map<unsigned int, WindowPos> WindowPosMap;
       WindowPosMap mWindowPositions;
