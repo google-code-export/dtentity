@@ -138,7 +138,8 @@ namespace dtEntityOSG
       GroupComponent::SetNode(node);      
 
       LayerSystem* ls;
-      mEntityManager->GetEntitySystem(LayerComponent::TYPE, ls);
+      bool found = mEntityManager->GetES(ls);
+      assert(found);
       std::list<dtEntity::EntityId> eids;
       ls->GetEntitiesInSystem(eids);
 
