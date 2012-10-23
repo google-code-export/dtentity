@@ -211,9 +211,9 @@ namespace dtEntityNet
             float dist = (newpos - currentTrans).length();
             osg::Vec3 angdiff = (newori - currentAtt);
             if(dist > GetMaxPositionDeviation() ||
-                  angdiff[0] > GetMaxOrientationDeviation() ||
-                  angdiff[1] > GetMaxOrientationDeviation() ||
-                  angdiff[2] > GetMaxOrientationDeviation()
+                  fabs(angdiff[0]) > GetMaxOrientationDeviation() ||
+                  fabs(angdiff[1]) > GetMaxOrientationDeviation() ||
+                  fabs(angdiff[2]) > GetMaxOrientationDeviation()
                   )
             {
                resend = true;
