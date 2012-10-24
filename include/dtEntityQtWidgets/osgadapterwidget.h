@@ -64,6 +64,7 @@ namespace dtEntityQtWidgets
 
       void TextDropped(const QPointF& pos, const QString&);
       void UrlDropped(const QPointF& pos, const QUrl& url);
+      void DataDropped(const QPointF& pos, const QMimeData* mimeData);
 
       // when escape key is pressed
       void EscapePressed();

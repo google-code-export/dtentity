@@ -257,9 +257,12 @@ namespace dtEntityOSG
       case dtEntity::DataType::FLOAT: uniform = new osg::Uniform(name, prop->FloatValue()); break;
       case dtEntity::DataType::INT: uniform = new osg::Uniform(name, prop->IntValue()); break;
       case dtEntity::DataType::UINT: uniform = new osg::Uniform(name, prop->UIntValue()); break;
-      case dtEntity::DataType::VEC2D: uniform = new osg::Uniform(name, prop->Vec2dValue()); break;
-      case dtEntity::DataType::VEC3D: uniform = new osg::Uniform(name, prop->Vec3dValue()); break;
-      case dtEntity::DataType::VEC4D: uniform = new osg::Uniform(name, prop->Vec4dValue()); break;
+      case dtEntity::DataType::VEC2:
+      case dtEntity::DataType::VEC2D: uniform = new osg::Uniform(name, prop->Vec2Value()); break;
+      case dtEntity::DataType::VEC3:
+      case dtEntity::DataType::VEC3D: uniform = new osg::Uniform(name, prop->Vec3Value()); break;
+      case dtEntity::DataType::VEC4:
+      case dtEntity::DataType::VEC4D: uniform = new osg::Uniform(name, prop->Vec4Value()); break;
       default:
          {
          LOG_ERROR("Unhandled uniform input value: " << prop->GetDataType());
