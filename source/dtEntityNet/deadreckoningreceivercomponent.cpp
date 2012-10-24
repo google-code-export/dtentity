@@ -197,11 +197,21 @@ namespace dtEntityNet
          mapcomp->SetUniqueId(uniqueid);
 
          dtEntity::DynamicsComponent* dc;
-         entity->CreateComponent(dc);
+
+         if(!entity->GetComponent(dc))
+         {
+            entity->CreateComponent(dc);
+         }
 
          DeadReckoningReceiverComponent* rc;
-         entity->CreateComponent(rc);
+
+         if(!entity->GetComponent(rc))
+         {
+            entity->CreateComponent(rc);
+         }
          rc->mUniqueId = msg.GetUniqueId();
+
+         GetEntityManager().AddToScene(entity->GetId());
 
       }
 
