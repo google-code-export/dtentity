@@ -285,6 +285,8 @@ namespace dtEntityQtWidgets
          }
       }
 
+      emit DataDropped(QPointF(x, y), evt->mimeData());
+
       evt->setDropAction(Qt::IgnoreAction);
       
    }
