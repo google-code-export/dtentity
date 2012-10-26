@@ -165,17 +165,16 @@ namespace dtEntityOSG
       
       mAttachedComponentVal = handle;
 
-      // add new attachment
       if(mAddedToScene)
       {
-         // remove old attachment
+         // add new attachment
          osg::Node* attachedNode = GetAttachedComponentNode();
          if(attachedNode != NULL)
          {
             current->GetAttachmentGroup()->addChild(attachedNode);
          }
       }
-      SetVisible(mVisible.Get());
+      SetVisible(mVisibleVal);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -232,26 +231,33 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::SetVisible(bool visible)
    {      
-      if(mVisibleVal == visible || GetAttachedComponentNode() == NULL) return;
-
-      LayerSystem* sys;
-      mEntity->GetEntityManager().GetES(sys);
-      unsigned int visiblemask = sys->GetVisibilityBits();
-
-      mVisibleVal = visible;
-      if(visible)
+      // overwrite node mask even when mVisibleVal == visible, because
+      // attached node may have changed and this call is to re-apply the visibility property
+      if(GetAttachedComponentNode() != NULL)
       {
-         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() | visiblemask);
-      }
-      else
-      {
-         GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~visiblemask);
+         LayerSystem* sys;
+         mEntity->GetEntityManager().GetES(sys);
+         unsigned int visiblemask = sys->GetVisibilityBits();
+
+         if(visible)
+         {
+            GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() | visiblemask);
+         }
+         else
+         {
+            GetAttachedComponentNode()->setNodeMask(GetAttachedComponentNode()->getNodeMask() & ~visiblemask);
+         }
       }
 
-      dtEntity::VisibilityChangedMessage msg;
-      msg.SetAboutEntityId(mEntity->GetId());
-      msg.SetVisible(visible);
-      mEntity->GetEntityManager().EmitMessage(msg);
+      if(mVisibleVal != visible)
+      {
+         mVisibleVal = visible;
+         dtEntity::VisibilityChangedMessage msg;
+         msg.SetAboutEntityId(mEntity->GetId());
+         msg.SetVisible(visible);
+         mEntity->GetEntityManager().EmitMessage(msg);
+      }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -296,7 +302,7 @@ namespace dtEntityOSG
             {
                static_cast<NodeComponent*>(ac)->SetParentComponent(LayerComponent::TYPE);
             }
-            SetVisible(mVisible.Get());
+            SetVisible(mVisibleVal);
          }
       }
    }
