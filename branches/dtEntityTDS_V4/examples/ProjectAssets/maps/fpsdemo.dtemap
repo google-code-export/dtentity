@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<map>
+ <!--<entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+    <component type="LayerAttachPoint">
+      <stringproperty name="Name">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">SkyBox</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">SkyBox</stringproperty>
+    </component>
+    <component type="Shadow">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">LayerAttachPoint</stringproperty>
+      </arrayproperty>
+      <uintproperty name="ShadowTexCoordIndex" value="1"/>
+    </component>
+    <component type="SkyBox">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">Shadow</stringproperty>
+      </arrayproperty>
+      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+    </component>
+  </entity>-->
+  
+  <entity>
+	<component type="Light">
+	  <vec4property name="Position" x="1" y="1" z="1" w="0" />
+	  <vec4property name="Diffuse" x="1" y="1" z="1" w="1" />
+	  <vec4property name="Ambient" x="0.5" y="0.5" z="0.5" w="1" />
+	</component>	
+	<component type="Layer">
+      <stringproperty name="AttachedComponent">Light</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+  </entity>
+  
+<entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">SkyBox</stringproperty>
+      <stringproperty name="Layer">root</stringproperty>
+    </component>
+    <component type="LayerAttachPoint">
+      <stringproperty name="Name">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">SkyBox</stringproperty>
+      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">SkyBox</stringproperty>
+    </component>
+    <component type="SkyBox">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">LayerAttachPoint</stringproperty>
+      </arrayproperty>
+      <stringproperty name="TextureDown">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureEast">Textures/right.jpg</stringproperty>
+      <stringproperty name="TextureNorth">Textures/front.jpg</stringproperty>
+      <stringproperty name="TextureSouth">Textures/back.jpg</stringproperty>
+      <stringproperty name="TextureUp">Textures/top.jpg</stringproperty>
+      <stringproperty name="TextureWest">Textures/left.jpg</stringproperty>
+    </component>
+  </entity>
+  <entity>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+      <stringproperty name="Layer">default</stringproperty>
+    </component>
+    <component type="Map">
+      <stringproperty name="EntityName">Terrain</stringproperty>
+      <stringproperty name="MapName">maps/fpsdemo.dtemap</stringproperty>
+      <stringproperty name="SpawnerName"></stringproperty>
+      <stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
+    </component>
+    <component type="PositionAttitudeTransform">
+      <arrayproperty name="Children">
+        <stringproperty name="000000">StaticMesh</stringproperty>
+      </arrayproperty>
+      <vec3property name="Position" x="0.0000000000" y="0.0000000000" z="-20.0000000000"/>
+    </component>
+    <component type="StaticMesh">
+      <stringproperty name="Mesh">StaticMeshes/terrain_simple.ive</stringproperty>
+      <boolproperty name="IsTerrain" value="true" />
+    </component>
+  </entity>
+  
+  
+</map>
