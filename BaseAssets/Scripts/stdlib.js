@@ -1,5 +1,3 @@
-var applicationSystem = EntityManager.getEntitySystem("Application");
-
 
 ////////////////////////////////////////////////////////////////////////////////
 function random(maxNum) {
