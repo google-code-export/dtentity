@@ -22,7 +22,6 @@
 #include <dtEntity/core.h>
 #include <dtEntity/core.h>
 #include <dtEntityOSG/osgsysteminterface.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentpluginmanager.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntityOSG/initosgviewer.h>
@@ -56,18 +55,6 @@ TEST(InitOsgViewer)
 
    bool success = dtEntityOSG::InitOSGViewer(2, args, viewer, em, true, true, true, root);
    CHECK(success);
-
-   CHECK(em.HasEntitySystem(dtEntity::SID("Application")));
-   ApplicationSystem* appsys;
-   CHECK(em.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys));
-
-   CHECK(em.HasEntitySystem(dtEntity::SID("Layer")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("Group")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("StaticMesh")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("Transform")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("MatrixTransform")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("LayerAttachPoint")));
-   CHECK(em.HasEntitySystem(dtEntity::SID("Layer")));
 
    dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
    // check if passed root node is actually used as root node

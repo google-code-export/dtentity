@@ -45,7 +45,6 @@ configure_file (
 )
 
 SET(LIB_PUBLIC_HEADERS
-  ${HEADER_PATH}/applicationcomponent.h
   ${HEADER_PATH}/commandmessages.h
   ${HEADER_PATH}/component.h
   ${HEADER_PATH}/componentfactories.h
@@ -95,7 +94,6 @@ SET(LIB_PUBLIC_HEADERS
 
 
 SET(LIB_REPLACE
-  applicationcomponent.cpp
   commandmessages.cpp
   core.cpp
   dynamicscomponent.cpp

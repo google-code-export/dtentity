@@ -21,7 +21,8 @@
 #include <UnitTest++.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
-
+#include <dtEntity/core.h>
+#include <dtEntityOSG/osginputinterface.h>
 using namespace dtEntityWrappers;
 using namespace dtEntity;
 using namespace v8;
@@ -31,6 +32,10 @@ struct ScriptFixture
    ScriptFixture()
    {
       mScriptSystem = new ScriptSystem(mEntityManager);
+      
+      //dtEntity::SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager->GetMessagePump()));
+      //dtEntity::SetWindowInterface(new dtEntityOSG::OSGWindowInterface(*mEntityManager));
+      dtEntity::SetInputInterface(new dtEntityOSG::OSGInputInterface(mEntityManager.GetMessagePump()));
       mEntityManager.AddEntitySystem(*mScriptSystem);
    }
 

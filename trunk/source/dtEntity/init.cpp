@@ -20,7 +20,6 @@
 
 #include <dtEntity/init.h>
 
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/componentfactories.h>
 #include <dtEntity/core.h>
 #include <dtEntity/mapcomponent.h>
@@ -170,13 +169,6 @@ namespace dtEntity
       // this is a required component system, so add it immediately
       MapSystem* mapSystem = new MapSystem(em);
       em.AddEntitySystem(*mapSystem);
-
-      ApplicationSystem* appsystem = new ApplicationSystem(em);
-      em.AddEntitySystem(*appsystem);
-      for(int i = 0; i < argc; ++i)
-      {
-         appsystem->AddCmdLineArg(argv[i]);
-      }
 
       // add factories for aditional entity systems, they will be started lazily
       RegisterStandardFactories(ComponentPluginManager::GetInstance());
