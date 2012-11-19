@@ -38,7 +38,7 @@ struct SceneFixture
    SceneFixture()
    {
       SetupDataPaths(0, NULL, true);
-      SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump()));
+      SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump(), 0, NULL));
       AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
