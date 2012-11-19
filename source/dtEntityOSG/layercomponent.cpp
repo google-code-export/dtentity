@@ -94,11 +94,6 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::SetLayer(dtEntity::StringId layername)
    {
-      if(mLayerVal == layername)
-      {
-         return;
-      }
-
       assert(mEntity != NULL);
 
       osg::Node* attachedNode = GetAttachedComponentNode();
@@ -140,17 +135,10 @@ namespace dtEntityOSG
 
       LayerAttachPointSystem* layerattsystem;
       mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layerattsystem);
-      
-      LayerAttachPointComponent* current;
-      if(!layerattsystem->GetByName(mLayerVal, current))
-      {
-         LOG_WARNING(os << "Cannot detach node from scene graph. Attach point is "
-          << dtEntity::GetStringFromSID(mLayerVal));
-         return;
-      }
 
       // remove old attachment
-      if(mAddedToScene && mLayerVal != dtEntity::StringId())
+      LayerAttachPointComponent* current;
+      if(layerattsystem->GetByName(mLayerVal, current) && mAddedToScene && mLayerVal != dtEntity::StringId())
       {
          // remove old attachment
          osg::Node* attachedNode = GetAttachedComponentNode();
@@ -159,7 +147,7 @@ namespace dtEntityOSG
          if(attachedNode != NULL && layerattsystem->GetByName(mLayerVal, current))
          {
             bool success = current->GetGroup()->removeChild(attachedNode);           
-			assert(success);
+            assert(success);
          }
       }
       

@@ -108,9 +108,11 @@ namespace dtEntityOSG
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   OSGSystemInterface::OSGSystemInterface(dtEntity::MessagePump& mp)
+   OSGSystemInterface::OSGSystemInterface(dtEntity::MessagePump& mp, int argc, const char** argv)
       : mMessagePump(&mp)
       , mImpl(new Impl())
+      , mArgC(argc)
+      , mArgV(argv)
    {
    }
 

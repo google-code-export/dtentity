@@ -14,6 +14,7 @@ SET(LIB_SOURCES
 	 ${SOURCE_PATH}/testDynamicProperties.cpp
 	 ${SOURCE_PATH}/testEntityManager.cpp
 	 ${SOURCE_PATH}/testInitOsgViewer.cpp
+	 ${SOURCE_PATH}/testLayerSystem.cpp
 	 ${SOURCE_PATH}/testMap.cpp
 	 ${SOURCE_PATH}/testProperties.cpp
 	 ${SOURCE_PATH}/testPropertyContainer.cpp
