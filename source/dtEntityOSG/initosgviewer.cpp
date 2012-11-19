@@ -68,7 +68,7 @@ namespace dtEntityOSG
       }
 
 
-      dtEntity::SetSystemInterface(new OSGSystemInterface(em.GetMessagePump()));
+      dtEntity::SetSystemInterface(new OSGSystemInterface(em.GetMessagePump(), argc, (const char**)argv));
       dtEntity::SetInputInterface(new OSGInputInterface(em.GetMessagePump()));
       dtEntity::SetWindowInterface(new OSGWindowInterface(em));
 

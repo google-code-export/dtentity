@@ -20,6 +20,8 @@
 
 #include <dtEntityWrappers/wrappers.h>
 
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/nodemasks.h>
@@ -67,6 +69,25 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> WrapCmdLineArgs()
+   {
+
+      dtEntity::SystemInterface* sysinf = dtEntity::GetSystemInterface();
+      int argc = sysinf->GetArgC();;
+      const char** argv = sysinf->GetArgV();
+
+      HandleScope scope;
+      Handle<Array> o = Array::New(argc);
+
+      for(int i = 0; i < argc; ++i)
+      {
+         const char* arg = argv[i];
+         o->Set(i, String::New(arg));
+      }
+      return scope.Close(o);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void InitializeAllWrappers(dtEntity::EntityManager& em)
    {
       
@@ -99,6 +120,7 @@ namespace dtEntityWrappers
       context->Global()->Set(String::New("Buffer"), CreateBuffer());
       context->Global()->Set(String::New("File"), CreateFile());
       context->Global()->Set(String::New("Log"), WrapLogger(context));
+      context->Global()->Set(String::New("CmdLineArgs"), WrapCmdLineArgs());
 
       InitMapSystemWrapper(scriptsystem);
       
