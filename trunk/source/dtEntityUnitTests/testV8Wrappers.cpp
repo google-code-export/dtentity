@@ -35,7 +35,7 @@ struct ScriptFixture
    {
       mScriptSystem = new ScriptSystem(mEntityManager);
       
-      dtEntity::SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump()));
+      dtEntity::SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump(), 0, NULL));
       //dtEntity::SetWindowInterface(new dtEntityOSG::OSGWindowInterface(*mEntityManager));
       dtEntity::SetInputInterface(new dtEntityOSG::OSGInputInterface(mEntityManager.GetMessagePump()));
       mEntityManager.AddEntitySystem(*mScriptSystem);

@@ -171,7 +171,7 @@ namespace dtEntityQtWidgets
                ComponentTreeItem* citem = dynamic_cast<ComponentTreeItem*>(item);
                if(citem)
                {
-                  return QIcon(":icons/component.png");
+                  return QIcon(":dtentity/icons/component.png");
                }
                PropertyTreeItem* pitem = dynamic_cast<PropertyTreeItem*>(item);
                if(pitem)

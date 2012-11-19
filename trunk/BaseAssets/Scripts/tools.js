@@ -233,7 +233,7 @@ EntityManager.registerForMessages("ToolActivatedMessage", OnToolActivatedMessage
 
 //////////////////////////////// Navigate tool /////////////////////////////
 Tool.name = "Navigate";
-Tool.iconPath = ":icons/draw-spiral.png";
+Tool.iconPath = ":/icons/draw-spiral.png";
 Tool.shortCut = "Ctrl+n";
 ToolHolder.addTool(Tool);
 
@@ -242,7 +242,7 @@ ToolHolder.addTool(Tool);
 
 function SelectTool() {
   this.name = "Select";
-  this.iconPath = ":icons/edit-select.png";
+  this.iconPath = ":/icons/edit-select.png";
   this.shortCut = "Ctrl+i";
 
   this.activate = function () { this.disableMotionSystem(); };
@@ -322,7 +322,7 @@ var tmpvec = [0, 0, 0];
 
 function TranslateTool() {
   this.name = "Translate";
-  this.iconPath = ":icons/transform-move.png";
+  this.iconPath = ":/icons/transform-move.png";
   this.shortCut = "Ctrl+t";
 
   this.axis = "all";
@@ -513,7 +513,7 @@ ToolHolder.addTool(translateTool);
 function RotateTool() {
 
   this.name = "Rotate";
-  this.iconPath = ":icons/transform-rotate.png";
+  this.iconPath = ":/icons/transform-rotate.png";
   this.shortCut = "Ctrl+r";
 
   this.axis = "all";
@@ -705,7 +705,7 @@ ToolHolder.addTool(rotateTool);
 
 function ScaleTool() {
   this.name = "Scale";
-  this.iconPath = ":icons/transform-scale.png";
+  this.iconPath = ":/icons/transform-scale.png";
   this.shortCut = "Ctrl+s";
 
   this.axis = "all";
