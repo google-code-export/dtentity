@@ -46,9 +46,26 @@ namespace dtEntityOSG
       virtual void Finished();
       void OnAddedToEntity(dtEntity::Entity& entity);
 
-      virtual void SetNode(osg::Node* node);
+      /**
+        * Set osg group node that will hold layer component nodes
+        * as children. When this is set, all layer components are
+        * traversed and their nodes are attached to this group node
+        * if the layer name fits
+        */
+      virtual void SetNode(osg::Group* node);
 
+
+      /**
+        * Get name SID identifying this layer attach point
+        */
       dtEntity::StringId GetName() const { return mName.Get(); }
+
+      /**
+        * Set name SID identifying this layer attach point.
+        * When the name is changed all layer components are
+        * traversed and their nodes are attached to this group node
+        * if the layer name fits
+        */
       void SetName(dtEntity::StringId name);
 
       virtual dtEntity::ComponentType GetType() const
@@ -57,6 +74,7 @@ namespace dtEntityOSG
       }
 
    private:
+      void ReattachLayerNodes();
       dtEntity::EntityManager* mEntityManager;
       dtEntity::StringIdProperty mName;
       dtEntity::StringId mCurrentName;

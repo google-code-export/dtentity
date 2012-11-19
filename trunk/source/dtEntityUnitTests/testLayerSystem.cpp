@@ -68,11 +68,14 @@ TEST(AttachLayer)
    mapsys->AddToScene(attachpoint->GetId());
    CHECK(meshlc->GetAttachedComponentNode() == smc->GetNode());
    CHECK(smc->GetNode()->getNumParents() == 1);
-   CHECK(smc->GetNode()->getParent(0) == lapc->GetNode());
-
-
-
-
+   if(smc->GetNode()->getNumParents() == 0)
+   {
+      CHECK(false && "Static Mesh node has no parents after layer attach");
+   }
+   else
+   {
+      CHECK(smc->GetNode()->getParent(0) == lapc->GetNode());
+   }
 }
 
 

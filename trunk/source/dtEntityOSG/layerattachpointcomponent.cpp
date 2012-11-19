@@ -75,80 +75,67 @@ namespace dtEntityOSG
    {      
       mName.Set(name);
       mCurrentName = name;
-
-      LayerAttachPointSystem* sys;
-      mEntityManager->GetEntitySystem(TYPE, sys);      
-    
-      LayerAttachPointComponent* previous;
-
-      if(sys->GetByName(name, previous) && previous != this)
+      LayerAttachPointSystem* lps;
+      if(mEntityManager->GetES(lps))
       {
-         std::list<dtEntity::EntityId> childentities;
-         for(unsigned int i = 0; i < previous->GetGroup()->getNumChildren(); ++i)
-         {
-            osg::Node* child = previous->GetAttachmentGroup()->getChild(i);
-            dtEntity::Entity* entity = dynamic_cast<dtEntity::Entity*>(child->getUserData());
-            if(entity != NULL)
-            {
-               LayerComponent* lc;
-               if(entity->GetComponent(lc) &&
-                  lc->GetLayer() == name) 
-               {
-                  dtEntity::MapComponent* mc;
-                  entity->GetComponent(mc);
-                  childentities.push_back(entity->GetId());
-               }
-            }
-         }
-
-         for(std::list<dtEntity::EntityId>::iterator i = childentities.begin();
-            i != childentities.end(); ++i)
-         {
-            LayerComponent* lc;
-            if(mEntityManager->GetComponent(*i, lc))
-            {
-               lc->OnRemovedFromScene();
-            }
-         }
-
-         sys->RegisterByName(name, this);
-
-         for(std::list<dtEntity::EntityId>::iterator i = childentities.begin();
-            i != childentities.end(); ++i)
-         {
-            LayerComponent* lc;
-            if(mEntityManager->GetComponent(*i, lc))
-            {
-               lc->OnAddedToScene();
-            }
-         }
+         lps->RegisterByName(name, this);
       }
-      else
-      {
-         sys->RegisterByName(name, this);
-      }
-      
+
+      ReattachLayerNodes();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointComponent::SetNode(osg::Node* node)
+   void LayerAttachPointComponent::SetNode(osg::Group* node)
    {
       assert(mEntityManager);
       node->setName("Layer Attach Point");
       GroupComponent::SetNode(node);      
 
+      ReattachLayerNodes();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LayerAttachPointComponent::ReattachLayerNodes()
+   {
+      osg::Group* grp = GetGroup();
+      assert(grp != NULL);
+
+      // remove all child nodes of layer attach point that are NodeComponet nodes
+      // (that have an entity class as user data)
+      unsigned int i = 0;
+      while(i < grp->getNumChildren())
+      {
+         osg::Node* child = grp->getChild(i);
+         dtEntity::Entity* entity = dynamic_cast<dtEntity::Entity*>(child->getUserData());
+         if(entity != NULL)
+         {
+            grp->removeChild(i);
+         }
+         else
+         {
+            ++i;
+         }
+      }
+
+      // Loop through all layer components and attach those as children
+      // that have a layer name equal to layer name of this layer attach point
       LayerSystem* ls;
       bool found = mEntityManager->GetES(ls);
       assert(found);
-      std::list<dtEntity::EntityId> eids;
-      ls->GetEntitiesInSystem(eids);
 
-      for(std::list<dtEntity::EntityId>::iterator i = eids.begin(); i != eids.end(); ++i)
+      for(LayerSystem::ComponentStore::iterator j = ls->begin(); j != ls->end(); ++j)
       {
-         LayerComponent* comp;
-         mEntityManager->GetComponent(*i, comp);
-         if(comp->GetLayer() == GetName())
+         LayerComponent* comp = j->second;
+         if(comp->IsAddedToScene() && comp->GetLayer() == GetName())
          {
+            osg::Node* layernode = comp->GetAttachedComponentNode();
+            if(layernode)
+            {
+               while(layernode->getNumParents() != 0)
+               {
+                  layernode->getParent(0)->removeChild(layernode);
+               }
+            }
             comp->SetLayer(GetName());
          }
       }
