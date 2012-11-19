@@ -37,7 +37,7 @@ namespace dtEntityOSG
    {
    public:
 
-      OSGSystemInterface(dtEntity::MessagePump&);
+      OSGSystemInterface(dtEntity::MessagePump&, int argc, const char** argv);
       ~OSGSystemInterface();
 
       void InstallUpdateCallback(osg::Node* node);
@@ -79,11 +79,18 @@ namespace dtEntityOSG
         */
       virtual bool FileExists(const std::string& filename);
 
+      virtual int GetArgC() { return mArgC; }
+      virtual const char** GetArgV() { return mArgV; }
+
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
       dtEntity::MessagePump* mMessagePump;
       class Impl;
       Impl* mImpl;
+
+      int mArgC;
+      const char** mArgV;
+
    };
   
 }
