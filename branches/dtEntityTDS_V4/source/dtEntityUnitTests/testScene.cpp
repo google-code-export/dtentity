@@ -25,7 +25,6 @@
 #include <dtEntityOSG/osgsysteminterface.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/init.h>
 #include <dtEntity/entitymanager.h>
 #include <osgDB/FileUtils>
@@ -39,7 +38,7 @@ struct SceneFixture
    SceneFixture()
    {
       SetupDataPaths(0, NULL, true);
-      SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump()));
+      SetSystemInterface(new dtEntityOSG::OSGSystemInterface(mEntityManager.GetMessagePump(), 0, NULL));
       AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager); 
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
    }
@@ -58,14 +57,6 @@ TEST_FIXTURE(SceneFixture, SceneCanBeLoaded)
 {
    bool success = mMapSystem->LoadScene("TestData/testscene.dtescene");
    CHECK(success);
-}
-
-TEST_FIXTURE(SceneFixture, SceneSetsProps)
-{
-   mMapSystem->LoadScene("TestData/testscene.dtescene");
-   dtEntity::ApplicationSystem* appsys;
-   mEntityManager.GetEntitySystem(dtEntity::ApplicationSystem::TYPE, appsys);
-   CHECK_CLOSE(appsys->GetTimeScale(), 3, 0.1);
 }
 
 TEST_FIXTURE(SceneFixture, SceneLoadsMap)

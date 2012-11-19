@@ -25,7 +25,6 @@
 #include <dtEntity/sound.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
-#include <dtEntity/applicationcomponent.h>
 #include <dtEntity/systemmessages.h>
 #include <osg/Camera>
 #include <assert.h>

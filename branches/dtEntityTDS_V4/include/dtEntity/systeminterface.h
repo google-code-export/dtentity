@@ -121,6 +121,9 @@ namespace dtEntity
         */
       virtual bool FileExists(const std::string& filename) = 0;
 
+      virtual int GetArgC() = 0;
+      virtual const char** GetArgV() = 0;
+
    };
   
 }

@@ -123,7 +123,7 @@ namespace dtEntityWrappers
 		  return ThrowError("usage: pickEntity(x, y, [nodemask, contextid])");
       }
 
-      unsigned int nodemask = dtEntity::NodeMasks::PICKABLE;
+      unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::VISIBLE;
       if(args.Length() > 2)
       {
          nodemask = args[2]->Uint32Value();

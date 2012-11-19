@@ -181,6 +181,11 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       mMapSystem->AddEmptyMap(projectassets, mapname);
       dtEntity::Entity* entity;
       mEntityManager.CreateEntity(entity);
+
+      if(!mEntityManager.HasEntitySystem(dtEntity::SID("PositionAttitudeTransform")))
+      {
+         mEntityManager.AddEntitySystem(*new dtEntityOSG::PositionAttitudeTransformSystem(mEntityManager));
+      }
       dtEntityOSG::PositionAttitudeTransformComponent* transcomp;
       entity->CreateComponent(transcomp);
       transcomp->SetPosition(osg::Vec3(1,2,3));
@@ -189,9 +194,6 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       children.push_back(new StringProperty("Child2"));
       transcomp->SetChildren(children);
       
-      // don't execute finished, would create a warning
-      //transcomp->Finished();
-
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);
       mapcomp->SetMapName(mapname);
