@@ -14,6 +14,7 @@ SET(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(APP_PUBLIC_HEADERS
    ${HEADER_PATH}/editorapplication.h
    ${HEADER_PATH}/editormainwindow.h
+   ${HEADER_PATH}/motionmodel.h
 
 )
 
@@ -21,11 +22,12 @@ SET(APP_SOURCES
    ${SOURCE_PATH}/editorapplication.cpp
    ${SOURCE_PATH}/editormainwindow.cpp
    ${SOURCE_PATH}/main.cpp
+   ${SOURCE_PATH}/motionmodel.cpp
 )
 
 set(MOC_INPUT
    ${HEADER_PATH}/editorapplication.h
-   ${HEADER_PATH}/editormainwindow.h
+   ${HEADER_PATH}/editormainwindow.h   
 )
 
 INCLUDE_DIRECTORIES(

@@ -27,20 +27,20 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/init.h>
 #include <dtEntity/mapcomponent.h>
+#include <dtEntity/resourcemanager.h>
+#include <dtEntity/systemmessages.h>
+#include <dtEntityEditor/editormainwindow.h>
+#include <dtEntityEditor/motionmodel.h>
 #include <dtEntityOSG/osginputinterface.h>
 #include <dtEntityOSG/osgdebugdrawinterface.h>
 #include <dtEntityOSG/osgsysteminterface.h>
-#include <dtEntity/resourcemanager.h>
-#include <dtEntity/systemmessages.h>
 #include <dtEntityOSG/osgwindowinterface.h>
 #include <dtEntityOSG/componentfactories.h>
 #include <dtEntityOSG/initosgviewer.h>
-#include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityQtWidgets/messages.h>
 #include <dtEntityQtWidgets/osggraphicswindowqt.h>
 #include <dtEntityQtWidgets/osgadapterwidget.h>
 #include <osgViewer/GraphicsWindow>
-#include <osg/MatrixTransform>
 #include <osgViewer/View>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
@@ -48,8 +48,6 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <iostream>
 #include <QtCore/QDir>
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 
 namespace dtEntityEditor
 {
@@ -71,6 +69,8 @@ namespace dtEntityEditor
       dtEntity::SetInputInterface(new dtEntityOSG::OSGInputInterface(mEntityManager->GetMessagePump()));
 
       dtEntity::LogManager::GetInstance().AddListener(new dtEntity::ConsoleLogHandler());
+
+      mEntityManager->AddEntitySystem(*new MotionModelSystem(*mEntityManager));
       
       dtEntity::SetupDataPaths(argc,argv, false);
 
@@ -134,6 +134,9 @@ namespace dtEntityEditor
       dtEntity::MessageFunctor f(this, &EditorApplication::OnResourceLoaded);
       mEntityManager->RegisterForMessages(dtEntity::ResourceLoadedMessage::TYPE, f, "EditorApplication::OnResourceLoaded");
       connect(mFileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(OnFileChanged(QString)));
+
+      dtEntity::MessageFunctor f2(this, &EditorApplication::OnCameraAdded);
+      mEntityManager->RegisterForMessages(dtEntity::CameraAddedMessage::TYPE, f2, "EditorApplication::OnCameraAdded");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -356,6 +359,30 @@ namespace dtEntityEditor
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EditorApplication::OnCameraAdded(const dtEntity::Message& m)
+   {
+      const dtEntity::CameraAddedMessage& msg = static_cast<const dtEntity::CameraAddedMessage&>(m);
+      unsigned int camid = msg.GetAboutEntityId();
+
+      dtEntityOSG::CameraComponent* camcomp;
+      if(mEntityManager->GetComponent(camid, camcomp))
+      {
+         if(!mEntityManager->HasComponent(camid, MotionModelSystem::TYPE))
+         {
+            MotionModelComponent* motioncomp;
+            mEntityManager->CreateComponent(camid, motioncomp);
+            motioncomp->Finished();
+         }
+      }
+      dtEntity::EntitySystem* soundsys = mEntityManager->GetEntitySystem(dtEntity::SID("Sound"));
+      if(soundsys)
+      {
+          soundsys->SetUInt(dtEntity::SID("ListenerEntity"), camid);
+          soundsys->Finished();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorApplication::OnResourceLoaded(const dtEntity::Message& m)
    {
       const dtEntity::ResourceLoadedMessage& msg = static_cast<const dtEntity::ResourceLoadedMessage&>(m);
@@ -363,7 +390,7 @@ namespace dtEntityEditor
       if(!mFileSystemWatcher->files().contains(path))
       {
          mFileSystemWatcher->addPath(path);
-      }      
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
