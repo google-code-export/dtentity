@@ -79,6 +79,7 @@ namespace dtEntityEditor
        */
       QStringList GetDataPaths() const;
 
+      void OnCameraAdded(const dtEntity::Message& msg);
       void OnResourceLoaded(const dtEntity::Message& msg);
 
    public slots:
