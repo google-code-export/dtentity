@@ -40,7 +40,6 @@
 #endif
 
 // include the plugins we need
-USE_DTENTITYPLUGIN(dtEntitySimulation)
 USE_DTENTITYPLUGIN(dtEntityRocket)
 USE_DTENTITYPLUGIN(dtEntityV8Plugin)
 
@@ -85,7 +84,6 @@ int main(int argc, char** argv)
 
    dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
    pm.AddPlugin("plugins/", "dtEntityV8Plugin", true);
-   pm.AddPlugin("plugins/", "dtEntitySimulation", true);   
    
    dtEntity::StringId scriptId = dtEntity::SID("Script");
       

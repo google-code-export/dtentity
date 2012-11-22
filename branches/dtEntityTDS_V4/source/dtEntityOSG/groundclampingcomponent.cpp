@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/groundclampingcomponent.h>
+#include <dtEntityOSG/groundclampingcomponent.h>
 
 #include <dtEntity/entity.h>
 #include <dtEntityOSG/layerattachpointcomponent.h>
@@ -31,7 +31,7 @@
 #include <osg/io_utils>
 #include <osgSim/LineOfSight>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
 

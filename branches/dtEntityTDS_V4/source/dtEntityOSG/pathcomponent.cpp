@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/pathcomponent.h>
+#include <dtEntityOSG/pathcomponent.h>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
@@ -26,7 +26,7 @@
 #include <osgUtil/LineSegmentIntersector>
 #include <dtEntity/nodemasks.h>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class VertexIndexHolder : public osg::Referenced

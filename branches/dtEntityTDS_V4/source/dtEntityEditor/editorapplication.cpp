@@ -52,9 +52,7 @@
 namespace dtEntityEditor
 {
     // include the plugins we need
-    USE_DTENTITYPLUGIN(dtEntitySimulation)
-    USE_DTENTITYPLUGIN(dtEntityRocket)    
-    USE_DTENTITYPLUGIN(dtEntityV8Plugin)    
+    USE_DTENTITYPLUGIN(dtEntityV8Plugin)
 
    ////////////////////////////////////////////////////////////////////////////////
    EditorApplication::EditorApplication(int argc, char *argv[])

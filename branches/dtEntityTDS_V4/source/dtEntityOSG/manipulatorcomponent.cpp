@@ -18,9 +18,9 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/manipulatorcomponent.h>
+#include <dtEntityOSG/manipulatorcomponent.h>
 
-#include <dtEntitySimulation/manipulators.h>
+#include <dtEntityOSG/manipulators.h>
 #include <osg/MatrixTransform>
 #include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/nodemasks.h>
@@ -37,7 +37,7 @@
 #include <osg/LineWidth>
 #include <osg/ShapeDrawable>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////
