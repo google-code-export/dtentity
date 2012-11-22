@@ -11,7 +11,16 @@ int main (int argc, char *argv[])
 {  
   if (argc < 4) 
   {
-    printf("Usage: hash_sids infile outfile outfile_db");
+    std::ostringstream os;
+    os << "Usage: hash_sids infile outfile outfile_db\n";
+    os << "Input was:" << argc << "\n";
+    for(int i = 0; i < argc; ++i)
+    {
+       os << argv[i];
+       os << " ";
+    }
+    os << "\n";
+    std::cout << os.str();
     return 1;
   }
   

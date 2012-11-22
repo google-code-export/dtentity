@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/particlecomponent.h>
+#include <dtEntityOSG/particlecomponent.h>
 
 #include <dtEntity/core.h>
 #include <dtEntity/debugdrawinterface.h>
@@ -33,7 +33,7 @@
 #include <osgParticle/BounceOperator>
 #include <osgParticle/ForceOperator>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////

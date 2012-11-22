@@ -36,7 +36,7 @@ namespace dtEntity
    class MapSystem;
 }
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class GroundClampingComponent : public dtEntity::Component

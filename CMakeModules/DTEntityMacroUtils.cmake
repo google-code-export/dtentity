@@ -55,14 +55,14 @@ MACRO(REPLACE_SIDS_IN_SOURCE SOURCES_OUT)
 			# DTENTITY_SID_DB_PATH should hold write location for SID text file
 			add_custom_command (
 			  OUTPUT ${SID_TARGET}
-			  COMMAND HashSids ${SID_ORIGIN} ${SID_TARGET} ${DTENTITY_SID_DB_PATH}
+        COMMAND HashSids ${SID_ORIGIN} ${SID_TARGET} ${CMAKE_BINARY_DIR}/sids.txt
 			  DEPENDS HashSids ${SID_ORIGIN}
 			)
 			
 			# write destination to sources out global var
 			LIST(APPEND ${SOURCES_OUT} ${SID_TARGET})	  
 			set_source_files_properties(${SID_ORIGIN} PROPERTIES HEADER_FILE_ONLY true)
-		    set_source_files_properties(${SID_TARGET} PROPERTIES GENERATED true)
+      set_source_files_properties(${SID_TARGET} PROPERTIES GENERATED true)
 		ELSE(EXTENSION STREQUAL ".cpp")
 		  LIST(APPEND ${SOURCES_OUT} ${SID_ORIGIN})	  
 		ENDIF(EXTENSION STREQUAL ".cpp")
