@@ -32,7 +32,7 @@
 #include <osgManipulator/Scale1DDragger>
 #include <osgManipulator/ScaleAxisDragger>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class TerrainTranslateDragger : public osgManipulator::CompositeDragger

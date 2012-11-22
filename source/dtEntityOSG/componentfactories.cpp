@@ -23,45 +23,54 @@
 #include <dtEntity/dtentity_config.h>
 
 #include <dtEntityOSG/cameracomponent.h>
+#include <dtEntityOSG/groundclampingcomponent.h>
 #include <dtEntityOSG/groupcomponent.h>
-#include <dtEntityOSG/nodecomponent.h>
-#include <dtEntityOSG/transformcomponent.h>
-#include <dtEntityOSG/positionattitudetransformcomponent.h>
-#include <dtEntityOSG/matrixtransformcomponent.h>
 #include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntityOSG/layercomponent.h>
 #include <dtEntityOSG/lightcomponent.h>
+#include <dtEntityOSG/manipulatorcomponent.h>
+#include <dtEntityOSG/matrixtransformcomponent.h>
+#include <dtEntityOSG/nodecomponent.h>
+#include <dtEntityOSG/osganimationcomponent.h>
+#include <dtEntityOSG/particlecomponent.h>
+#include <dtEntityOSG/pathcomponent.h>
 #include <dtEntityOSG/pickshapecomponent.h>
+#include <dtEntityOSG/positionattitudetransformcomponent.h>
 #include <dtEntityOSG/shadercomponent.h>
 #include <dtEntityOSG/shadowcomponent.h>
 #include <dtEntityOSG/skyboxcomponent.h>
 #include <dtEntityOSG/staticmeshcomponent.h>
 #include <dtEntityOSG/textlabelcomponent.h>
 #include <dtEntityOSG/texturelabelcomponent.h>
-#include <dtEntityOSG/osganimationcomponent.h>
+#include <dtEntityOSG/transformcomponent.h>
 
 namespace dtEntityOSG
 {
    void RegisterStandardFactories(dtEntity::ComponentPluginManager& pluginManager)
    {
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<CameraSystem>("Camera"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<GroundClampingSystem>("GroundClamping"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<GroupSystem>("Group"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerSystem>("Layer"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerAttachPointSystem>("LayerAttachPoint"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LightSystem>("Light"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ManipulatorSystem>("Manipulator"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<MatrixTransformSystem>("MatrixTransform"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<NodeSystem>("Node"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<OSGAnimationSystem>("OSGAnimation"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ParticleSystem>("Particle"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PathSystem>("Path"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PickShapeSystem>("PickShape"));
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PositionAttitudeTransformSystem>("PositionAttitudeTransform"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ShaderSystem>("Shader"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<ShadowSystem>("Shadow"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<SkyBoxSystem>("SkyBox"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<StaticMeshSystem>("StaticMesh"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextLabelSystem>("TextLabel"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
-
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<GroupSystem>("Group"));
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<NodeSystem>("Node"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TransformSystem>("Transform"));
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<PositionAttitudeTransformSystem>("PositionAttitudeTransform"));
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<MatrixTransformSystem>("MatrixTransform"));
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerAttachPointSystem>("LayerAttachPoint"));
-      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<LayerSystem>("Layer"));
+
+
 
    }
 }

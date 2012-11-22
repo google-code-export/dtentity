@@ -26,7 +26,7 @@
 #include <dtEntityOSG/nodecomponent.h>
 #include <osgManipulator/Dragger>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class ManipulatorComponent
