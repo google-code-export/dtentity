@@ -55,7 +55,7 @@ MACRO(REPLACE_SIDS_IN_SOURCE SOURCES_OUT)
 			# DTENTITY_SID_DB_PATH should hold write location for SID text file
 			add_custom_command (
 			  OUTPUT ${SID_TARGET}
-			  COMMAND HashSids ${SID_ORIGIN} ${SID_TARGET} ${DTENTITY_SID_DB_PATH}
+        COMMAND HashSids ${SID_ORIGIN} ${SID_TARGET} ${CMAKE_BINARY_DIR}/sids.txt
 			  DEPENDS HashSids ${SID_ORIGIN}
 			)
 			
