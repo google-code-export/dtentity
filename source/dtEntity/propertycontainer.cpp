@@ -57,7 +57,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetArray(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +68,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetBool(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +79,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetDouble(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
    
    ////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +90,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetFloat(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +101,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetGroup(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +112,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetInt(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +123,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetMatrix(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +134,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetQuat(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +145,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetString(val);      
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +156,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetStringId(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +167,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetUInt(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +178,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec2(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +189,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec3(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +200,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec4(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +211,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec2D(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +222,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec3D(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +233,9 @@ namespace dtEntity
       assert(Get(name));
       Property* prop = Get(name);
       prop->SetVec4D(val);
+#if CALL_ONPROPERTYCHANGED_METHOD
       OnPropertyChanged(name, *prop);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
