@@ -183,6 +183,12 @@ namespace dtEntity
       mStopSystemFunctor = MessageFunctor(this, &MapSystem::OnStopSystem);
       em.RegisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor, "MapSystem::OnStopSystem");
 
+      mSetComponentPropertiesFunctor = MessageFunctor(this, &MapSystem::OnSetComponentProperties);
+      em.RegisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor, "MapSystem::OnSetComponentProperties");
+
+      mSetSystemPropertiesFunctor = MessageFunctor(this, &MapSystem::OnSetSystemProperties);
+      em.RegisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor, "MapSystem::OnSetSystemPropertie");
+
       RegisterCommandMessages(MessageFactory::GetInstance());
       RegisterSystemMessages(MessageFactory::GetInstance());
    }
@@ -198,6 +204,9 @@ namespace dtEntity
       GetEntityManager().UnregisterForMessages(SpawnEntityMessage::TYPE, mSpawnEntityFunctor);
       GetEntityManager().UnregisterForMessages(DeleteEntityMessage::TYPE, mDeleteEntityFunctor);
       GetEntityManager().UnregisterForMessages(StopSystemMessage::TYPE, mStopSystemFunctor);
+      GetEntityManager().UnregisterForMessages(SetComponentPropertiesMessage::TYPE, mSetComponentPropertiesFunctor);
+      GetEntityManager().UnregisterForMessages(SetSystemPropertiesMessage::TYPE, mSetSystemPropertiesFunctor);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -879,6 +888,81 @@ namespace dtEntity
    void MapSystem::OnStopSystem(const Message& msg)
    {
       ComponentPluginManager::GetInstance().UnloadAllPlugins(GetEntityManager());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MapSystem::OnSetComponentProperties(const Message& m)
+   {
+      const SetComponentPropertiesMessage& msg = static_cast<const SetComponentPropertiesMessage&>(m);
+
+      ComponentType ctype = dtEntity::SIDHash(msg.GetComponentType());
+      std::string uniqueid = msg.GetEntityUniqueId();
+
+      MapSystem* ms;
+      GetEntityManager().GetEntitySystem(MapComponent::TYPE, ms);
+      EntityId id = ms->GetEntityIdByUniqueId(uniqueid);
+
+      Component* component;
+      bool found = GetEntityManager().GetComponent(id, ctype, component);
+
+      if(!found)
+      {
+         LOG_WARNING("Cannot process SetComponentProperties message. Component not found: "
+            + msg.GetComponentType());
+         return;
+      }
+      const PropertyGroup& props = msg.GetComponentProperties();
+      for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
+      {
+         Property* target = component->Get(i->first);
+         if(!target)
+         {
+            LOG_ERROR(
+                "Cannot process SetComponentProperties message. Component "
+                << msg.GetComponentType()
+                << " has no property named "
+                << GetStringFromSID(i->first)
+            );
+            continue;
+         }
+         target->SetFrom(*i->second);
+#if CALL_ONPROPERTYCHANGED_METHOD
+         component->OnPropertyChanged(i->first, *target);
+#endif
+      }
+      component->Finished();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MapSystem::OnSetSystemProperties(const Message& m)
+   {
+      const SetSystemPropertiesMessage& msg = static_cast<const SetSystemPropertiesMessage&>(m);
+      EntitySystem* sys = GetEntityManager().GetEntitySystem(SIDHash(msg.GetComponentType()));
+      if(sys == NULL)
+      {
+         LOG_WARNING("Cannot process SetSystemProperties message. Entity system not found: "
+            << msg.GetComponentType());
+         return;
+      }
+      const PropertyGroup& props = msg.GetSystemProperties();
+      for(PropertyGroup::const_iterator i = props.begin(); i != props.end(); ++i)
+      {
+         Property* target = sys->Get(i->first);
+         if(!target)
+         {
+            LOG_ERROR("Cannot process SetSystemProperties message. Entity system "
+                << msg.GetComponentType()
+                << " has no property named "
+                << GetStringFromSID(i->first));
+            continue;
+         }
+         target->SetFrom(*i->second);
+#if CALL_ONPROPERTYCHANGED_METHOD
+         sys->OnPropertyChanged(i->first, *target);
+#endif
+      }
+      sys->Finished();
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////
