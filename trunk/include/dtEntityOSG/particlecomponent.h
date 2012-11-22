@@ -31,7 +31,7 @@
 #include <osgParticle/ModularProgram>
 #include <osgParticle/ParticleSystemUpdater>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class ParticleComponent

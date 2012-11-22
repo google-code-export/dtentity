@@ -12,12 +12,15 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/cameracomponent.h
   ${HEADER_PATH}/componentfactories.h
   ${HEADER_PATH}/export.h
+  ${HEADER_PATH}/groundclampingcomponent.h
   ${HEADER_PATH}/groupcomponent.h
   ${HEADER_PATH}/initosgviewer.h
   ${HEADER_PATH}/layerattachpointcomponent.h
   ${HEADER_PATH}/layercomponent.h
   ${HEADER_PATH}/lightcomponent.h
   ${HEADER_PATH}/matrixtransformcomponent.h
+  ${HEADER_PATH}/manipulatorcomponent.h
+  ${HEADER_PATH}/manipulators.h
   ${HEADER_PATH}/nodecomponent.h
   ${HEADER_PATH}/nodemaskvisitor.h
   ${HEADER_PATH}/osganimationcomponent.h
@@ -25,6 +28,8 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/osginputinterface.h
   ${HEADER_PATH}/osgsysteminterface.h
   ${HEADER_PATH}/osgwindowinterface.h
+  ${HEADER_PATH}/particlecomponent.h
+  ${HEADER_PATH}/pathcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
   ${HEADER_PATH}/shadercomponent.h
@@ -43,10 +48,13 @@ SET(LIB_SOURCES
 
 SET(LIB_SOURCES_REPLACE  
   cameracomponent.cpp
+  groundclampingcomponent.cpp
   groupcomponent.cpp
   layerattachpointcomponent.cpp
   layercomponent.cpp
   lightcomponent.cpp
+  manipulatorcomponent.cpp
+  manipulators.cpp
   matrixtransformcomponent.cpp
   nodecomponent.cpp
   osganimationcomponent.cpp
@@ -54,6 +62,8 @@ SET(LIB_SOURCES_REPLACE
   osginputinterface.cpp
   osgsysteminterface.cpp
   osgwindowinterface.cpp
+  pathcomponent.cpp
+  particlecomponent.cpp
   pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
   shadercomponent.cpp

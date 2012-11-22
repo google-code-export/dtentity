@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntitySimulation/manipulators.h>
+#include <dtEntityOSG/manipulators.h>
 
 #include <osg/Geometry>
 #include <osg/LineWidth>
@@ -27,7 +27,7 @@
 #include <osg/PolygonMode>
 #include <osg/Version>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    ////////////////////////////////////////////////////////////////////////////////

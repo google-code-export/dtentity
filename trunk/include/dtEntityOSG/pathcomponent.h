@@ -27,7 +27,7 @@
 #include <dtEntityOSG/nodecomponent.h>
 #include <dtEntity/scriptaccessor.h>
 
-namespace dtEntitySimulation
+namespace dtEntityOSG
 {
 
    class PathComponent : public dtEntityOSG::NodeComponent
