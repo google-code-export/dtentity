@@ -101,7 +101,7 @@ OPTION(BUILD_TESTS "Build unit tests" OFF)
 OPTION(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR "Use a preprocessor to replace calls to dtEntity::SID with result of that operation (EXPERIMENTAL)" OFF)
 IF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
   add_executable(HashSids source/hash_sids/hash_sids.cpp source/dtEntity/hash.cpp)
-  SET(DTENTITY_SID_DB_PATH ${CMAKE_CURRENT_BINARY_DIR}/sids.txt)
+  SET(DTENTITY_SID_DB_PATH ${CMAKE_BINARY_DIR}/sids.txt)
 ENDIF(DTENTITY_REPLACE_SIDS_WITH_PREPROCESSOR)
 
 ADD_SUBDIRECTORY(ext)
