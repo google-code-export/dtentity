@@ -42,6 +42,11 @@ namespace dtEntity
       virtual void EmitTickMessagesAndQueuedMessages() = 0;
 
       /**
+       * Send PostUpdateMessage to main message pump
+       */
+      virtual void EmitPostUpdateMessage() = 0;
+
+      /**
        * Get simulation time delta since last tick in seconds
        */
       virtual float GetDeltaSimTime() const = 0;

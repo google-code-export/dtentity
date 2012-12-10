@@ -145,7 +145,7 @@ namespace dtEntityOSG
 
       if(enabled)
       {
-         mEntityManager->RegisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor, "OSGDebugDrawInterface::Update");
+         mEntityManager->RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, dtEntity::FilterOptions::ORDER_EARLIEST, "OSGDebugDrawInterface::Update");
          mGroupDepthTest->setNodeMask(ALL_BITS);
          mGroupNoDepthTest->setNodeMask(ALL_BITS);
       }
@@ -154,7 +154,7 @@ namespace dtEntityOSG
          Clear();
          mGroupDepthTest->setNodeMask(0);
          mGroupNoDepthTest->setNodeMask(0);
-         mEntityManager->UnregisterForMessages(dtEntity::PostFrameMessage::TYPE, mTickFunctor);
+         mEntityManager->UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
       }
       mEnabled = enabled;
    }
@@ -174,7 +174,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    void OSGDebugDrawInterface::Tick(const dtEntity::Message& m)
    {
-      const dtEntity::PostFrameMessage& msg = static_cast<const dtEntity::PostFrameMessage&>(m);
+      const dtEntity::TickMessage& msg = static_cast<const dtEntity::TickMessage&>(m);
       float dt = msg.GetDeltaRealTime();
 
       mCurrentTime += dt;

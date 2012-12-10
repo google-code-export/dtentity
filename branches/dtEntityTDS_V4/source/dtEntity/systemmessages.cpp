@@ -30,6 +30,7 @@ namespace dtEntity
       em.RegisterMessageType<CameraAddedMessage>(CameraAddedMessage::TYPE);
       em.RegisterMessageType<CameraRemovedMessage>(CameraRemovedMessage::TYPE);
       em.RegisterMessageType<EndOfFrameMessage>(EndOfFrameMessage::TYPE);
+      em.RegisterMessageType<PostUpdateMessage>(PostUpdateMessage::TYPE);
       em.RegisterMessageType<EntityAddedToSceneMessage>(EntityAddedToSceneMessage::TYPE);
       em.RegisterMessageType<EntityDeselectedMessage>(EntityDeselectedMessage::TYPE);
       em.RegisterMessageType<EntityNameUpdatedMessage>(EntityNameUpdatedMessage::TYPE);
@@ -44,8 +45,7 @@ namespace dtEntity
       em.RegisterMessageType<MapLoadedMessage>(MapLoadedMessage::TYPE);
       em.RegisterMessageType<MapUnloadedMessage>(MapUnloadedMessage::TYPE);
       em.RegisterMessageType<MeshChangedMessage>(MeshChangedMessage::TYPE);
-      em.RegisterMessageType<PostFrameMessage>(PostFrameMessage::TYPE);
-      em.RegisterMessageType<ResourceChangedMessage>(ResourceChangedMessage::TYPE);      
+      em.RegisterMessageType<ResourceChangedMessage>(ResourceChangedMessage::TYPE);
       em.RegisterMessageType<ResourceLoadedMessage>(ResourceLoadedMessage::TYPE);      
       em.RegisterMessageType<SceneLoadedMessage>(SceneLoadedMessage::TYPE);
       em.RegisterMessageType<SceneUnloadedMessage>(SceneUnloadedMessage::TYPE);
@@ -97,6 +97,14 @@ namespace dtEntity
    const MessageType EndOfFrameMessage::TYPE(dtEntity::SID("EndOfFrameMessage"));
 
    EndOfFrameMessage::EndOfFrameMessage()
+      : TickMessage(TYPE)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType PostUpdateMessage::TYPE(dtEntity::SID("PostUpdateMessage"));
+
+   PostUpdateMessage::PostUpdateMessage()
       : TickMessage(TYPE)
    {
    }
@@ -227,13 +235,6 @@ namespace dtEntity
    const StringId TickMessage::SimTimeScaleId(dtEntity::SID("SimTimeScale"));
    const StringId TickMessage::SimulationTimeId(dtEntity::SID("SimulationTime"));
 
-   ////////////////////////////////////////////////////////////////////////////////
-   const MessageType PostFrameMessage::TYPE(dtEntity::SID("PostFrameMessage"));
-
-   PostFrameMessage::PostFrameMessage()
-      : TickMessage(TYPE)
-   {
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    const MessageType ResourceChangedMessage::TYPE(dtEntity::SID("ResourceChanged"));
