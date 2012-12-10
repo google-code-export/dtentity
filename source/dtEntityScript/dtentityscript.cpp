@@ -46,7 +46,9 @@ USE_DTENTITYPLUGIN(dtEntityV8Plugin)
 int main(int argc, char** argv)
 {
     std::string script = "Scripts/autostart.js";
+#if DTENTITY_PROFILING_ENABLED
     bool profiling_enabled = false;
+#endif
     int curArg = 1;
 
     while (curArg < argc)
@@ -62,10 +64,12 @@ int main(int argc, char** argv)
                 script = argv[curArg];
              }
           }
+#if DTENTITY_PROFILING_ENABLED
           else if (curArgv == "--enable-profiling")
           {
              profiling_enabled = true;
           }
+#endif
         }
        ++curArg;
     }
@@ -143,6 +147,8 @@ int main(int argc, char** argv)
          viewer.updateTraversal();
          CProfileManager::Stop_Profile();
 
+         iface->EmitPostUpdateMessage();
+
          CProfileManager::Start_Profile(frameRenderTrId);
          viewer.renderingTraversals();
          CProfileManager::Stop_Profile();
@@ -166,6 +172,7 @@ int main(int argc, char** argv)
          viewer.eventTraversal();
          iface->EmitTickMessagesAndQueuedMessages();
          viewer.updateTraversal();
+         iface->EmitPostUpdateMessage();
          viewer.renderingTraversals();
       }
    }
