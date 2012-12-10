@@ -322,6 +322,7 @@ namespace dtEntityEditor
          iface->EmitTickMessagesAndQueuedMessages();
 
          mViewer->updateTraversal();
+         iface->EmitPostUpdateMessage();
          mViewer->renderingTraversals();
 
          QCoreApplication::processEvents();

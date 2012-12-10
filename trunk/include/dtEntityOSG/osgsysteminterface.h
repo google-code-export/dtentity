@@ -51,6 +51,8 @@ namespace dtEntityOSG
 
       virtual void EmitTickMessagesAndQueuedMessages();
 
+      virtual void EmitPostUpdateMessage();
+
       virtual float GetDeltaSimTime() const;
       virtual float GetDeltaRealTime() const;
       virtual dtEntity::Timer_t GetRealClockTime();
