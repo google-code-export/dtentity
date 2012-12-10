@@ -136,6 +136,7 @@ namespace dtEntity
    {
    public:
 
+      friend class MapComponent;
       static const ComponentType TYPE;
       typedef DefaultEntitySystem<MapComponent> BaseClass;
       typedef std::map<std::string, osg::ref_ptr<Spawner> > SpawnerStorage;
@@ -312,14 +313,6 @@ namespace dtEntity
        * Get all entities that are stored to this map
        */
       void GetEntitiesInMap(const std::string& mapname, std::vector<EntityId>& toFill) const;
-      
-      /**
-       *called by component. Don't call, please set the property on 
-       * the component instead
-       * returns true if change succeeded, false if an entity with this id already exists
-       */
-      bool OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
-
 
       // implementation of EntityManager::EntitySystemRequestCallback interface
       virtual bool CreateEntitySystem(EntityManager* em, ComponentType t);
@@ -330,6 +323,24 @@ namespace dtEntity
       MapEncoder* GetEncoderForScene(const std::string& extension) const;
 
    private:
+
+      /**
+       * called by component. Don't call, please set the property on
+       * the component instead
+       * returns true if change succeeded, false if an entity with this id already exists
+       */
+      bool OnEntityChangedUniqueId(EntityId id, const std::string& oldUniqueId, const std::string& newUniqueid);
+
+
+      /**
+       * Handles SetComponentPropertiesMessage
+       */
+      void OnSetComponentProperties(const Message& m);
+
+      /**
+       * Handles SetSystemPropertiesMessage
+       */
+      void OnSetSystemProperties(const Message& m);
 
       void EmitSpawnerDeleteMessages(MapSystem::SpawnerStorage& spawners, const std::string& path);
 
@@ -344,7 +355,8 @@ namespace dtEntity
       MessageFunctor mDeleteEntityFunctor;
       MessageFunctor mResetSystemFunctor;
       MessageFunctor mStopSystemFunctor;
-
+      MessageFunctor mSetComponentPropertiesFunctor;
+      MessageFunctor mSetSystemPropertiesFunctor;
       ComponentPluginManager mPluginManager;
 
       std::map<std::string, EntityId> mEntitiesByUniqueId;

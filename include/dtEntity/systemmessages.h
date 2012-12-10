@@ -185,6 +185,20 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
+    * PostUpdateMessage gets sent after scene graph update traversal
+    */
+   class DT_ENTITY_EXPORT PostUpdateMessage
+      : public TickMessage
+   {
+   public:
+      static const MessageType TYPE;
+
+      PostUpdateMessage();
+      virtual Message* Clone() const { return CloneContainer<PostUpdateMessage>(); }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
     * This message gets sent when the method EntityManager::AddToScene method is
     * called. The layer system reacts to this message by attaching the entity to the scene
     * graph.
@@ -622,20 +636,6 @@ namespace dtEntity
 
       UIntProperty mAboutEntityId;
       StringProperty mFilePath;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   /**
-    * PostFrameMessage gets sent after rendering and before tick message.
-    */
-   class DT_ENTITY_EXPORT PostFrameMessage
-      : public TickMessage
-   {
-   public:
-      static const MessageType TYPE;
-
-      PostFrameMessage();
-      virtual Message* Clone() const { return CloneContainer<PostFrameMessage>(); }
    };
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -137,16 +137,6 @@ namespace dtEntityOSG
       float simtimescale = GetTimeScale();
       double simulationtime = GetSimulationTime();
 
-
-      {
-         dtEntity::PostFrameMessage msg;
-         msg.SetDeltaSimTime(deltasimtime);
-         msg.SetDeltaRealTime(deltarealtime);
-         msg.SetSimTimeScale(simtimescale);
-         msg.SetSimulationTime(simulationtime);
-         mMessagePump->EmitMessage(msg);
-      }
-
       {
          dtEntity::TickMessage msg;
          msg.SetDeltaSimTime(deltasimtime);
@@ -167,6 +157,25 @@ namespace dtEntityOSG
          mMessagePump->EmitMessage(msg);
       }
 
+   }
+   
+   //////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::EmitPostUpdateMessage()
+   {
+      float deltasimtime = GetDeltaSimTime();
+      float deltarealtime = GetDeltaRealTime();
+      float simtimescale = GetTimeScale();
+      double simulationtime = GetSimulationTime();
+
+
+      {
+         dtEntity::PostUpdateMessage msg;
+         msg.SetDeltaSimTime(deltasimtime);
+         msg.SetDeltaRealTime(deltarealtime);
+         msg.SetSimTimeScale(simtimescale);
+         msg.SetSimulationTime(simulationtime);
+         mMessagePump->EmitMessage(msg);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
