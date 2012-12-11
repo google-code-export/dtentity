@@ -155,6 +155,7 @@ namespace dtEntityOSG
          {
              osgViewer::View* view = new osgViewer::View();
              view->getCamera()->setGraphicsContext(gw);
+             view->setName(name);
              compviewer->addView(view);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
              gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(mTraits->x, mTraits->y, mTraits->width, mTraits->height);
