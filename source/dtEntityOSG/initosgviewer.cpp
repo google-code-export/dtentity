@@ -135,7 +135,7 @@ namespace dtEntityOSG
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
       OSGInputInterface* ipface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
-      views.front()->addEventHandler(ipface);
+      views.front()->addEventHandler(ipface->GetEventHandler());
 
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerAttachPointSystem::TYPE);
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerSystem::TYPE);
