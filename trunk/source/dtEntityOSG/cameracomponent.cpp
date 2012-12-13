@@ -274,7 +274,7 @@ namespace dtEntityOSG
 
       osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->GetViewer();
 
-      osgViewer::View* view;
+      osgViewer::View* view = NULL;
             
       if(GetCamera()->getGraphicsContext() &&
          GetCamera()->getGraphicsContext()->getState()->getContextID() == static_cast<unsigned int>(mContextId.Get()))
@@ -342,9 +342,9 @@ namespace dtEntityOSG
                // add input interface as event listener to view
                OSGInputInterface* wface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
                osgViewer::View::EventHandlers& eh = view->getEventHandlers();
-               if(std::find(eh.begin(), eh.end(), wface) ==  eh.end())
+               if(std::find(eh.begin(), eh.end(), wface->GetEventHandler()) ==  eh.end())
                {
-                  eh.push_back(wface);
+                  eh.push_back(wface->GetEventHandler());
                }
 
                LayerAttachPointSystem* lsys;
@@ -397,6 +397,11 @@ namespace dtEntityOSG
 
          }
         
+      }
+
+      if(view == NULL)
+      {
+         return;
       }
       
       LayerAttachPointSystem* layersys;

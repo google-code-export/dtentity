@@ -40,6 +40,7 @@ namespace dtEntityOSG
       , mMouseScroll(0)
       , mMouseScrollContext(0)
       , mNeedReset(false)
+      , mEventHandler(new EventHandler(this))
    {
      
       mKeyNames["0"] = osgGA::GUIEventAdapter::KEY_0;
