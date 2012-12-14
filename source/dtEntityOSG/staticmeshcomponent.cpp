@@ -125,7 +125,7 @@ namespace dtEntityOSG
          }
 
          dtEntity::ResourceManager& rm = dtEntity::ResourceManager::GetInstance();
-         osg::ref_ptr<osg::Node> meshnode = rm.GetNode(mEntity->GetEntityManager(), path, options);
+         osg::ref_ptr<osg::Node> meshnode = rm.GetNode(GetNodeEntity()->GetEntityManager(), path, options);
          if(meshnode == NULL)
          {
             LOG_ERROR("Could not load static mesh from path " + path);
@@ -141,9 +141,9 @@ namespace dtEntityOSG
       }
 
       dtEntity::MeshChangedMessage msg;
-      msg.SetAboutEntityId(mEntity->GetId());
+      msg.SetAboutEntityId(GetNodeEntity()->GetId());
       msg.SetFilePath(path);
-      mEntity->GetEntityManager().EmitMessage(msg);
+      GetNodeEntity()->GetEntityManager().EmitMessage(msg);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void StaticMeshComponent::SetStaticMesh(osg::Node* node)
    {
-      assert(mEntity != NULL);
+      assert(GetNodeEntity() != NULL);
 
       unsigned int nm = node->getNodeMask() |
             dtEntity::NodeMasks::VISIBLE | dtEntity::NodeMasks::PICKABLE |

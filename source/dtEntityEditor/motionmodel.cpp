@@ -54,7 +54,7 @@ namespace dtEntityEditor
 
       mContextId.Set(0);
       mMoveSpeed.Set(100);
-      mRotateSpeed.Set(0.001);
+      mRotateSpeed.Set(0.001f);
       mRotateKeySpeed.Set(2);
       mEnabled.Set(true);
    }

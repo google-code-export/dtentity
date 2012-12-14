@@ -86,6 +86,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/systeminterface.h
   ${HEADER_PATH}/systemmessages.h
   ${HEADER_PATH}/threadsafequeue.h
+  ${HEADER_PATH}/transformcomponent.h
   ${HEADER_PATH}/uniqueid.h
   ${HEADER_PATH}/windowinterface.h
   ${DTENTITY_CONFIG_HEADER}
@@ -100,6 +101,7 @@ SET(LIB_REPLACE
   inputinterface.cpp
   mapcomponent.cpp
   systemmessages.cpp
+  transformcomponent.cpp
 )
 
 SET(LIB_SOURCES

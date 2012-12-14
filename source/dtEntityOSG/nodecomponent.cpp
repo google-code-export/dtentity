@@ -27,49 +27,50 @@
 
 namespace dtEntityOSG
 {
-
    ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   const dtEntity::StringId NodeComponent::TYPE(dtEntity::SID("Node"));
-   
-   ////////////////////////////////////////////////////////////////////////////
-   NodeComponent::NodeComponent()
-      : mEntity(NULL)
-      , mNode(new osg::Node())
-      , mParentComponent(dtEntity::StringId())
+   NodeStore::NodeStore()
+      : mNode(new osg::Node())
+      , mParentComponent(dtEntity::StringId())     
    {
-      GetNode()->setName("NodeComponent");
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   NodeComponent::NodeComponent(osg::Node* node)
-      : mEntity(NULL)
-      , mNode(node)
+   ////////////////////////////////////////////////////////////////////////////////
+   NodeStore::NodeStore(osg::Node* node)
+      : mNode(node)
       , mParentComponent(dtEntity::StringId())
    {
    }
-    
-   ////////////////////////////////////////////////////////////////////////////
-   NodeComponent::~NodeComponent()
+
+   ////////////////////////////////////////////////////////////////////////////////
+   NodeStore::~NodeStore()
    {
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::OnAddedToEntity(dtEntity::Entity& entity)
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeStore::SetNodeEntity(dtEntity::Entity* e)
    {
-      mEntity = &entity;
-
-      // for picking
-      mNode->setUserData(mEntity);
+      mNode->setUserData(e);
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::Entity* NodeStore::GetNodeEntity()
    {
+      return dynamic_cast<dtEntity::Entity*>(mNode->getUserData());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeStore::ClearFromParent()
+   {
+      dtEntity::Entity* entity = GetNodeEntity();
+      if(entity == NULL)
+      {
+         LOG_ERROR("Cannot clear from parent: Does not belong to an entity!");
+         return;
+      }
       if(GetParentComponent() != dtEntity::StringId())
       {
          dtEntity::Component* comp;
-         if(entity.GetComponent(GetParentComponent(), comp))
+         if(entity->GetComponent(GetParentComponent(), comp))
          {
             GroupComponent* grp = dynamic_cast<GroupComponent*>(comp);
             if(grp)
@@ -78,58 +79,60 @@ namespace dtEntityOSG
             }
          }
       }
-      mEntity = NULL;
+      SetNodeEntity(NULL);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Node* NodeComponent::GetNode() const
+   osg::Node* NodeStore::GetNode() const
    {
       return mNode;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::SetNode(osg::Node* node)
-   {
-      GroupComponent* parent = NULL;
-      // remove from parent
-      if(mNode.valid() && mEntity != NULL && GetParentComponent() != dtEntity::StringId())
+   void NodeStore::SetNode(osg::Node* node)
+   {  
+      // remove current node from all its parents
+      while(mNode->getNumParents() != 0)
       {
-         Component* comp;
-         if(mEntity->GetComponent(GetParentComponent(), comp))
-         {
-            if(GetParentComponent() == LayerComponent::TYPE)
-            {
-               static_cast<LayerComponent*>(comp)->SetAttachedComponent(dtEntity::StringId());
-            }
-            else
-            {
-               parent = static_cast<GroupComponent*>(comp);
-               parent->GetAttachmentGroup()->removeChild(mNode);
-            }
-         }
-         mNode = node;
-         mNode->setUserData(mEntity);
-         if(parent == NULL)
-         {
-            if(GetParentComponent() == LayerComponent::TYPE)
-            {
-               static_cast<LayerComponent*>(comp)->SetAttachedComponent(GetType());
-            }
-         }
-         else
-         {
-            parent->GetAttachmentGroup()->addChild(mNode);
-         }
+         mNode->getParent(0)->removeChild(mNode);
       }
-      else
+      dtEntity::Entity* entity = GetNodeEntity();
+      mNode->setUserData(0);
+
+      mNode = node;     
+      
+      if(entity)
       {
-         mNode = node;
-         mNode->setUserData(mEntity);
+         mNode->setUserData(entity);
+
+         // if node is already attached to a parent node owned by a component:
+         if(GetParentComponent() != dtEntity::StringId())
+         {       
+            dtEntity::Component* parent;
+            if(entity->GetComponent(GetParentComponent(), parent))
+            {
+               if(GetParentComponent() == LayerComponent::TYPE)
+               {
+                  LayerComponent* layercomp = static_cast<LayerComponent*>(parent);
+                  if(layercomp->IsAddedToScene())
+                  {
+                     layercomp->SetLayer(layercomp->GetLayer());
+                  }
+               }
+               else
+               {
+                  assert(dynamic_cast<GroupComponent*>(parent) != NULL);
+                  
+                  bool success = static_cast<GroupComponent*>(parent)->GetAttachmentGroup()->addChild(mNode);                  
+                  assert(success);
+               }
+            }            
+         }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void NodeComponent::SetNodeMask(unsigned int nodemask, bool recursive)
+   void NodeStore::SetNodeMask(unsigned int nodemask, bool recursive)
    {
       if(recursive)
       {
@@ -143,8 +146,42 @@ namespace dtEntityOSG
    }
   
    ////////////////////////////////////////////////////////////////////////////
-   unsigned int NodeComponent::GetNodeMask() const
+   unsigned int NodeStore::GetNodeMask() const
    {
       return GetNode()->getNodeMask();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtEntity::StringId NodeComponent::TYPE(dtEntity::SID("Node"));
+   
+   ////////////////////////////////////////////////////////////////////////////
+   NodeComponent::NodeComponent()
+   {
+      GetNode()->setName("NodeComponent");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   NodeComponent::NodeComponent(osg::Node* node)
+      : NodeStore(node)      
+   {
+      GetNode()->setName("NodeComponent");
+   }
+    
+   ////////////////////////////////////////////////////////////////////////////
+   NodeComponent::~NodeComponent()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void NodeComponent::OnAddedToEntity(dtEntity::Entity& entity)
+   {
+      SetNodeEntity(&entity);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void NodeComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
+   {
+      ClearFromParent();
    }
 }

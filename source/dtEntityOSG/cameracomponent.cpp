@@ -175,7 +175,7 @@ namespace dtEntityOSG
    {
       dtEntity::CameraRemovedMessage msg;
       msg.SetAboutEntityId(entity.GetId());
-      mEntity->GetEntityManager().EmitMessage(msg);
+      GetNodeEntity()->GetEntityManager().EmitMessage(msg);
       
       BaseClass::OnRemovedFromEntity(entity);      
    }
@@ -270,7 +270,7 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::TryAssignContext()
    {
-      if(mEntity == NULL || mContextId.Get() == -1) return;
+      if(GetNodeEntity() == NULL || mContextId.Get() == -1) return;
 
       osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->GetViewer();
 
@@ -332,12 +332,12 @@ namespace dtEntityOSG
                viewer->startThreading();
 
                dtEntity::CameraAddedMessage msg;
-               msg.SetAboutEntityId(mEntity->GetId());
+               msg.SetAboutEntityId(GetNodeEntity()->GetId());
                msg.SetContextId(mContextId.Get());
 
                // enqueueing instead of emitting, this way recipients can be sure that
                // camera entity is fully constructed
-               mEntity->GetEntityManager().EnqueueMessage(msg);
+               GetNodeEntity()->GetEntityManager().EnqueueMessage(msg);
 
                // add input interface as event listener to view
                OSGInputInterface* wface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
@@ -348,7 +348,7 @@ namespace dtEntityOSG
                }
 
                LayerAttachPointSystem* lsys;
-               mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
+               GetNodeEntity()->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
                if(GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
                {
                   LayerAttachPointComponent* lc;
@@ -405,7 +405,7 @@ namespace dtEntityOSG
       }
       
       LayerAttachPointSystem* layersys;
-      bool success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
+      bool success = GetNodeEntity()->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
       assert(success);
 
       LayerAttachPointComponent* lcomp;
