@@ -1,0 +1,11 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates allowcreatefromgui="false">
+   <arrayinput propertyname="Scripts" >
+    <prototype>
+	<stringproperty name="script" />
+    </prototype>
+    <inputs>
+      <fileinput propertyname="script" filters="*.js" />
+    </inputs>
+   </arrayinput>
+</delegates>   

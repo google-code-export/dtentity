@@ -1,0 +1,46 @@
+Geode {
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  StateSet {
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    textureUnit 0 {
+      GL_TEXTURE_2D ON
+      Texture2D {
+        file "Textures/world.topo.200408.3x5400x2700.jpg"
+        wrap_s CLAMP
+        wrap_t CLAMP
+        wrap_r CLAMP
+        min_filter LINEAR
+        mag_filter LINEAR
+        maxAnisotropy 1
+        borderColor 0 0 0 0
+        borderWidth 0
+        useHardwareMipMapGeneration TRUE
+        unRefImageDataAfterApply FALSE
+        internalFormatMode USE_IMAGE_DATA_FORMAT
+        resizeNonPowerOfTwo FALSE
+        shadowComparison FALSE
+        shadowCompareFunc GL_LEQUAL
+        shadowTextureMode GL_LUMINANCE
+      }
+    }
+  }
+  num_drawables 1
+  ShapeDrawable {
+    Sphere {
+      Center 0 0 0
+      Radius 6371
+    }
+    useDisplayList TRUE
+    useVertexBufferObjects FALSE
+    color 1 1 1 1
+    TessellationHints {
+      detailRatio 2
+      createFaces TRUE FALSE
+      createNormals TRUE
+      createTextureCoords FALSE
+      createParts TRUE TRUE TRUE
+    }
+  }
+}

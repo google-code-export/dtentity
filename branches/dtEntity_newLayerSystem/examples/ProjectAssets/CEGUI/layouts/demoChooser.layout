@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+
+    <Window Type="DefaultWindow" Name="Root" >
+        <Property Name="InheritsAlpha" Value="False" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Property Name="VerticalAlignment" Value="Centre" />
+        <Property Name="HorizontalAlignment" Value="Centre" />
+		    <Property Name="MousePassThroughEnabled" Value="True" />
+		
+        <Window Type="WindowsLook/Button" Name="startBoidsDemo" >
+            <Property Name="Text" Value="Start Boids Demo" />
+            <Property Name="UnifiedAreaRect" Value="{{0.211914,0},{0.320313,0},{0.461914,0},{0.432292,0}}" />
+       </Window>
+
+       </Window>
+	
+</GUILayout>

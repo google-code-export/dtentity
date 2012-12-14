@@ -1,0 +1,17 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+  <arrayinput propertyname="Children" >
+	   <prototype>
+			<stringproperty name="child" />
+	   </prototype>
+	   <inputs>
+	   <componentinput propertyname="child" />
+	   </inputs>
+   </arrayinput>
+   <fileinput propertyname="TextureDown" filters="*.tga *.jpg *.png" />
+   <fileinput propertyname="TextureUp" filters="*.tga *.jpg *.png" />
+   <fileinput propertyname="TextureEast" filters="*.tga *.jpg *.png" />
+   <fileinput propertyname="TextureWest" filters="*.tga *.jpg *.png" />
+   <fileinput propertyname="TextureNorth" filters="*.tga *.jpg *.png" />
+   <fileinput propertyname="TextureSouth" filters="*.tga *.jpg *.png" />
+</delegates>   

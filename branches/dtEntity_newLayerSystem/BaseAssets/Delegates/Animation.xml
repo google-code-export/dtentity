@@ -1,0 +1,23 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+   <fileinput propertyname="Mesh" filters="*.xml" />
+   <arrayinput propertyname="Attachments">
+      <prototype>
+
+         <groupproperty name="AttachmentProperty">
+			<boolproperty name="Visible" value="true" />
+            <stringproperty name="Mesh"></stringproperty>
+            <stringproperty name="BoneName"></stringproperty>
+            <vec3property name="LocalTranslation" x="0" y="0" z="0" />
+            <quatproperty name="LocalRotation" x="0" y="0" z="0" w="1" />
+         </groupproperty>
+
+      </prototype>
+ 
+      <inputs>
+         <groupinput propertyname="*">
+            <fileinput propertyname="Mesh" filters="*.ive *.osg *.flt *.3ds" />
+         </groupinput>
+      </inputs>
+   </arrayinput> 
+</delegates>   
