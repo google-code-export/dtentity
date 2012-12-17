@@ -109,9 +109,9 @@ namespace dtEntityOSG
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowInterface::OpenWindow(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
+   bool OSGWindowInterface::OpenWindow(const std::string& name, unsigned int& contextId)
    {
-      bool success = OpenWindowInternal(name, layername, contextId);
+      bool success = OpenWindowInternal(name, contextId);
       
       if(success)
       {
@@ -125,7 +125,7 @@ namespace dtEntityOSG
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowInterface::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
+   bool OSGWindowInterface::OpenWindowInternal(const std::string& name, unsigned int& contextId)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
       osgViewer::ViewerBase* viewer = iface->GetViewer();
@@ -157,6 +157,10 @@ namespace dtEntityOSG
              view->getCamera()->setGraphicsContext(gw);
              view->setName(name);
              compviewer->addView(view);
+
+             // wake viewer up if it was asleep (had no windows)
+
+             compviewer->setDone(false);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
              gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(mTraits->x, mTraits->y, mTraits->width, mTraits->height);
              gw->getEventQueue()->getCurrentEventState()->setMouseYOrientation(osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS);
