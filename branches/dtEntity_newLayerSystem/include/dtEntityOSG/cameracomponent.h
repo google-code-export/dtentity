@@ -32,10 +32,7 @@ namespace osg
 }
 
 namespace dtEntityOSG
-{ 
-
-   class CameraSystem;
-
+{    
    /** 
 	* The camera component holds properties for the osg::Camera object
    */
@@ -98,11 +95,11 @@ namespace dtEntityOSG
       void SetContextId(int id);
       int GetContextId() const { return mContextIdVal; }
 
-      void SetLayerAttachPoint(dtEntity::StringId id) { mLayerAttachPoint.Set(id); }
-      dtEntity::StringId GetLayerAttachPoint() const { return mLayerAttachPoint.Get(); }
+      void SetLayerAttachPoint(dtEntity::StringId id);
+      dtEntity::StringId GetLayerAttachPoint() const;
 
 		void SetProjectionMode(dtEntity::StringId);
-		dtEntity::StringId GetProjectionMode() const { return mProjectionMode.Get(); }
+      dtEntity::StringId GetProjectionMode() const { return mProjectionModeVal; }
 
 		void SetCullingMode(dtEntity::StringId);
 		dtEntity::StringId GetCullingMode() const { return mCullingModeVal; }
@@ -179,21 +176,27 @@ namespace dtEntityOSG
       
       dtEntity::DynamicIntProperty mContextId;
       int mContextIdVal;
-      dtEntity::StringIdProperty mLayerAttachPoint;
+      dtEntity::DynamicStringIdProperty mLayerAttachPoint;
+      dtEntity::StringId mLayerAttachPointVal;
 
       dtEntity::DynamicStringIdProperty mCullingMode;
       dtEntity::StringId mCullingModeVal;
       dtEntity::DynamicDoubleProperty mFieldOfView;
+      double mFieldOfViewVal;
       dtEntity::DynamicDoubleProperty mAspectRatio;
+      double mAspectRatioVal;
       dtEntity::DynamicDoubleProperty mNearClip;
+      double mNearClipVal;
       dtEntity::DynamicDoubleProperty mFarClip;
+      double mFarClipVal;
       dtEntity::DynamicVec4Property mClearColor;
       dtEntity::DynamicFloatProperty mLODScale;
       dtEntity::Vec3dProperty mPosition;
       dtEntity::Vec3dProperty mUp;
       dtEntity::Vec3dProperty mEyeDirection;
       dtEntity::DynamicUIntProperty mCullMask;
-      dtEntity::StringIdProperty mProjectionMode;
+      dtEntity::DynamicStringIdProperty mProjectionMode;
+      dtEntity::StringId mProjectionModeVal;
 
       dtEntity::DoubleProperty mOrthoLeft;
       dtEntity::DoubleProperty mOrthoRight;

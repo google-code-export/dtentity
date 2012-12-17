@@ -208,7 +208,7 @@ namespace dtEntityOSG
       dtEntity::MapComponent* mc; 
       if(mEntity->GetComponent(mc))
       {
-         LOG_ALWAYS("Attaching entity " << mc->GetEntityName() << " to " << current->GetName());
+         LOG_ALWAYS("Attaching entity " << mc->GetEntityName() << " to " << dtEntity::GetStringFromSID(current->GetName()));
       }
       else
       {

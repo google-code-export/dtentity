@@ -118,7 +118,7 @@ namespace dtEntityOSG
       bool found = mEntityManager->GetES(ls);
       assert(found);
 
-      GetNode()->setName("Layer Attach Point" + name);
+      GetNode()->setName("Layer Attach Point" + dtEntity::GetStringFromSID(name));
 
       if(name != mCurrentName)
       {
@@ -146,7 +146,7 @@ namespace dtEntityOSG
       LayerSystem* ls;
       mEntityManager->GetES(ls);
       DetachLayerNodes(ls, mCurrentName, this);
-      node->setName("Layer Attach Point " + GetName());
+      node->setName("Layer Attach Point " + dtEntity::GetStringFromSID(GetName()));
       GroupComponent::SetNode(node);      
 
       ReattachLayerNodes(ls, this);

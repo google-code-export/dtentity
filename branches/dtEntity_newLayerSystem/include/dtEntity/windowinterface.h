@@ -34,13 +34,11 @@ namespace dtEntity
       /**
        * Opens a new window if used viewer is a composite viewer.
        * @param name Name of osg nodes for window, view and camera to set
-       * @param layerName Name of layer attach point to show
        * @param traits OSG GraphicsWindow traits to use
        * @contexId will receive context id of newly created context
        * @return true if success
        */
-      virtual bool OpenWindow(const std::string& name,
-         dtEntity::StringId layerName, unsigned int& contextId) = 0;
+      virtual bool OpenWindow(const std::string& name, unsigned int& contextId) = 0;
 
       virtual void CloseWindow(const std::string& name) = 0;
 

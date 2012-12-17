@@ -200,16 +200,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCROpenWindow(const Arguments& args)
    {
-     // std::string name = ToStdString(args[0]);
-      dtEntity::StringId layername;
-      if(args.Length() > 1)
-      {
-         layername = dtEntity::SIDHash(ToStdString(args[1]));
-      }
-      else
-      {
-         layername = dtEntity::SID("default");
-      }
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
       osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
@@ -218,9 +208,9 @@ namespace dtEntityWrappers
       traits->doubleBuffer = true;
       traits->sharedContext = 0;
 
-      if(args.Length() > 2)
+      if(args.Length() > 1)
       {
-         Handle<Object> traitsin = Handle<Object>::Cast(args[2]);
+         Handle<Object> traitsin = Handle<Object>::Cast(args[1]);
          if(traitsin->Has(String::New("x"))) traits->x = traitsin->Get(String::New("x"))->Int32Value();
          if(traitsin->Has(String::New("y"))) traits->y = traitsin->Get(String::New("y"))->Int32Value();
          if(traitsin->Has(String::New("width"))) traits->width = traitsin->Get(String::New("width"))->Int32Value();
@@ -237,7 +227,7 @@ namespace dtEntityWrappers
       // TODO how to pass traits???
       //dtEntityOSG::OSGWindowInterface* wface = static_cast<dtEntityOSG::OSGWindowInterface*>(dtEntity::GetWindowInterface());
       //wface->SetTraits(traits);
-      bool success = dtEntity::GetWindowInterface()->OpenWindow(ToStdString(args[0]), layername, contextid);
+      bool success = dtEntity::GetWindowInterface()->OpenWindow(ToStdString(args[0]), contextid);
       assert(success);
       return Uint32::New(contextid);
    }
