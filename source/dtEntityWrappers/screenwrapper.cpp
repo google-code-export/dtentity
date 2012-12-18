@@ -131,7 +131,7 @@ namespace dtEntityWrappers
       bool usePixels = true;
       if(args.Length() > 3)
       {
-         usePixels = args[3]->BooleanValue();
+         usePixels = args[4]->BooleanValue();
       }
 
       dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay(contextid, x, y, usePixels);
@@ -308,6 +308,33 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRSetContinuousRedraw(const Arguments& args)
+   {
+      if(args.Length() != 2)
+      {
+         return ThrowError("Usage: setContinuousRedraw(contextId, bool)");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+      bool v = args[1]->BooleanValue();
+
+      dtEntity::GetWindowInterface()->SetContinuousRedraw(contextId, v);
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRRequestRedraw(const Arguments& args)
+   {
+      if(args.Length() != 1)
+      {
+         return ThrowError("Usage: requestRedraw(contextId)");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+
+      dtEntity::GetWindowInterface()->RequestRedraw(contextId);
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss)
    {
       HandleScope handle_scope;
@@ -329,6 +356,8 @@ namespace dtEntityWrappers
       proto->Set("getWindowGeometry", FunctionTemplate::New(SCRGetWindowGeometry));
       proto->Set("setWindowGeometry", FunctionTemplate::New(SCRSetWindowGeometry));
       proto->Set("setShowCursor", FunctionTemplate::New(SCRSetShowCursor));
+      proto->Set("setContinuousRedraw", FunctionTemplate::New(SCRSetContinuousRedraw));
+      proto->Set("requestRedraw", FunctionTemplate::New(SCRRequestRedraw));
 
       Local<Object> instance = templt->GetFunction()->NewInstance();
 

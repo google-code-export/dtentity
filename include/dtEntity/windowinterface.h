@@ -46,7 +46,7 @@ namespace dtEntity
        * Get pick ray at given screen position
 	   * @param usePixels if true, use x-y screen coordinates, if false use values from -1 to 1
        */
-      virtual Vec3f GetPickRay(unsigned int contextid, float x, float y, bool usePixels = true) const = 0;
+      virtual Vec3f GetPickRay(unsigned int contextid, float x, float y, bool usePixels = false) const = 0;
 
       /**
         Get window size and position of window with given context id

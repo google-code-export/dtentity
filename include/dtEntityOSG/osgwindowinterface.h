@@ -74,7 +74,7 @@ namespace dtEntityOSG
       /**
        * Get pick ray at given screen position
        */
-      dtEntity::Vec3f GetPickRay(unsigned int contextid, float x, float y, bool usePixels = true) const;
+      dtEntity::Vec3f GetPickRay(unsigned int contextid, float x, float y, bool usePixels = false) const;
       
       virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) const;
       virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height);
