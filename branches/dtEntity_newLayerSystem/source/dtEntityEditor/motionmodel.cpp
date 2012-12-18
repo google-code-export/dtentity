@@ -145,7 +145,7 @@ namespace dtEntityEditor
          inputif->SetLockCursor(true);
          double mouseX = inputif->GetAxis(dtEntity::InputInterface::MouseXId);
          double mouseY = inputif->GetAxis(dtEntity::InputInterface::MouseYId);
-         osg::Vec3 pickray = dtEntity::GetWindowInterface()->GetPickRay("defaultView", mouseX, mouseY);
+         osg::Vec3 pickray = dtEntity::GetWindowInterface()->GetPickRay(contextid, mouseX, mouseY);
          osg::Vec3d campos = mCamera->GetPosition();
 
          std::vector<dtEntity::SystemInterface::Intersection> isects;

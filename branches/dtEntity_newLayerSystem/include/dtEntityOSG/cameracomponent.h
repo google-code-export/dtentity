@@ -168,6 +168,24 @@ namespace dtEntityOSG
       void SetLODScale(float v);
       float GetLODScale() const;
 
+      void SetOrthoLeft(double v);
+      double GetOrthoLeft() const;
+
+      void SetOrthoRight(double v);
+      double GetOrthoRight() const;
+
+      void SetOrthoTop(double v);
+      double GetOrthoTop() const;
+
+      void SetOrthoBottom(double v);
+      double GetOrthoBottom() const;
+
+      void SetOrthoZNear(double v);
+      double GetOrthoZNear() const;
+
+      void SetOrthoZFar(double v);
+      double GetOrthoZFar() const;
+
       void TryAssignContext();
       
    private:
@@ -198,12 +216,19 @@ namespace dtEntityOSG
       dtEntity::DynamicStringIdProperty mProjectionMode;
       dtEntity::StringId mProjectionModeVal;
 
-      dtEntity::DoubleProperty mOrthoLeft;
-      dtEntity::DoubleProperty mOrthoRight;
-      dtEntity::DoubleProperty mOrthoBottom;
-      dtEntity::DoubleProperty mOrthoTop;
-      dtEntity::DoubleProperty mOrthoZNear;
-      dtEntity::DoubleProperty mOrthoZFar;
+      dtEntity::DynamicDoubleProperty mOrthoLeft;
+      dtEntity::DynamicDoubleProperty mOrthoRight;
+      dtEntity::DynamicDoubleProperty mOrthoBottom;
+      dtEntity::DynamicDoubleProperty mOrthoTop;
+      dtEntity::DynamicDoubleProperty mOrthoZNear;
+      dtEntity::DynamicDoubleProperty mOrthoZFar;
+      double mOrthoLeftVal;
+      double mOrthoRightVal;
+      double mOrthoBottomVal;
+      double mOrthoTopVal;
+      double mOrthoZNearVal;
+      double mOrthoZFarVal;
+
    };
 
    

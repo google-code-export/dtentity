@@ -119,6 +119,30 @@ namespace dtEntityOSG
            dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetProjectionMode),
            dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetProjectionMode)
         )
+      , mOrthoLeft (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoLeft),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoLeft)
+        )
+      , mOrthoRight (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoRight),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoRight)
+        )
+      , mOrthoTop (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoTop),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoTop)
+        )
+      , mOrthoBottom (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoBottom),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoBottom)
+        )
+      , mOrthoZNear (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoZNear),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoZNear)
+        )
+      , mOrthoZFar (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoZFar),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoZFar)
+        )
    {
 
       Register(ContextIdId, &mContextId);
@@ -159,12 +183,12 @@ namespace dtEntityOSG
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
       mProjectionMode.Set(ModePerspectiveId);
 
-      mOrthoLeft.Set(-1000);
-      mOrthoRight.Set(1000);
-      mOrthoBottom.Set(-1000);
-      mOrthoTop.Set(1000);
-      mOrthoZNear.Set(-10000);
-      mOrthoZFar.Set(10000);
+      mOrthoLeftVal = -1000;
+      mOrthoRightVal = 1000;
+      mOrthoBottomVal = -1000;
+      mOrthoTopVal = 1000;
+      mOrthoZNearVal = -10000;
+      mOrthoZFarVal = 10000;
 
       SetCullingMode(NoAutoNearFarCullingId);
       GetCamera()->setAllowEventFocus(true);
@@ -510,9 +534,9 @@ namespace dtEntityOSG
       }
       else if(mProjectionModeVal == ModeOrthoId)
       {
-         GetCamera()->setProjectionMatrixAsOrtho(mOrthoLeft.Get(), mOrthoRight.Get(),
-                                             mOrthoBottom.Get(), mOrthoTop.Get(),
-                                             mOrthoZNear.Get(), mOrthoZFar.Get());
+         GetCamera()->setProjectionMatrixAsOrtho(mOrthoLeftVal, mOrthoRightVal,
+                                             mOrthoBottomVal, mOrthoTopVal,
+                                             mOrthoZNearVal, mOrthoZFarVal);
       }
    }
 
@@ -564,6 +588,83 @@ namespace dtEntityOSG
       return GetCamera()->getCullMask();
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoLeft(double v)
+   {
+      mOrthoLeftVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoLeft() const
+   {
+      return mOrthoLeftVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoRight(double v)
+   {
+      mOrthoRightVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoRight() const
+   {
+      return mOrthoRightVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoTop(double v)
+   {
+      mOrthoTopVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoTop() const
+   {
+      return mOrthoTopVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoBottom(double v)
+   {
+      mOrthoBottomVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoBottom() const
+   {
+      return mOrthoBottomVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoZNear(double v)
+   {
+      mOrthoZNearVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoZNear() const
+   {
+      return mOrthoZNearVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoZFar(double v)
+   {
+      mOrthoZFarVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoZFar() const
+   {
+      return mOrthoZFarVal;
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////

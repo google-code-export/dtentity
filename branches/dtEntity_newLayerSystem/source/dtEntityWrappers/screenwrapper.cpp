@@ -69,15 +69,21 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SCRSetShowCursor(Local<String> propname, Local<Value> value, const AccessorInfo& info)
+   Handle<Value> SCRSetShowCursor(const Arguments& args)
    {
-      dtEntity::GetWindowInterface()->SetShowCursor(value->BooleanValue());
-   }
+      unsigned int cid = 0;
+      bool show = true;
+      if(args.Length() > 0)
+      {
+         cid = args[0]->Uint32Value();
+      }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SCRGetShowCursor(Local<String> propname, const AccessorInfo& info)
-   {
-      return Boolean::New(true);
+      if(args.Length() > 1)
+      {
+         show = args[1]->BooleanValue();
+      }
+      dtEntity::GetWindowInterface()->SetShowCursor(cid, show);
+      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +117,24 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetPickRay(const Arguments& args)
    {
-      dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
+      if(args.Length() < 3)
+      {
+         return ThrowError("getPickRay expects three arguments!");
+      }
+      if(!args[0]->IsInt32())
+      {
+         return ThrowError("Usage: getPickRay(contextid, x, y[, bool usePixels])");
+      }
+      unsigned int contextid = args[0]->Uint32Value();
+      float x = (float)args[1]->NumberValue();
+      float y = (float)args[2]->NumberValue();
+      bool usePixels = true;
+      if(args.Length() > 3)
+      {
+         usePixels = args[3]->BooleanValue();
+      }
+
+      dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay(contextid, x, y, usePixels);
       return WrapVec3(pr);
    }
 
@@ -235,7 +258,11 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRCloseWindow(const Arguments& args)
    {     
-      dtEntity::GetWindowInterface()->CloseWindow(ToStdString(args[0]));
+      if(args[0]->IsString())
+      {
+         return ThrowError("closeWindow expects context id as first argument!");
+      }
+      dtEntity::GetWindowInterface()->CloseWindow(args[0]->Uint32Value());
       return Undefined();
    }
 
@@ -301,11 +328,11 @@ namespace dtEntityWrappers
       proto->Set("closeWindow", FunctionTemplate::New(SCRCloseWindow));
       proto->Set("getWindowGeometry", FunctionTemplate::New(SCRGetWindowGeometry));
       proto->Set("setWindowGeometry", FunctionTemplate::New(SCRSetWindowGeometry));
+      proto->Set("setShowCursor", FunctionTemplate::New(SCRSetShowCursor));
 
       Local<Object> instance = templt->GetFunction()->NewInstance();
 
       instance->SetAccessor(String::New("lockCursor"), SCRGetLockCursor, SCRSetLockCursor);
-      instance->SetAccessor(String::New("showCursor"), SCRGetShowCursor, SCRSetShowCursor);
       instance->SetAccessor(String::New("width"), SCRGetWidth);
       instance->SetAccessor(String::New("height"), SCRGetHeight);
       instance->SetAccessor(String::New("fullScreen"), SCRGetFullScreen, SCRSetFullScreen);

@@ -112,8 +112,8 @@ namespace dtEntityOSG
 
       dtEntity::MapComponent* mc;
       
-      std::string name = mEntity->GetComponent(mc) ? mc->GetEntityName() : "unnamed";
-      LOG_ALWAYS("Changing layer of " << name << " from " << dtEntity::GetStringFromSID(mLayerVal) << " to " << dtEntity::GetStringFromSID(layername))
+      //std::string name = mEntity->GetComponent(mc) ? mc->GetEntityName() : "unnamed";
+      //LOG_ALWAYS("Changing layer of " << name << " from " << dtEntity::GetStringFromSID(mLayerVal) << " to " << dtEntity::GetStringFromSID(layername))
       mLayerVal = layername;
 
       if(CanAttach())
@@ -162,7 +162,7 @@ namespace dtEntityOSG
          return false;
       }
 
-      dtEntity::MapComponent* mc; 
+      /*dtEntity::MapComponent* mc;
       if(mEntity->GetComponent(mc))
       {
          LOG_ALWAYS("Detaching entity " << mc->GetEntityName() << " from " << current->GetName());
@@ -175,7 +175,7 @@ namespace dtEntityOSG
       if(!CanAttach())
       {
          LOG_ERROR("Huch");
-      }
+      }*/
       assert(CanAttach());      
 
       // fetch attached component
@@ -187,10 +187,10 @@ namespace dtEntityOSG
       }      
       osg::Group* grp = current->GetAttachmentGroup();
       bool success = grp->removeChild(attachedNode);  
-      if(!success)
+     /* if(!success)
       {
           LOG_ERROR("Huch");
-      }
+      }*/
       assert(success);
       assert(attachedNode->getNumParents() == 0);
       return true;
@@ -205,7 +205,7 @@ namespace dtEntityOSG
          return false;
       }
 
-      dtEntity::MapComponent* mc; 
+      /*dtEntity::MapComponent* mc;
       if(mEntity->GetComponent(mc))
       {
          LOG_ALWAYS("Attaching entity " << mc->GetEntityName() << " to " << dtEntity::GetStringFromSID(current->GetName()));
@@ -218,7 +218,7 @@ namespace dtEntityOSG
       if(!CanAttach())
       {
          LOG_ERROR("Huch");
-      }
+      }*/
       assert(CanAttach());
       
       // add new attachment
@@ -229,10 +229,10 @@ namespace dtEntityOSG
          return false;
       }
       
-      if(attachedNode->getNumParents() != 0)
+      /*if(attachedNode->getNumParents() != 0)
       {
          LOG_ERROR("Huch");
-      }
+      }*/
       assert(attachedNode->getNumParents() == 0);
       osg::Group* attchgrp = current->GetAttachmentGroup();
       bool success = attchgrp->addChild(attachedNode);

@@ -32,6 +32,12 @@ namespace dtEntity
    class EntityManager;
 }
 
+namespace osgViewer
+{
+   class GraphicsWindow;
+   class View;
+}
+
 namespace dtEntityOSG
 {
 
@@ -51,6 +57,9 @@ namespace dtEntityOSG
       OSGWindowInterface(dtEntity::EntityManager& em);
       ~OSGWindowInterface();
 
+      osgViewer::GraphicsWindow* GetWindowByContextId(unsigned int contextId) const;
+      osgViewer::View* GetViewByContextId(unsigned int contextId) const;
+
       /**
        * Opens a new window if used viewer is a composite viewer.
        * @param name Name of osg nodes for window, view and camera to set
@@ -60,12 +69,12 @@ namespace dtEntityOSG
        */
       virtual bool OpenWindow(const std::string& name, unsigned int& contextId);
       
-      virtual void CloseWindow(const std::string& name);
+      virtual void CloseWindow(unsigned int contextid);
 
       /**
        * Get pick ray at given screen position
        */
-      dtEntity::Vec3f GetPickRay(const std::string& name, float x, float y, bool usePixels = false) const;
+      dtEntity::Vec3f GetPickRay(unsigned int contextid, float x, float y, bool usePixels = true) const;
       
       virtual bool GetWindowGeometry(unsigned int contextid, int& x, int& y, int& width, int& height) const;
       virtual bool SetWindowGeometry(unsigned int contextid, int x, int y, int width, int height);
@@ -73,14 +82,29 @@ namespace dtEntityOSG
       virtual void SetFullscreen(unsigned int contextid, bool fullscreen);
       virtual bool GetFullscreen(unsigned int contextid) const;
 
-      virtual dtEntity::EntityId PickEntity(double x, double y, unsigned int nodemask, unsigned int contextid) const;
+      virtual dtEntity::EntityId PickEntity(double x,
+                                            double y,
+                                            unsigned int nodemask,
+                                            unsigned int contextid,
+                                            bool usePixels = true) const;
 
       void SetTraits(osg::GraphicsContext::Traits* traits) { mTraits = traits; }
       osg::GraphicsContext::Traits* GetTraits() const { return mTraits; }
 
-      virtual void SetShowCursor(bool);
+      virtual void SetShowCursor(unsigned int contextid, bool);
 
       virtual dtEntity::Vec3d ConvertWorldToScreenCoords(unsigned int contextid, const dtEntity::Vec3d& coord);
+
+      /**
+        * Should the window with given context id be continuously redrawn
+        * or only by request? Default is on
+        */
+      virtual void SetContinuousRedraw(unsigned int contextid, bool);
+
+      /**
+        * If Continuous Redraw is off, request a redraw in next render traversal
+        */
+      virtual void RequestRedraw(unsigned int contextid);
 
    protected:
 
