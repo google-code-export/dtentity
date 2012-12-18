@@ -66,7 +66,7 @@ namespace dtEntity
               mReverseLookup[hash] = text;
            }
          }
-        
+         mReverseLookup[0] = "";
       }
 
       ////////////////////////////////////////////////////////////////////////////////

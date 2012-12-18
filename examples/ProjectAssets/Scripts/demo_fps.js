@@ -77,7 +77,7 @@ function update() {
 
    if(Input.getKey("Space")) {
      Screen.fullScreen = false;
-     Screen.showCursor = true;
+     Screen.setShowCursor(0, true);
      Screen.lockCursor = false;
    }
 
@@ -105,7 +105,7 @@ function startFPSDemo() {
   
   Screen.lockCursor = true;
   Screen.fullScreen = true;
-  Screen.showCursor = false;
+  Screen.setShowCursor(0, false);
   
   Input.addInputCallback(inputCallback);
   interval = setInterval(update, 0);
@@ -132,7 +132,7 @@ function stopFPSDemo() {
   Input.removeInputCallback(inputCallback);
   clearInterval(interval);
   Screen.fullScreen = false;
-  Screen.showCursor = true;
+  Screen.setShowCursor(0, true);
   Screen.lockCursor = false;
 
 
