@@ -199,9 +199,9 @@ namespace dtEntityCloud
       mCloudSharpnessUniform = new osg::Uniform("clouds_sharpness", 0.95f);
       mCloudMutationRateUniform = new osg::Uniform("cloud_mutation_rate", 0.1f);
       mWindUniform = new osg::Uniform("wind", osg::Vec2(0.0001f, 0.0001f));
-      mSunPosUniform = new osg::Uniform("sun_pos", osg::Vec3(0.8f,0.8f,2.0f));
-      mTraceStartUniform = new osg::Uniform("trace_start", 0.1f);
-      mTraceDistUniform = new osg::Uniform("trace_dist", 0.6f);
+      mSunPosUniform = new osg::Uniform("sun_pos", osg::Vec3(0.0f,0.0f,2.0f));
+      mTraceStartUniform = new osg::Uniform("trace_start", 1.31000f);
+      mTraceDistUniform = new osg::Uniform("trace_dist", 0.01100f);
       osg::Camera* cloudDensityCam = CreateCloudDensityCam(mCloudDensity, combinedSize);
       GetNode()->asGroup()->addChild(cloudDensityCam);
 
@@ -210,7 +210,7 @@ namespace dtEntityCloud
       cloudGeode->addDrawable(cloudPlane);
 
       osg::Transform* transform = new MoveEarthySkyWithEyePointTransform();
-      //transform->setCullingActive(false);
+      transform->setCullingActive(false);
       transform->addChild(cloudGeode);
       GetNode()->asGroup()->addChild(transform);
       GetNode()->asGroup()->addChild(mDrawables);
@@ -310,26 +310,15 @@ namespace dtEntityCloud
    ////////////////////////////////////////////////////////////////////////////
    osg::Geometry* CloudsComponent::CreateCloudPlane() const
    {
+      // geometry is a disk with center above the viewer position.
+      // Having a vert at center of plane makes it possible to use per-vertex
+      // fog values.
+      // sides of disk are a little lower than center. When disk was a plane,
+      // ugly jaggies appeared near the horizon.
       osg::Geometry* cloudPlaneGeometry = new osg::Geometry();
-      float height = 400;
+      float height_center = 400;
+      float height_sides = 200;
       float width_2 = 8000;
-      /*osg::Vec3Array* coords = new osg::Vec3Array(4);
-      (*coords)[0] = osg::Vec3(-width_2, -width_2, height);
-      (*coords)[1] = osg::Vec3(-width_2,  width_2, height);
-      (*coords)[2] = osg::Vec3( width_2,  width_2, height);
-      (*coords)[3] = osg::Vec3( width_2, -width_2, height);
-      cloudPlaneGeometry->setVertexArray(coords);
-
-      float scale = 0.5f;
-      osg::Vec2Array* tcoords = new osg::Vec2Array(4);
-      (*tcoords)[0].set(-scale, -scale);
-      (*tcoords)[1].set(-scale, scale);
-      (*tcoords)[2].set(scale, scale);
-      (*tcoords)[3].set(scale, -scale);
-      cloudPlaneGeometry->setTexCoordArray(0,tcoords);   
-
-      cloudPlaneGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
-   */
 
       unsigned int sides = 6;
       osg::Vec3Array* coords = new osg::Vec3Array(sides + 2);
@@ -337,13 +326,13 @@ namespace dtEntityCloud
       cloudPlaneGeometry->setVertexArray(coords);
       cloudPlaneGeometry->setTexCoordArray(0,tcoords);   
 
-      (*coords)[0].set(0, 0, height);
+      (*coords)[0].set(0, 0, height_center);
       (*tcoords)[0].set(0, 0);
       double angle = osg::PI * 2.0 / (double)sides;
       for(unsigned int i = 0; i < sides + 1; ++i)
       {
-         (*coords)[i + 1].set(cosf(i * angle) * width_2, sinf(i * angle) * width_2, height);
-         (*tcoords)[i + 1].set(cosf(i * angle), sinf(i * angle));
+         (*coords)[i + 1].set(cosf(i * angle) * width_2, sinf(i * angle) * width_2, height_sides);
+         (*tcoords)[i + 1].set(cosf(i * angle) * 0.5f, sinf(i * angle) * 0.5f);
       }
       
       cloudPlaneGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLE_FAN, 0, sides + 2));
@@ -379,7 +368,7 @@ namespace dtEntityCloud
        "    gl_TexCoord[0] = gl_MultiTexCoord0;\n"
        "    gl_Position = ftransform();\n"
        "    vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n"
-       "    float f = length(vVertex) - 400;\n"
+       "    float f = (length(vVertex) - 400) * 0.2;\n"
        "    fogFactor = exp2( -f * f);\n"
        "    fogFactor = clamp(fogFactor, 0.0, 1.0);\n"
        "}\n";
@@ -427,7 +416,7 @@ namespace dtEntityCloud
        "  tex.r = max(tex.r - 1 + cloud_cover.r, 0.0);\n"       
        "  if(tex.r < 0.004) discard;\n"       
        "  vec3 endTracePos = vec3(uv, -tex.r);\n" 
-       "  vec3 traceDir = normalize(endTracePos - sun_pos);\n" //* (trace_dist / 64.0);\n"
+       "  vec3 traceDir = normalize(endTracePos - sun_pos);\n"
        "  vec3 curTracePos = sun_pos + traceDir * trace_start;\n"
        "  float scattering = 0.0;\n"
        "  for(int i = 0; i < 64; ++i)\n"
@@ -437,12 +426,11 @@ namespace dtEntityCloud
        "    scattering += step(curTracePos.z, tex2.r);\n"
        "  }\n"
        "  \n"
-       //"  scattering /= 64.0;\n"
        "  tex.r = 1.0 - pow(1 - clouds_sharpness, tex.r * 255.0);\n"
-#if 0
+#if 1
        "    vec2 sunRay2D = uv - sun_pos.xy;\n"
 	    "    float sunDist2D = length(sunRay2D);\n"
-       "    scattering = 1.0 / exp(scattering * 0.8);\n"      
+       "    scattering = 1 - scattering / 64.0;\n"      
        "    gl_FragColor.rgb = lerp3(sunColor * scattering, vec3(scattering, scattering, scattering), sunDist2D);\n"
 	    "    float opacity = 2.0 - sunDist2D;\n"
        "    vec3 shadeColorTweaked = max(gl_FragColor.rgb - 0.75, vec3(0,0,0));\n"
@@ -452,10 +440,9 @@ namespace dtEntityCloud
        "          vec4(1.0, 1.0, 1.0, gl_FragColor.r * tex.r * 1), // Horizon color\n"
        "          sunDist2D * 2\n"
        "      );\n"
+       "    gl_FragColor.a *= fogFactor;\n"
 #else
-       
-       //"  float light = 1.0 / exp(scattering * 0.01);\n"
-       "  float light = 1 - scattering / (64.0 * 1.3);\n"
+       "  float light = 1 - scattering / 64.0;\n"
        "  gl_FragColor = vec4(light, light, light, tex.r * fogFactor);\n"  
 #endif
        "}\n";
