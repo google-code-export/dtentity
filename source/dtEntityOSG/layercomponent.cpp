@@ -110,8 +110,7 @@ namespace dtEntityOSG
          Detach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
       }
 
-      dtEntity::MapComponent* mc;
-      
+      //dtEntity::MapComponent* mc;      
       //std::string name = mEntity->GetComponent(mc) ? mc->GetEntityName() : "unnamed";
       //LOG_ALWAYS("Changing layer of " << name << " from " << dtEntity::GetStringFromSID(mLayerVal) << " to " << dtEntity::GetStringFromSID(layername))
       mLayerVal = layername;
@@ -187,12 +186,12 @@ namespace dtEntityOSG
       }      
       osg::Group* grp = current->GetAttachmentGroup();
       bool success = grp->removeChild(attachedNode);  
-     /* if(!success)
-      {
-          LOG_ERROR("Huch");
-      }*/
+
       assert(success);
-      assert(attachedNode->getNumParents() == 0);
+      if(attachedNode->getNumParents() != 0)
+      {
+         LOG_ERROR("Detaching: attached node still has parents!");
+      }
       return true;
    
    }
@@ -229,11 +228,10 @@ namespace dtEntityOSG
          return false;
       }
       
-      /*if(attachedNode->getNumParents() != 0)
+      if(attachedNode->getNumParents() != 0)
       {
-         LOG_ERROR("Huch");
-      }*/
-      assert(attachedNode->getNumParents() == 0);
+         LOG_ERROR("Node already attached!");
+      }
       osg::Group* attchgrp = current->GetAttachmentGroup();
       bool success = attchgrp->addChild(attachedNode);
       assert(success);

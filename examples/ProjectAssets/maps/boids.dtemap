@@ -86,23 +86,6 @@
 		</component>
 		<component type="StaticMesh"/>
 	</entity>
-	<entity>
-		<component type="Layer">
-			<stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-		</component>
-		<component type="Light">
-			<vec4property name="Position" x="-1.0000000000" y="1.0000000000" z="1.0000000000" w="0.0000000000"/>
-		</component>
-		<component type="Map">
-			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
-			<stringproperty name="UniqueId">27f394dd-2552-41bd-b94d-f5c3fbc1af6a</stringproperty>
-		</component>
-		<component type="PositionAttitudeTransform">
-			<arrayproperty name="Children">
-				<stringproperty name="0">Light</stringproperty>
-			</arrayproperty>
-		</component>
-	</entity>
 	<entity spawner="Earth">
 		<component type="Layer"/>
 		<component type="Map">
@@ -255,15 +238,14 @@
 			<arrayproperty name="Children">
 				<stringproperty name="0">Shadow</stringproperty>
 			</arrayproperty>
-			<floatproperty name="CloudCover" value="0.2099999934"/>
+			<floatproperty name="CloudCover" value="0.0099999998"/>
 			<floatproperty name="CloudSharpness" value="0.1800000072"/>
-			<vec3property name="SunPos" x="0.0000000000" y="0.0000000000" z="2.0000000000"/>
-			<floatproperty name="TraceDist" value="0.0109999999"/>
-			<floatproperty name="TraceStart" value="1.3099999428"/>
+			<floatproperty name="TraceDist" value="0.0049999999"/>
+			<floatproperty name="TraceStart" value="1.7000000477"/>
 			<vec2property name="Wind" x="0.0010000000" y="0.0001000000"/>
 		</component>
 		<component type="Layer">
-			<stringproperty name="AttachedComponent">SkyBox</stringproperty>
+			<stringproperty name="AttachedComponent">OSGEphemeris</stringproperty>
 			<stringproperty name="Layer">root</stringproperty>
 		</component>
 		<component type="LayerAttachPoint">
@@ -273,6 +255,11 @@
 			<stringproperty name="EntityName">SkyBox</stringproperty>
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
 			<stringproperty name="UniqueId">SkyBox</stringproperty>
+		</component>
+		<component type="OSGEphemeris">
+			<arrayproperty name="Children">
+				<stringproperty name="0">Clouds</stringproperty>
+			</arrayproperty>
 		</component>
 		<component type="Shadow">
 			<arrayproperty name="Children">
@@ -301,24 +288,13 @@
 				<stringproperty name="__SELECTED__">PSSM</stringproperty>
 			</groupproperty>
 		</component>
-		<component type="SkyBox">
-			<arrayproperty name="Children">
-				<stringproperty name="0">Clouds</stringproperty>
-			</arrayproperty>
-			<stringproperty name="TextureDown">Textures/sky_clear/down.png</stringproperty>
-			<stringproperty name="TextureEast">Textures/sky_clear/east.png</stringproperty>
-			<stringproperty name="TextureNorth">Textures/sky_clear/north.png</stringproperty>
-			<stringproperty name="TextureSouth">Textures/sky_clear/south.png</stringproperty>
-			<stringproperty name="TextureUp">Textures/sky_clear/up.png</stringproperty>
-			<stringproperty name="TextureWest">Textures/sky_clear/west.png</stringproperty>
-		</component>
 	</entity>
 	<entity>
 		<component type="Camera">
 			<doubleproperty name="AspectRatio" value="1.0781671159"/>
 			<vec4property name="ClearColor" x="0.0000000000" y="0.0000000000" z="0.0000000000" w="1.0000000000"/>
 			<intproperty name="ContextId" value="0"/>
-			<vec3property name="EyeDirection" x="-0.0239231551" y="0.9965789893" z="0.0791075262"/>
+			<vec3property name="EyeDirection" x="0.0910802478" y="-0.9542317317" z="0.2848617044"/>
 			<vec3property name="Position" x="-19.2468866970" y="-18.0396568688" z="-9.9585006949"/>
 		</component>
 		<component type="Map">
@@ -326,7 +302,9 @@
 			<stringproperty name="MapName">maps/boids.dtemap</stringproperty>
 			<stringproperty name="UniqueId">cam_0</stringproperty>
 		</component>
-		<component type="MotionModel"/>
+		<component type="MotionModel">
+			<uintproperty name="MoveSpeed" value="99"/>
+		</component>
 	</entity>
 </map>
 

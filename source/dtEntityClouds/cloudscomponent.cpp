@@ -27,7 +27,11 @@
 #include <osg/Geometry>
 #include <osg/PolygonMode>
 #include <osgUtil/CullVisitor>
+#include <dtEntityOSG/dtentityosg_config.h>
 
+#if OSGEPHEMERIS_FOUND
+#include <dtEntityOSG/osgephemeriscomponent.h>
+#endif
 namespace dtEntityCloud
 {
 
@@ -359,6 +363,7 @@ namespace dtEntityCloud
 
       ss->setMode(GL_BLEND,osg::StateAttribute::ON);
       ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+      ss->setRenderBinDetails(-9000,"RenderBin");
 
       char vertexShaderSource[] =
        "varying float fogFactor;\n"
@@ -475,7 +480,9 @@ namespace dtEntityCloud
    ////////////////////////////////////////////////////////////////////////////
    void CloudsComponent::SetSunPos(const osg::Vec3f& w)
    {
-      mSunPosUniform->set(w);
+      osg::Vec3f val = w;
+      //val.normalize();
+      mSunPosUniform->set(val);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -561,12 +568,15 @@ namespace dtEntityCloud
 
    const dtEntity::StringId CloudsSystem::TYPE(dtEntity::SID("Clouds"));
 
+   ////////////////////////////////////////////////////////////////////////////
    CloudsSystem::CloudsSystem(dtEntity::EntityManager& em)
       : BaseClass(em)
    {    
+#if OSGEPHEMERIS_FOUND
       mTickFunctor = dtEntity::MessageFunctor(this, &CloudsSystem::Tick);
       GetEntityManager().RegisterForMessages(dtEntity::TickMessage::TYPE,
          mTickFunctor, dtEntity::FilterOptions::ORDER_LATE, "CloudsSystem::Tick");
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -577,5 +587,17 @@ namespace dtEntityCloud
    ////////////////////////////////////////////////////////////////////////////
    void CloudsSystem::Tick(const dtEntity::Message& msg)
    {
+#if OSGEPHEMERIS_FOUND
+      dtEntityOSG::OSGEphemerisSystem* ephemsys;
+      if(GetEntityManager().GetES(ephemsys) && ephemsys->begin() != ephemsys->end())
+      {
+         dtEntityOSG::OSGEphemerisComponent* comp = ephemsys->begin()->second;
+         osg::Vec4f sunpos = comp->GetSunLightPos();
+         for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
+         {
+            //i->second->SetSunPos(osg::Vec3(sunpos[0], sunpos[1], sunpos[2]));
+         }
+      }
+#endif
    }
 }
