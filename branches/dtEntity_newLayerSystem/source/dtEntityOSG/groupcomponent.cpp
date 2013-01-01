@@ -138,7 +138,10 @@ namespace dtEntityOSG
 
             if(nc)
             {
-               assert(nc->GetNode()->getNumParents() == 0);
+               if(nc->GetNode()->getNumParents() != 0)
+               {
+                  LOG_ERROR("A node component is child of multiple node components!");
+               }
                bool success = GetAttachmentGroup()->addChild(nc->GetNode());
                assert(success);
                nc->SetParentComponent(this->GetType());

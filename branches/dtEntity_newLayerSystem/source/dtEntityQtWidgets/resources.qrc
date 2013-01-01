@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource>
         <file>icons/property-editor-add-component.png</file>
         <file>icons/property-editor-add-component_disabled.png</file>
         <file>icons/property-editor-remove-component.png</file>

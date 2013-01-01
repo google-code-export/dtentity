@@ -292,13 +292,13 @@ namespace dtEntityEditor
       mToolsToolbar->clear();
       dtEntity::PropertyArray props = msg.GetTools();
 
-      QAction* coordsysaction = mToolsToolbar->addAction(QIcon(":dtentity/icons/coordsystems.png"), "Use local coord system");
+      QAction* coordsysaction = mToolsToolbar->addAction(QIcon(":/icons/coordsystems.png"), "Use local coord system");
       coordsysaction->setCheckable(true);
       coordsysaction->setChecked(true);
       connect(coordsysaction, SIGNAL(triggered(bool)), this, SLOT(OnToggleCoordSystem(bool)));
       OnToggleCoordSystem(true);
 
-      QAction* clampaction = mToolsToolbar->addAction(QIcon(":dtentity/icons/go-bottom.png"), "Clamp");
+      QAction* clampaction = mToolsToolbar->addAction(QIcon(":/icons/go-bottom.png"), "Clamp");
       clampaction->setCheckable(true);
       clampaction->setChecked(true);
       connect(clampaction, SIGNAL(triggered(bool)), this, SLOT(OnToggleGroundClamp(bool)));

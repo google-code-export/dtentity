@@ -120,11 +120,9 @@ namespace dtEntityCloud
       CloudsSystem(dtEntity::EntityManager& em);
       ~CloudsSystem();
 
+   private:
       void Tick(const dtEntity::Message& msg);
 
-   private:
-
       dtEntity::MessageFunctor mTickFunctor;
-
    };
 }
