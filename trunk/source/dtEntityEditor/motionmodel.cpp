@@ -54,7 +54,7 @@ namespace dtEntityEditor
 
       mContextId.Set(0);
       mMoveSpeed.Set(100);
-      mRotateSpeed.Set(0.001);
+      mRotateSpeed.Set(0.001f);
       mRotateKeySpeed.Set(2);
       mEnabled.Set(true);
    }
@@ -145,7 +145,7 @@ namespace dtEntityEditor
          inputif->SetLockCursor(true);
          double mouseX = inputif->GetAxis(dtEntity::InputInterface::MouseXId);
          double mouseY = inputif->GetAxis(dtEntity::InputInterface::MouseYId);
-         osg::Vec3 pickray = dtEntity::GetWindowInterface()->GetPickRay("defaultView", mouseX, mouseY);
+         osg::Vec3 pickray = dtEntity::GetWindowInterface()->GetPickRay(contextid, mouseX, mouseY);
          osg::Vec3d campos = mCamera->GetPosition();
 
          std::vector<dtEntity::SystemInterface::Intersection> isects;

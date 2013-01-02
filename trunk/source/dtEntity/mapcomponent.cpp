@@ -902,6 +902,12 @@ namespace dtEntity
       GetEntityManager().GetEntitySystem(MapComponent::TYPE, ms);
       EntityId id = ms->GetEntityIdByUniqueId(uniqueid);
 
+      if(id == 0)
+      {
+         LOG_ERROR("Entity not found for SetComponentPropertiesMessage!");
+         return;
+      }
+
       Component* component;
       bool found = GetEntityManager().GetComponent(id, ctype, component);
 

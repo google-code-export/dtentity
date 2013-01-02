@@ -61,10 +61,10 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/dtentity/icons/property-editor-add-component.png</normaloff>
-         <normalon>:/dtentity/icons/property-editor-add-component.png</normalon>
-         <disabledoff>:/dtentity/icons/property-editor-add-component_disabled.png</disabledoff>
-         <disabledon>:/dtentity/icons/property-editor-add-component_disabled.png</disabledon>:/dtentity/icons/property-editor-add-component.png</iconset>
+         <normaloff>:/icons/property-editor-add-component.png</normaloff>
+         <normalon>:/icons/property-editor-add-component.png</normalon>
+         <disabledoff>:/icons/property-editor-add-component_disabled.png</disabledoff>
+         <disabledon>:/icons/property-editor-add-component_disabled.png</disabledon>:/icons/property-editor-add-component.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -96,10 +96,10 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/dtentity/icons/property-editor-remove-component.png</normaloff>
-         <normalon>:/dtentity/icons/property-editor-remove-component.png</normalon>
-         <disabledoff>:/dtentity/icons/property-editor-remove-component.png</disabledoff>
-         <disabledon>:/dtentity/icons/property-editor-remove-component.png</disabledon>:/dtentity/icons/property-editor-remove-component.png</iconset>
+         <normaloff>:/icons/property-editor-remove-component.png</normaloff>
+         <normalon>:/icons/property-editor-remove-component.png</normalon>
+         <disabledoff>:/icons/property-editor-remove-component.png</disabledoff>
+         <disabledon>:/icons/property-editor-remove-component.png</disabledon>:/icons/property-editor-remove-component.png</iconset>
        </property>
        <property name="iconSize">
         <size>

@@ -182,7 +182,7 @@ namespace dtEntityQtWidgets
             return QVariant();
          }
 
-         case Qt::ForegroundRole:
+         /*case Qt::ForegroundRole:
          {
             TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
             ComponentTreeItem* citem = dynamic_cast<ComponentTreeItem*>(item);
@@ -192,7 +192,7 @@ namespace dtEntityQtWidgets
             }
             return QColor(0, 0.5, 0);
             
-         }
+         }*/
          case Qt::BackgroundRole:
          {
             TreeItem* item = static_cast<TreeItem*>(index.internalPointer());

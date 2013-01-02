@@ -31,13 +31,54 @@
 namespace dtEntityOSG
 {
 
+   class DTENTITY_OSG_EXPORT NodeStore
+   {
+   public:
+
+      NodeStore();
+      NodeStore(osg::Node* node);
+      virtual ~NodeStore();
+
+      /**
+       * returns encapsulated node
+       */
+      virtual osg::Node* GetNode() const;
+
+      /**
+       * Sets encapsulated node. Also, if the currently held node
+       * is attached as a child to another component then it is
+       * removed from that parent and the passed node is added as a child
+       */
+      virtual void SetNode(osg::Node* node);
+
+       /**
+       * type of compponent that this node component is attached to.
+       * Is 0 if not attached to a parent
+       */
+      dtEntity::ComponentType GetParentComponent() const { return mParentComponent; }
+      void SetParentComponent(dtEntity::ComponentType c) { mParentComponent = c; }
+
+      void ClearFromParent();
+
+      void SetNodeMask(unsigned int nodemask, bool recursive = false);
+      unsigned int GetNodeMask() const;
+      
+      void SetNodeEntity(dtEntity::Entity*);
+      dtEntity::Entity* GetNodeEntity();
+
+   private:
+      osg::ref_ptr<osg::Node> mNode;
+      dtEntity::ComponentType mParentComponent;
+   };
    ///////////////////////////////////////////////////////////////////////////
    /**
     * Holds a single OSG node. Subclass this if you want to wrap an object
     * derived from osg::Node. NodeComponent instances can be attached to
     * the scene by the Layer system.
     */
-   class DTENTITY_OSG_EXPORT NodeComponent : public dtEntity::Component
+   class DTENTITY_OSG_EXPORT NodeComponent 
+      : public dtEntity::Component
+      , public NodeStore
    {
 
    public:
@@ -52,37 +93,8 @@ namespace dtEntityOSG
 
       virtual void OnAddedToEntity(dtEntity::Entity& entity);
       virtual void OnRemovedFromEntity(dtEntity::Entity& entity);
-
-      /**
-       * returns encapsulated node
-       */
-      virtual osg::Node* GetNode() const;
-
-      /**
-       * Sets encapsulated node. Also, if the currently held node
-       * is attached as a child to another component then it is
-       * removed from that parent and the passed node is added as a child
-       */
-      virtual void SetNode(osg::Node* node);
    
-      /**
-       * type of compponent that this node component is attached to.
-       * Is 0 if not attached to a parent
-       */
-      dtEntity::ComponentType GetParentComponent() const { return mParentComponent; }
-      void SetParentComponent(dtEntity::ComponentType c) { mParentComponent = c; }
-
-      void SetNodeMask(unsigned int nodemask, bool recursive = false);
-      unsigned int GetNodeMask() const;
-
    protected:
-
-      dtEntity::Entity* mEntity;
-
-   private:
-
-      osg::ref_ptr<osg::Node> mNode;
-      dtEntity::ComponentType mParentComponent;
       
    };
 

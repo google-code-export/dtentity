@@ -339,10 +339,10 @@ namespace dtEntityOSG
       {
          return;
       }
-      assert(mEntity != NULL);
+      assert(GetNodeEntity() != NULL);
 
       dtEntityOSG::LayerAttachPointSystem* layerattsystem;
-      mEntity->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
+      GetNodeEntity()->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
 
       dtEntityOSG::LayerAttachPointComponent* current;
       if(layerattsystem->GetByName(mAttachPoint, current))
@@ -361,13 +361,13 @@ namespace dtEntityOSG
       assert(mAttachPoint == dtEntity::StringId());
 
       dtEntityOSG::LayerAttachPointSystem* layerattsystem;
-      mEntity->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
+      GetNodeEntity()->GetEntityManager().GetEntitySystem(dtEntityOSG::LayerAttachPointComponent::TYPE, layerattsystem);
 
       dtEntityOSG::LayerAttachPointComponent* next;
       if(layerattsystem->GetByName(mLayerProperty.Get(), next))
       {
          dtEntityOSG::TransformComponent* tcomp;
-         if(mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true))
+         if(GetNodeEntity()->GetEntityManager().GetComponent(GetNodeEntity()->GetId(), tcomp, true))
          {
 
             assert(!mDraggerContainer.valid());
@@ -400,7 +400,7 @@ namespace dtEntityOSG
       }
 
       mLayerVal = layername;
-      if(mEntity != NULL)
+      if(GetNodeEntity() != NULL)
       {
          RemoveFromParent();
          AddToLayer();
@@ -474,7 +474,7 @@ namespace dtEntityOSG
       dragger->setupDefaultGeometry();
       dragger->setHandleEvents(true);
 
-      if(mEntity != NULL)
+      if(GetNodeEntity() != NULL)
       {
          AddToLayer();
       }
@@ -510,7 +510,7 @@ namespace dtEntityOSG
       }
 
       dtEntityOSG::TransformComponent* tcomp;
-      if(mEntity->GetEntityManager().GetComponent(mEntity->GetId(), tcomp, true))
+      if(GetNodeEntity()->GetEntityManager().GetComponent(GetNodeEntity()->GetId(), tcomp, true))
       {
          mDraggerCallback = new DraggerCallback(tcomp);
          dragger->addDraggerCallback(mDraggerCallback);

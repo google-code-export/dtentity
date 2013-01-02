@@ -90,79 +90,152 @@ namespace dtEntityOSG
    {
       return mLayerVal;;
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool LayerComponent::CanAttach()
+   {
+      return (mEntity != NULL && 
+         mLayerVal != dtEntity::StringId() && 
+         mAttachedComponentVal != dtEntity::StringId() && 
+         IsAddedToScene());
+   }
    
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::SetLayer(dtEntity::StringId layername)
    {
       assert(mEntity != NULL);
 
-      osg::Node* attachedNode = GetAttachedComponentNode();
+      if(CanAttach() && GetAttachedComponentNode()->getNumParents() != 0)
+      {
+         Detach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
+      }
 
-      if(attachedNode != NULL && mAddedToScene)
+      //dtEntity::MapComponent* mc;      
+      //std::string name = mEntity->GetComponent(mc) ? mc->GetEntityName() : "unnamed";
+      //LOG_ALWAYS("Changing layer of " << name << " from " << dtEntity::GetStringFromSID(mLayerVal) << " to " << dtEntity::GetStringFromSID(layername))
+      mLayerVal = layername;
+
+      if(CanAttach())
+      {
+         Attach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   LayerAttachPointComponent* GetAttachPoint(dtEntity::EntityManager& em, dtEntity::StringId name)
+   {
+      LayerAttachPointComponent* ret = NULL;
+      if(name != dtEntity::StringId())
       {
          LayerAttachPointSystem* layerattsystem;
-         mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layerattsystem);
-               
-         LayerAttachPointComponent* current;
-         if(mLayerVal != dtEntity::StringId() && layerattsystem->GetByName(mLayerVal, current))
-         {
-            current->GetGroup()->removeChild(attachedNode);           
-         }
-
-         LayerAttachPointComponent* next;
-         if(layerattsystem->GetByName(layername, next))
-         {
-            next->GetAttachmentGroup()->addChild(attachedNode);
-         }
-
+         bool success = em.GetES(layerattsystem);
+         assert(success);
+         layerattsystem->GetByName(name, ret);         
       }
-      mLayerVal = layername;
+      return ret;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::SetAttachedComponent(dtEntity::ComponentType handle)
    {
-      if(mLayerVal == dtEntity::StringId())
+      // if nothing changed or not yet added to scene
+      if(CanAttach())
       {
-         mAttachedComponentVal = handle;
-         return;
-      }
-
-      if(mAttachedComponentVal == handle)
-      {
-         return;
-      }
-
-      LayerAttachPointSystem* layerattsystem;
-      mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layerattsystem);
-
-      // remove old attachment
-      LayerAttachPointComponent* current;
-      if(layerattsystem->GetByName(mLayerVal, current) && mAddedToScene && mLayerVal != dtEntity::StringId())
-      {
-         // remove old attachment
-         osg::Node* attachedNode = GetAttachedComponentNode();
-         
-         LayerAttachPointComponent* current;
-         if(attachedNode != NULL && layerattsystem->GetByName(mLayerVal, current))
-         {
-            bool success = current->GetGroup()->removeChild(attachedNode);           
-            assert(success);
-         }
+         Detach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
       }
       
       mAttachedComponentVal = handle;
-
-      if(mAddedToScene)
+      if(CanAttach())
       {
-         // add new attachment
-         osg::Node* attachedNode = GetAttachedComponentNode();
-         if(attachedNode != NULL)
-         {
-            current->GetAttachmentGroup()->addChild(attachedNode);
-         }
+         Attach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
       }
-      SetVisible(mVisibleVal);
+      
+      SetVisible(mVisibleVal);      
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool LayerComponent::Detach(LayerAttachPointComponent* current)
+   {
+      if(current == NULL) 
+      {
+         return false;
+      }
+
+      /*dtEntity::MapComponent* mc;
+      if(mEntity->GetComponent(mc))
+      {
+         LOG_ALWAYS("Detaching entity " << mc->GetEntityName() << " from " << current->GetName());
+      }
+      else
+      {
+         LOG_ALWAYS("Detaching unnamed entity from " << current->GetName());
+      }
+
+      if(!CanAttach())
+      {
+         LOG_ERROR("Huch");
+      }*/
+      assert(CanAttach());      
+
+      // fetch attached component
+      osg::Node* attachedNode = GetAttachedComponentNode();      
+      if(attachedNode == NULL)
+      {
+         // attached component no longer exists
+         return false;
+      }      
+      osg::Group* grp = current->GetAttachmentGroup();
+      bool success = grp->removeChild(attachedNode);  
+
+      assert(success);
+      if(attachedNode->getNumParents() != 0)
+      {
+         LOG_ERROR("Detaching: attached node still has parents!");
+      }
+      return true;
+   
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   bool LayerComponent::Attach(LayerAttachPointComponent* current)
+   {
+      if(current == NULL) 
+      {
+         return false;
+      }
+
+      /*dtEntity::MapComponent* mc;
+      if(mEntity->GetComponent(mc))
+      {
+         LOG_ALWAYS("Attaching entity " << mc->GetEntityName() << " to " << dtEntity::GetStringFromSID(current->GetName()));
+      }
+      else
+      {
+         LOG_ALWAYS("Attaching unnamed entity to " << current->GetName());
+      }
+
+      if(!CanAttach())
+      {
+         LOG_ERROR("Huch");
+      }*/
+      assert(CanAttach());
+      
+      // add new attachment
+      osg::Node* attachedNode = GetAttachedComponentNode();
+      if(attachedNode == NULL)
+      {
+         // component to attach does not yet exist
+         return false;
+      }
+      
+      if(attachedNode->getNumParents() != 0)
+      {
+         LOG_ERROR("Node already attached!");
+      }
+      osg::Group* attchgrp = current->GetAttachmentGroup();
+      bool success = attchgrp->addChild(attachedNode);
+      assert(success);
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -175,7 +248,11 @@ namespace dtEntityOSG
    osg::Node* LayerComponent::GetAttachedComponentNode() const
    {
       assert(mEntity != NULL);
-      if(mAttachedComponentVal == dtEntity::StringId()) return NULL;
+      if(mAttachedComponentVal == dtEntity::StringId()) 
+      {
+         return NULL;
+      }
+
       Component* ac;
       bool found = mEntity->GetComponent(static_cast<dtEntity::ComponentType>(mAttachedComponentVal), ac);
       if(!found)
@@ -184,7 +261,7 @@ namespace dtEntityOSG
             + dtEntity::GetStringFromSID(mAttachedComponentVal));
          return NULL;
       }
-      NodeComponent* nc = dynamic_cast<NodeComponent*>(ac);
+      NodeStore* nc = dynamic_cast<NodeStore*>(ac);
       if(nc == NULL) return NULL;
       return nc->GetNode();
    }
@@ -253,71 +330,22 @@ namespace dtEntityOSG
    {
       if(mAddedToScene) return;
       mAddedToScene = true;
-
-      LayerAttachPointComponent* current = NULL;
-      if(mLayerVal != dtEntity::StringId() && mEntity != NULL)
+      if(!CanAttach())
       {
-         LayerAttachPointSystem* ls;
-         mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
-         ls->GetByName(mLayerVal, current);
+         return;
       }
-
-      if(current != NULL && mAttachedComponent.Get() != dtEntity::StringId())
-      {  
-         osg::Node* attachedNode = GetAttachedComponentNode();
-#ifdef _DEBUG
-         if(attachedNode == NULL)
-         {
-
-            LOG_WARNING("LayerSystem: Cannot attach entity, node to attach is not selected!"
-             << " ComponentType: " << dtEntity::GetStringFromSID(mAttachedComponentVal));
-         }
-         if(attachedNode != NULL && (attachedNode->getUserData() == NULL ||
-             dynamic_cast<dtEntity::Entity*>(attachedNode->getUserData()) == NULL))
-         {
-
-            LOG_ERROR("Attaching node with no user data to scene graph!"
-             << " ComponentType: " << dtEntity::GetStringFromSID(mAttachedComponentVal));
-         }
-#endif
-
-         if(attachedNode != NULL)
-         {
-            bool success = current->GetAttachmentGroup()->addChild(attachedNode);
-            assert(success);
-            Component* ac;
-            if(mEntity->GetComponent(static_cast<dtEntity::ComponentType>(mAttachedComponent.Get()), ac))
-            {
-               static_cast<NodeComponent*>(ac)->SetParentComponent(LayerComponent::TYPE);
-            }
-            SetVisible(mVisibleVal);
-         }
-      }
+      Attach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void LayerComponent::OnRemovedFromScene()
    {
-      if(!mAddedToScene) return;
-
-      if(mLayerVal != dtEntity::StringId() && mAttachedComponentVal != dtEntity::StringId())
+      if(!CanAttach())
       {
-         osg::Node* attachedNode = GetAttachedComponentNode();
-         LayerAttachPointSystem* ls;
-         mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
-         LayerAttachPointComponent* current = NULL;
-         ls->GetByName(mLayerVal, current);
-         
-         if(attachedNode != NULL && current != NULL && current->GetGroup() != NULL)
-         {
-            bool success = current->GetGroup()->removeChild(attachedNode);
-            if(!success)
-            {
-               LOG_WARNING("Could not remove attached node from scene graph!");
-            }
-         }
+         return;
       }
-      mAddedToScene = false;
+      Detach(GetAttachPoint(mEntity->GetEntityManager(), mLayerVal));
+      mAddedToScene = false;      
    }
 
 
@@ -335,8 +363,6 @@ namespace dtEntityOSG
          : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
          , mVisited(false)
       {}
-
-
 
       /**
       * Visits the specified geode.
@@ -389,8 +415,6 @@ namespace dtEntityOSG
    const dtEntity::StringId LayerSystem::TYPE(dtEntity::SID("Layer"));
    const dtEntity::StringId LayerSystem::VisibilityBitsId(dtEntity::SID("VisibilityBits"));
 
-   
-
    ////////////////////////////////////////////////////////////////////////////
    LayerSystem::LayerSystem(dtEntity::EntityManager& em)
       : dtEntity::DefaultEntitySystem<LayerComponent>(em)
@@ -415,7 +439,6 @@ namespace dtEntityOSG
    {
       GetEntityManager().UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
       GetEntityManager().UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
-
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -591,7 +614,7 @@ namespace dtEntityOSG
 
 
       LayerAttachPointSystem* ls;
-      GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, ls);
+      GetEntityManager().GetES(ls);
       grp = ls->GetDefaultLayer()->GetNode()->asGroup();
 
       for(unsigned int i = 0; i < grp->getNumChildren(); ++i)

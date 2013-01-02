@@ -111,6 +111,38 @@ namespace dtEntityOSG
            dtEntity::DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
            dtEntity::DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
         )
+      , mLayerAttachPoint (
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetLayerAttachPoint),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetLayerAttachPoint)
+        )
+      , mProjectionMode (
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetProjectionMode),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetProjectionMode)
+        )
+      , mOrthoLeft (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoLeft),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoLeft)
+        )
+      , mOrthoRight (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoRight),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoRight)
+        )
+      , mOrthoTop (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoTop),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoTop)
+        )
+      , mOrthoBottom (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoBottom),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoBottom)
+        )
+      , mOrthoZNear (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoZNear),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoZNear)
+        )
+      , mOrthoZFar (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoZFar),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoZFar)
+        )
    {
 
       Register(ContextIdId, &mContextId);
@@ -138,21 +170,25 @@ namespace dtEntityOSG
 
       mLayerAttachPoint.Set(dtEntity::SID("root"));
 
-      GetCamera()->setProjectionMatrixAsPerspective(45, 1, 1, 100000);
       GetCamera()->setCullMask(dtEntity::NodeMasks::VISIBLE);
       mUp.Set(osg::Vec3(0, 0, 1));
       mEyeDirection.Set(osg::Vec3(0, 1, 0));
 
-      mAspectRatio.Set(1);
+      mProjectionModeVal = ModePerspectiveId;
+
+      mFieldOfViewVal = 45;
+      mNearClipVal = 1;
+      mFarClipVal = 10000;
+      mAspectRatioVal = 1;
       mClearColor.Set(osg::Vec4(0.5f, 0.5f, 0.5f, 1));
       mProjectionMode.Set(ModePerspectiveId);
 
-      mOrthoLeft.Set(-1000);
-      mOrthoRight.Set(1000);
-      mOrthoBottom.Set(-1000);
-      mOrthoTop.Set(1000);
-      mOrthoZNear.Set(-10000);
-      mOrthoZFar.Set(10000);
+      mOrthoLeftVal = -1000;
+      mOrthoRightVal = 1000;
+      mOrthoBottomVal = -1000;
+      mOrthoTopVal = 1000;
+      mOrthoZNearVal = -10000;
+      mOrthoZFarVal = 10000;
 
       SetCullingMode(NoAutoNearFarCullingId);
       GetCamera()->setAllowEventFocus(true);
@@ -175,7 +211,7 @@ namespace dtEntityOSG
    {
       dtEntity::CameraRemovedMessage msg;
       msg.SetAboutEntityId(entity.GetId());
-      mEntity->GetEntityManager().EmitMessage(msg);
+      GetNodeEntity()->GetEntityManager().EmitMessage(msg);
       
       BaseClass::OnRemovedFromEntity(entity);      
    }
@@ -190,69 +226,53 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetFieldOfView(double v)
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      GetCamera()->setProjectionMatrixAsPerspective(v, asp, nc, fc);
+      mFieldOfViewVal = v;
       UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    double CameraComponent::GetFieldOfView() const
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      return fov;
+      return mFieldOfViewVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetAspectRatio(double v)
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      GetCamera()->setProjectionMatrixAsPerspective(fov, v, nc, fc);
+      mAspectRatioVal = v;
       UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    double CameraComponent::GetAspectRatio() const
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      return asp;
+      return mAspectRatioVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetNearClip(double v)
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      GetCamera()->setProjectionMatrixAsPerspective(fov, asp, v, fc);
+      mNearClipVal = v;
       UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    double CameraComponent::GetNearClip() const
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      return nc;
+      return mNearClipVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetFarClip(double v)
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      GetCamera()->setProjectionMatrixAsPerspective(fov, asp, nc, v);
+      mFarClipVal = v;
       UpdateProjectionMatrix();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    double CameraComponent::GetFarClip() const
    {
-      double fov, asp, nc, fc;
-      GetCamera()->getProjectionMatrixAsPerspective(fov, asp, nc, fc);
-      return fc;
+      return mFarClipVal;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -270,9 +290,13 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::TryAssignContext()
    {
-      if(mEntity == NULL || mContextId.Get() == -1) return;
+      if(GetNodeEntity() == NULL || mContextId.Get() == -1) return;
 
       osgViewer::ViewerBase* viewer = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->GetViewer();
+
+      LayerAttachPointSystem* layersys;
+      bool success = GetNodeEntity()->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
+      assert(success);
 
       osgViewer::View* view = NULL;
             
@@ -329,15 +353,18 @@ namespace dtEntityOSG
                   view->removeSlave(0);
                }
 
+               // wake up viewer if no views were present before
+               viewer->setDone(false);
                viewer->startThreading();
 
+
                dtEntity::CameraAddedMessage msg;
-               msg.SetAboutEntityId(mEntity->GetId());
+               msg.SetAboutEntityId(GetNodeEntity()->GetId());
                msg.SetContextId(mContextId.Get());
 
                // enqueueing instead of emitting, this way recipients can be sure that
                // camera entity is fully constructed
-               mEntity->GetEntityManager().EnqueueMessage(msg);
+               GetNodeEntity()->GetEntityManager().EnqueueMessage(msg);
 
                // add input interface as event listener to view
                OSGInputInterface* wface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
@@ -347,12 +374,10 @@ namespace dtEntityOSG
                   eh.push_back(wface->GetEventHandler());
                }
 
-               LayerAttachPointSystem* lsys;
-               mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, lsys);
                if(GetLayerAttachPoint() != LayerAttachPointSystem::RootId)
                {
                   LayerAttachPointComponent* lc;
-                  if(lsys->GetByName(GetLayerAttachPoint(), lc))
+                  if(layersys->GetByName(GetLayerAttachPoint(), lc))
                   {
                      static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface())->InstallUpdateCallback(lc->GetNode());
                   }
@@ -404,9 +429,6 @@ namespace dtEntityOSG
          return;
       }
       
-      LayerAttachPointSystem* layersys;
-      bool success = mEntity->GetEntityManager().GetEntitySystem(LayerAttachPointComponent::TYPE, layersys);
-      assert(success);
 
       LayerAttachPointComponent* lcomp;
 
@@ -442,9 +464,22 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetLayerAttachPoint(dtEntity::StringId id)
+   {
+      mLayerAttachPointVal = id;
+      TryAssignContext();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtEntity::StringId CameraComponent::GetLayerAttachPoint() const
+   {
+      return mLayerAttachPointVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::SetProjectionMode(dtEntity::StringId v)
    {
-      mProjectionMode.Set(v);
+      mProjectionModeVal = v;
       UpdateProjectionMatrix();
    }
 
@@ -493,19 +528,15 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void CameraComponent::UpdateProjectionMatrix()
    {
-      if(mProjectionMode.Get() == ModePerspectiveId)
+      if(mProjectionModeVal == ModePerspectiveId)
       {
-         double fov = mFieldOfView.Get();
-         double asp = mAspectRatio.Get();
-         double nc = mNearClip.Get();
-         double fc = mFarClip.Get();
-         GetCamera()->setProjectionMatrixAsPerspective(fov, asp, nc, fc);
+         GetCamera()->setProjectionMatrixAsPerspective(mFieldOfViewVal, mAspectRatioVal, mNearClipVal, mFarClipVal);
       }
-      else if(mProjectionMode.Get() == ModeOrthoId)
+      else if(mProjectionModeVal == ModeOrthoId)
       {
-         GetCamera()->setProjectionMatrixAsOrtho(mOrthoLeft.Get(), mOrthoRight.Get(),
-                                             mOrthoBottom.Get(), mOrthoTop.Get(),
-                                             mOrthoZNear.Get(), mOrthoZFar.Get());
+         GetCamera()->setProjectionMatrixAsOrtho(mOrthoLeftVal, mOrthoRightVal,
+                                             mOrthoBottomVal, mOrthoTopVal,
+                                             mOrthoZNearVal, mOrthoZFarVal);
       }
    }
 
@@ -557,6 +588,83 @@ namespace dtEntityOSG
       return GetCamera()->getCullMask();
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoLeft(double v)
+   {
+      mOrthoLeftVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoLeft() const
+   {
+      return mOrthoLeftVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoRight(double v)
+   {
+      mOrthoRightVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoRight() const
+   {
+      return mOrthoRightVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoTop(double v)
+   {
+      mOrthoTopVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoTop() const
+   {
+      return mOrthoTopVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoBottom(double v)
+   {
+      mOrthoBottomVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoBottom() const
+   {
+      return mOrthoBottomVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoZNear(double v)
+   {
+      mOrthoZNearVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoZNear() const
+   {
+      return mOrthoZNearVal;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void CameraComponent::SetOrthoZFar(double v)
+   {
+      mOrthoZFarVal = v;
+      UpdateProjectionMatrix();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   double CameraComponent::GetOrthoZFar() const
+   {
+      return mOrthoZFarVal;
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////

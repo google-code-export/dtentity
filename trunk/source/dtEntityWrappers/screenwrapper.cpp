@@ -69,15 +69,21 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SCRSetShowCursor(Local<String> propname, Local<Value> value, const AccessorInfo& info)
+   Handle<Value> SCRSetShowCursor(const Arguments& args)
    {
-      dtEntity::GetWindowInterface()->SetShowCursor(value->BooleanValue());
-   }
+      unsigned int cid = 0;
+      bool show = true;
+      if(args.Length() > 0)
+      {
+         cid = args[0]->Uint32Value();
+      }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SCRGetShowCursor(Local<String> propname, const AccessorInfo& info)
-   {
-      return Boolean::New(true);
+      if(args.Length() > 1)
+      {
+         show = args[1]->BooleanValue();
+      }
+      dtEntity::GetWindowInterface()->SetShowCursor(cid, show);
+      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +117,24 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRGetPickRay(const Arguments& args)
    {
-      dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay("defaultView", args[0]->NumberValue(), args[1]->NumberValue());
+      if(args.Length() < 3)
+      {
+         return ThrowError("getPickRay expects three arguments!");
+      }
+      if(!args[0]->IsInt32())
+      {
+         return ThrowError("Usage: getPickRay(contextid, x, y[, bool usePixels])");
+      }
+      unsigned int contextid = args[0]->Uint32Value();
+      float x = (float)args[1]->NumberValue();
+      float y = (float)args[2]->NumberValue();
+      bool usePixels = true;
+      if(args.Length() > 3)
+      {
+         usePixels = args[4]->BooleanValue();
+      }
+
+      dtEntity::Vec3f pr = dtEntity::GetWindowInterface()->GetPickRay(contextid, x, y, usePixels);
       return WrapVec3(pr);
    }
 
@@ -200,16 +223,6 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCROpenWindow(const Arguments& args)
    {
-     // std::string name = ToStdString(args[0]);
-      dtEntity::StringId layername;
-      if(args.Length() > 1)
-      {
-         layername = dtEntity::SIDHash(ToStdString(args[1]));
-      }
-      else
-      {
-         layername = dtEntity::SID("default");
-      }
 
       osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
       osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits(ds);
@@ -218,9 +231,9 @@ namespace dtEntityWrappers
       traits->doubleBuffer = true;
       traits->sharedContext = 0;
 
-      if(args.Length() > 2)
+      if(args.Length() > 1)
       {
-         Handle<Object> traitsin = Handle<Object>::Cast(args[2]);
+         Handle<Object> traitsin = Handle<Object>::Cast(args[1]);
          if(traitsin->Has(String::New("x"))) traits->x = traitsin->Get(String::New("x"))->Int32Value();
          if(traitsin->Has(String::New("y"))) traits->y = traitsin->Get(String::New("y"))->Int32Value();
          if(traitsin->Has(String::New("width"))) traits->width = traitsin->Get(String::New("width"))->Int32Value();
@@ -237,7 +250,7 @@ namespace dtEntityWrappers
       // TODO how to pass traits???
       //dtEntityOSG::OSGWindowInterface* wface = static_cast<dtEntityOSG::OSGWindowInterface*>(dtEntity::GetWindowInterface());
       //wface->SetTraits(traits);
-      bool success = dtEntity::GetWindowInterface()->OpenWindow(ToStdString(args[0]), layername, contextid);
+      bool success = dtEntity::GetWindowInterface()->OpenWindow(ToStdString(args[0]), contextid);
       assert(success);
       return Uint32::New(contextid);
    }
@@ -245,7 +258,11 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SCRCloseWindow(const Arguments& args)
    {     
-      dtEntity::GetWindowInterface()->CloseWindow(ToStdString(args[0]));
+      if(args[0]->IsString())
+      {
+         return ThrowError("closeWindow expects context id as first argument!");
+      }
+      dtEntity::GetWindowInterface()->CloseWindow(args[0]->Uint32Value());
       return Undefined();
    }
 
@@ -291,6 +308,33 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRSetContinuousRedraw(const Arguments& args)
+   {
+      if(args.Length() != 2)
+      {
+         return ThrowError("Usage: setContinuousRedraw(contextId, bool)");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+      bool v = args[1]->BooleanValue();
+
+      dtEntity::GetWindowInterface()->SetContinuousRedraw(contextId, v);
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Handle<Value> SCRRequestRedraw(const Arguments& args)
+   {
+      if(args.Length() != 1)
+      {
+         return ThrowError("Usage: requestRedraw(contextId)");
+      }
+      unsigned int contextId = args[0]->Uint32Value();
+
+      dtEntity::GetWindowInterface()->RequestRedraw(contextId);
+      return Undefined();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapScreen(ScriptSystem* ss)
    {
       HandleScope handle_scope;
@@ -311,11 +355,13 @@ namespace dtEntityWrappers
       proto->Set("closeWindow", FunctionTemplate::New(SCRCloseWindow));
       proto->Set("getWindowGeometry", FunctionTemplate::New(SCRGetWindowGeometry));
       proto->Set("setWindowGeometry", FunctionTemplate::New(SCRSetWindowGeometry));
+      proto->Set("setShowCursor", FunctionTemplate::New(SCRSetShowCursor));
+      proto->Set("setContinuousRedraw", FunctionTemplate::New(SCRSetContinuousRedraw));
+      proto->Set("requestRedraw", FunctionTemplate::New(SCRRequestRedraw));
 
       Local<Object> instance = templt->GetFunction()->NewInstance();
 
       instance->SetAccessor(String::New("lockCursor"), SCRGetLockCursor, SCRSetLockCursor);
-      instance->SetAccessor(String::New("showCursor"), SCRGetShowCursor, SCRSetShowCursor);
       instance->SetAccessor(String::New("width"), SCRGetWidth);
       instance->SetAccessor(String::New("height"), SCRGetHeight);
       instance->SetAccessor(String::New("fullScreen"), SCRGetFullScreen, SCRSetFullScreen);
