@@ -45,6 +45,7 @@ namespace dtEntityOSG
       virtual ~LayerAttachPointComponent();
       virtual void Finished();
       void OnAddedToEntity(dtEntity::Entity& entity);
+      void OnRemovedFromEntity(dtEntity::Entity& entity);
 
       /**
         * Set osg group node that will hold layer component nodes
@@ -74,7 +75,6 @@ namespace dtEntityOSG
       }
 
    private:
-      void ReattachLayerNodes();
       dtEntity::EntityManager* mEntityManager;
       dtEntity::StringIdProperty mName;
       dtEntity::StringId mCurrentName;

@@ -16,12 +16,14 @@ var Selection = {
     this.ids.push(id);
     var motionSystem = getEntitySystem("Motion");
     if(motionSystem === null || motionSystem.ShowSelection) {
-      layerSystem.addVisibleBoundingBox(id);
+      getEntitySystem("Layer").addVisibleBoundingBox(id);
     }
     EntityManager.emitMessage("EntitySelectedMessage", {
       AboutEntity: id
     });
-    ToolHolder.selectionUpdated();
+    if(typeof ToolHolder !== 'undefined')  {
+      ToolHolder.selectionUpdated();
+    }
   },
 
   deselect : function (id) {
@@ -32,11 +34,13 @@ var Selection = {
       return false;
     } else {
       this.ids.splice(i, 1);
-      layerSystem.removeVisibleBoundingBox(id);
+      getEntitySystem("Layer").removeVisibleBoundingBox(id);
       EntityManager.emitMessage("EntityDeselectedMessage", {
         AboutEntity: id
       });
-      ToolHolder.selectionUpdated();
+      if(typeof ToolHolder !== 'undefined')  {
+        ToolHolder.selectionUpdated();
+      }
       return true;
     }
   },

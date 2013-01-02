@@ -32,10 +32,7 @@ namespace osg
 }
 
 namespace dtEntityOSG
-{ 
-
-   class CameraSystem;
-
+{    
    /** 
 	* The camera component holds properties for the osg::Camera object
    */
@@ -98,11 +95,11 @@ namespace dtEntityOSG
       void SetContextId(int id);
       int GetContextId() const { return mContextIdVal; }
 
-      void SetLayerAttachPoint(dtEntity::StringId id) { mLayerAttachPoint.Set(id); }
-      dtEntity::StringId GetLayerAttachPoint() const { return mLayerAttachPoint.Get(); }
+      void SetLayerAttachPoint(dtEntity::StringId id);
+      dtEntity::StringId GetLayerAttachPoint() const;
 
 		void SetProjectionMode(dtEntity::StringId);
-		dtEntity::StringId GetProjectionMode() const { return mProjectionMode.Get(); }
+      dtEntity::StringId GetProjectionMode() const { return mProjectionModeVal; }
 
 		void SetCullingMode(dtEntity::StringId);
 		dtEntity::StringId GetCullingMode() const { return mCullingModeVal; }
@@ -171,6 +168,24 @@ namespace dtEntityOSG
       void SetLODScale(float v);
       float GetLODScale() const;
 
+      void SetOrthoLeft(double v);
+      double GetOrthoLeft() const;
+
+      void SetOrthoRight(double v);
+      double GetOrthoRight() const;
+
+      void SetOrthoTop(double v);
+      double GetOrthoTop() const;
+
+      void SetOrthoBottom(double v);
+      double GetOrthoBottom() const;
+
+      void SetOrthoZNear(double v);
+      double GetOrthoZNear() const;
+
+      void SetOrthoZFar(double v);
+      double GetOrthoZFar() const;
+
       void TryAssignContext();
       
    private:
@@ -179,28 +194,41 @@ namespace dtEntityOSG
       
       dtEntity::DynamicIntProperty mContextId;
       int mContextIdVal;
-      dtEntity::StringIdProperty mLayerAttachPoint;
+      dtEntity::DynamicStringIdProperty mLayerAttachPoint;
+      dtEntity::StringId mLayerAttachPointVal;
 
       dtEntity::DynamicStringIdProperty mCullingMode;
       dtEntity::StringId mCullingModeVal;
       dtEntity::DynamicDoubleProperty mFieldOfView;
+      double mFieldOfViewVal;
       dtEntity::DynamicDoubleProperty mAspectRatio;
+      double mAspectRatioVal;
       dtEntity::DynamicDoubleProperty mNearClip;
+      double mNearClipVal;
       dtEntity::DynamicDoubleProperty mFarClip;
+      double mFarClipVal;
       dtEntity::DynamicVec4Property mClearColor;
       dtEntity::DynamicFloatProperty mLODScale;
       dtEntity::Vec3dProperty mPosition;
       dtEntity::Vec3dProperty mUp;
       dtEntity::Vec3dProperty mEyeDirection;
       dtEntity::DynamicUIntProperty mCullMask;
-      dtEntity::StringIdProperty mProjectionMode;
+      dtEntity::DynamicStringIdProperty mProjectionMode;
+      dtEntity::StringId mProjectionModeVal;
 
-      dtEntity::DoubleProperty mOrthoLeft;
-      dtEntity::DoubleProperty mOrthoRight;
-      dtEntity::DoubleProperty mOrthoBottom;
-      dtEntity::DoubleProperty mOrthoTop;
-      dtEntity::DoubleProperty mOrthoZNear;
-      dtEntity::DoubleProperty mOrthoZFar;
+      dtEntity::DynamicDoubleProperty mOrthoLeft;
+      dtEntity::DynamicDoubleProperty mOrthoRight;
+      dtEntity::DynamicDoubleProperty mOrthoBottom;
+      dtEntity::DynamicDoubleProperty mOrthoTop;
+      dtEntity::DynamicDoubleProperty mOrthoZNear;
+      dtEntity::DynamicDoubleProperty mOrthoZFar;
+      double mOrthoLeftVal;
+      double mOrthoRightVal;
+      double mOrthoBottomVal;
+      double mOrthoTopVal;
+      double mOrthoZNearVal;
+      double mOrthoZFarVal;
+
    };
 
    

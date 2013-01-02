@@ -80,21 +80,6 @@ namespace dtEntityOSG
       return NULL;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   osgViewer::GraphicsWindow* GetWindowByContextId(unsigned int contextId, osgViewer::ViewerBase* v)
-   {
-      osgViewer::ViewerBase::Windows wins;
-      v->getWindows(wins);
-      for(osgViewer::ViewerBase::Windows::iterator i = wins.begin(); i != wins.end(); ++i)
-      {
-         osgViewer::GraphicsWindow* w = *i;
-         if(w && w->getState()->getContextID() == contextId)
-         {
-            return w;
-         }
-      }
-      return NULL;
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    OSGWindowInterface::OSGWindowInterface(dtEntity::EntityManager& em)
@@ -109,9 +94,49 @@ namespace dtEntityOSG
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowInterface::OpenWindow(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
+   osgViewer::GraphicsWindow* OSGWindowInterface::GetWindowByContextId(unsigned int contextId) const
    {
-      bool success = OpenWindowInternal(name, layername, contextId);
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::ViewerBase* viewer = iface->GetViewer();
+
+      osgViewer::ViewerBase::Windows wins;
+      viewer->getWindows(wins);
+      for(osgViewer::ViewerBase::Windows::iterator i = wins.begin(); i != wins.end(); ++i)
+      {
+         osgViewer::GraphicsWindow* w = *i;
+         if(w && w->getState()->getContextID() == contextId)
+         {
+            return w;
+         }
+      }
+      return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osgViewer::View* OSGWindowInterface::GetViewByContextId(unsigned int contextId) const
+   {
+
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::ViewerBase* viewer = iface->GetViewer();
+
+      osgViewer::ViewerBase::Views views;
+      viewer->getViews(views);
+      for(osgViewer::ViewerBase::Views::iterator i = views.begin(); i != views.end(); ++i)
+      {
+         osgViewer::View* v = *i;
+         if(v && v->getCamera()->getGraphicsContext()->getState()->getContextID() == contextId)
+         {
+            return v;
+         }
+      }
+      return NULL;
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool OSGWindowInterface::OpenWindow(const std::string& name, unsigned int& contextId)
+   {
+      bool success = OpenWindowInternal(name, contextId);
       
       if(success)
       {
@@ -125,7 +150,7 @@ namespace dtEntityOSG
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool OSGWindowInterface::OpenWindowInternal(const std::string& name, dtEntity::StringId layername, unsigned int& contextId)
+   bool OSGWindowInterface::OpenWindowInternal(const std::string& name, unsigned int& contextId)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
       osgViewer::ViewerBase* viewer = iface->GetViewer();
@@ -157,6 +182,10 @@ namespace dtEntityOSG
              view->getCamera()->setGraphicsContext(gw);
              view->setName(name);
              compviewer->addView(view);
+
+             // wake viewer up if it was asleep (had no windows)
+
+             compviewer->setDone(false);
              OSG_INFO<<"View::setUpViewOnSingleScreen - GraphicsWindow has been created successfully."<<std::endl;
              gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(mTraits->x, mTraits->y, mTraits->width, mTraits->height);
              gw->getEventQueue()->getCurrentEventState()->setMouseYOrientation(osgGA::GUIEventAdapter::Y_INCREASING_DOWNWARDS);
@@ -181,10 +210,10 @@ namespace dtEntityOSG
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OSGWindowInterface::CloseWindow(const std::string& name)
+   void OSGWindowInterface::CloseWindow(unsigned int contextid)
    {
 
-      osgViewer::GraphicsWindow* window = GetWindowByName(name);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextid);
 
       if(window == NULL)
       {
@@ -193,8 +222,9 @@ namespace dtEntityOSG
       }
 
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      osgViewer::ViewerBase* viewer = iface->GetViewer();
 
-      osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(iface->GetViewer());
+      osgViewer::CompositeViewer* compview = dynamic_cast<osgViewer::CompositeViewer*>(viewer);
       if(compview == NULL)
       {
          LOG_ERROR("Cannot close window, use CompositeViewer class!");
@@ -210,10 +240,10 @@ namespace dtEntityOSG
          mEntityManager->KillEntity(camid);
       }
 
-      osgViewer::View* view = GetViewByName(name);
+      osgViewer::View* view = GetViewByContextId(contextid);
       if(!view)
       {
-         LOG_ERROR("Cannot close view, not found: " << name);
+         LOG_ERROR("Cannot close view, not found: " << contextid);
          return;
       }
       view->setSceneData(NULL);
@@ -224,24 +254,24 @@ namespace dtEntityOSG
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::Vec3f OSGWindowInterface::GetPickRay(const std::string& name, float x, float y, bool usePixels) const
+   dtEntity::Vec3f OSGWindowInterface::GetPickRay(unsigned int contextid, float x, float y, bool usePixels) const
    {
-      osgViewer::GraphicsWindow* window = GetWindowByName(name);
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextid);
       
       if(!window) 
       {
-         LOG_ERROR("Cannot get pickray for window " + name);
+         LOG_ERROR("Cannot get pickray for context " + contextid);
          return osg::Vec3(0,1,0);
       }
 
-      osg::View* view = GetViewByName(name);
+      osg::View* view = GetViewByContextId(contextid);
       if(!view)
       {
-         LOG_ERROR("Cannot get pickray for view " + name);
+         LOG_ERROR("Cannot get pickray for context " + contextid);
          return osg::Vec3(0,1,0);
       }
 
-      osg::Camera* cam = GetViewByName(name)->getCamera();
+      osg::Camera* cam = view->getCamera();
       
       int wx, wy, w, h;
       window->getWindowRectangle(wx, wy, w, h);
@@ -282,8 +312,8 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    bool OSGWindowInterface::GetWindowGeometry(unsigned int contextId, int& x, int& y, int& width, int& height) const
    {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
+
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId);
       if(!window)
       {
          return false;
@@ -297,8 +327,7 @@ namespace dtEntityOSG
    {
       SetFullscreen(contextId, false);
 
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId);
       if(!window)
       {
          return false;
@@ -311,7 +340,7 @@ namespace dtEntityOSG
    void OSGWindowInterface::SetFullscreen(unsigned int contextId, bool fullscreen)
    {
       OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId, iface->GetViewer());
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId);
       if(!window)
       {
          LOG_ERROR("Cannot set window to fullscreen, no window with that id found! " << contextId);
@@ -374,7 +403,8 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::EntityId OSGWindowInterface::PickEntity(double x, double y, unsigned int nodemask, unsigned int contextid) const
+   dtEntity::EntityId OSGWindowInterface::PickEntity(double x, double y, unsigned int nodemask,
+                                                     unsigned int contextid, bool usePixels) const
    {
       dtEntityOSG::CameraSystem* camsys;
 	   mEntityManager->GetES(camsys);
@@ -386,7 +416,7 @@ namespace dtEntityOSG
 	 	  return 0;
 	   }
 	   osg::Vec3d from = camcomp->GetPosition();
-      dtEntity::Vec3f pr = GetPickRay("defaultView", x, y, true);
+      dtEntity::Vec3f pr = GetPickRay(contextid, x, y, usePixels);
       
       osg::Vec3d to = from + pr * 10000;
 
@@ -428,11 +458,14 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OSGWindowInterface::SetShowCursor(bool v)
+   void OSGWindowInterface::SetShowCursor(unsigned int contextid, bool v)
    {
-      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* window = iface->GetPrimaryWindow();
-      
+      osgViewer::GraphicsWindow* window = GetWindowByContextId(contextid);
+      if(!window)
+      {
+         LOG_ERROR("Cannot set show cursor: No window with context id " << contextid);
+         return;
+      }
       if(v)
       {
          window->useCursor(true);
@@ -448,12 +481,12 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec3d OSGWindowInterface::ConvertWorldToScreenCoords(unsigned int contextid, const dtEntity::Vec3d& coord)
    {
-      dtEntityOSG::OSGSystemInterface* iface = static_cast<dtEntityOSG::OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      osgViewer::GraphicsWindow* win = GetWindowByContextId(contextid, iface->GetViewer());
-      osgViewer::GraphicsWindow::Views views;
-      win->getViews(views);
-      assert(views.size() != 0);
-      osgViewer::View* view = views.front();
+      osgViewer::View* view = GetViewByContextId(contextid);
+      if(view == NULL)
+      {
+         LOG_ERROR("Cannot convert world to screen coords: context does not exist");
+         return dtEntity::Vec3d();
+      }
       osg::Camera* cam = view->getCamera();
 
       osg::Vec4d c(coord, 1);
@@ -461,5 +494,34 @@ namespace dtEntityOSG
       c = cam->getProjectionMatrix().preMult(c);
       double w = c [3];
       return osg::Vec3d(c [0] / w, c [1] / w, c [2] / w);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGWindowInterface::SetContinuousRedraw(unsigned int contextid, bool v)
+   {
+      osgViewer::View* view = GetViewByContextId(contextid);
+      if(view)
+      {
+         view->requestContinuousUpdate(v);
+      }
+      else
+      {
+         LOG_ERROR("SetContinuousRedraw: No view with this contextid");
+      }
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGWindowInterface::RequestRedraw(unsigned int contextid)
+   {
+      osgViewer::View* view = GetViewByContextId(contextid);
+      if(view)
+      {
+         view->requestRedraw();
+      }
+      else
+      {
+         LOG_ERROR("RequestRedraw: No view with this contextid");
+      }
    }
 }

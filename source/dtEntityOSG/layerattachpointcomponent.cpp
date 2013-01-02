@@ -31,7 +31,35 @@
 
 namespace dtEntityOSG
 {
+   ////////////////////////////////////////////////////////////////////////////////
+   void DetachLayerNodes(LayerSystem* ls, dtEntity::StringId attachcompname, LayerAttachPointComponent* attachcomp)
+   {
+      for(LayerSystem::ComponentStore::iterator j = ls->begin(); j != ls->end(); ++j)
+      {
+         LayerComponent* lcomp = j->second;
+         osg::Node* attached = lcomp->GetAttachedComponentNode();         
+         if(lcomp->IsAddedToScene() && attached->getNumParents() != 0 && lcomp->GetLayer() == attachcompname)
+         {
+            lcomp->Detach(attachcomp);
+         }
+      }
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ReattachLayerNodes(LayerSystem* ls, LayerAttachPointComponent* attachcomp)
+   {
+      // Loop through all layer components and attach those as children
+      // that have a layer name equal to layer name of this layer attach point
+      for(LayerSystem::ComponentStore::iterator j = ls->begin(); j != ls->end(); ++j)
+      {
+         LayerComponent* lcomp = j->second;
+         dtEntity::StringId layer = lcomp->GetLayer();
+         if(lcomp->IsAddedToScene() && layer == attachcomp->GetName())
+         {
+            lcomp->Attach(attachcomp);
+         }
+      }
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +87,16 @@ namespace dtEntityOSG
       mEntityManager = &entity.GetEntityManager();
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   void LayerAttachPointComponent::OnRemovedFromEntity(dtEntity::Entity& entity)
+   {      
+      LayerSystem* ls;
+      bool found = mEntityManager->GetES(ls);
+      assert(found);
+      DetachLayerNodes(ls, GetName(), this);
+      BaseClass::OnRemovedFromEntity(entity);
+   }
+
     ////////////////////////////////////////////////////////////////////////////
    void LayerAttachPointComponent::Finished()
    {
@@ -73,73 +111,47 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////
    void LayerAttachPointComponent::SetName(dtEntity::StringId name)
    {      
-      mName.Set(name);
-      mCurrentName = name;
       LayerAttachPointSystem* lps;
-      if(mEntityManager->GetES(lps))
-      {
-         lps->RegisterByName(name, this);
-      }
+      mEntityManager->GetES(lps);
 
-      ReattachLayerNodes();
+      LayerSystem* ls;
+      bool found = mEntityManager->GetES(ls);
+      assert(found);
+
+      GetNode()->setName("Layer Attach Point" + dtEntity::GetStringFromSID(name));
+
+      if(name != mCurrentName)
+      {
+         LayerAttachPointComponent* old = NULL;
+         if(lps->GetByName(name, old) && old == this)
+         {
+            return;
+         }
+         if(old != NULL)
+         {
+            DetachLayerNodes(ls, name, old);
+         }
+         mName.Set(name);
+         mCurrentName = name;
+         lps->RegisterByName(name, this);
+         
+         ReattachLayerNodes(ls, this);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void LayerAttachPointComponent::SetNode(osg::Group* node)
    {
       assert(mEntityManager);
-      node->setName("Layer Attach Point");
+      LayerSystem* ls;
+      mEntityManager->GetES(ls);
+      DetachLayerNodes(ls, mCurrentName, this);
+      node->setName("Layer Attach Point " + dtEntity::GetStringFromSID(GetName()));
       GroupComponent::SetNode(node);      
 
-      ReattachLayerNodes();
+      ReattachLayerNodes(ls, this);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void LayerAttachPointComponent::ReattachLayerNodes()
-   {
-      osg::Group* grp = GetGroup();
-      assert(grp != NULL);
-
-      // remove all child nodes of layer attach point that are NodeComponet nodes
-      // (that have an entity class as user data)
-      unsigned int i = 0;
-      while(i < grp->getNumChildren())
-      {
-         osg::Node* child = grp->getChild(i);
-         dtEntity::Entity* entity = dynamic_cast<dtEntity::Entity*>(child->getUserData());
-         if(entity != NULL)
-         {
-            grp->removeChild(i);
-         }
-         else
-         {
-            ++i;
-         }
-      }
-
-      // Loop through all layer components and attach those as children
-      // that have a layer name equal to layer name of this layer attach point
-      LayerSystem* ls;
-      bool found = mEntityManager->GetES(ls);
-      assert(found);
-
-      for(LayerSystem::ComponentStore::iterator j = ls->begin(); j != ls->end(); ++j)
-      {
-         LayerComponent* comp = j->second;
-         if(comp->IsAddedToScene() && comp->GetLayer() == GetName())
-         {
-            osg::Node* layernode = comp->GetAttachedComponentNode();
-            if(layernode)
-            {
-               while(layernode->getNumParents() != 0)
-               {
-                  layernode->getParent(0)->removeChild(layernode);
-               }
-            }
-            comp->SetLayer(GetName());
-         }
-      }
-   }
 
    ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////

@@ -404,7 +404,9 @@ namespace dtEntityQtWidgets
 
 
       dtEntity::WindowInterface* iface = dtEntity::GetWindowInterface();
-      osg::Vec3 pickray = iface->GetPickRay("defaultView", pos.x(), pos.y());
+
+      // TODO get correct context id! drag drop only works on first window!
+      osg::Vec3 pickray = iface->GetPickRay(0, pos.x(), pos.y());
       
       dtEntity::Component* cam;
       mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), dtEntity::SID("Camera"), cam);

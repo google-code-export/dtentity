@@ -10,7 +10,9 @@ var animsystem = getEntitySystem("OSGAnimation");
 function addAnimation(position) {
 
   var entityProto = {
-
+	Map : { 
+		EntityName : "Animation"
+	},
     Layer : {
       Layer: "default",
       AttachedComponent : "PositionAttitudeTransform"

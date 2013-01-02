@@ -233,7 +233,7 @@ namespace dtEntityOSG
       OSGWindowInterface* o = static_cast<OSGWindowInterface*>(wface);
       o->SetTraits(traits);
       unsigned int contextId;
-      bool success = wface->OpenWindow("defaultView", dtEntity::SID("root"), contextId);
+      bool success = wface->OpenWindow("defaultView", contextId);
       if(!success)
       {
          LOG_ERROR("Could not open window, exiting!");

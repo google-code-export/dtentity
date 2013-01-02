@@ -1,0 +1,12 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+   <arrayinput propertyname="Children" >
+	   <prototype>
+			<stringproperty name="child" />
+	   </prototype>
+	   <inputs>
+	   <componentinput propertyname="child" />
+	   </inputs>
+   </arrayinput>
+
+</delegates>   
