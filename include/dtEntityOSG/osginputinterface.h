@@ -43,10 +43,30 @@ namespace dtEntityOSG
    
    ////////////////////////////////////////////////////////////////////////////////
    class DTENTITY_OSG_EXPORT OSGInputInterface
-      : public osgGA::GUIEventHandler
-      , public dtEntity::InputInterface
+      : public dtEntity::InputInterface
    {
    public:
+
+
+      // can't make OSGInputInterface derive from osgGA::GUIEventHandler because
+      // we don't want to inherit osg::Referenced stuff
+      class EventHandler : public osgGA::GUIEventHandler
+      {
+         OSGInputInterface* mIface;
+      public:
+         EventHandler(OSGInputInterface* i)
+            : mIface(i)
+         {
+         }
+
+         virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object* o, osg::NodeVisitor* nv)
+         {
+            return mIface->handle(ea, aa, o, nv);
+         }
+
+      };
+
+      osgGA::GUIEventHandler* GetEventHandler() { return mEventHandler; }
       
       typedef std::map<std::string, osgGA::GUIEventAdapter::KeySymbol> KeyNames;
       typedef std::map<int, std::string> KeyNamesReverse;
@@ -55,7 +75,7 @@ namespace dtEntityOSG
       virtual ~OSGInputInterface();
 
       //virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
-      virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*) ;
+      virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*);
 
       virtual void AddInputCallback(dtEntity::InputCallbackInterface*);
       virtual bool RemoveInputCallback(dtEntity::InputCallbackInterface*);
@@ -155,6 +175,8 @@ namespace dtEntityOSG
       
          
    private:
+
+      osg::ref_ptr<osgGA::GUIEventHandler> mEventHandler;
 
       void HandleMultiTouch(const osgGA::GUIEventAdapter& ea);
       void HandleKeyUp(const osgGA::GUIEventAdapter& ea);

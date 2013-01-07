@@ -97,15 +97,15 @@ ADD_LIBRARY(${LIB_NAME} ${DTENTITY_LIBS_DYNAMIC_OR_STATIC}
  )
 SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEFINE_SYMBOL ENTITYQTWIDGETS_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}   ${QT_QTCORE_LIBRARIES}
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                            ${QT_QTCORE_LIBRARIES}
 				                    ${QT_QTGUI_LIBRARIES}
-				                    ${QT_QTSVG_LIBRARIES}
-				                    ${QT_QTOPENGL_LIBRARIES}
-                                    ${OPENSCENEGRAPH_LIBRARIES}
+                            ${QT_QTSVG_LIBRARIES}
+                            ${QT_QTOPENGL_LIBRARIES}
+                            ${OPENSCENEGRAPH_LIBRARIES}
 				                    dtEntity
 				                    dtEntityOSG
-				                    ${DTCORE_LIBRARIES}    
-				                    ${DTABC_LIBRARIES}    
+
 )
 
 SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")

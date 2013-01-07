@@ -78,12 +78,6 @@ namespace dtEntityWrappers
 
       void ExecuteFileOnce(const std::string& path);
 
-
-      // look in given directory for scripts ending with "*.js",
-      // execute them and try to add entity system with name
-      // equal to the file name
-      void LoadAutoStartScripts(const std::string& path);
-
       virtual bool StorePropertiesToScene() const { return true; }
 
       v8::Handle<v8::Context> GetGlobalContext();

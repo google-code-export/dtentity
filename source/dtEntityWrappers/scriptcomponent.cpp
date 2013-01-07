@@ -385,46 +385,6 @@ namespace dtEntityWrappers
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   void ScriptSystem::LoadAutoStartScripts(const std::string& path)
-   {
-      HandleScope handle_scope;
-      Handle<Context> global = GetGlobalContext();
-      Context::Scope context_scope(global);
-
-      std::set<std::string> executed;
-
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      for(osgDB::FilePathList::iterator i = paths.begin(); i != paths.end(); ++i)
-      {
-         std::ostringstream autostartpath;
-         autostartpath << *i << "/" << path;
-         
-         osgDB::FilePathList currentPathList;
-         currentPathList.push_back(autostartpath.str());
-         const std::string absPath = dtEntity::GetSystemInterface()->FindDataFile(autostartpath.str());
-
-         if(!dtEntity::GetSystemInterface()->FileExists(absPath))
-         {
-            continue;
-         }         
-         
-         osgDB::DirectoryContents contents = osgDB::getDirectoryContents(absPath);
-
-         osgDB::DirectoryContents::const_iterator j;
-         for(j = contents.begin(); j != contents.end(); ++j)
-         {
-            std::string filepath = *j;
-            if(osgDB::getFileExtension(filepath).compare("js") != 0) continue;
-            if(executed.find(filepath) == executed.end())
-            {
-               ExecuteFile(path + "/" + filepath);
-               executed.insert(filepath);
-            }
-         }
-      }      
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentWrapperDestructor(v8::Persistent<Value> v, void* scriptsysnull)
    {      

@@ -73,12 +73,14 @@ namespace dtEntityOSG
    bool GroupComponent::AddChildComponent(dtEntity::ComponentType ct)
    {
       dtEntity::Component* component;
-      if(!mEntity->GetComponent(ct, component))
+      if(!GetNodeEntity()->GetComponent(ct, component))
       {
          return false;
       }
-      NodeComponent* nc = static_cast<NodeComponent*>(component);
-      GetAttachmentGroup()->addChild(nc->GetNode());
+      NodeStore* nc = dynamic_cast<NodeStore*>(component);
+      assert(nc->GetNode()->getNumParents() == 0);
+      bool success = GetAttachmentGroup()->addChild(nc->GetNode());
+      assert(success);
       nc->SetParentComponent(this->GetType());
       mChildrenVal.Add(new dtEntity::StringIdProperty(ct));
       return true;
@@ -88,11 +90,12 @@ namespace dtEntityOSG
    bool GroupComponent::RemoveChildComponent(dtEntity::ComponentType ct)
    {
       dtEntity::Component* component;
-      if(!mEntity->GetComponent(ct, component))
+      if(!GetNodeEntity()->GetComponent(ct, component))
       {
          return false;
       }
-      NodeComponent* nc = static_cast<NodeComponent*>(component);
+
+      NodeStore* nc = dynamic_cast<NodeStore*>(component);
       GetAttachmentGroup()->removeChild(nc->GetNode());
       nc->SetParentComponent(dtEntity::StringId());
 
@@ -112,7 +115,7 @@ namespace dtEntityOSG
    {
       mChildrenVal.Set(arr);
       
-      assert(mEntity != NULL && "Please add group component to entity before adding children!");
+      assert(GetNodeEntity() != NULL && "Please add group component to entity before adding children!");
 
       GetAttachmentGroup()->removeChild(0, GetAttachmentGroup()->getNumChildren());
 
@@ -123,7 +126,7 @@ namespace dtEntityOSG
          dtEntity::StringId componentType = prop->StringIdValue();
 
          Component* c;
-         bool found = mEntity->GetComponent(componentType, c);
+         bool found = GetNodeEntity()->GetComponent(componentType, c);
          if(!found)
          {
             LOG_WARNING("Could not attach component to group, not found: "
@@ -131,11 +134,16 @@ namespace dtEntityOSG
          }
          else
          {
-            NodeComponent* nc = dynamic_cast<NodeComponent*>(c);
+            NodeStore* nc = dynamic_cast<NodeStore*>(c);
 
             if(nc)
             {
-               GetAttachmentGroup()->addChild(nc->GetNode());
+               if(nc->GetNode()->getNumParents() != 0)
+               {
+                  LOG_ERROR("A node component is child of multiple node components!");
+               }
+               bool success = GetAttachmentGroup()->addChild(nc->GetNode());
+               assert(success);
                nc->SetParentComponent(this->GetType());
             }
             else
