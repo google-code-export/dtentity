@@ -114,12 +114,17 @@ namespace dtEntityOSG
       , mArgC(argc)
       , mArgV(argv)
    {
+
    }
 
 
    ////////////////////////////////////////////////////////////////////////////////
    OSGSystemInterface::~OSGSystemInterface()
    {
+      if(mViewer.valid())
+      {
+         mViewer->stopThreading();
+      }
       delete mImpl;
    }
 

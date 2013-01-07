@@ -35,6 +35,8 @@ namespace dtEntity
    {
    public:
 
+      virtual ~SystemInterface() {}
+
       /**
        * Send tick messages to main message pump, also emit
        * all queued messages

@@ -103,8 +103,20 @@ namespace dtEntityOSG
        */
       bool GetBoundingBox(dtEntity::Vec3d& min, dtEntity::Vec3d& max);
 
-   private:
+      /**
+        * Add attached component node to layer as a child in the scene graph hierarchy
+        */
+      bool Attach(LayerAttachPointComponent* current);
 
+      /**
+        * Add attached component node to layer as a child in the scene graph hierarchy
+        */
+      bool Detach(LayerAttachPointComponent* current);
+
+   private:
+      
+      // is there an attach point, a component to attach and added to scene?
+      bool CanAttach();
       dtEntity::Entity* mEntity;
       dtEntity::DynamicBoolProperty mVisible;
       bool mVisibleVal;
@@ -115,6 +127,9 @@ namespace dtEntityOSG
       bool mAddedToScene;
 
    };
+
+   LayerAttachPointComponent* GetAttachPoint(dtEntity::EntityManager& em, dtEntity::StringId name);
+
 
    
    ////////////////////////////////////////////////////////////////////////////////

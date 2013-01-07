@@ -34,18 +34,28 @@
   </entity>-->
   
   <entity>
-	<component type="Light">
-	  <vec4property name="Position" x="1" y="1" z="1" w="0" />
-	  <vec4property name="Diffuse" x="1" y="1" z="1" w="1" />
-	  <vec4property name="Ambient" x="0.5" y="0.5" z="0.5" w="1" />
-	</component>	
-	<component type="Layer">
+    <component type="Map">
+      <stringproperty name="EntityName">Light</stringproperty>
+    </component>
+    <component type="Light">
+      <vec4property name="Position" x="1" y="1" z="1" w="0" />
+      <vec4property name="Diffuse" x="1" y="1" z="1" w="1" />
+      <vec4property name="Ambient" x="0.5" y="0.5" z="0.5" w="1" />
+    </component>
+    <component type="Layer">
       <stringproperty name="AttachedComponent">Light</stringproperty>
       <stringproperty name="Layer">root</stringproperty>
     </component>
+
   </entity>
   
 <entity>
+  <component type="Map">
+    <stringproperty name="EntityName">SkyBox</stringproperty>
+    <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
+    <stringproperty name="SpawnerName"></stringproperty>
+    <stringproperty name="UniqueId">SkyBox</stringproperty>
+  </component>
     <component type="Layer">
       <stringproperty name="AttachedComponent">SkyBox</stringproperty>
       <stringproperty name="Layer">root</stringproperty>
@@ -53,12 +63,7 @@
     <component type="LayerAttachPoint">
       <stringproperty name="Name">default</stringproperty>
     </component>
-    <component type="Map">
-      <stringproperty name="EntityName">SkyBox</stringproperty>
-      <stringproperty name="MapName">maps/boids.dtemap</stringproperty>
-      <stringproperty name="SpawnerName"></stringproperty>
-      <stringproperty name="UniqueId">SkyBox</stringproperty>
-    </component>
+    
     <component type="SkyBox">
       <arrayproperty name="Children">
         <stringproperty name="000000">LayerAttachPoint</stringproperty>
@@ -72,16 +77,17 @@
     </component>
   </entity>
   <entity>
-    <component type="Layer">
-      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
-      <stringproperty name="Layer">default</stringproperty>
-    </component>
     <component type="Map">
       <stringproperty name="EntityName">Terrain</stringproperty>
       <stringproperty name="MapName">maps/fpsdemo.dtemap</stringproperty>
       <stringproperty name="SpawnerName"></stringproperty>
       <stringproperty name="UniqueId">32c3c4a9-8929-49e6-b0bd-74b2df65ab21</stringproperty>
     </component>
+    <component type="Layer">
+      <stringproperty name="AttachedComponent">PositionAttitudeTransform</stringproperty>
+      <stringproperty name="Layer">default</stringproperty>
+    </component>
+    
     <component type="PositionAttitudeTransform">
       <arrayproperty name="Children">
         <stringproperty name="000000">StaticMesh</stringproperty>

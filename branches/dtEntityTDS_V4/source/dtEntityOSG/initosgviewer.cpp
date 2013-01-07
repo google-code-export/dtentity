@@ -135,7 +135,7 @@ namespace dtEntityOSG
       // add input handler as callback to primary camera. This is also done again in Camera setup,
       // but is done here first so everything runs fine without a camera.
       OSGInputInterface* ipface = static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
-      views.front()->addEventHandler(ipface);
+      views.front()->addEventHandler(ipface->GetEventHandler());
 
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerAttachPointSystem::TYPE);
       dtEntity::ComponentPluginManager::GetInstance().StartEntitySystem(em, LayerSystem::TYPE);
@@ -233,7 +233,7 @@ namespace dtEntityOSG
       OSGWindowInterface* o = static_cast<OSGWindowInterface*>(wface);
       o->SetTraits(traits);
       unsigned int contextId;
-      bool success = wface->OpenWindow("defaultView", dtEntity::SID("root"), contextId);
+      bool success = wface->OpenWindow("defaultView", contextId);
       if(!success)
       {
          LOG_ERROR("Could not open window, exiting!");

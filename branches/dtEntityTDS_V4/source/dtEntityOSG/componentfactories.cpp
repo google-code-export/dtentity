@@ -20,7 +20,7 @@
 
 #include <dtEntityOSG/componentfactories.h>
 #include <dtEntity/componentpluginmanager.h>
-#include <dtEntity/dtentity_config.h>
+#include <dtEntityOSG/dtentityosg_config.h>
 
 #include <dtEntityOSG/cameracomponent.h>
 #include <dtEntityOSG/groundclampingcomponent.h>
@@ -43,6 +43,10 @@
 #include <dtEntityOSG/textlabelcomponent.h>
 #include <dtEntityOSG/texturelabelcomponent.h>
 #include <dtEntityOSG/transformcomponent.h>
+
+#if OSGEPHEMERIS_FOUND
+#include <dtEntityOSG/osgephemeriscomponent.h>
+#endif
 
 namespace dtEntityOSG
 {
@@ -70,7 +74,9 @@ namespace dtEntityOSG
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TextureLabelSystem>("TextureLabel"));
       pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<TransformSystem>("Transform"));
 
-
+#if OSGEPHEMERIS_FOUND
+      pluginManager.AddFactory(new dtEntity::ComponentPluginFactoryImpl<OSGEphemerisSystem>("OSGEphemeris"));
+#endif
 
    }
 }

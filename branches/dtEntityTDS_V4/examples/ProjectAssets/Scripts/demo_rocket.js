@@ -33,6 +33,9 @@ function startRocket() {
 
   // pure data object that will act as prototype for our entity
   var entityProto = {
+	Map : {
+		EntityName : "RocketGUI"
+	},
     Rocket : {
 		FullScreen : false,
 		ContextName : "DemoRocket",
@@ -48,6 +51,8 @@ function startRocket() {
 	Scale: [0.01,0.01,0.01],
 	Children : ["Rocket"]
 	}
+	
+	
   };
   
    // create entity and setup components from prototype
@@ -61,7 +66,9 @@ function startRocket() {
   huds.appendChild(smileydiv);
   
   var sphereProto = {
-    
+    Map : {
+		EntityName : "Sphere"
+	},
 	Layer : {
 	  Layer: "default",
       AttachedComponent : "PositionAttitudeTransform"
@@ -78,6 +85,7 @@ function startRocket() {
 		Offset : [0,0,1],
 		PixelOffset : [-30,30]  
 	}
+	
   };
   
   
