@@ -78,7 +78,10 @@ namespace dtEntityOSG
          return false;
       }
       NodeStore* nc = dynamic_cast<NodeStore*>(component);
-      assert(nc->GetNode()->getNumParents() == 0);
+      if(nc->GetNode()->getNumParents() != 0)
+      {
+         LOG_ERROR("AddChildComponent: Component node already has a parent!");
+      }
       bool success = GetAttachmentGroup()->addChild(nc->GetNode());
       assert(success);
       nc->SetParentComponent(this->GetType());

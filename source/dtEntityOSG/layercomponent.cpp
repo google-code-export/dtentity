@@ -190,7 +190,7 @@ namespace dtEntityOSG
       assert(success);
       if(attachedNode->getNumParents() != 0)
       {
-         LOG_ERROR("Detaching: attached node still has parents!");
+         LOG_DEBUG("Detaching: attached node still has parents!");
       }
       return true;
    
@@ -204,20 +204,6 @@ namespace dtEntityOSG
          return false;
       }
 
-      /*dtEntity::MapComponent* mc;
-      if(mEntity->GetComponent(mc))
-      {
-         LOG_ALWAYS("Attaching entity " << mc->GetEntityName() << " to " << dtEntity::GetStringFromSID(current->GetName()));
-      }
-      else
-      {
-         LOG_ALWAYS("Attaching unnamed entity to " << current->GetName());
-      }
-
-      if(!CanAttach())
-      {
-         LOG_ERROR("Huch");
-      }*/
       assert(CanAttach());
       
       // add new attachment
@@ -230,7 +216,7 @@ namespace dtEntityOSG
       
       if(attachedNode->getNumParents() != 0)
       {
-         LOG_ERROR("Node already attached!");
+         LOG_DEBUG("Node already attached!");
       }
       osg::Group* attchgrp = current->GetAttachmentGroup();
       bool success = attchgrp->addChild(attachedNode);
