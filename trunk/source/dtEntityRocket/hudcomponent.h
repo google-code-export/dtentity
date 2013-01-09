@@ -62,8 +62,6 @@ namespace dtEntityRocket
       virtual ~HUDComponent();
 
       void OnAddedToEntity(dtEntity::Entity& e);
-      void OnRemovedFromEntity(dtEntity::Entity& e);
-      void Finished();
 
       virtual dtEntity::ComponentType GetType() const { return TYPE; }
       virtual bool IsInstanceOf(dtEntity::ComponentType id) const
@@ -97,6 +95,8 @@ namespace dtEntityRocket
         */
       void SetHideWhenNormalPointsAway(bool v) { mHideWhenNormalPointsAway.Set(v); }
       bool GetHideWhenNormalPointsAway() const { return mHideWhenNormalPointsAway.Get(); }
+
+      void RemoveElement();
 
    protected:
 
@@ -138,6 +138,7 @@ namespace dtEntityRocket
       void Tick(const dtEntity::Message& msg);
       void OnVisibilityChanged(const dtEntity::Message& msg);
       void OnMeshChanged(const dtEntity::Message& m);
+      void OnRemovedFromScene(const dtEntity::Message& m);
 
       void OnRemoveFromEntityManager(dtEntity::EntityManager &em);
 
@@ -149,6 +150,7 @@ namespace dtEntityRocket
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::MessageFunctor mVisibilityChangedFunctor;
       dtEntity::MessageFunctor mMeshChangedFunctor;
+      dtEntity::MessageFunctor mLeaveWorldFunctor;
       dtEntity::BoolProperty mEnabled;
 
    };
