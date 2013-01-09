@@ -82,6 +82,10 @@ namespace dtEntityRocket
    ////////////////////////////////////////////////////////////////////////////
    HUDComponent::~HUDComponent()
    {
+      if(mElement)
+      {
+         mElement->RemoveReference();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -89,17 +93,6 @@ namespace dtEntityRocket
    {
       BaseClass::OnAddedToEntity(e);
       mEntity = &e;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void HUDComponent::OnRemovedFromEntity(dtEntity::Entity& e)
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void HUDComponent::Finished()
-   {
-      BaseClass::Finished();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -202,6 +195,7 @@ namespace dtEntityRocket
             if(el != NULL)
             {
                mElement = el;
+               mElement->AddReference();
                return;
             }
          }
@@ -242,6 +236,15 @@ namespace dtEntityRocket
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   void HUDComponent::RemoveElement()
+   {
+      if(mElement)
+      {
+         mElement->GetParentNode()->RemoveChild(mElement);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////
 
    const dtEntity::StringId HUDSystem::EnabledId(dtEntity::SID("Enabled"));
@@ -263,6 +266,10 @@ namespace dtEntityRocket
       mMeshChangedFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnMeshChanged);
       GetEntityManager().RegisterForMessages(dtEntity::MeshChangedMessage::TYPE, mMeshChangedFunctor,
                             dtEntity::FilterOptions::ORDER_DEFAULT, "HUDSystem::OnMeshChanged");
+
+      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &HUDSystem::OnRemovedFromScene);
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor,
+                             "HUDSystem::OnRemovedFromScene");
 
       mEnabled.Set(true);
    }
@@ -313,6 +320,22 @@ namespace dtEntityRocket
        comp->CalculateRelPosition();
      }
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void HUDSystem::OnRemovedFromScene(const dtEntity::Message& m)
+   {
+      const dtEntity::EntityRemovedFromSceneMessage&  msg =
+            static_cast<const dtEntity::EntityRemovedFromSceneMessage&>(m);
+
+      dtEntity::EntityId id = msg.GetAboutEntityId();
+      HUDComponent* comp = GetComponent(id);
+      if(comp)
+      {
+        comp->RemoveElement();
+      }
+
+   }
+
    ////////////////////////////////////////////////////////////////////////////
    void HUDSystem::Tick(const dtEntity::Message& msg)
    {
