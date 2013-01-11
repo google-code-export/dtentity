@@ -359,6 +359,48 @@ namespace dtEntityWrappers
       return scope.Close(obj);
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
+     Returns JS object with all components of spawner and its spawner parents
+   */
+
+   Handle<Value> MSGetSpawnerComponents(const Arguments& args)
+   {
+      dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
+      dtEntity::Spawner* spawner;
+
+      if(!ms->GetSpawner(ToStdString(args[0]), spawner))
+      {
+         return Null();
+      }
+      HandleScope scope;
+
+      Handle<Object> comps = Object::New();
+      dtEntity::Spawner::ComponentProperties props;
+      spawner->GetAllComponentPropertiesRecursive(props);
+      dtEntity::Spawner::ComponentProperties::iterator i;
+      for(i = props.begin(); i != props.end(); ++i)
+      {
+         std::string compname = dtEntity::GetStringFromSID(i->first);
+         Handle<Object> jscomp = Object::New();
+
+         const dtEntity::GroupProperty props = i->second;
+         dtEntity::PropertyGroup g = props.Get();
+
+         for(dtEntity::PropertyGroup::const_iterator j = g.begin(); j != g.end(); ++j)
+         {
+            std::string propname = dtEntity::GetStringFromSID(j->first);
+            const dtEntity::Property* prop = j->second;
+            jscomp->Set(ToJSString(propname), ConvertPropertyToValue(args.This()->CreationContext(), prop));
+         }
+
+         comps->Set(ToJSString(compname), jscomp);
+      }
+      return scope.Close(comps);
+   }
+
+
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> MSGetSpawnerCreatedEntities(const Arguments& args)
    {
@@ -455,6 +497,7 @@ namespace dtEntityWrappers
       proto->Set("addToScene", FunctionTemplate::New(MSAddToScene));
       proto->Set("deleteSpawner", FunctionTemplate::New(MSDeleteSpawner));
       proto->Set("getSpawner", FunctionTemplate::New(MSGetSpawner));
+      proto->Set("MSGetSpawnerComponents", FunctionTemplate::New(MSGetSpawnerComponents));
       proto->Set("getSpawnerCreatedEntities", FunctionTemplate::New(MSGetSpawnerCreatedEntities));
       proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
       proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
