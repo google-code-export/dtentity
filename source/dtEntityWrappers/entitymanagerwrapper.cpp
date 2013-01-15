@@ -437,7 +437,10 @@ namespace dtEntityWrappers
          if(success)
          {
             es = em->GetEntitySystem(t);
-            assert(es != NULL);
+            if(es == NULL)
+            {
+               return ThrowError("Could not start entity system " + str);
+            }
          }
          else
          {
