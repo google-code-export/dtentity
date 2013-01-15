@@ -32,7 +32,8 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////////
    OSGInputInterface::OSGInputInterface(dtEntity::MessagePump& mp)
-      : mMessagePump(&mp)
+      : mEventHandler(new EventHandler(this))
+      , mMessagePump(&mp)
       , mMultiTouchEnabled(false)
       , mLockCursor(false)
       , mNumTouches(0)
@@ -40,7 +41,6 @@ namespace dtEntityOSG
       , mMouseScroll(0)
       , mMouseScrollContext(0)
       , mNeedReset(false)
-      , mEventHandler(new EventHandler(this))
    {
      
       mKeyNames["0"] = osgGA::GUIEventAdapter::KEY_0;

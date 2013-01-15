@@ -158,6 +158,8 @@ namespace dtEntityEditor
       
       connect(mMainWindow, SIGNAL(Closed(bool)), this, SLOT(ShutDownGame(bool)));
       connect(mMainWindow, SIGNAL(ViewResized(const QSize&)), this, SLOT(ViewResized(const QSize&)));
+
+      connect(this, SIGNAL(EditorSceneLoaded(const QString&)), mMainWindow, SLOT(OnComponentListChanged()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -235,12 +237,7 @@ namespace dtEntityEditor
             dtEntity::ComponentPluginManager::GetInstance().LoadPluginsInDir(mPluginPaths[i]);
          }
          // add new factories to list of known ones
-         std::set<dtEntity::ComponentType> newTypes;
-         dtEntity::ComponentPluginManager::PluginFactoryMap& factories = dtEntity::ComponentPluginManager::GetInstance().GetFactories();
-         dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
-         for(j = factories.begin(); j != factories.end(); ++j)
-            newTypes.insert(j->first);
-         mMainWindow->AddToKnownComponentList(newTypes);
+         mMainWindow->OnComponentListChanged();
 
 
       }
@@ -302,7 +299,7 @@ namespace dtEntityEditor
       std::set<dtEntity::ComponentType> newTypes = 
          dtEntity::ComponentPluginManager::GetInstance().AddPlugin(fileName, true);
       // notify GUI that new types are now available
-      mMainWindow->AddToKnownComponentList(newTypes);
+      mMainWindow->OnComponentListChanged();
    
    }
 
@@ -423,7 +420,7 @@ namespace dtEntityEditor
 
       mapSystem->LoadScene(path.toStdString());
       
-      emit SceneLoaded(path);
+      emit EditorSceneLoaded(path);
 
    }
 

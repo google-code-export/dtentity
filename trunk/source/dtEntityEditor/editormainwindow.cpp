@@ -22,10 +22,12 @@
 
 #include <dtEntity/core.h>
 #include <dtEntity/entitymanager.h>
+#include <dtEntity/entitysystem.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/log.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
+#include <dtEntity/componentpluginmanager.h>
 #include <dtEntityQtWidgets/datapatheditor.h>
 #include <dtEntityEditor/editorapplication.h>
 #include <dtEntityQtWidgets/entitytree.h>
@@ -511,31 +513,6 @@ namespace dtEntityEditor
       CreatePropertyEditor();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void EditorMainWindow::AddToKnownComponentList(std::set<dtEntity::ComponentType> newTypes)
-   {
-      using namespace dtEntityQtWidgets;
-
-      // get the model first
-      PropertyEditorView* view = dynamic_cast<PropertyEditorView*>(mPropertyEditorDock->widget());
-      if (view)
-      {
-         PropertyEditorModel* model = dynamic_cast<PropertyEditorModel*>(view->GetModel());
-         if (model)
-         {
-          //  model->EntitySystemAdded();
-
-            // loop over input types and add them
-            std::set<dtEntity::ComponentType>::const_iterator itr;
-            for (itr = newTypes.begin(); itr != newTypes.end(); ++itr)
-            {
-               model->EntitySystemAdded(*itr);
-            }
-         }
-      }
-   }
-
-
    ////////////////////////////////////////////////////////////////////////////////
    void EditorMainWindow::closeEvent(QCloseEvent* e)
    {
@@ -749,4 +726,40 @@ namespace dtEntityEditor
    {
       emit TextDroppedOntoGLWidget(pos, txt);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorMainWindow::OnComponentListChanged()
+   {
+      using namespace dtEntityQtWidgets;
+
+      // get the model first
+      PropertyEditorView* view = dynamic_cast<PropertyEditorView*>(mPropertyEditorDock->widget());
+      if (view)
+      {
+         PropertyEditorModel* model = dynamic_cast<PropertyEditorModel*>(view->GetModel());
+
+         if (model)
+         {
+            std::vector<const dtEntity::EntitySystem*> toFill;
+            mApplication->GetEntityManager().GetEntitySystems(toFill);
+            std::vector<const dtEntity::EntitySystem*>::const_iterator i;
+            for(i = toFill.begin(); i != toFill.end(); ++i)
+            {
+               const dtEntity::EntitySystem* es = *i;
+               dtEntity::ComponentType ctype = es->GetComponentType();       
+               model->EntitySystemAdded(ctype);
+            }
+
+            dtEntity::ComponentPluginManager::PluginFactoryMap& factories = dtEntity::ComponentPluginManager::GetInstance().GetFactories();
+            dtEntity::ComponentPluginManager::PluginFactoryMap::const_iterator j;
+            for(j = factories.begin(); j != factories.end(); ++j)
+            {
+               dtEntity::ComponentType t = j->first;
+               model->EntitySystemAdded(t);
+            }
+         }
+      }
+
+   }
+
 }

@@ -339,7 +339,6 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    void OSGWindowInterface::SetFullscreen(unsigned int contextId, bool fullscreen)
    {
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
       osgViewer::GraphicsWindow* window = GetWindowByContextId(contextId);
       if(!window)
       {
