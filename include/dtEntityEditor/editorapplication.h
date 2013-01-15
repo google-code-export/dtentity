@@ -130,7 +130,7 @@ namespace dtEntityEditor
    signals: 
       
       void ErrorOccurred(const QString&);
-      void SceneLoaded(const QString& path);
+      void EditorSceneLoaded(const QString& path);
       void DataPathsChanged(const QStringList& paths);
 
    private:

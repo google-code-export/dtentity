@@ -78,7 +78,6 @@ namespace dtEntityCloud
 
       float step = 4.0f / (float)size;
       float fRds = 1;
-      float fNoiseScale = 1;
       for(unsigned int i = 0; i < size; ++i)
       {
          float u = (float)i * step;
@@ -146,7 +145,14 @@ namespace dtEntityCloud
    
    ////////////////////////////////////////////////////////////////////////////
    CloudsComponent::CloudsComponent()
-      : mDrawables(new osg::Group())
+      : mSunPos(
+         dtEntity::DynamicVec3Property::SetValueCB(this, &CloudsComponent::SetSunPos),
+         dtEntity::DynamicVec3Property::GetValueCB(this, &CloudsComponent::GetSunPos)
+      )
+      , mWind(
+         dtEntity::DynamicVec2Property::SetValueCB(this, &CloudsComponent::SetWind),
+         dtEntity::DynamicVec2Property::GetValueCB(this, &CloudsComponent::GetWind)
+      )
       , mCloudCover(
          dtEntity::DynamicFloatProperty::SetValueCB(this, &CloudsComponent::SetCloudCover),
          dtEntity::DynamicFloatProperty::GetValueCB(this, &CloudsComponent::GetCloudCover)
@@ -167,14 +173,7 @@ namespace dtEntityCloud
          dtEntity::DynamicFloatProperty::SetValueCB(this, &CloudsComponent::SetTraceDist),
          dtEntity::DynamicFloatProperty::GetValueCB(this, &CloudsComponent::GetTraceDist)
       )
-      , mWind(
-         dtEntity::DynamicVec2Property::SetValueCB(this, &CloudsComponent::SetWind),
-         dtEntity::DynamicVec2Property::GetValueCB(this, &CloudsComponent::GetWind)
-      )
-      , mSunPos(
-         dtEntity::DynamicVec3Property::SetValueCB(this, &CloudsComponent::SetSunPos),
-         dtEntity::DynamicVec3Property::GetValueCB(this, &CloudsComponent::GetSunPos)
-      )
+      , mDrawables(new osg::Group())
    {
       Register(WindId, &mWind);
       Register(CloudCoverId, &mCloudCover);

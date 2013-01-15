@@ -23,7 +23,7 @@
 #include <dtEntity/componentpluginmanager.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityCloud(dtEntity::MessageFactory& mf)
+extern "C" DTE_EXPORT_MACRO void dtEntityMessages_dtEntityClouds(dtEntity::MessageFactory& mf)
 {
 }
 

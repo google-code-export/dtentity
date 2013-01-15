@@ -108,9 +108,16 @@ namespace dtEntityEditor
       void CreateEntityTree();
       void CreateSpawners();
       void CreatePropertyEditor();
-      void AddToKnownComponentList(std::set<dtEntity::ComponentType> newTypes);
 
-   protected slots:
+      /// Handles changes in the list of known systems/components
+      /**
+      *  This forces a refresh in the list of available components, by recreating it from
+      *  scratch. Make sure this method is called whenever the list of known components
+      *  changes and the GUI widget must be updated accordingly.
+      */
+      void OnComponentListChanged();
+
+      protected slots:
 
       void OnToggleCoordSystem(bool v);
       void OnToggleGroundClamp(bool v);

@@ -79,6 +79,10 @@ namespace dtEntityOSG
            dtEntity::DynamicIntProperty::GetValueCB(this, &CameraComponent::GetContextId)
         )
       , mContextIdVal(-1)
+      , mLayerAttachPoint (
+           dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetLayerAttachPoint),
+           dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetLayerAttachPoint)
+        )
       , mCullingMode (
            dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetCullingMode),
            dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetCullingMode)
@@ -98,7 +102,7 @@ namespace dtEntityOSG
       , mFarClip (
            dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetFarClip),
            dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetFarClip)
-        )      
+        )
       , mClearColor (
            dtEntity::DynamicVec4Property::SetValueCB(this, &CameraComponent::SetClearColor),
            dtEntity::DynamicVec4Property::GetValueCB(this, &CameraComponent::GetClearColor)
@@ -110,11 +114,7 @@ namespace dtEntityOSG
       , mCullMask (
            dtEntity::DynamicUIntProperty::SetValueCB(this, &CameraComponent::SetCullMask),
            dtEntity::DynamicUIntProperty::GetValueCB(this, &CameraComponent::GetCullMask)
-        )
-      , mLayerAttachPoint (
-           dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetLayerAttachPoint),
-           dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetLayerAttachPoint)
-        )
+        )      
       , mProjectionMode (
            dtEntity::DynamicStringIdProperty::SetValueCB(this, &CameraComponent::SetProjectionMode),
            dtEntity::DynamicStringIdProperty::GetValueCB(this, &CameraComponent::GetProjectionMode)
@@ -126,14 +126,14 @@ namespace dtEntityOSG
       , mOrthoRight (
            dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoRight),
            dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoRight)
+        )      
+      , mOrthoBottom (
+           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoBottom),
+           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoBottom)
         )
       , mOrthoTop (
            dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoTop),
            dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoTop)
-        )
-      , mOrthoBottom (
-           dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoBottom),
-           dtEntity::DynamicDoubleProperty::GetValueCB(this, &CameraComponent::GetOrthoBottom)
         )
       , mOrthoZNear (
            dtEntity::DynamicDoubleProperty::SetValueCB(this, &CameraComponent::SetOrthoZNear),
