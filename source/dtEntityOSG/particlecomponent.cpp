@@ -114,10 +114,6 @@ namespace dtEntityOSG
       , mParticleSystem(new osgParticle::ParticleSystem())
       , mModularEmitter(new osgParticle::ModularEmitter())
       , mProgram(new osgParticle::ModularProgram())
-      , mDebugOn(
-           dtEntity::DynamicBoolProperty::SetValueCB(this, &ParticleComponent::SetDebugOn),
-           dtEntity::DynamicBoolProperty::GetValueCB(this, &ParticleComponent::GetDebugOn)
-        )
       , mPlacer(
            dtEntity::DynamicGroupProperty::SetValueCB(this, &ParticleComponent::SetPlacer),
            dtEntity::DynamicGroupProperty::GetValueCB(this, &ParticleComponent::GetPlacer)
@@ -154,7 +150,6 @@ namespace dtEntityOSG
       Register(ColorRangeMinId, &mColorRangeMin);
       Register(ColorRangeMaxId, &mColorRangeMax);
       Register(CounterId, &mCounter);
-      Register(DebugOnId, &mDebugOn);
       Register(EmissiveParticlesId, &mEmissiveParticles);
       Register(EnabledId, &mEnabled);
       Register(LifeTimeId, &mLifeTime);
@@ -403,13 +398,6 @@ namespace dtEntityOSG
    dtEntity::PropertyGroup ParticleComponent::GetPlacer() const
    {
       return mCounterVal.Get();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   void ParticleComponent::SetDebugOn(bool v)
-   {      
-      mDebugOnVal = v;
-      dtEntity::GetDebugDrawInterface()->SetEnabled(v);
    }
 
    ////////////////////////////////////////////////////////////////////////////
