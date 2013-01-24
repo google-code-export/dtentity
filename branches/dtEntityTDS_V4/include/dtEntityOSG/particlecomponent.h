@@ -129,9 +129,6 @@ namespace dtEntityOSG
       void SetEmissiveParticles(bool v) { mEmissiveParticles.Set(v); }
       bool GetEmissiveParticles() const { return mEmissiveParticles.Get(); }
 
-      void SetDebugOn(bool v);
-      bool GetDebugOn() const { return mDebugOnVal; }
-
       void SetLighting(bool v) { mLighting.Set(v); }
       bool GetLighting() const { return mLighting.Get(); }
 
@@ -179,8 +176,6 @@ namespace dtEntityOSG
       osg::ref_ptr<osgParticle::ModularEmitter> mModularEmitter;
       osg::ref_ptr<osgParticle::ModularProgram> mProgram;
       
-      dtEntity::DynamicBoolProperty mDebugOn;
-      bool mDebugOnVal;
       dtEntity::StringProperty mTextureFile;
       dtEntity::BoolProperty mEmissiveParticles;
       dtEntity::BoolProperty mEnabled;
