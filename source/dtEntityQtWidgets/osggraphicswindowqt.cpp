@@ -23,6 +23,7 @@
 #include <dtEntityQtWidgets/osgadapterwidget.h>
 #include <dtEntity/log.h>
 #include <QtCore/QThread>
+#include <osg/Version>
 
 namespace dtEntityQtWidgets
 {
@@ -95,7 +96,11 @@ namespace dtEntityQtWidgets
       QGLWidget* sharedContextWidget = NULL;
       if (traits->sharedContext != NULL)
       {
+#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 96)
+          OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
+#else
          OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext);
+#endif
          if (sharedWin != NULL)
          {
             sharedContextWidget = sharedWin->GetQGLWidget();
@@ -161,8 +166,11 @@ namespace dtEntityQtWidgets
       {
           setState( new osg::State );
           getState()->setGraphicsContext(this);
-
+#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 96)
+          if (_traits.valid() && _traits->sharedContext.valid())
+#else
           if (_traits.valid() && _traits->sharedContext)
+#endif
           {
               getState()->setContextID( _traits->sharedContext->getState()->getContextID() );
               incrementContextIDUsageCount( getState()->getContextID() );
