@@ -190,7 +190,7 @@ namespace dtEntity
       {
          if(HasComponent(eid))
          {
-            LOG_ERROR("Could not create component: already exists!");
+            LOG_ERROR("Could not create component: already exists! Type is " << GetStringFromSID(T::TYPE));
             return false;
          }
 
