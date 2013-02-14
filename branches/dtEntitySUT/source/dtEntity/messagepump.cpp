@@ -59,7 +59,7 @@ namespace dtEntity
       {
          unsigned int otherpriority = it->second.mOptions & 3;
 
-         if(it->second.mFunctor == ftr)
+         if(it->second.mFunctor == ftr && ((it->second.mOptions & FilterOptions::UNREGISTERED) == 0))
          {
            LOG_ERROR("Trying to register a functor twice for same message: " + GetStringFromSID(msgtype));
          }
