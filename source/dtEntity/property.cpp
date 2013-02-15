@@ -637,6 +637,10 @@ namespace dtEntity
    /////////////////////////////////////////////////////////////////////////////////
    void GroupProperty::Add(StringId name, Property* prop)
    {
+      if(mValue.find(name) != mValue.end())
+      {
+         delete mValue[name]; 
+      }
       mValue[name] = prop;
    }
 
