@@ -590,12 +590,12 @@ namespace dtEntityCloud
       dtEntityOSG::OSGEphemerisSystem* ephemsys;
       if(GetEntityManager().GetES(ephemsys) && ephemsys->begin() != ephemsys->end())
       {
-         dtEntityOSG::OSGEphemerisComponent* comp = ephemsys->begin()->second;
+         /*dtEntityOSG::OSGEphemerisComponent* comp = ephemsys->begin()->second;
          osg::Vec4f sunpos = comp->GetSunLightPos();
          for(ComponentStore::iterator i = mComponents.begin(); i != mComponents.end(); ++i)
          {
-            //i->second->SetSunPos(osg::Vec3(sunpos[0], sunpos[1], sunpos[2]));
-         }
+            i->second->SetSunPos(osg::Vec3(sunpos[0], sunpos[1], sunpos[2]));
+         }*/
       }
 #endif
    }
