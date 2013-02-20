@@ -183,8 +183,8 @@ namespace dtEntityWrappers
       dtEntity::Vec3d from = UnwrapVec3(args[0]);
       dtEntity::Vec3d to = UnwrapVec3(args[1]);
 
-      dtEntity::SystemInterface::Intersections isects;
-      bool found = dtEntity::GetSystemInterface()->GetIntersections(from, to, isects, nodemask);
+      dtEntity::WindowInterface::Intersections isects;
+      bool found = dtEntity::GetWindowInterface()->GetIntersections(from, to, isects, nodemask);
 
       HandleScope scope;
       Handle<Array> ret = Array::New();
@@ -199,9 +199,9 @@ namespace dtEntityWrappers
       Handle<String> position = String::New("Position");
 
       unsigned int count = 0;
-      for(dtEntity::SystemInterface::Intersections::const_iterator i = isects.begin(); i != isects.end(); ++i)
+      for(dtEntity::WindowInterface::Intersections::const_iterator i = isects.begin(); i != isects.end(); ++i)
       {
-         dtEntity::SystemInterface::Intersection isect = *i;
+         dtEntity::WindowInterface::Intersection isect = *i;
          Handle<Object> obj = Object::New();
          obj->Set(entityid, Uint32::New(isect.mEntityId));
          obj->Set(normal, WrapVec3(isect.mNormal));

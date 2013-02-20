@@ -65,10 +65,6 @@ namespace dtEntityOSG
       virtual dtEntity::Timer_t GetSimulationClockTime() const;
       virtual void SetSimulationClockTime(dtEntity::Timer_t t);
 
-      virtual bool GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end, 
-         std::vector<dtEntity::SystemInterface::Intersection>& isects,
-         unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN
-         ) const;
 
       /**
        * Get absolute path from a relative file path.
