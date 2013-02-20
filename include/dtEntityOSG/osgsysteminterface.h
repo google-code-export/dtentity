@@ -65,6 +65,7 @@ namespace dtEntityOSG
       virtual dtEntity::Timer_t GetSimulationClockTime() const;
       virtual void SetSimulationClockTime(dtEntity::Timer_t t);
 
+      void SetTimeValues(double simulationTime, float deltaSimTime,float deltaTime, dtEntity::Timer_t clockTime);
 
       /**
        * Get absolute path from a relative file path.
