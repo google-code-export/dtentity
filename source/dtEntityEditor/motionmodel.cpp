@@ -148,8 +148,8 @@ namespace dtEntityEditor
          osg::Vec3 pickray = dtEntity::GetWindowInterface()->GetPickRay(contextid, mouseX, mouseY);
          osg::Vec3d campos = mCamera->GetPosition();
 
-         std::vector<dtEntity::SystemInterface::Intersection> isects;
-         bool found = dtEntity::GetSystemInterface()->GetIntersections(campos, campos + pickray * 10000, isects);
+         std::vector<dtEntity::WindowInterface::Intersection> isects;
+         bool found = dtEntity::GetWindowInterface()->GetIntersections(campos, campos + pickray * 10000, isects);
          if(found)
          {
              mPivot = isects.front().mPosition;

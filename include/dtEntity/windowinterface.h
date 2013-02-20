@@ -20,7 +20,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/property.h>
+#include <dtEntity/nodemasks.h>
 
 namespace dtEntity
 { 
@@ -90,6 +90,25 @@ namespace dtEntity
         * If Continuous Redraw is off, request a redraw in next render traversal
         */
       virtual void RequestRedraw(unsigned int contextid) = 0;
+
+      /**
+       * Holds intersection info
+       */
+      struct Intersection
+      {
+         Vec3d mPosition;
+         Vec3f mNormal;
+         EntityId mEntityId;
+      };
+
+      typedef std::vector<Intersection> Intersections;
+      /**
+       * Get intersections between start and end and add them to isects vector
+       */
+      virtual bool GetIntersections(const Vec3d& start, const Vec3d& end,
+         std::vector<Intersection>& isects,
+         unsigned int nodemask = NodeMasks::PICKABLE | NodeMasks::TERRAIN
+      ) const = 0;
 
    };	
 

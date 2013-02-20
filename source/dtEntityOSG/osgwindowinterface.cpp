@@ -523,4 +523,46 @@ namespace dtEntityOSG
          LOG_ERROR("RequestRedraw: No view with this contextid");
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OSGWindowInterface::GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end,
+         std::vector<dtEntity::WindowInterface::Intersection>& isects, unsigned int nodemask) const
+   {
+      osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
+      lsi = new osgUtil::LineSegmentIntersector(start, end);
+
+      osgUtil::IntersectionVisitor iv(lsi.get());
+      iv.setUseKdTreeWhenAvailable(true);
+      iv.setTraversalMask(nodemask);
+
+      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
+      iface->GetPrimaryView()->getSceneData()->accept(iv);
+
+      if(!lsi->containsIntersections())
+      {
+         return false;
+      }
+
+      osgUtil::LineSegmentIntersector::Intersections::iterator i;
+      for(i = lsi->getIntersections().begin(); i != lsi->getIntersections().end(); ++i)
+      {
+         osgUtil::LineSegmentIntersector::Intersection isect = *i;
+         for(osg::NodePath::const_iterator j = isect.nodePath.begin(); j != isect.nodePath.end(); ++j)
+         {
+            const osg::Node* node = *j;
+            const osg::Referenced* referenced = node->getUserData();
+            if(referenced == NULL) continue;
+            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
+            if(entity != NULL)
+            {
+               dtEntity::WindowInterface::Intersection entry;
+               entry.mEntityId = entity->GetId();
+               entry.mNormal = isect.getWorldIntersectNormal();
+               entry.mPosition = isect.getWorldIntersectPoint();
+               isects.push_back(entry);
+            }
+         }
+      }
+      return true;
+   }
 }

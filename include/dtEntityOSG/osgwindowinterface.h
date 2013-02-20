@@ -106,6 +106,12 @@ namespace dtEntityOSG
         */
       virtual void RequestRedraw(unsigned int contextid);
 
+      virtual bool GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end,
+         std::vector<dtEntity::WindowInterface::Intersection>& isects,
+         unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN
+         ) const;
+
+
    protected:
 
       bool OpenWindowInternal(const std::string& name, unsigned int& contextId);

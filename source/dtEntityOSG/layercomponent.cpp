@@ -187,7 +187,7 @@ namespace dtEntityOSG
       osg::Group* grp = current->GetAttachmentGroup();
       bool success = grp->removeChild(attachedNode);  
 
-      assert(success);
+      //assert(success);
       if(attachedNode->getNumParents() != 0)
       {
          LOG_ERROR("Detaching: attached node still has parents!");
