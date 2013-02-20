@@ -276,6 +276,15 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::SetTimeValues(double simulationTime, float deltaSimTime,float deltaTime, dtEntity::Timer_t clockTime)
+   {
+      mImpl->mUpdateCallback->mSimTime = simulationTime;
+      mImpl->mUpdateCallback->mDeltaSimTime = deltaSimTime;
+      mImpl->mUpdateCallback->mDeltaTime = deltaTime;
+      mImpl->mUpdateCallback->mSimulationClockTime = clockTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Timer_t OSGSystemInterface::GetSimulationClockTime() const
    {
       return mImpl->mUpdateCallback->mSimulationClockTime;
