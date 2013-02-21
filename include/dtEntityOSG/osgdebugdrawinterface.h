@@ -20,6 +20,7 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/core.h>
 #include <dtEntity/debugdrawinterface.h>
 #include <dtEntityOSG/export.h>
 #include <dtEntity/entitymanager.h>
@@ -269,5 +270,10 @@ namespace dtEntityOSG
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::StringId mLayerName;
    };
+
+   inline OSGDebugDrawInterface* GetOSGDebugDrawInterface()
+   {
+      return static_cast<OSGDebugDrawInterface*>(dtEntity::GetDebugDrawInterface());
+   }
 }
 

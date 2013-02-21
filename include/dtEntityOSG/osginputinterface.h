@@ -20,6 +20,7 @@
 * Martin Scheffler
 */
 
+#include <dtEntity/core.h>
 #include <dtEntity/inputinterface.h>
 #include <dtEntityOSG/export.h>
 #include <osgGA/GUIEventHandler>
@@ -228,5 +229,9 @@ namespace dtEntityOSG
       bool mNeedReset; // internal flag to check when to reset
    };
 
+   inline OSGInputInterface* GetOSGInputInterface()
+   {
+      return static_cast<OSGInputInterface*>(dtEntity::GetInputInterface());
+   }
 }
 

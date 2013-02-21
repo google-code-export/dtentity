@@ -20,6 +20,7 @@
  * Martin Scheffler
  */
 
+#include <dtEntity/core.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntityOSG/export.h>
 #include <osgViewer/ViewerBase>
@@ -91,5 +92,10 @@ namespace dtEntityOSG
       const char** mArgV;
 
    };
+
+   inline OSGSystemInterface* GetOSGSystemInterface()
+   {
+      return static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
+   }
   
 }
