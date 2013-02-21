@@ -21,6 +21,7 @@
 */
 
 #include <dtEntityOSG/export.h>
+#include <dtEntity/core.h>
 #include <dtEntity/message.h>
 #include <dtEntity/messagepump.h>
 #include <dtEntity/property.h>
@@ -124,5 +125,9 @@ namespace dtEntityOSG
       
    };	
 
+   inline OSGWindowInterface* GetOSGWindowInterface()
+   {
+      return static_cast<OSGWindowInterface*>(dtEntity::GetWindowInterface());
+   }
 
 }
