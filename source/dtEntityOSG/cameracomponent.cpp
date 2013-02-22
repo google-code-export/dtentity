@@ -211,7 +211,7 @@ namespace dtEntityOSG
    {
       dtEntity::CameraRemovedMessage msg;
       msg.SetAboutEntityId(entity.GetId());
-      GetNodeEntity()->GetEntityManager().EmitMessage(msg);
+      entity.GetEntityManager().EmitMessage(msg);
       
       BaseClass::OnRemovedFromEntity(entity);      
    }

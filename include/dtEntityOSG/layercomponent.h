@@ -33,6 +33,15 @@ namespace dtEntityOSG
    class LayerAttachPointComponent;
    ////////////////////////////////////////////////////////////////////////////////
 
+   struct EntityData : public osg::Referenced
+   {
+       dtEntity::Entity* mEntity;
+       EntityData(dtEntity::Entity* e)
+           : mEntity(e)
+       {
+       }
+   };
+
    /**
     * Each visible entity has to have a layer component. The layer component
     * defines which node component of the entity is attached to which layer.

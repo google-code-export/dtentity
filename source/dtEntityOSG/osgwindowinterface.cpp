@@ -24,6 +24,7 @@
 #include <dtEntityOSG/cameracomponent.h>
 #include <dtEntity/core.h>
 #include <dtEntity/entity.h>
+#include <dtEntityOSG/layercomponent.h>
 #include <dtEntityOSG/layerattachpointcomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntityOSG/osgsysteminterface.h>
@@ -446,10 +447,10 @@ namespace dtEntityOSG
             const osg::Node* node = *j;
             const osg::Referenced* referenced = node->getUserData();
             if(referenced == NULL) continue;
-            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL)
+            const EntityData* ed = dynamic_cast<const EntityData*>(referenced);
+            if(ed != NULL)
             {			     
-               return entity->GetId();			      
+               return ed->mEntity->GetId();
             }
          }
       }
@@ -552,11 +553,11 @@ namespace dtEntityOSG
             const osg::Node* node = *j;
             const osg::Referenced* referenced = node->getUserData();
             if(referenced == NULL) continue;
-            const dtEntity::Entity* entity = dynamic_cast<const dtEntity::Entity*>(referenced);
-            if(entity != NULL)
+            const EntityData* ed = dynamic_cast<const EntityData*>(referenced);
+            if(ed != NULL)
             {
                dtEntity::WindowInterface::Intersection entry;
-               entry.mEntityId = entity->GetId();
+               entry.mEntityId = ed->mEntity->GetId();
                entry.mNormal = isect.getWorldIntersectNormal();
                entry.mPosition = isect.getWorldIntersectPoint();
                isects.push_back(entry);

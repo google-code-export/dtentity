@@ -24,7 +24,6 @@
 #include <dtEntity/entityid.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/component.h>
-#include <osg/Referenced>
 #include <vector>
 
 namespace dtEntity
@@ -34,7 +33,7 @@ namespace dtEntity
     * The entity class is simply a convenience class to bundle
     * the entity ID and access to the entity manager.
     */
-   class DT_ENTITY_EXPORT Entity : public osg::Referenced
+   class DT_ENTITY_EXPORT Entity
    {
    public:
       
@@ -95,10 +94,6 @@ namespace dtEntity
        * @return the entity manager this entity is assigned to
        */
       EntityManager& GetEntityManager() const;
-      
-   protected:
-
-      ~Entity() {}
 
    private:
 

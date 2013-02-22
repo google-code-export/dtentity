@@ -75,8 +75,7 @@ namespace dtEntity
       entity = new dtEntity::Entity(*this, eid);
 
       OpenThreads::ScopedWriteLock lock(mEntityMutex);
-      mEntities.insert(std::pair<EntityId, osg::ref_ptr<Entity> >(eid, entity));
-
+      mEntities[eid] = entity;
       return true;
    }
 
@@ -255,12 +254,14 @@ namespace dtEntity
       }
       
       OpenThreads::ScopedWriteLock lock(mEntityMutex);
-      EntityMap::iterator toKill = mEntities.find(id);
-      if(toKill == mEntities.end())
+      EntityMap::iterator it = mEntities.find(id);
+      if(it == mEntities.end())
       {
          return false;
       }
-      mEntities.erase(toKill);
+      dtEntity::Entity* e = it->second;
+      mEntities.erase(it);
+      delete e;
       return true;
    }
 

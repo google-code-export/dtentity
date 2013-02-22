@@ -49,13 +49,14 @@ namespace dtEntityOSG
    ////////////////////////////////////////////////////////////////////////////////
    void NodeStore::SetNodeEntity(dtEntity::Entity* e)
    {
-      mNode->setUserData(e);
+      mNode->setUserData(new EntityData(e));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Entity* NodeStore::GetNodeEntity()
    {
-      return dynamic_cast<dtEntity::Entity*>(mNode->getUserData());
+       EntityData* ed = dynamic_cast<EntityData*>(mNode->getUserData());
+       return (ed == NULL) ? NULL : ed->mEntity;;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +104,8 @@ namespace dtEntityOSG
       
       if(entity)
       {
-         mNode->setUserData(entity);
+         osg::ref_ptr<EntityData> ed = new EntityData(entity);
+         mNode->setUserData(ed);
 
          // if node is already attached to a parent node owned by a component:
          if(GetParentComponent() != dtEntity::StringId())
