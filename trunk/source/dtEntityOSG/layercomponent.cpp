@@ -560,11 +560,12 @@ namespace dtEntityOSG
 
       geode->setNodeMask(GetVisibilityBits());
 
-      // store pointer to entity to make box identifiable for removal
       dtEntity::Entity* entity;
-      GetEntityManager().GetEntity(id, entity);
+      bool found = GetEntityManager().GetEntity(id, entity);
+      assert(found);
+      // store pointer to entity to make box identifiable for removal
+      geode->setUserData(new EntityData(entity));
 
-      geode->setUserData(entity);
       node->asGroup()->addChild(geode);
 
       // make box wireframe
@@ -605,7 +606,8 @@ namespace dtEntityOSG
       for(unsigned int i = 0; i < grp->getNumChildren(); ++i)
       {
          osg::Node* child = grp->getChild(i);
-         if(child->getName() == "SelectionBounds" && child->getUserData() == entity)
+         EntityData* ed = dynamic_cast<EntityData*>(child->getUserData());
+         if(child->getName() == "SelectionBounds" && ed && ed->mEntity->GetId() == id)
          {
             grp->removeChild(i, 1);
             return;
@@ -620,7 +622,8 @@ namespace dtEntityOSG
       for(unsigned int i = 0; i < grp->getNumChildren(); ++i)
       {
          osg::Node* child = grp->getChild(i);
-         if(child->getName() == "SelectionBounds" && child->getUserData() == entity)
+         EntityData* ed = dynamic_cast<EntityData*>(child->getUserData());
+         if(child->getName() == "SelectionBounds" && ed->mEntity->GetId() == id)
          {
             grp->removeChild(i, 1);
             return;

@@ -332,7 +332,7 @@ namespace dtEntity
       bool GetDerived(EntityId eid, ComponentType ctype, Component*& comp) const;
 
       // storage for entity objects.
-      typedef std::map<EntityId, osg::ref_ptr<Entity> > EntityMap;
+      typedef std::map<EntityId,Entity*> EntityMap;
       EntityMap mEntities;
 
       // controls access to mEntities.
