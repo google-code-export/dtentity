@@ -107,10 +107,21 @@ namespace dtEntityOSG
         */
       virtual void RequestRedraw(unsigned int contextid);
 
+      /**
+       * Get intersections between start and end and add them to isects vector
+       * @param start Start of intersection line
+       * @param end End of intersection lnie
+       * @param isects Vector return value for isect results
+       * @param nodemask Bit mask, used for selecting nodes for intersection
+       * @param layer Name of layer attach point component from which intersecition test will
+       *              be executed downwards
+       * @return true if an intersection was found
+       */
       virtual bool GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end,
          std::vector<dtEntity::WindowInterface::Intersection>& isects,
-         unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN
-         ) const;
+         unsigned int nodemask = dtEntity::NodeMasks::PICKABLE | dtEntity::NodeMasks::TERRAIN,
+          dtEntity::StringId layer = dtEntity::SID("default")
+      ) const;
 
 
    protected:

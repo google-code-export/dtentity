@@ -185,7 +185,7 @@ namespace dtEntityOSG
          return false;
       }      
       osg::Group* grp = current->GetAttachmentGroup();
-      bool success = grp->removeChild(attachedNode);  
+      grp->removeChild(attachedNode);
 
       //assert(success);
       if(attachedNode->getNumParents() != 0)
