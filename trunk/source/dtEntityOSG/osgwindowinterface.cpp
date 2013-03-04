@@ -527,7 +527,7 @@ namespace dtEntityOSG
 
    ////////////////////////////////////////////////////////////////////////////////
    bool OSGWindowInterface::GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end,
-         std::vector<dtEntity::WindowInterface::Intersection>& isects, unsigned int nodemask) const
+         std::vector<dtEntity::WindowInterface::Intersection>& isects, unsigned int nodemask, dtEntity::StringId layer) const
    {
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
       lsi = new osgUtil::LineSegmentIntersector(start, end);
@@ -536,8 +536,16 @@ namespace dtEntityOSG
       iv.setUseKdTreeWhenAvailable(true);
       iv.setTraversalMask(nodemask);
 
-      OSGSystemInterface* iface = static_cast<OSGSystemInterface*>(dtEntity::GetSystemInterface());
-      iface->GetPrimaryView()->getSceneData()->accept(iv);
+      dtEntityOSG::LayerAttachPointSystem* ls;
+      mEntityManager->GetES(ls);
+      dtEntityOSG::LayerAttachPointComponent* layercomp;
+      if(!ls->GetByName(layer, layercomp))
+      {
+         LOG_ERROR("Could not execute isect test, layer attach point not found!");
+         return false;
+      }
+
+      layercomp->GetNode()->accept(iv);
 
       if(!lsi->containsIntersections())
       {
