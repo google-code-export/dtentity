@@ -529,6 +529,10 @@ namespace dtEntityOSG
    bool OSGWindowInterface::GetIntersections(const dtEntity::Vec3d& start, const dtEntity::Vec3d& end,
          std::vector<dtEntity::WindowInterface::Intersection>& isects, unsigned int nodemask, dtEntity::StringId layer) const
    {
+      if(layer == dtEntity::StringId())
+      {
+         layer = dtEntity::SID("default");
+      }
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi;
       lsi = new osgUtil::LineSegmentIntersector(start, end);
 
