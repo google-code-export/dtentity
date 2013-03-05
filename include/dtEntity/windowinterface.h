@@ -110,13 +110,13 @@ namespace dtEntity
        * @param isects Vector return value for isect results
        * @param nodemask Bit mask, used for selecting nodes for intersection
        * @param layer Name of layer attach point component from which intersecition test will
-       *              be executed downwards
+       *              be executed downwards (default: layer "default")
        * @return true if an intersection was found
        */
       virtual bool GetIntersections(const Vec3d& start, const Vec3d& end,
          std::vector<Intersection>& isects,
          unsigned int nodemask = NodeMasks::PICKABLE | NodeMasks::TERRAIN,
-          dtEntity::StringId layer = dtEntity::SID("default")
+          dtEntity::StringId layer = dtEntity::StringId()
       ) const = 0;
 
    };	
