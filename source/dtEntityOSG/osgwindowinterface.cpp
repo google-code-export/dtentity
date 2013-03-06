@@ -519,10 +519,6 @@ namespace dtEntityOSG
       {
          view->requestRedraw();
       }
-      else
-      {
-         LOG_ERROR("RequestRedraw: No view with this contextid");
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
