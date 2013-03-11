@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Properties">
+  
+  <xs:group name="property">
+   <xs:choice>
+      <xs:element ref="arrayproperty" />
+      <xs:element ref="boolproperty" />
+	  <xs:element ref="charproperty" />
+      <xs:element ref="doubleproperty" />
+      <xs:element ref="floatproperty" />
+      <xs:element ref="groupproperty" />
+      <xs:element ref="intproperty" />
+      <xs:element ref="matrixproperty" />
+      <xs:element ref="quatproperty" />
+      <xs:element ref="stringproperty" />
+      <xs:element ref="uintproperty" />
+      <xs:element ref="vec2property" />
+      <xs:element ref="vec3property" />
+      <xs:element ref="vec4property" />
+    </xs:choice>
+  </xs:group>
+  
+  <xs:element name="arrayproperty">
+    <xs:complexType>
+     <xs:sequence minOccurs="0" maxOccurs="unbounded">
+       <xs:group ref="property" />
+     </xs:sequence>
+     <xs:attribute name="name" type="xs:string" use="required" />   
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="boolproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:boolean" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="charproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:string" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="doubleproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:double" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="floatproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:float" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="groupproperty">
+    <xs:complexType>
+     <xs:sequence minOccurs="0" maxOccurs="unbounded">
+       <xs:group ref="property" />
+     </xs:sequence>
+     <xs:attribute name="name" type="xs:string" use="required" />   
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="intproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:integer" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  
+<xs:element name="uintproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="value" type="xs:integer" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  
+  
+  <xs:element name="matrixproperty">
+    <xs:complexType>
+     <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required" />
+        </xs:extension>
+      </xs:simpleContent>    
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="quatproperty">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="x" type="xs:double" use="required" />
+     <xs:attribute name="y" type="xs:double" use="required" />
+     <xs:attribute name="z" type="xs:double" use="required" />
+     <xs:attribute name="w" type="xs:double" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="stringproperty">
+    <xs:complexType>
+     <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required" />
+        </xs:extension>
+      </xs:simpleContent>    
+   </xs:complexType>
+  </xs:element>
+
+  
+  <xs:element name="vec2property">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="x" type="xs:double" use="required" />
+     <xs:attribute name="y" type="xs:double" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="vec3property">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="x" type="xs:double" use="required" />
+     <xs:attribute name="y" type="xs:double" use="required" />
+     <xs:attribute name="z" type="xs:double" use="required" />
+   </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="vec4property">
+    <xs:complexType>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="x" type="xs:double" use="required" />
+     <xs:attribute name="y" type="xs:double" use="required" />
+     <xs:attribute name="z" type="xs:double" use="required" />
+     <xs:attribute name="w" type="xs:double" use="required" />
+   </xs:complexType>
+  </xs:element>
+
+
+</xs:schema>

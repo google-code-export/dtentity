@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
+<scene>
+	<libraries/>
+	<entitysystem type="GroundClamping">
+		<boolproperty name="Enabled" value="true"/>
+		<boolproperty name="FetchLODs" value="true"/>
+		<stringproperty name="IntersectLayer">default</stringproperty>
+	</entitysystem>
+	<entitysystem type="Script">
+		<boolproperty name="DebugEnabled" value="false"/>
+		<uintproperty name="DebugPort" value="9222"/>
+		<arrayproperty name="Scripts"/>
+	</entitysystem>
+	<maps>
+		<map path="maps/boids.dtemap"/>
+	</maps>
+</scene>
+
