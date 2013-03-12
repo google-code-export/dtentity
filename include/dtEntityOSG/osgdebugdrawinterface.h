@@ -254,7 +254,18 @@ namespace dtEntityOSG
        * Immediately remove all debug geometry
        */
       void Clear();
-   
+
+      /**
+        If context id is set then a redraw of that context is requested from OSG.
+        Only relevant when render on demand is used.
+        */
+      void SetContextId(unsigned int v)
+      {
+         mContextId = v;
+         mContextIdSet = true;
+      }
+      unsigned int GetContextId() const { return mContextId; }
+
    private:
       bool mEnabled;
 
@@ -269,6 +280,9 @@ namespace dtEntityOSG
       dtEntity::MessageFunctor mEnableFunctor;
       dtEntity::MessageFunctor mTickFunctor;
       dtEntity::StringId mLayerName;
+      int mContextId;
+      bool mContextIdSet;
+      void RequestRedraw();
    };
 
    inline OSGDebugDrawInterface* GetOSGDebugDrawInterface()
