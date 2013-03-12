@@ -21,6 +21,7 @@
 
 #include <dtEntityOSG/osgdebugdrawinterface.h>
 
+#include <dtEntity/windowinterface.h>
 #include <dtEntity/commandmessages.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntity/nodemasks.h>
@@ -58,6 +59,8 @@ namespace dtEntityOSG
    , mEnableFunctor(this, &OSGDebugDrawInterface::OnEnable)
    , mTickFunctor(this, &OSGDebugDrawInterface::Tick)
    , mLayerName(layerName)
+   , mContextId(0)
+   , mContextIdSet(false)
    {
       if(layerName == dtEntity::StringId())
       {
@@ -109,7 +112,7 @@ namespace dtEntityOSG
       else
       {
          layer->GetAttachmentGroup()->addChild(mGroupDepthTest);
-		   layer->GetAttachmentGroup()->addChild(mGroupNoDepthTest);         
+         layer->GetAttachmentGroup()->addChild(mGroupNoDepthTest);
       }
 
       mEntityManager->RegisterForMessages(dtEntity::EnableDebugDrawingMessage::TYPE, mEnableFunctor);
@@ -185,6 +188,7 @@ namespace dtEntityOSG
          if(geode->mTimeOfDeath < mCurrentTime)
          {
             mGroupDepthTest->removeChild(i);
+            RequestRedraw();
          }
          else
          {
@@ -198,6 +202,7 @@ namespace dtEntityOSG
          if(geode->mTimeOfDeath < mCurrentTime)
          {
             mGroupNoDepthTest->removeChild(i);
+            RequestRedraw();
          }
          else
          {
@@ -509,10 +514,11 @@ namespace dtEntityOSG
          {
            mGroupDepthTest->addChild(geode);
          }
-        else
-        {
+         else
+         {
            mGroupNoDepthTest->addChild(geode);
-        }
+         }
+         RequestRedraw();
       }
    }
 
@@ -532,10 +538,11 @@ namespace dtEntityOSG
       {
          mGroupDepthTest->addChild(geode);
       }
-	  else
-	  {
-		  mGroupNoDepthTest->addChild(geode);
-	  }
+      else
+      {
+        mGroupNoDepthTest->addChild(geode);
+      }
+      RequestRedraw();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -776,5 +783,14 @@ namespace dtEntityOSG
       lines[16] = m * p3; lines[17] = m * p3b;
 
       AddLines(lines, color, size, duration, depthTestEnabled);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGDebugDrawInterface::RequestRedraw()
+   {
+      if(mContextIdSet)
+      {
+         dtEntity::GetWindowInterface()->RequestRedraw(mContextId);
+      }
    }
 }
