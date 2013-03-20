@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="DtEntityMap">
+
+  <xs:include schemaLocation="properties.xsd"/>
+   
+  <xs:element name="map">    
+    <xs:complexType>   
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+       <xs:choice>
+        <xs:element ref="spawner" />
+        <xs:element ref="entity" />
+      </xs:choice>      
+      </xs:sequence>
+    </xs:complexType>   
+  </xs:element>
+  
+  <xs:element name="spawner">
+    <xs:complexType>   
+     <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="component" />    
+     </xs:sequence>
+     <xs:attribute name="name" type="xs:string" use="required" />
+     <xs:attribute name="parent" type="xs:string" />
+     <xs:attribute name="guicategory" type="xs:string" />
+     <xs:attribute name="addtospawnerstore" type="xs:string" />
+     <xs:attribute name="iconpath" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="entity">
+    <xs:complexType>   
+     <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="component" />    
+     </xs:sequence>
+     <xs:attribute name="spawner" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="component">
+    <xs:complexType> 
+     <xs:sequence minOccurs="0" maxOccurs="unbounded">
+       <xs:group ref="property" />
+     </xs:sequence>
+     <xs:attribute name="type" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
