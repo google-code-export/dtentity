@@ -1145,10 +1145,10 @@ namespace dtEntityQtWidgets
          for(i = esystems.begin(); i != esystems.end(); ++i)
          {
             if((*i)->GetAllProperties().size() != 0)
-            {
-               dtEntity::EntitySystemAddedMessage m;
+            {  dtEntity::EntitySystemAddedMessage m;
                m.SetComponentType((*i)->GetComponentType());
                m.SetComponentTypeString(dtEntity::GetStringFromSID((*i)->GetComponentType()));
+               m.SetSystemProperties((*i)->GetAllProperties());
                model->GetMessagePump().EnqueueMessage(m);
             }
          }
