@@ -1447,7 +1447,6 @@ namespace dtEntityQtWidgets
                   dtEntity::EntitySystemAddedMessage m;
                   m.SetComponentType((*i)->GetComponentType());
                   m.SetComponentTypeString(dtEntity::GetStringFromSID((*i)->GetComponentType()));
-				  m.SetSystemProperties((*i)->GetAllProperties());
                   model->EnqueueMessage(m);
                }
             }
