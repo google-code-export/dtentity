@@ -292,6 +292,31 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    /**
+    * This message gets sent when the method EntityManager::KillEntity method is
+    * called. 
+    */
+   class DT_ENTITY_EXPORT EntityKilledMessage
+      : public Message
+   {
+   public:
+
+      static const MessageType TYPE;
+      static const StringId AboutEntityId;
+
+      EntityKilledMessage();
+
+      virtual Message* Clone() const { return CloneContainer<EntityKilledMessage>(); }
+
+      EntityId GetAboutEntityId() const { return mAboutEntityId.Get(); }
+      void SetAboutEntityId(EntityId id) { mAboutEntityId.Set(id); }      
+
+   private:
+
+      UIntProperty mAboutEntityId;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   /**
     * Is sent when an entity was added to the selection
     */
    class DT_ENTITY_EXPORT EntitySelectedMessage

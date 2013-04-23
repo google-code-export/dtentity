@@ -32,6 +32,7 @@ namespace dtEntity
       em.RegisterMessageType<EndOfFrameMessage>(EndOfFrameMessage::TYPE);
       em.RegisterMessageType<EntityAddedToSceneMessage>(EntityAddedToSceneMessage::TYPE);
       em.RegisterMessageType<EntityDeselectedMessage>(EntityDeselectedMessage::TYPE);
+      em.RegisterMessageType<EntityKilledMessage>(EntityKilledMessage::TYPE);
       em.RegisterMessageType<EntityRemovedFromSceneMessage>(EntityRemovedFromSceneMessage::TYPE);
       em.RegisterMessageType<EntitySelectedMessage>(EntitySelectedMessage::TYPE);
       em.RegisterMessageType<EntitySystemAddedMessage>(EntitySystemAddedMessage::TYPE);
@@ -109,6 +110,16 @@ namespace dtEntity
       this->Register(EntityNameId, &mEntityName);
       this->Register(UniqueIdId, &mUniqueId);
       this->Register(MapNameId, &mMapName);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageType EntityKilledMessage::TYPE(SID("EntityKilledMessage"));
+   const StringId EntityKilledMessage::AboutEntityId(SID("AboutEntity"));
+  
+   EntityKilledMessage::EntityKilledMessage()
+      : Message(TYPE)
+   {
+      this->Register(AboutEntityId, &mAboutEntityId);      
    }
 
    ////////////////////////////////////////////////////////////////////////////////

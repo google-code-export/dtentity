@@ -605,6 +605,7 @@ namespace dtEntityQtWidgets
 
    public:
       FileSelectorWidget(const QString& filters, FilePathPropertyDelegate* dlgt, QWidget* parent = 0);
+      ~FileSelectorWidget();
       QLabel* mLabel;
 
       

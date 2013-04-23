@@ -47,5 +47,5 @@
 			</switchinput>
 		</inputs>
 	</arrayinput>
-
+	<fileinput propertyname="Path" filters="*.osg" />
 </delegates>   

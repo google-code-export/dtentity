@@ -165,6 +165,9 @@ namespace dtEntity
          return false;
       }
       mEntities.erase(toKill);
+      EntityKilledMessage msg;
+      msg.SetAboutEntityId(id);
+      GetMessagePump().EmitMessage(msg);
       return true;
    }
 

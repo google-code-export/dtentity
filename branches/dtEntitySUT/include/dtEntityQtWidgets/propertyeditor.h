@@ -167,9 +167,11 @@ namespace dtEntityQtWidgets
                   
       void EmitChanges();
       void OnEntitySelected(dtEntity::EntityId id);
+      void OnEntityKilled(dtEntity::EntityId id);
       void OnEntitySystemSelected(const QString& name);
       void OnSpawnerSelected(const QString& name, bool addToStore, const QString& category, const QString& iconPath);
       void OnMapSelected(const QString& name);
+      void OnSceneUnloaded();
       void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&);
       void ComponentDeleted(dtEntity::ComponentType);
       
@@ -327,14 +329,18 @@ namespace dtEntityQtWidgets
       void OnEntitySystemAdded(const dtEntity::Message& msg);
       void OnEntitySystemRemoved(const dtEntity::Message& msg);
       void OnComponentDataChanged(const dtEntity::Message& m);
+      void OnSceneUnloaded(const dtEntity::Message& m);
+      void OnEntityKilled(const dtEntity::Message& m);
 
       void SetupSlots(PropertyEditorModel* model, PropertyEditorView* view);
 
    signals:
 
       void EntitySelected(dtEntity::EntityId);
+      void EntityKilled(dtEntity::EntityId);
       void SpawnerSelected(const QString& name, bool addToStore, const QString& category, const QString& iconpath);
       void MapSelected(const QString& name);
+      void SceneUnloaded();
       void EntitySystemSelected(const QString& name);
       
       void ComponentRetrieved(dtEntity::ComponentType, const dtEntity::DynamicPropertyContainer&);
@@ -383,6 +389,8 @@ namespace dtEntityQtWidgets
       dtEntity::MessageFunctor mEntitySystemAddedFunctor;
       dtEntity::MessageFunctor mEntitySystemRemovedFunctor;
       dtEntity::MessageFunctor mComponentDataChangedFunctor;
+      dtEntity::MessageFunctor mSceneUnloadedFunctor;
+      dtEntity::MessageFunctor mEntityKilledFunctor;
       
    };
 }
