@@ -760,12 +760,27 @@ namespace dtEntityQtWidgets
       emit EditEntity(QString("%1").arg(id));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorModel::OnEntityKilled(dtEntity::EntityId id)
+   {
+      if(mSelectedEntity == id)
+      {
+         Reset();
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
-  void PropertyEditorModel::OnMapSelected(const QString& name)
-  {
+   void PropertyEditorModel::OnMapSelected(const QString& name)
+   {
      Reset();
      emit EditNone();
-  }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorModel::OnSceneUnloaded()
+   {
+     Reset();
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorModel::OnEntitySystemSelected(const QString& name)
@@ -1232,6 +1247,8 @@ namespace dtEntityQtWidgets
       mEntityManager->UnregisterForMessages(dtEntity::EntitySystemAddedMessage::TYPE, mEntitySystemAddedFunctor);      
       mEntityManager->UnregisterForMessages(dtEntity::EntitySystemRemovedMessage::TYPE, mEntitySystemRemovedFunctor);
       mEntityManager->UnregisterForMessages(dtEntityQtWidgets::ComponentDataChangedMessage::TYPE, mComponentDataChangedFunctor);
+      mEntityManager->UnregisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, mSceneUnloadedFunctor);
+      mEntityManager->UnregisterForMessages(dtEntity::EntityKilledMessage::TYPE, mEntityKilledFunctor);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1242,6 +1259,7 @@ namespace dtEntityQtWidgets
       connect(this, SIGNAL(SpawnerSelected(const QString&, bool, const QString&, const QString&)),
               model, SLOT(OnSpawnerSelected(const QString&, bool, const QString&, const QString&)));
       connect(this, SIGNAL(MapSelected(const QString&)), model, SLOT(OnMapSelected(const QString&)));
+      connect(this, SIGNAL(SceneUnloaded()), model, SLOT(OnSceneUnloaded()));
       connect(this, SIGNAL(EntitySystemSelected(const QString&)), model, SLOT(OnEntitySystemSelected(const QString&)));
       connect(
          this, 
@@ -1256,6 +1274,8 @@ namespace dtEntityQtWidgets
          model, 
          SLOT(ComponentDeleted(dtEntity::ComponentType))
       );
+
+      connect(this, SIGNAL(EntityKilled(dtEntity::EntityId)), model, SLOT(OnEntityKilled(dtEntity::EntityId)));
 
       connect(this, SIGNAL(EnableAddComponent(bool)), view, SLOT(EnableAddComponent(bool)));
       connect(this, SIGNAL(ComponentDataChanged(dtEntity::EntityId, dtEntity::StringId)),
@@ -1349,6 +1369,12 @@ namespace dtEntityQtWidgets
       mComponentDataChangedFunctor = dtEntity::MessageFunctor(this, &PropertyEditorController::OnComponentDataChanged);
       mEntityManager->RegisterForMessages(dtEntityQtWidgets::ComponentDataChangedMessage::TYPE, mComponentDataChangedFunctor);
 
+      mSceneUnloadedFunctor = dtEntity::MessageFunctor(this, &PropertyEditorController::OnSceneUnloaded);
+      mEntityManager->RegisterForMessages(dtEntity::SceneUnloadedMessage::TYPE, mSceneUnloadedFunctor);
+
+      mEntityKilledFunctor = dtEntity::MessageFunctor(this, &PropertyEditorController::OnEntityKilled);
+      mEntityManager->RegisterForMessages(dtEntity::EntityKilledMessage::TYPE, mEntityKilledFunctor);
+      
       SetupDelegates();
 
    }
@@ -1447,6 +1473,20 @@ namespace dtEntityQtWidgets
    {
       std::string mapName = msg.GetString(dtEntity::SIDHash("Name"));
       emit(MapSelected(mapName.c_str()));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorController::OnSceneUnloaded(const dtEntity::Message& msg)
+   {
+      emit(SceneUnloaded());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorController::OnEntityKilled(const dtEntity::Message& msg)
+   {
+      const dtEntity::EntityKilledMessage& m = static_cast<const dtEntity::EntityKilledMessage&>(msg);     
+
+      emit(EntityKilled(m.GetAboutEntityId()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1728,6 +1768,11 @@ namespace dtEntityQtWidgets
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorController::OnAddComponentToEntity(dtEntity::EntityId id, const QString& ctypestr)
    {
+      if(!mEntityManager->EntityExists(id))
+      {
+         LOG_ERROR("Entity does not exist, cannot add component!");
+         return;
+      }
       dtEntity::EntitySystem* es;
       dtEntity::ComponentType ctype = dtEntity::SIDHash(ctypestr.toStdString());
       bool found = mEntityManager->GetEntitySystem(ctype, es);

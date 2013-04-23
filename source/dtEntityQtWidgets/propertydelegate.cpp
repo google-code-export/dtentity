@@ -230,7 +230,7 @@ namespace dtEntityQtWidgets
      const QModelIndex& index) const
    {
      QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
-     editor->setSingleStep(0.01);
+     editor->setSingleStep(1.0);
      editor->setDecimals(5);
      editor->setMaximum(FLT_MAX);
      editor->setMinimum(-FLT_MAX);
@@ -568,7 +568,7 @@ namespace dtEntityQtWidgets
      const QModelIndex& index) const
    {
      QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
-     editor->setSingleStep(0.01);
+     editor->setSingleStep(1.0);
      editor->setDecimals(5);
      editor->setMaximum(DBL_MAX);
      editor->setMinimum(-DBL_MAX);
@@ -1143,12 +1143,18 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   FileSelectorWidget::~FileSelectorWidget()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void FileSelectorWidget::GetFile()
    {
+      bool hidden = this->isHidden();
       AssetSelector sel (mFilters, this);
       if(sel.exec() == QDialog::Accepted)
       {
-         if(!this->isHidden())
+         if(!hidden)
          {
             mLabel->setText(sel.GetSelected());
          }
