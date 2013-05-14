@@ -99,7 +99,7 @@ namespace dtEntityQtWidgets
 #if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 96)
           OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
 #else
-         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext);
+         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
 #endif
          if (sharedWin != NULL)
          {
@@ -166,7 +166,7 @@ namespace dtEntityQtWidgets
       {
           setState( new osg::State );
           getState()->setGraphicsContext(this);
-#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 96)
+#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 93)
           if (_traits.valid() && _traits->sharedContext.valid())
 #else
           if (_traits.valid() && _traits->sharedContext)
