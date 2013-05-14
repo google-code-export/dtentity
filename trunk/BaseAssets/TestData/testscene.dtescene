@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <scene>
 
-  <entitysystem type="Application">
-    <doubleproperty name="TimeScale" value="3" />
-  </entitysystem>
-
-
   <maps>
     <map path="TestData/testmap.dtemap"/>
   </maps>

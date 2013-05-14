@@ -27,7 +27,7 @@
   </spawner>  
 
   <entity>
-    <component type="PositionAttitudeTransform">
+    <component type="Velocity">
       <vec3property name="Position" x="1" y="2" z="3" />
     </component>
   </entity>

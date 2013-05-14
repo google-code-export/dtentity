@@ -63,3 +63,9 @@ TEST(InitOsgViewer)
 
    ComponentPluginManager::DestroyInstance();
 }
+
+int main()
+{
+ int ret = UnitTest::RunAllTests();
+ return ret;
+}
