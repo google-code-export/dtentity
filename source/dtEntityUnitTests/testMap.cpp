@@ -21,19 +21,44 @@
 
 #include <UnitTest++.h>
 #include <dtEntity/init.h>
+#include <dtEntity/core.h>
 #include <dtEntity/mapcomponent.h>
 #include <dtEntity/spawner.h>
 #include <dtEntity/entitymanager.h> 
-#include <dtEntityOSG/positionattitudetransformcomponent.h>
+#include <dtEntity/dynamicscomponent.h>
+#include <dtEntity/systeminterface.h>
 #include <osgDB/FileUtils>
 
 using namespace UnitTest;
 using namespace dtEntity;
 
+class MySystemInterface : public dtEntity::SystemInterface
+{
+public:
+    virtual ~MySystemInterface() {}
+    virtual void EmitTickMessagesAndQueuedMessages() {}
+    virtual void EmitPostUpdateMessage() {}
+    virtual float GetDeltaSimTime() const { return 0; }
+    virtual float GetDeltaRealTime() const { return 0; }
+    virtual float GetTimeScale() const { return 0; }
+    virtual void SetTimeScale(float) {}
+    virtual double GetSimulationTime() const { return 0; }
+    virtual void SetSimulationTime(double) {}
+    virtual void SetSimulationClockTime(Timer_t) {}
+    virtual Timer_t GetSimulationClockTime() const { return 0; }
+    virtual Timer_t GetRealClockTime() { return 0; }
+    virtual std::string FindDataFile(const std::string& filename) { return osgDB::findDataFile(filename); }
+    virtual bool FileExists(const std::string& filename) { return osgDB::fileExists(filename); }
+    virtual int GetArgC() { return 0; }
+    virtual const char** GetArgV() { return NULL; }
+
+};
+
 struct MapFixture
 {
    MapFixture()
    {
+      dtEntity::SetSystemInterface(new MySystemInterface());
       SetupDataPaths(0, NULL, true);
       dtEntity::AddDefaultEntitySystemsAndFactories(0, NULL, mEntityManager);
       mEntityManager.GetEntitySystem(MapComponent::TYPE, mMapSystem);
@@ -42,6 +67,7 @@ struct MapFixture
    ~MapFixture()
    {
       ComponentPluginManager::DestroyInstance();
+      delete dtEntity::GetSystemInterface();
    }
 
    EntityManager mEntityManager;
@@ -55,7 +81,8 @@ TEST(IsBaseAssetsEnvVariableSet)
 
 TEST_FIXTURE(MapFixture, SpawnerCanBeLoaded)
 {
-   mMapSystem->LoadMap("TestData/testmap.dtemap");
+   bool found = mMapSystem->LoadMap("TestData/testmap.dtemap");
+   CHECK(found);
    dtEntity::Spawner* spawner;
    bool spawnerfound = mMapSystem->GetSpawner("TestSpawner", spawner);
    CHECK(spawnerfound);
@@ -64,9 +91,10 @@ TEST_FIXTURE(MapFixture, SpawnerCanBeLoaded)
 
 TEST_FIXTURE(MapFixture, SpawnerHeaderData)
 {
-   mMapSystem->LoadMap("TestData/testmap.dtemap");
+   bool found = mMapSystem->LoadMap("TestData/testmap.dtemap");
+   CHECK(found);
    dtEntity::Spawner* spawner;
-   bool found = mMapSystem->GetSpawner("TestSpawner", spawner);
+   found = mMapSystem->GetSpawner("TestSpawner", spawner);
    CHECK(found);
    if(found)
    {
@@ -184,15 +212,11 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
 
       if(!mEntityManager.HasEntitySystem(dtEntity::SID("PositionAttitudeTransform")))
       {
-         mEntityManager.AddEntitySystem(*new dtEntityOSG::PositionAttitudeTransformSystem(mEntityManager));
+         mEntityManager.AddEntitySystem(*new dtEntity::DynamicsSystem(mEntityManager));
       }
-      dtEntityOSG::PositionAttitudeTransformComponent* transcomp;
-      entity->CreateComponent(transcomp);
-      transcomp->SetPosition(osg::Vec3(1,2,3));
-      dtEntity::PropertyArray children;
-      children.push_back(new StringProperty("Child1"));
-      children.push_back(new StringProperty("Child2"));
-      transcomp->SetChildren(children);
+      dtEntity::DynamicsComponent* dyncomp;
+      entity->CreateComponent(dyncomp);
+      dyncomp->SetVelocity(osg::Vec3(1,2,3));
       
       dtEntity::MapComponent* mapcomp;
       entity->CreateComponent(mapcomp);
@@ -216,20 +240,13 @@ TEST_FIXTURE(MapFixture, SaveMapTest)
       CHECK(canFindEntity);
       if(!canFindEntity) return;
 
-      dtEntityOSG::PositionAttitudeTransformComponent* transcomp;
-      entity->GetComponent(transcomp);
-      osg::Vec3 pos = transcomp->GetPosition();
-      CHECK_CLOSE(pos[0], 1, 0.1);
-      CHECK_CLOSE(pos[1], 2, 0.1);
-      CHECK_CLOSE(pos[2], 3, 0.1);
-      CHECK_EQUAL((unsigned int)2, transcomp->GetChildren().size());
-      dtEntity::Property* p1 = transcomp->GetChildren()[0];
-      dtEntity::Property* p2 = transcomp->GetChildren()[1];
-
-      CHECK_EQUAL("Child1", p1->StringValue());
-      CHECK_EQUAL("Child2", p2->StringValue());
-
-
+      dtEntity::DynamicsComponent* dyncomp;
+      entity->GetComponent(dyncomp);
+      osg::Vec3 vel = dyncomp->GetVelocity();
+      CHECK_CLOSE(vel[0], 1, 0.1);
+      CHECK_CLOSE(vel[1], 2, 0.1);
+      CHECK_CLOSE(vel[2], 3, 0.1);    
+     
    }
 
    std::remove(targetpath.c_str());

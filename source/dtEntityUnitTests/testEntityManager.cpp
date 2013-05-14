@@ -21,7 +21,6 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitysystem.h>
-#include <dtEntityOSG/layercomponent.h>
 #include <dtEntity/mapcomponent.h>
 #include <UnitTest++.h>
 
@@ -130,16 +129,10 @@ namespace EMTest
    TEST(GetEntitySystem)
    {
       EntityManager* em = new EntityManager();
-      dtEntityOSG::LayerSystem* layersys = new dtEntityOSG::LayerSystem(*em);
-      em->AddEntitySystem(*layersys);
-
-      MapSystem* mapsys = new MapSystem(*em);
-      em->AddEntitySystem(*mapsys);
       
-      dtEntityOSG::LayerSystem* layersys2;
-      CHECK(em->GetES(layersys2));
-      CHECK_EQUAL(layersys, layersys2);
-
+      MapSystem* mapsys = new MapSystem(*em);
+      em->AddEntitySystem(*mapsys);      
+     
       MapSystem* mapsys2;
       CHECK(em->GetES(mapsys2));
       CHECK_EQUAL(mapsys, mapsys2);

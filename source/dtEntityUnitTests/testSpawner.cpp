@@ -20,18 +20,17 @@
 
 
 #include <UnitTest++.h>
-
+#include <osg/Vec3>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/propertycontainer.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntityOSG/positionattitudetransformcomponent.h>
+#include <dtEntity/dynamicscomponent.h>
 #include <dtEntity/spawner.h>
 #include <UnitTest++.h>
 
 
 using namespace UnitTest;
 using namespace dtEntity;
-using namespace dtEntityOSG;
 
 TEST(SpawnComponent)
 {
@@ -41,13 +40,13 @@ TEST(SpawnComponent)
    
    EntityManager* em = new EntityManager();
    em->AddEntitySystem(*new MapSystem(*em));
-   em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
+   em->AddEntitySystem(*new DynamicsSystem(*em));
 
    Spawner* spawner = new Spawner("mymap", "");
 
    GroupProperty pprops;
-   pprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(33,66,99)));
-   spawner->AddComponent(PositionAttitudeTransformComponent::TYPE, pprops);
+   pprops.Add(DynamicsComponent::VelocityId, new Vec3Property(osg::Vec3(33,66,99)));
+   spawner->AddComponent(DynamicsComponent::TYPE, pprops);
 
    
    Entity* entity;
@@ -55,10 +54,10 @@ TEST(SpawnComponent)
 
    spawner->Spawn(*entity);
 
-   PositionAttitudeTransformComponent* component;
+   DynamicsComponent* component;
    CHECK(entity->GetComponent(component));
 
-   Property* prop = component->Get(PositionAttitudeTransformComponent::PositionId);
+   Property* prop = component->Get(DynamicsComponent::VelocityId);
    CHECK(prop != NULL);
 
    CHECK_EQUAL(prop->Vec3Value()[0], 33.0f);
@@ -72,16 +71,16 @@ TEST(SpawnHierarchy)
    Spawner* childSpawner = new Spawner("Bla2", "mapname",parentSpawner);   
 
    GroupProperty parentprops;
-   parentprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(33,66,99)));
-   parentSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, parentprops);
+   parentprops.Add(DynamicsComponent::VelocityId, new Vec3Property(osg::Vec3(33,66,99)));
+   parentSpawner->AddComponent(DynamicsComponent::TYPE, parentprops);
 
    GroupProperty childprops;
-   childprops.Add(PositionAttitudeTransformComponent::PositionId, new Vec3Property(osg::Vec3(333,666,999)));
-   childSpawner->AddComponent(PositionAttitudeTransformComponent::TYPE, childprops);
+   childprops.Add(DynamicsComponent::VelocityId, new Vec3Property(osg::Vec3(333,666,999)));
+   childSpawner->AddComponent(DynamicsComponent::TYPE, childprops);
 
    EntityManager* em = new EntityManager();
    em->AddEntitySystem(*new MapSystem(*em));
-   em->AddEntitySystem(*new PositionAttitudeTransformSystem(*em));
+   em->AddEntitySystem(*new DynamicsSystem(*em));
 
    CHECK(childSpawner->GetParent() == parentSpawner);
    
@@ -91,10 +90,10 @@ TEST(SpawnHierarchy)
 
    childSpawner->Spawn(*entity);
 
-   PositionAttitudeTransformComponent* component;
+   DynamicsComponent* component;
    CHECK(entity->GetComponent(component));
 
-   Property* prop = component->Get(PositionAttitudeTransformComponent::PositionId);
+   Property* prop = component->Get(DynamicsComponent::VelocityId);
    CHECK(prop != NULL);
 
    CHECK_EQUAL(prop->Vec3Value()[0], 333.0f);
