@@ -96,10 +96,10 @@ namespace dtEntityQtWidgets
       QGLWidget* sharedContextWidget = NULL;
       if (traits->sharedContext != NULL)
       {
-#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 96)
+#if (OSG_VERSION_GREATER_OR_EQUAL(3,1,2) && OPENSCENEGRAPH_SOVERSION >= 93)
           OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
 #else
-         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext.get());
+         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext);
 #endif
          if (sharedWin != NULL)
          {

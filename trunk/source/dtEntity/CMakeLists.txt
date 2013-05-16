@@ -54,6 +54,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/hash.h
   ${HEADER_PATH}/debugdrawinterface.h
   ${HEADER_PATH}/defaultentitysystem.h
+  ${HEADER_PATH}/dynamiclibrary.h
   ${HEADER_PATH}/dynamicscomponent.h
   ${HEADER_PATH}/dynamicproperty.h
   ${HEADER_PATH}/entity.h
@@ -105,6 +106,7 @@ SET(LIB_REPLACE
 SET(LIB_SOURCES
   componentfactories.cpp
   componentpluginmanager.cpp  
+  dynamiclibrary.cpp
   entity.cpp
   entitymanager.cpp
   hash.cpp
