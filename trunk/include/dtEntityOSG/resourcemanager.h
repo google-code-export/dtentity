@@ -21,7 +21,7 @@
 */
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityOSG/export.h>
 #include <dtEntity/singleton.h>
 #include <map>
 #include <string>
@@ -33,8 +33,11 @@ namespace osg
 
 namespace dtEntity
 {
-   class EntityManager;
+    class EntityManager;
+}
 
+namespace dtEntityOSG
+{
    namespace ResourceManagerOptions
    {
       enum e
@@ -49,7 +52,7 @@ namespace dtEntity
    }
    
    ///////////////////////////////////////////////////////////////////////////
-   class DT_ENTITY_EXPORT ResourceManager 
+   class DTENTITY_OSG_EXPORT ResourceManager 
       : public dtEntity::Singleton<ResourceManager>
    {
    public:
@@ -62,7 +65,7 @@ namespace dtEntity
        * @param options Loading options.
        * @return node, NULL if not found
        */
-      osg::ref_ptr<osg::Node> GetNode(EntityManager& em, const std::string& path, unsigned int options = ResourceManagerOptions::Default);
+      osg::ref_ptr<osg::Node> GetNode(dtEntity::EntityManager& em, const std::string& path, unsigned int options = ResourceManagerOptions::Default);
 
       /**
        * @return true if this resource resides in the cache
@@ -79,7 +82,7 @@ namespace dtEntity
        * Call this method to notify the resource manager that this resource has changed
        * and should be reloaded
        */
-      void TriggerReload(const std::string& path, EntityManager& em);
+      void TriggerReload(const std::string& path, dtEntity::EntityManager& em);
 
    private:
       NodeStore mNodeStore;
