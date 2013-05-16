@@ -294,8 +294,7 @@ namespace dtEntity
    bool MapSystem::LoadScene(const std::string& path)
    {
       // get data path containing this map
-      std::string scenedatapath = "";
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
+      
       std::string abspath = GetSystemInterface()->FindDataFile(path);
       if(abspath == "")
       {
@@ -303,15 +302,9 @@ namespace dtEntity
          return false;
       }
 
-      for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
-      {
-         std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
-         if(osgDB::equalCaseInsensitive(datapath, abspath.substr(0, datapath.length())))
-         {
-            scenedatapath = *i;
-            break;
-         }
-      }
+      std::string scenedatapath = GetSystemInterface()->GetDataFilePathFromFilePath(abspath);
+
+      
       if(scenedatapath == "")
       {
          LOG_ERROR("No data path for scene found!");
@@ -403,21 +396,13 @@ namespace dtEntity
       }
 
       // get data path containing this map
-      std::string mapdatapath = "";
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
       std::string abspath = GetSystemInterface()->FindDataFile(path);
-      for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
-      {
-         std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
-         if(osgDB::equalCaseInsensitive(datapath, abspath.substr(0, datapath.length())))
-         {
-            mapdatapath = *i;
-            break;
-         }
-      }
+      std::string mapdatapath = dtEntity::GetSystemInterface()->GetDataFilePathFromFilePath(abspath);
+      
+      assert(mapdatapath != "");
+
       LoadedMaps::size_type mapsaveorder = mLoadedMaps.size();
 
-      assert(mapdatapath != "");
 
       MapBeginLoadMessage msg;
       msg.SetMapPath(path);

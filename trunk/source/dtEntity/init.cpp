@@ -27,8 +27,7 @@
 #include <dtEntity/systeminterface.h>
 
 #include <osg/Notify>
-#include <osgDB/FileNameUtils>
-#include <osgDB/FileUtils>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -39,7 +38,7 @@
 
 namespace dtEntity
 {
-
+    
    ////////////////////////////////////////////////////////////////////////////////
    // a simple log handler that forwards log messages to osg log system
     void ConsoleLogHandler::LogMessage(LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
@@ -72,14 +71,22 @@ namespace dtEntity
    #else
       std::string cwd = getcwd(NULL, 0);
    #endif
+
+
+    #if defined(WIN32) && !defined(__CYGWIN__)
+        char pathsep = '\\';
+    #else
+        char pathsep =  '/';
+    #endif
+    
       if(GetSystemInterface()->FileExists("ProjectAssets"))
       {
-         projectassets = cwd + osgDB::getNativePathSeparator() + "ProjectAssets";
+         projectassets = cwd + pathsep + "ProjectAssets";
       }
 
       if(GetSystemInterface()->FileExists("BaseAssets"))
       {
-         baseassets = cwd + osgDB::getNativePathSeparator() + "BaseAssets";
+         baseassets = cwd + pathsep + "BaseAssets";
       }
 
       const char* env_projectassets = getenv("DTENTITY_PROJECTASSETS");
@@ -123,15 +130,9 @@ namespace dtEntity
 
       if((projectassets == "" || baseassets == "") && checkPaths)
       {
-         std::cout << "Please give argument --projectAssets and --baseAssets with path to project assets dir!";
+         LOG_ERROR("Please give argument --projectAssets and --baseAssets with path to project assets dir!");
          return false;
       }
-
-      projectassets = osgDB::convertFileNameToUnixStyle(projectassets);
-      baseassets = osgDB::convertFileNameToUnixStyle(baseassets);
-
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-
 
    #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
       const char separator = ';';
@@ -145,19 +146,15 @@ namespace dtEntity
          std::vector<std::string> pathsplit = dtEntity::split(projectassets, separator);
          for(unsigned int i = 0; i < pathsplit.size(); ++i)
          {
-            if(std::find(paths.begin(), paths.end(), pathsplit[i]) == paths.end())
-            {
-               paths.push_back(pathsplit[i]);
-            }
+             dtEntity::GetSystemInterface()->AddDataFilePath(pathsplit[i]);            
          }
       }
 
-      if(!baseassets.empty() && (std::find(paths.begin(), paths.end(), baseassets) == paths.end()))
+      if(!baseassets.empty())
       {
-         paths.push_back(baseassets);
+         dtEntity::GetSystemInterface()->AddDataFilePath(baseassets);
       }
 
-      osgDB::setDataFilePathList(paths);
       return true;
 
    }
