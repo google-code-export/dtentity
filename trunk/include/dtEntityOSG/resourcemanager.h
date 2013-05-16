@@ -25,11 +25,7 @@
 #include <dtEntity/singleton.h>
 #include <map>
 #include <string>
-
-namespace osg
-{
-   class Node;
-}
+#include <osg/Node>
 
 namespace dtEntity
 {

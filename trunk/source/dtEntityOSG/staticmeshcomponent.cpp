@@ -21,7 +21,7 @@
 #include <dtEntityOSG/staticmeshcomponent.h>
 
 #include <dtEntity/nodemasks.h>
-#include <dtEntity/resourcemanager.h>
+#include <dtEntityOSG/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 #include <osgDB/FileUtils>
 
@@ -106,25 +106,25 @@ namespace dtEntityOSG
       }
       else
       {
-         unsigned int options = dtEntity::ResourceManagerOptions::DeepCopy;
+         unsigned int options = ResourceManagerOptions::DeepCopy;
          if(cacheHint == CacheAllId)
          {
-           options = dtEntity::ResourceManagerOptions::ShallowCopy;
+           options = ResourceManagerOptions::ShallowCopy;
          }
          else if(cacheHint == CacheNodesId)
          {
-            options = dtEntity::ResourceManagerOptions::CopyNodes;
+            options = ResourceManagerOptions::CopyNodes;
          }
          else if(cacheHint == CacheHardwareMeshesId)
          {
-            options = dtEntity::ResourceManagerOptions::CopyHardwareMeshes;
+            options = ResourceManagerOptions::CopyHardwareMeshes;
          }
          if(GetOptimize())
          {
-            options |= dtEntity::ResourceManagerOptions::DoOptimization;
+            options |= ResourceManagerOptions::DoOptimization;
          }
 
-         dtEntity::ResourceManager& rm = dtEntity::ResourceManager::GetInstance();
+         ResourceManager& rm = ResourceManager::GetInstance();
          osg::ref_ptr<osg::Node> meshnode = rm.GetNode(GetNodeEntity()->GetEntityManager(), path, options);
          if(meshnode == NULL)
          {
