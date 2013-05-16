@@ -79,7 +79,6 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/property.h
   ${HEADER_PATH}/propertycontainer.h
   ${HEADER_PATH}/rapidxmlmapencoder.h
-  ${HEADER_PATH}/resourcemanager.h
   ${HEADER_PATH}/scriptaccessor.h
   ${HEADER_PATH}/singleton.h
   ${HEADER_PATH}/spawner.h
@@ -119,7 +118,6 @@ SET(LIB_SOURCES
   property.cpp
   propertycontainer.cpp
   rapidxmlmapencoder.cpp
-  resourcemanager.cpp
   scriptaccessor.cpp
   spawner.cpp
   stringid.cpp

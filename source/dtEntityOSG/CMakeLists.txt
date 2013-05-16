@@ -41,6 +41,7 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/pathcomponent.h
   ${HEADER_PATH}/pickshapecomponent.h
   ${HEADER_PATH}/positionattitudetransformcomponent.h
+  ${HEADER_PATH}/resourcemanager.h
   ${HEADER_PATH}/shadercomponent.h
   ${HEADER_PATH}/shadowcomponent.h
   ${HEADER_PATH}/skyboxcomponent.h
@@ -77,6 +78,7 @@ SET(LIB_SOURCES_REPLACE
   particlecomponent.cpp
   pickshapecomponent.cpp
   positionattitudetransformcomponent.cpp
+  resourcemanager.cpp
   shadercomponent.cpp
   shadowcomponent.cpp
   skyboxcomponent.cpp

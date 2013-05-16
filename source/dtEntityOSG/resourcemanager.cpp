@@ -18,7 +18,7 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/resourcemanager.h>
+#include <dtEntityOSG/resourcemanager.h>
 
 #include <dtEntity/core.h>
 #include <dtEntity/systeminterface.h>
@@ -29,14 +29,14 @@
 #include <osgDB/FileUtils>
 #include <osgUtil/Optimizer>
 
-namespace dtEntity
+namespace dtEntityOSG
 {
    ///////////////////////////////////////////////////////////////////////////
-   osg::ref_ptr<osg::Node> ResourceManager::GetNode(EntityManager& em, const std::string& path, unsigned int options)
+    osg::ref_ptr<osg::Node> ResourceManager::GetNode(dtEntity::EntityManager& em, const std::string& path, unsigned int options)
    {
       osg::Node* ret = NULL;
 
-      std::string abspath = GetSystemInterface()->FindDataFile(path);
+      std::string abspath = dtEntity::GetSystemInterface()->FindDataFile(path);
 
       if(abspath.empty())
       {
@@ -118,7 +118,7 @@ namespace dtEntity
          mNodeStore[abspath] = node;
       }
 
-      ResourceLoadedMessage msg;
+      dtEntity::ResourceLoadedMessage msg;
       msg.SetPath(abspath);
       em.EmitMessage(msg);
 
@@ -156,11 +156,11 @@ namespace dtEntity
    }
 
    ///////////////////////////////////////////////////////////////////////////
-   void ResourceManager::TriggerReload(const std::string& path, EntityManager& em)
+   void ResourceManager::TriggerReload(const std::string& path, dtEntity::EntityManager& em)
    {
       RemoveFromNodeCache(path);
       
-      ResourceChangedMessage msg;
+      dtEntity::ResourceChangedMessage msg;
       msg.SetPath(path);
       em.EmitMessage(msg);
    

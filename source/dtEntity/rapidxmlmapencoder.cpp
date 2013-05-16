@@ -33,9 +33,6 @@
 #include <osg/Vec2>
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <osgDB/FileNameUtils>
-#include <osgDB/FileUtils>
-#include <osgDB/ReadFile>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -807,7 +804,7 @@ namespace dtEntity
                      if(strcmp(currLibNode->name(), "library") == 0)
                      {
                         std::string fullLibName =
-                           osgDB::Registry::instance()->createLibraryNameForNodeKit(currLibNode->value());
+                            currLibNode->value() + ComponentPluginManager::GetLibExtension();
                         pluginManager.AddPlugin(fullLibName, true);
                      }
                   }
