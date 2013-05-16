@@ -28,7 +28,7 @@
 #include <dtEntity/systeminterface.h>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
-#include <osgDB/DynamicLibrary>
+#include <dtEntity/dynamiclibrary.h>
 #include <dtEntity/log.h>
 
 #include <iostream>
@@ -244,13 +244,13 @@ namespace dtEntity
    {
       // use library sharing manager to do the actual library loading
 
-      osg::ref_ptr<osgDB::DynamicLibrary> dynlib = osgDB::DynamicLibrary::loadLibrary(path);
+      dtEntity::DynamicLibrary* dynlib = dtEntity::DynamicLibrary::loadLibrary(path);
       if(dynlib == NULL)
       {
          LOG_WARNING("Could not load library " + path);
          return;
       }
-      osgDB::DynamicLibrary::PROC_ADDRESS messagesaddr = dynlib->getProcAddress(std::string("dtEntityMessages_") + pluginName);
+      dtEntity::DynamicLibrary::PROC_ADDRESS messagesaddr = dynlib->getProcAddress(std::string("dtEntityMessages_") + pluginName);
 
       if (messagesaddr)
       {
@@ -261,7 +261,7 @@ namespace dtEntity
 
       }
 
-      osgDB::DynamicLibrary::PROC_ADDRESS pluginaddr = dynlib->getProcAddress(std::string("dtEntity_") + pluginName);
+      dtEntity::DynamicLibrary::PROC_ADDRESS pluginaddr = dynlib->getProcAddress(std::string("dtEntity_") + pluginName);
 
       //Make sure the plugin actually implemented these functions and they
       //have been exported.
@@ -282,9 +282,6 @@ namespace dtEntity
             {
                ComponentPluginFactory* factory = *i;
                factory->SetLibrary(dynlib);
-
-               // cannot cleanly unload library yet
-               dynlib->ref();
                factories.push_back(factory);
             }
          }

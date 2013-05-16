@@ -104,6 +104,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                             ${QT_QTOPENGL_LIBRARIES}
                             ${OPENSCENEGRAPH_LIBRARIES}
 				            dtEntity
+				            dtEntityOSG
 )
 
 SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")

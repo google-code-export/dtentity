@@ -315,6 +315,12 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string OSGSystemInterface::FindLibraryFile(const std::string& filename)
+   {
+      return osgDB::findLibraryFile(filename);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool OSGSystemInterface::FileExists(const std::string& filename)
    {
       return osgDB::fileExists(filename);

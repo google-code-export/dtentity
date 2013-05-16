@@ -23,7 +23,7 @@
 #include <list>
 #include <dtEntity/entityid.h>
 #include <osg/ref_ptr>
-#include <osgDB/DynamicLibrary>
+#include <dtEntity/dynamiclibrary.h>
 #include <dtEntity/stringid.h>
 
 namespace dtEntity
@@ -42,8 +42,14 @@ namespace dtEntity
    {
    public:
 
+      ComponentPluginFactory()
+         : mLibrary(NULL)
+      {
+      }
+      
       virtual ~ComponentPluginFactory()
       {
+          delete mLibrary;
       }
 
       /** get the name of the entity system (the type string) */
@@ -70,12 +76,19 @@ namespace dtEntity
       */
       virtual void GetDependencies(std::list<ComponentType>&) {}
 
-      osgDB::DynamicLibrary* GetLibrary() const { return mLibrary.get(); }
-      void SetLibrary(osgDB::DynamicLibrary* l) { mLibrary = l; }
+      dtEntity::DynamicLibrary* GetLibrary() const { return mLibrary; }
+      void SetLibrary(dtEntity::DynamicLibrary* l) 
+      {
+          if(mLibrary)
+          {
+              delete mLibrary;
+          }
+          mLibrary = l; 
+      }
 
    protected:
 
-      osg::ref_ptr<osgDB::DynamicLibrary> mLibrary;
+      dtEntity::DynamicLibrary* mLibrary;
    };
 
    template <class ES>
