@@ -29,6 +29,10 @@
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/dynamiclibrary.h>
 
+/* Test for access to NAME using the real UID and real GID.  */
+extern int access (__const char *__name, int __type) __THROW __nonnull ((1));
+
+
 namespace dtEntity
 {
     static const char * const PATH_SEPARATORS = "/\\";
@@ -122,10 +126,10 @@ namespace dtEntity
         handle = dlopen( localLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
         if( handle == NULL )
         {
-            if (fileExists(localLibraryName))
+            if (access( localLibraryName.c_str(), F_OK ) == 0)
             {
-                LOG_WARN("Warning: dynamic library '" << libraryName << "' exists, but an error occurred while trying to open it:");
-                LOG_WARN(dlerror());
+                LOG_WARNING("Warning: dynamic library '" << libraryName << "' exists, but an error occurred while trying to open it:");
+                LOG_WARNING(dlerror());
             }
             else
             {
@@ -156,15 +160,15 @@ namespace dtEntity
         }
         else
         {
-            LOG_WARN("DynamicLibrary::failed looking up " << procName);
-            LOG_WARN("DynamicLibrary::error " << strerror(errno));
+            LOG_WARNING("DynamicLibrary::failed looking up " << procName);
+            LOG_WARNING("DynamicLibrary::error " << strerror(errno));
             return NULL;
         }
     #else // other unix
         void* sym = dlsym( _handle,  procName.c_str() );
         if (!sym) {
-            LOG_WARN("DynamicLibrary::failed looking up " << procName);
-            LOG_WARN("DynamicLibrary::error " << dlerror());
+            LOG_WARNING("DynamicLibrary::failed looking up " << procName);
+            LOG_WARNING("DynamicLibrary::error " << dlerror());
         }
         return sym;
     #endif
