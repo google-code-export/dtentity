@@ -56,7 +56,7 @@ namespace dtEntityOSG
 
       virtual float GetDeltaSimTime() const;
       virtual float GetDeltaRealTime() const;
-      virtual dtEntity::Timer_t GetRealClockTime();
+      virtual dtEntity::Timer_t GetRealClockTime() const;
       virtual double GetSimulationTime() const;
       void SetSimulationTime(double);
 
@@ -72,18 +72,26 @@ namespace dtEntityOSG
        * Get absolute path from a relative file path.
        * Returns empty string if file is not found
        */
-      virtual std::string FindDataFile(const std::string& filename);
+      virtual std::string FindDataFile(const std::string& filename) const;
 
       /**
        * Get absolute path from a library name.
        * Returns empty string if file is not found
        */
-      virtual std::string FindLibraryFile(const std::string& filename);
+      virtual std::string FindLibraryFile(const std::string& filename) const;
+
+      virtual void AddDataFilePath(const std::string& path);
+
+      /**
+       * Input is an absolute path. Return is a data file path list entry containing
+       * that path or "" if it is not contained.
+       */
+      virtual std::string GetDataFilePathFromFilePath(const std::string& path) const;
 
       /**
         * return true if a file exists
         */
-      virtual bool FileExists(const std::string& filename);
+      virtual bool FileExists(const std::string& filename) const;
 
       virtual int GetArgC() { return mArgC; }
       virtual const char** GetArgV() { return mArgV; }

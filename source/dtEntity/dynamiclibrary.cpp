@@ -29,9 +29,6 @@
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/dynamiclibrary.h>
 
-/* Test for access to NAME using the real UID and real GID.  */
-extern int access (__const char *__name, int __type) __THROW __nonnull ((1));
-
 
 namespace dtEntity
 {
@@ -126,7 +123,7 @@ namespace dtEntity
         handle = dlopen( localLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
         if( handle == NULL )
         {
-            if (access( localLibraryName.c_str(), F_OK ) == 0)
+            if (GetSystemInterface()->FileExists(localLibraryName))
             {
                 LOG_WARNING("Warning: dynamic library '" << libraryName << "' exists, but an error occurred while trying to open it:");
                 LOG_WARNING(dlerror());

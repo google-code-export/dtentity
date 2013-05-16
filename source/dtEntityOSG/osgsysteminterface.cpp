@@ -27,6 +27,7 @@
 #include <osg/Timer>
 #include <osg/FrameStamp>
 #include <osg/NodeVisitor>
+#include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
 #include <osgViewer/View>
 #include <osgViewer/GraphicsWindow>
@@ -303,26 +304,56 @@ namespace dtEntityOSG
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::Timer_t OSGSystemInterface::GetRealClockTime()
+   dtEntity::Timer_t OSGSystemInterface::GetRealClockTime() const
    {
       return osg::Timer::instance()->tick();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string OSGSystemInterface::FindDataFile(const std::string& filename)
+   std::string OSGSystemInterface::FindDataFile(const std::string& filename) const
    {
       return osgDB::findDataFile(filename);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string OSGSystemInterface::FindLibraryFile(const std::string& filename)
+   std::string OSGSystemInterface::FindLibraryFile(const std::string& filename) const
    {
       return osgDB::findLibraryFile(filename);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool OSGSystemInterface::FileExists(const std::string& filename)
+   bool OSGSystemInterface::FileExists(const std::string& filename) const
    {
       return osgDB::fileExists(filename);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::AddDataFilePath(const std::string& path)
+   {
+       osgDB::FilePathList& paths = osgDB::getDataFilePathList();
+
+       // check if path is already in list
+       if(std::find(paths.begin(), paths.end(), path) != paths.end())
+       {
+           return;
+       }
+       paths.push_back(path);
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string OSGSystemInterface::GetDataFilePathFromFilePath(const std::string& path) const
+   {
+      osgDB::FilePathList& paths = osgDB::getDataFilePathList();
+      
+      for(osgDB::FilePathList::const_iterator i = paths.begin(); i != paths.end(); ++i)
+      {
+         std::string datapath = osgDB::convertFileNameToNativeStyle(*i);
+         if(osgDB::equalCaseInsensitive(datapath, path.substr(0, datapath.length())))
+         {
+            return *i;
+         }
+      }
+      return "";
    }
 }

@@ -80,7 +80,6 @@ namespace dtEntity
        */
       virtual void SetSimulationTime(double) = 0;
 
-
       /**
        * Number of microseconds since 1.1.1970
        * Causes a TimeChangedMessage to be sent
@@ -95,24 +94,35 @@ namespace dtEntity
       /**
        * Get current system time in number of microseconds since 1/1/1970
        */
-      virtual Timer_t GetRealClockTime() = 0;
+      virtual Timer_t GetRealClockTime() const = 0;
+
+      /**
+       * Add data file path 
+       */
+      virtual void AddDataFilePath(const std::string& path) = 0;
+
+      /**
+       * Input is an absolute path. Return is a data file path list entry containing
+       * that path or "" if it is not contained.
+       */
+      virtual std::string GetDataFilePathFromFilePath(const std::string& path) const = 0;
 
       /**
        * Get absolute path from a relative file path.
        * Returns empty string if file is not found
        */
-      virtual std::string FindDataFile(const std::string& filename) = 0;
+      virtual std::string FindDataFile(const std::string& filename) const = 0;
 
       /**
        * Get absolute path from a library name.
        * Returns empty string if file is not found
        */
-      virtual std::string FindLibraryFile(const std::string& filename) = 0;
+      virtual std::string FindLibraryFile(const std::string& filename) const = 0;
 
       /**
         * return true if a file exists
         */
-      virtual bool FileExists(const std::string& filename) = 0;
+      virtual bool FileExists(const std::string& filename) const = 0;
 
       virtual int GetArgC() = 0;
       virtual const char** GetArgV() = 0;
