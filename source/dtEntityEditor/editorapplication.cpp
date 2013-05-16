@@ -27,7 +27,7 @@
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/init.h>
 #include <dtEntity/mapcomponent.h>
-#include <dtEntity/resourcemanager.h>
+#include <dtEntityOSG/resourcemanager.h>
 #include <dtEntity/systemmessages.h>
 #include <dtEntityEditor/editormainwindow.h>
 #include <dtEntityEditor/motionmodel.h>
@@ -398,7 +398,7 @@ namespace dtEntityEditor
          mFileSystemWatcher->addPath(path);
       }
 
-      dtEntity::ResourceManager::GetInstance().TriggerReload(path.toStdString(), *mEntityManager);
+      dtEntityOSG::ResourceManager::GetInstance().TriggerReload(path.toStdString(), *mEntityManager);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
