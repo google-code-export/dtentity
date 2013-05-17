@@ -21,6 +21,7 @@
  */
 
 #include <string>
+#include <vector>
 
 namespace dtEntity
 {     
@@ -123,6 +124,9 @@ namespace dtEntity
         * return true if a file exists
         */
       virtual bool FileExists(const std::string& filename) const = 0;
+
+      typedef std::vector<std::string> DirectoryContents;
+      virtual DirectoryContents GetDirectoryContents(const std::string& dirName) const = 0;
 
       virtual int GetArgC() = 0;
       virtual const char** GetArgV() = 0;

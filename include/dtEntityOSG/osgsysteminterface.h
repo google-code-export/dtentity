@@ -93,6 +93,8 @@ namespace dtEntityOSG
         */
       virtual bool FileExists(const std::string& filename) const;
 
+      virtual dtEntity::SystemInterface::DirectoryContents GetDirectoryContents(const std::string& dirName) const;
+
       virtual int GetArgC() { return mArgC; }
       virtual const char** GetArgV() { return mArgV; }
 
