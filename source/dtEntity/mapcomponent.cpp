@@ -33,6 +33,7 @@
 #include <sstream>
 #include <OpenThreads/ScopedLock>
 #include <fstream>
+#include <climits>
 
 #if PROTOBUF_FOUND
 #include <dtEntity/protobufmapencoder.h>
