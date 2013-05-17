@@ -9,17 +9,20 @@
 ***************************************************************************************************/
 
 #include <dtEntity/profile.h>
+#include <dtEntity/core.h>
+#include <dtEntity/systeminterface.h>
 #include <stdio.h>
-#include <osg/Timer>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #define DBL_EPSILON    2.2204460492503131e-016
+
+
 inline void Profile_Get_Ticks(dtEntity::Timer_t * ticks)
 {
-	osg::Timer timer;
-	 *ticks = timer.tick();
+	
+    *ticks = dtEntity::GetSystemInterface()->GetRealClockTime();
 }
 
 inline float Profile_Get_Tick_Rate(void)
@@ -28,7 +31,7 @@ inline float Profile_Get_Tick_Rate(void)
 	static float _CPUFrequency = -1.0f;
 	
 	if (_CPUFrequency == -1.0f) {
-            osg::Timer_t curr_rate = 0;
+            dtEntity::Timer_t curr_rate = 0;
 		::QueryPerformanceFrequency ((LARGE_INTEGER *)&curr_rate);
 		_CPUFrequency = (float)curr_rate;
 	} 
@@ -128,7 +131,7 @@ void	CProfileNode::Call( void )
 bool	CProfileNode::Return( void )
 {
 	if ( --RecursionCounter == 0 && TotalCalls != 0 ) { 
-                osg::Timer_t time;
+                dtEntity::Timer_t time;
 		Profile_Get_Ticks(&time);
 		time-=StartTime;
 		TotalTime += (float)time / Profile_Get_Tick_Rate();
@@ -260,7 +263,7 @@ void	CProfileManager::dumpAll()
 CProfileNode	CProfileManager::Root( dtEntity::SID("Root"), NULL );
 CProfileNode *	CProfileManager::CurrentNode = &CProfileManager::Root;
 int				CProfileManager::FrameCounter = 0;
-osg::Timer_t			CProfileManager::ResetTime = 0;
+dtEntity::Timer_t			CProfileManager::ResetTime = 0;
 
 
 /***********************************************************************************************
@@ -326,7 +329,7 @@ void CProfileManager::Increment_Frame_Counter( void )
  *=============================================================================================*/
 float CProfileManager::Get_Time_Since_Reset( void )
 {
-        osg::Timer_t time;
+    dtEntity::Timer_t time;
 	Profile_Get_Ticks(&time);
 	time -= ResetTime;
 	return (float)time / Profile_Get_Tick_Rate();

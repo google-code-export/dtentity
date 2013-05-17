@@ -53,8 +53,6 @@ namespace dtEntity
 
       /**
        * Constructor.
-       * @param startEntitySystems if true, start default entity
-       * systems like OSG components etc
        */
       EntityManager();
 

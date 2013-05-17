@@ -27,6 +27,7 @@
 #include <osg/Timer>
 #include <osg/FrameStamp>
 #include <osg/NodeVisitor>
+#include <osg/Notify>
 #include <osgDB/FileNameUtils>
 #include <osgDB/FileUtils>
 #include <osgViewer/View>
@@ -361,5 +362,24 @@ namespace dtEntityOSG
    dtEntity::SystemInterface::DirectoryContents OSGSystemInterface::GetDirectoryContents(const std::string& dirName) const
    {
        return osgDB::getDirectoryContents(dirName);       
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OSGSystemInterface::LogMessage(unsigned int level, const std::string& filename, const std::string& methodname, int linenumber,
+                   const std::string& msg) const
+   {
+       std::ostream* strm;
+       switch(level)
+       {
+       case  dtEntity::LogLevel::LVL_DEBUG   : strm = &osg::notify(osg::DEBUG_INFO); break;
+       case  dtEntity::LogLevel::LVL_INFO    : strm = &osg::notify(osg::INFO); break;
+       case  dtEntity::LogLevel::LVL_WARNING : strm = &osg::notify(osg::WARN); break;
+       case  dtEntity::LogLevel::LVL_ERROR   : strm = &osg::notify(osg::FATAL); break;
+       case  dtEntity::LogLevel::LVL_ALWAYS  : strm = &osg::notify(osg::ALWAYS); break;
+       default: strm = &osg::notify(osg::ALWAYS);
+       }
+       std::string fn = filename.size() < 30 ? filename : filename.substr(filename.size() - 30, filename.size() - 1);
+       (*strm) << "File: " << fn << " Line: " << linenumber << " Message: " << msg << std::endl;
+       strm->flush();
    }
 }

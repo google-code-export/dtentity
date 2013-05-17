@@ -1,22 +1,5 @@
 #include <dtEntity/fileutils.h>
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-#include <windows.h>
-#include <io.h>
-#include <direct.h>
-#include <winbase.h> 
-#else
-#include <dirent.h>
-#endif
-
-#define OSGDB_STRING_TO_FILENAME(s) s
-#define OSGDB_FILENAME_TO_STRING(s) s
-#define OSGDB_FILENAME_TEXT(x) x
-#define OSGDB_WINDOWS_FUNCT(x) x ## A
-#define OSGDB_WINDOWS_FUNCT_STRING(x) #x "A"
-typedef char filenamechar;
-typedef std::string filenamestring;
-
 namespace dtEntity
 {
     const char UNIX_PATH_SEPARATOR = '/';

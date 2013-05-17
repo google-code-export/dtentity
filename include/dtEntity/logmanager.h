@@ -22,6 +22,7 @@
 
 #include <dtEntity/export.h>
 #include <dtEntity/singleton.h>
+#include <dtEntity/singleton.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <string>
