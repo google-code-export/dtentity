@@ -121,14 +121,30 @@ namespace dtEntity
       virtual std::string FindLibraryFile(const std::string& filename) const = 0;
 
       /**
-        * return true if a file exists
+        * return true if a file with given absolute or relative path exists
         */
       virtual bool FileExists(const std::string& filename) const = 0;
 
+      /**
+       * Return a list of files in given system directory path.
+       */
       typedef std::vector<std::string> DirectoryContents;
       virtual DirectoryContents GetDirectoryContents(const std::string& dirName) const = 0;
 
+      /**
+       * Add an entry to log. level is a value of dtEntity::LogLevel
+       */
+      virtual void LogMessage(unsigned int level, const std::string& filename, 
+          const std::string& methodname, int linenumber, const std::string& msg) const = 0;
+
+      /**
+       * Return number of command line args used to start dtEntity 
+      */
       virtual int GetArgC() = 0;
+
+      /**
+       * Return command line arg with given number
+       */
       virtual const char** GetArgV() = 0;
 
    };

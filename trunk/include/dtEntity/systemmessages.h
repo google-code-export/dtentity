@@ -23,7 +23,8 @@
 #include <dtEntity/export.h>
 #include <dtEntity/message.h>
 #include <dtEntity/property.h>
-#include <osg/Timer>
+#include <dtEntity/systeminterface.h>
+
 
 namespace dtEntity
 {
@@ -889,8 +890,8 @@ namespace dtEntity
       float GetTimeScale() const { return mTimeScale.Get(); }
       void SetTimeScale(float v) { mTimeScale.Set(v); }
 
-      osg::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
-      void SetSimulationClockTime(osg::Timer_t v) { mSimulationClockTime = v; }
+      Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
+      void SetSimulationClockTime(Timer_t v) { mSimulationClockTime = v; }
 
       double GetSimulationTime() const { return mSimulationTime.Get(); }
       void SetSimulationTime(double v) { mSimulationTime.Set(v); }
@@ -898,7 +899,7 @@ namespace dtEntity
    private:
 
       DoubleProperty mSimulationTime;
-      osg::Timer_t mSimulationClockTime;
+      Timer_t mSimulationClockTime;
       FloatProperty mTimeScale;
    };
 

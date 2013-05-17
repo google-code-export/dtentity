@@ -95,6 +95,9 @@ namespace dtEntityOSG
 
       virtual dtEntity::SystemInterface::DirectoryContents GetDirectoryContents(const std::string& dirName) const;
 
+      virtual void LogMessage(unsigned int level, const std::string& filename, const std::string& methodname, int linenumber,
+                   const std::string& msg) const;
+
       virtual int GetArgC() { return mArgC; }
       virtual const char** GetArgV() { return mArgV; }
 

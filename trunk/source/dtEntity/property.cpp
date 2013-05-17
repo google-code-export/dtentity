@@ -21,7 +21,6 @@
 #include <dtEntity/property.h>
 #include <assert.h>
 #include <sstream>
-#include <osg/io_utils>
 #include <dtEntity/log.h>
 #include <climits>
 
