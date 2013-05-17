@@ -63,7 +63,8 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/entitysystem.h
   ${HEADER_PATH}/export.h
   ${HEADER_PATH}/FastDelegate.h
-  ${HEADER_PATH}/FastDelegateBind.h  
+  ${HEADER_PATH}/FastDelegateBind.h
+  ${HEADER_PATH}/fileutils.h  
   ${HEADER_PATH}/init.h
   ${HEADER_PATH}/inputinterface.h
   ${HEADER_PATH}/log.h
@@ -108,6 +109,7 @@ SET(LIB_SOURCES
   dynamiclibrary.cpp
   entity.cpp
   entitymanager.cpp
+  fileutils.cpp
   hash.cpp
   init.cpp
   inputinterface.cpp
