@@ -21,13 +21,12 @@
 #include <dtEntity/componentpluginmanager.h>
 
 #include <dtEntity/core.h>
+#include <dtEntity/fileutils.h>
 #include <dtEntity/messagefactory.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntity/stringid.h>
 #include <dtEntity/systeminterface.h>
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 #include <dtEntity/dynamiclibrary.h>
 #include <dtEntity/log.h>
 
@@ -114,7 +113,7 @@ namespace dtEntity
    void ComponentPluginManager::LoadPluginsInDir(const std::string& path)
    {
       std::string cleanedPath(path);
-      if (path[path.size() - 1] == osgDB::getNativePathSeparator())
+      if (path[path.size() - 1] == GetNativePathSeparator())
       {
          // remove the trailing path separator as this causes issues...
          cleanedPath = path.substr(0, path.size() - 1);
@@ -130,10 +129,10 @@ namespace dtEntity
       LOG_DEBUG("Looking for plugins with extension: " + libExtension);
 
       // get libs from directory
-      osgDB::DirectoryContents files = osgDB::getDirectoryContents(cleanedPath);
+      DirectoryContents files = GetDirectoryContents(cleanedPath);
 
       // for each library in dir
-      osgDB::DirectoryContents::const_iterator i;
+      DirectoryContents::const_iterator i;
       for(i = files.begin(); i != files.end(); ++i)
       {
          std::string fileName = *i;
@@ -148,7 +147,7 @@ namespace dtEntity
          }
 
          std::ostringstream libpath;
-         libpath << cleanedPath << osgDB::getNativePathSeparator() << fileName;
+         libpath << cleanedPath << GetNativePathSeparator() << fileName;
          AddPlugin(libpath.str());
          LOG_DEBUG("Loaded plugin: " + libpath.str());
       }
@@ -158,13 +157,10 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    std::set<ComponentType> ComponentPluginManager::AddPlugin(const std::string& path, const std::string& libname, bool saveWithScene)
-   {
-      osgDB::FilePathList paths = osgDB::getDataFilePathList();
-      paths.push_back(path);
-
+   {      
       std::string filename = GetSharedLibNameFromPluginName(libname);
-      std::string p = osgDB::findFileInPath(filename, paths);
-      if(p == "")
+      std::string p = path + "/" + filename;
+      if(!GetSystemInterface()->FileExists(p))
       {
          std::set<ComponentType> ret;
          return ret;
@@ -178,8 +174,8 @@ namespace dtEntity
    {
 
       // store the name of this plugin
-      std::string libName(osgDB::getSimpleFileName(abspath));
-      libName.assign(osgDB::getNameLessAllExtensions(libName));
+      std::string libName(GetSimpleFileName(abspath));
+      libName.assign(GetNameLessAllExtensions(libName));
 #if defined(_DEBUG) && (defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__))
       // remove debug postfix from lib name
       std::string debugPostfix("d");
