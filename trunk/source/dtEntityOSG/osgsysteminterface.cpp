@@ -356,4 +356,10 @@ namespace dtEntityOSG
       }
       return "";
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtEntity::SystemInterface::DirectoryContents OSGSystemInterface::GetDirectoryContents(const std::string& dirName) const
+   {
+       return osgDB::getDirectoryContents(dirName);       
+   }
 }

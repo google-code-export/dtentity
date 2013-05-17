@@ -129,10 +129,10 @@ namespace dtEntity
       LOG_DEBUG("Looking for plugins with extension: " + libExtension);
 
       // get libs from directory
-      DirectoryContents files = GetDirectoryContents(cleanedPath);
+      SystemInterface::DirectoryContents files = GetSystemInterface()->GetDirectoryContents(cleanedPath);
 
       // for each library in dir
-      DirectoryContents::const_iterator i;
+      SystemInterface::DirectoryContents::const_iterator i;
       for(i = files.begin(); i != files.end(); ++i)
       {
          std::string fileName = *i;
