@@ -248,7 +248,7 @@ namespace dtEntityOSG
    } 
 
    ////////////////////////////////////////////////////////////////////////////
-   bool GroundClampingSystem::ClampToTerrain(osg::Vec3d& v, int voffset)
+   bool GroundClampingSystem::ClampToTerrain(osg::Vec3d& v, int voffset, unsigned int nodemask)
    {
       if(!mRootNode.valid())
       {
@@ -260,15 +260,27 @@ namespace dtEntityOSG
          new osgUtil::LineSegmentIntersector(osg::Vec3d(v[0], v[1], v[2] + voffset),
          osg::Vec3d(v[0], v[1], v[2] - voffset));
       mIntersectionVisitor.setIntersector(intersector);
-      mIntersectionVisitor.setTraversalMask(dtEntity::NodeMasks::TERRAIN);
+      mIntersectionVisitor.setTraversalMask(nodemask);
 
       mRootNode->accept(mIntersectionVisitor);
-	   if(intersector->containsIntersections())
-	   {
-		   v = intersector->getFirstIntersection().getWorldIntersectPoint();
-		   return true;
-	   }
-      return false;
+      if(!intersector->containsIntersections()) return false;
+
+      float h = v[2];
+      float mindist = FLT_MAX;
+      osgUtil::LineSegmentIntersector::Intersections& isects = intersector->getIntersections();
+      osgUtil::LineSegmentIntersector::Intersections::const_iterator i;
+      for(i = isects.begin(); i != isects.end(); ++i)
+      {
+         osg::Vec3d pos = i->getWorldIntersectPoint();
+         float d = abs(pos[2] - h);
+         if(d < mindist)
+         {
+            mindist = d;
+            v = pos;
+         }
+      }
+
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/message.h>
 #include <dtEntity/dynamicproperty.h>
+#include <dtEntity/nodemasks.h>
 #include <dtEntity/scriptaccessor.h>
 #include <osgUtil/IntersectionVisitor>
 #include <osgUtil/LineSegmentIntersector>
@@ -145,7 +146,7 @@ namespace dtEntityOSG
       void CameraRemoved(const dtEntity::Message& msg);
       void MapLoaded(const dtEntity::Message& msg);
       
-      bool ClampToTerrain(osg::Vec3d& position, int voffset = 10000);
+      bool ClampToTerrain(osg::Vec3d& position, int voffset = 10000, unsigned int nodemask = dtEntity::NodeMasks::TERRAIN);
 
       void SetIntersectLayer(dtEntity::StringId);
       dtEntity::StringId GetIntersectLayer() const;
