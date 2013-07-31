@@ -21,16 +21,16 @@
 #ifndef  DTENTITY_LISTENER
 #define  DTENTITY_LISTENER
 
-#include <dtEntity/export.h>
+#include <dtEntityAudio/export.h>
 
 #include <osg/Referenced>
 #include <dtEntity/property.h>
 
-namespace dtEntity
+namespace dtEntityAudio
 {
-   /** dtEntity::Listener
+   /** dtEntityAudio::Listener
     *
-    * dtEntity::Listener is just an interface to the global listener
+    * dtEntityAudio::Listener is just an interface to the global listener
     * object held within (and protected) by the dtEntity::AudioManager.
     *
     * The listener is not usually created directly by the user (new/delete).
@@ -45,7 +45,7 @@ namespace dtEntity
     *
     * The current version is heavily inspired from the Delta3D one
     */
-   class DT_ENTITY_EXPORT Listener : public osg::Referenced
+   class DTENTITY_AUDIO_EXPORT Listener : public osg::Referenced
    {
 
       public:
@@ -65,22 +65,22 @@ namespace dtEntity
       public:
 
          /// Set listener position 
-         void SetPosition(const Vec3f& position);
+         void SetPosition(const osg::Vec3f& position);
          /// Set listener orientation
          /**
          *  Requires an "at" vector (listening direction) and an "up" vector
             (defining the UP dir)
          */
-         void SetOrientation(const Vec3f& atVec, const Vec3f& upVec);
+         void SetOrientation(const osg::Vec3f& atVec, const osg::Vec3f& upVec);
          /// Set listener velocity
-         void SetVelocity(const Vec3f& velocity);
+         void SetVelocity(const osg::Vec3f& velocity);
 
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
-         void GetVelocity(Vec3f& velocity) const;
+         void GetVelocity(osg::Vec3f& velocity) const;
 
          /**
           * Sets the master volume of the listener.
@@ -102,12 +102,12 @@ namespace dtEntity
 
    protected:
 
-      Vec3f               mPosition;
-      Vec3f               mDirection;
-      Vec3f               mUpVector;
-      Vec3f               mVelocity;
+      osg::Vec3f               mPosition;
+      osg::Vec3f               mDirection;
+      osg::Vec3f               mUpVector;
+      osg::Vec3f               mVelocity;
 
    };
-} // namespace dtEntity
+} // namespace dtEntityAudio
 
 #endif   // DTENTITY_LISTENER

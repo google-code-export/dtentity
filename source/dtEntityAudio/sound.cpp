@@ -19,7 +19,7 @@
 */
 
 #include <cfloat>
-#include <dtEntity/sound.h>
+#include <dtEntityAudio/sound.h>
 #include <dtEntity/log.h>
 
 #include <iostream>
@@ -27,7 +27,7 @@
 
 
 
-namespace dtEntity
+namespace dtEntityAudio
 {
    ////////////////////////////////////////////////////////////////////////////////
    bool Sound::CheckForError(const std::string& userMsg,const std::string& msgFunction, int lineNum)
@@ -133,9 +133,9 @@ namespace dtEntity
       , mUserDefinedSource(false)
    {
 
-      SetPosition(Vec3f(0.0f, 0.0f, 0.0f));
-      SetDirection(Vec3f(0.0f, 0.0f, 0.0f));
-      SetVelocity(Vec3f(0.0f, 0.0f, 0.0f));
+      SetPosition(osg::Vec3f(0.0f, 0.0f, 0.0f));
+      SetDirection(osg::Vec3f(0.0f, 0.0f, 0.0f));
+      SetVelocity(osg::Vec3f(0.0f, 0.0f, 0.0f));
 
       SetGain(1.0f);
       SetPitch(1.0f);
@@ -707,7 +707,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetPosition(const Vec3f& pos)
+   void Sound::SetPosition(const osg::Vec3f& pos)
    {
       if (IsSource(mSource) == AL_TRUE)
       {
@@ -719,19 +719,19 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetPosition(Vec3f& pos) const
+   void Sound::GetPosition(osg::Vec3f& pos) const
    {
       pos = mPosition;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Vec3f& Sound::GetPosition()
+   osg::Vec3f& Sound::GetPosition()
    {
       return mPosition;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetDirection(const Vec3f& dir)
+   void Sound::SetDirection(const osg::Vec3f& dir)
    {
       if (IsSource(mSource) == AL_TRUE)
       {   
@@ -743,7 +743,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetDirection(Vec3f& dir) const
+   void Sound::GetDirection(osg::Vec3f& dir) const
    {
       dir = mDirection;   
    }
@@ -755,7 +755,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::SetVelocity(const Vec3f& vel)
+   void Sound::SetVelocity(const osg::Vec3f& vel)
    {
       if (IsSource(mSource) == AL_TRUE)
       {
@@ -767,13 +767,13 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Sound::GetVelocity(Vec3f& vel) const
+   void Sound::GetVelocity(osg::Vec3f& vel) const
    {
       vel = mVelocity;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Vec3f Sound::GetVelocity()
+   osg::Vec3f Sound::GetVelocity()
    {
       return mVelocity;
    }
@@ -931,4 +931,4 @@ namespace dtEntity
 
       return flDurationSeconds;
    }
-}
+}  // namespace dtEntityAudio

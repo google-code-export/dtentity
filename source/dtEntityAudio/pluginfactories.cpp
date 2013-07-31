@@ -18,20 +18,13 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/componentfactories.h>
-
-#include <dtEntity/dtentity_config.h>
+#include <dtEntityAudio/soundcomponent.h>
 #include <dtEntity/componentplugin.h>
 #include <dtEntity/componentpluginmanager.h>
-#include <dtEntity/dynamicscomponent.h>
 
 
-namespace dtEntity
-{
+REGISTER_DTENTITYPLUGIN(dtEntityAudio, 1,
+                        new dtEntity::ComponentPluginFactoryImpl<dtEntityAudio::SoundSystem>
+                        (dtEntity::GetStringFromSID(dtEntityAudio::SoundComponent::TYPE), 
+                        "System handling Sound FX"))
 
-   void RegisterStandardFactories(ComponentPluginManager& pluginManager)
-   {
-      pluginManager.AddFactory(new ComponentPluginFactoryImpl<DynamicsSystem>("Dynamics"));
-
-   }
-}

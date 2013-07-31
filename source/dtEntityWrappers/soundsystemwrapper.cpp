@@ -21,7 +21,7 @@
 #include <dtEntityWrappers/soundsystemwrapper.h>
 #include <dtEntityWrappers/entitysystemwrapper.h>
 #include <dtEntityWrappers/propertyconverter.h>
-#include <dtEntity/soundcomponent.h>
+#include <dtEntityAudio/soundcomponent.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
@@ -36,9 +36,9 @@ using namespace v8;
 namespace dtEntityWrappers
 {
    ////////////////////////////////////////////////////////////////////////////////
-   dtEntity::SoundSystem* UnwrapSoundSystem(v8::Handle<v8::Value> val)
+   dtEntityAudio::SoundSystem* UnwrapSoundSystem(v8::Handle<v8::Value> val)
    {
-      dtEntity::SoundSystem* v;
+      dtEntityAudio::SoundSystem* v;
       GetInternal(Handle<Object>::Cast(val), 0, v);
       return v;
    }
@@ -52,7 +52,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> SSPlaySound(const Arguments& args)
    {
-      dtEntity::SoundSystem* ss = UnwrapSoundSystem(args.This());
+      dtEntityAudio::SoundSystem* ss = UnwrapSoundSystem(args.This());
       ss->PlaySound(args[0]->Int32Value());
       return Undefined();
    }
@@ -72,7 +72,7 @@ namespace dtEntityWrappers
       proto->Set("toString", FunctionTemplate::New(SSToString));
       proto->Set("playSound", FunctionTemplate::New(SSPlaySound));
       
-      RegisterEntitySystempWrapper(ss, dtEntity::SoundComponent::TYPE, templt);
+      RegisterEntitySystempWrapper(ss, dtEntityAudio::SoundComponent::TYPE, templt);
    }
 
 }
