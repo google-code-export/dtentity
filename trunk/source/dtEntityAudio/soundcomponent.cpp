@@ -46,17 +46,40 @@ namespace dtEntityAudio
    ////////////////////////////////////////////////////////////////////////////////
    SoundComponent::SoundComponent()
       : mOwner(NULL)
+      , mIsInitialized(false)
+      , mAutoPlay(false)
+      , mLooping(false)
+      , mGain(1.0f)
+      , mPitch(1.0f)
+      , mRollOff(1.0f)
    {
-      Register(SoundPathId, &mSoundPath);
-      Register(AutoPlayId, &mAutoPlay);
-      Register(GainId, &mGain);
-      Register(PitchId, &mPitch);
-      Register(RollOffId, &mRollOff);
-      Register(LoopingId, &mLooping);
+      // create properties
+      mSoundPathProp = dtEntity::DynamicStringProperty
+         (dtEntity::DynamicStringProperty::SetValueCB(this, &SoundComponent::SetSoundPath),
+         dtEntity::DynamicStringProperty::GetValueCB(this, &SoundComponent::GetSoundPath));
+      mAutoPlayProp = dtEntity::DynamicBoolProperty
+         (dtEntity::DynamicBoolProperty::SetValueCB(this, &SoundComponent::SetAutoPlay),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &SoundComponent::GetAutoPlay));
+      mLoopingProp = dtEntity::DynamicBoolProperty
+         (dtEntity::DynamicBoolProperty::SetValueCB(this, &SoundComponent::SetLooping),
+         dtEntity::DynamicBoolProperty::GetValueCB(this, &SoundComponent::GetLooping));
+      mGainProp = dtEntity::DynamicFloatProperty
+         (dtEntity::DynamicFloatProperty::SetValueCB(this, &SoundComponent::SetGain),
+         dtEntity::DynamicFloatProperty::GetValueCB(this, &SoundComponent::GetGain));
+      mPitchProp = dtEntity::DynamicFloatProperty
+         (dtEntity::DynamicFloatProperty::SetValueCB(this, &SoundComponent::SetPitch),
+         dtEntity::DynamicFloatProperty::GetValueCB(this, &SoundComponent::GetPitch));
+      mRollOffProp = dtEntity::DynamicFloatProperty
+         (dtEntity::DynamicFloatProperty::SetValueCB(this, &SoundComponent::SetRollOff),
+         dtEntity::DynamicFloatProperty::GetValueCB(this, &SoundComponent::GetRollOff));
 
-      mGain.Set(1.0f);
-      mPitch.Set(1.0f);
-      mRollOff.Set(1.0f);
+      Register(SoundPathId, &mSoundPathProp);
+      Register(AutoPlayId, &mAutoPlayProp);
+      Register(GainId, &mGainProp);
+      Register(PitchId, &mPitchProp);
+      Register(RollOffId, &mRollOffProp);
+      Register(LoopingId, &mLoopingProp);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -65,35 +88,53 @@ namespace dtEntityAudio
       FreeSound();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::Finished()
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::UpdateSoundValues()
    {
-      BaseClass::Finished();
-      FreeSound();
-           
-      if(mSoundPath.Get() == "")
+      if(!mIsInitialized)
       {
          return;
       }
+
+      mCurrentSound->SetGain(mGain);
+      mCurrentSound->SetRolloffFactor(mRollOff);
+      mCurrentSound->SetPitch(mPitch);
+      mCurrentSound->SetLooping(mLooping);
+      if(mAutoPlay)
+         PlaySound();
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::Init()
+   {
+
+      FreeSound();
+
+      if(mSoundPath.empty())
+         return;
+
       mCurrentSound = AudioManager::GetInstance().NewSound();
       assert(mCurrentSound);
-
-      mCurrentSound->LoadFile(mSoundPath.Get().c_str());
-      mCurrentSound->SetGain(mGain.Get());
-      mCurrentSound->SetRolloffFactor(mRollOff.Get());
-      mCurrentSound->SetPitch(mPitch.Get());
-      mCurrentSound->SetLooping(mLooping.Get());
       
-      if(mAutoPlay.Get())
-      {
-         PlaySound();
-      }      
+      mCurrentSound->LoadFile(mSoundPath.c_str());
+      
+      mIsInitialized = true;
+      UpdateSoundValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::Reinit()
+   {
+      mIsInitialized = false;
+      Init();
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SoundComponent::Update(float dt)
    {
-      if(!IsPlaying() || mOwner == NULL)
+      if(!IsPlaying() || mOwner == NULL || !mIsInitialized)
       {
          return;
       }
@@ -142,42 +183,79 @@ namespace dtEntityAudio
          }
          mCurrentSound->UnloadFile();
          mCurrentSound->ReleaseSource();
+
+         AudioManager::GetInstance().FreeSound(mCurrentSound.get());
+         mCurrentSound = NULL;
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::SetSoundPath(const std::string& p) 
+   void SoundComponent::SetSoundPath(const std::string& val) 
    {  
-      mSoundPath.Set(p);      
+      mSoundPath = val;
+
+      // force a full refresh
+      Reinit();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::SetAutoPlay(bool val)
+   {
+      mAutoPlay = val;
+      UpdateSoundValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::SetLooping(bool val)
+   {
+      mLooping = val;
+      UpdateSoundValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::SetGain(float val)
+   {
+      mGain = val;
+      UpdateSoundValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::SetPitch(float val)
+   {
+      mPitch = val;
+      UpdateSoundValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SoundComponent::SetRollOff(float val)
+   {
+      mRollOff = val;
+      UpdateSoundValues();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SoundComponent::PlaySound() 
    {  
       if(mCurrentSound != NULL)
-      {
          mCurrentSound->Play();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void SoundComponent::StopSound() 
    {  
       if(mCurrentSound != NULL)
-      {
          mCurrentSound->Stop();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool SoundComponent::IsPlaying() const
    {
       if(!mCurrentSound.valid())
-      {
          return false;
-      }
+
       return (mCurrentSound->IsPlaying() != 0);
    }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
@@ -200,14 +278,6 @@ namespace dtEntityAudio
 
       mListenerGain = 1.0f;
 
-      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnEnterWorld);
-      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
-
-      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnLeaveWorld);
-      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "SoundSystem::OnLeaveWorld");
-
-      mTickFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnTick);
-      em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
       dtEntityAudio::AudioManager::GetInstance().Init();
 
@@ -230,6 +300,22 @@ namespace dtEntityAudio
       dtEntityAudio::AudioManager::GetListener()->SetGain(mListenerGain.Get());
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void SoundSystem::OnAddedToEntityManager(dtEntity::EntityManager& em)
+   {
+   mEnterWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnEnterWorld);
+   em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
+   
+   mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnLeaveWorld);
+   em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "SoundSystem::OnLeaveWorld");
+   
+   mTickFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnTick);
+   em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
+   
+   
+      dtEntityAudio::AudioManager::GetInstance().Init();
+   }
+   
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnRemoveFromEntityManager(dtEntity::EntityManager& em)
    {
@@ -252,6 +338,7 @@ namespace dtEntityAudio
       SoundComponent* sc;
       if(GetEntityManager().GetComponent(eid, sc))
       {
+         sc->Init();
          if(sc->GetAutoPlay() && sc->GetSoundPath() != "")
          {
             this->PlaySound(eid);
@@ -278,7 +365,7 @@ namespace dtEntityAudio
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::OnTick(const dtEntity::Message& msg)
    {
-      // shortcut
+
       if(mComponents.empty())
       {
          return;
