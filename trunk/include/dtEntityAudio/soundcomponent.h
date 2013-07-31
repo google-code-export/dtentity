@@ -18,26 +18,26 @@
 * Martin Scheffler
 */
 
-#ifndef DELTA_ENTITY_SOUNDCOMPONENT
-#define DELTA_ENTITY_SOUNDCOMPONENT
+#ifndef DT_ENTITY_SOUNDCOMPONENT
+#define DT_ENTITY_SOUNDCOMPONENT
 
 #include <osg/ref_ptr>
-#include <dtEntity/export.h>
+#include <dtEntityAudio/export.h>
 #include <dtEntity/defaultentitysystem.h>
 #include <dtEntity/dynamicproperty.h>
 #include <dtEntity/component.h>
 #include <dtEntity/message.h>
 #include <dtEntity/stringid.h>
-#include <dtEntity/sound.h>
+#include <dtEntityAudio/sound.h>
 
 
-namespace dtEntity
+namespace dtEntityAudio
 { 
    ////////////////////////////////////////////////////////////////////////////////
 
    class SoundSystem;
 
-   class DT_ENTITY_EXPORT SoundComponent : public Component
+   class DTENTITY_AUDIO_EXPORT SoundComponent : public dtEntity::Component
    {
    
       friend class SoundSystem;
@@ -45,32 +45,32 @@ namespace dtEntity
 
    public:
 
-      static const ComponentType TYPE;
-      static const StringId SoundPathId;
-      static const StringId AutoPlayId;
-      static const StringId GainId;
-      static const StringId PitchId;
-      static const StringId RollOffId;
-      static const StringId LoopingId;
+      static const dtEntity::ComponentType TYPE;
+      static const dtEntity::StringId SoundPathId;
+      static const dtEntity::StringId AutoPlayId;
+      static const dtEntity::StringId GainId;
+      static const dtEntity::StringId PitchId;
+      static const dtEntity::StringId RollOffId;
+      static const dtEntity::StringId LoopingId;
       
       SoundComponent();
      
       virtual ~SoundComponent();
 
-      virtual ComponentType GetType() const { 
+      virtual dtEntity::ComponentType GetType() const { 
          return TYPE; 
       }
 
-      virtual bool IsInstanceOf(ComponentType id) const
+      virtual bool IsInstanceOf(dtEntity::ComponentType id) const
       { 
          return (id == TYPE); 
       }
 
       virtual void Finished();
-      virtual void OnAddedToEntity(Entity& entity) { mOwner = &entity;}
-      virtual void OnRemovedFromEntity(Entity& entity) { mOwner = NULL; }
+      virtual void OnAddedToEntity(dtEntity::Entity& entity) { mOwner = &entity;}
+      virtual void OnRemovedFromEntity(dtEntity::Entity& entity) { mOwner = NULL; }
 
-      dtEntity::Sound* GetCurrentSound() const { return mCurrentSound.get(); }
+      dtEntityAudio::Sound* GetCurrentSound() const { return mCurrentSound.get(); }
 
       void SetSoundPath(const std::string& p);
       std::string GetSoundPath() const { return mSoundPath.Get(); }
@@ -87,14 +87,14 @@ namespace dtEntity
 
    private:
 
-      StringProperty mSoundPath;
-      BoolProperty mAutoPlay;
-      FloatProperty mGain;
-      FloatProperty mPitch;
-      FloatProperty mRollOff;
-      BoolProperty mLooping;
-      osg::ref_ptr<dtEntity::Sound> mCurrentSound;
-      Entity* mOwner;
+      dtEntity::StringProperty mSoundPath;
+      dtEntity::BoolProperty mAutoPlay;
+      dtEntity::FloatProperty mGain;
+      dtEntity::FloatProperty mPitch;
+      dtEntity::FloatProperty mRollOff;
+      dtEntity::BoolProperty mLooping;
+      osg::ref_ptr<dtEntityAudio::Sound> mCurrentSound;
+      dtEntity::Entity* mOwner;
    };
 
    
@@ -107,25 +107,25 @@ namespace dtEntity
       This systems is in charge of updating all sound components at each frame, via
       the OnTick method.
    */
-   class DT_ENTITY_EXPORT SoundSystem : public DefaultEntitySystem<SoundComponent>
+   class DTENTITY_AUDIO_EXPORT SoundSystem : public dtEntity::DefaultEntitySystem<SoundComponent>
    {
       typedef DefaultEntitySystem<SoundComponent> BaseClass;
 
    public:
 
-      static const ComponentType TYPE;
+      static const dtEntity::ComponentType TYPE;
       
-      SoundSystem(EntityManager& em);
+      SoundSystem(dtEntity::EntityManager& em);
       ~SoundSystem();
 
-      static const StringId ListenerGainId;
-      static const StringId ListenerEntityId;
+      static const dtEntity::StringId ListenerGainId;
+      static const dtEntity::StringId ListenerEntityId;
 
       //void OnAddedToEntityManager(dtEntity::EntityManager& em)
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
-      void OnEnterWorld(const Message&);
-      void OnLeaveWorld(const Message&);
-      void OnTick(const Message& msg);
+      void OnEnterWorld(const dtEntity::Message&);
+      void OnLeaveWorld(const dtEntity::Message&);
+      void OnTick(const dtEntity::Message& msg);
 
       /// Override base class behavior to save system properties to file
       virtual bool StorePropertiesToScene() const { return true; }
@@ -133,27 +133,27 @@ namespace dtEntity
 
       virtual void Finished();
 
-      void SetSoundPath(EntityId eid, const std::string& p);
-      void PlaySound(EntityId eid);
-      void StopSound(EntityId eid);
+      void SetSoundPath(dtEntity::EntityId eid, const std::string& p);
+      void PlaySound(dtEntity::EntityId eid);
+      void StopSound(dtEntity::EntityId eid);
 
-      void SetListenerEntity(EntityId id);
-      EntityId GetListenerEntity() const;
+      void SetListenerEntity(dtEntity::EntityId id);
+      dtEntity::EntityId GetListenerEntity() const;
       
    private:
 
       /// Internal util that copies current camera position and orientation to listener
       void CopyEntityTransformToListener();
 
-      MessageFunctor mEnterWorldFunctor;
-      MessageFunctor mLeaveWorldFunctor;
-      MessageFunctor mTickFunctor;
-      MessageFunctor mWindowClosedFunctor;
-      FloatProperty mListenerGain;
-      DynamicUIntProperty mListenerEntity;
-      Component* mListenerEntityTrans;
-      EntityId mListenerEntityVal;
+      dtEntity::MessageFunctor mEnterWorldFunctor;
+      dtEntity::MessageFunctor mLeaveWorldFunctor;
+      dtEntity::MessageFunctor mTickFunctor;
+      dtEntity::MessageFunctor mWindowClosedFunctor;
+      dtEntity::FloatProperty mListenerGain;
+      dtEntity::DynamicUIntProperty mListenerEntity;
+      dtEntity::Component* mListenerEntityTrans;
+      dtEntity::EntityId mListenerEntityVal;
    };
-}
+}  //dtEntityAudio
 
-#endif // DELTA_ENTITY_SOUNDCOMPONENT
+#endif // DT_ENTITY_SOUNDCOMPONENT 

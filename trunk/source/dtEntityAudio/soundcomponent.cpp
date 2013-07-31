@@ -18,29 +18,29 @@
 * Martin Scheffler
 */
 
-#include <dtEntity/soundcomponent.h>
+#include <dtEntityAudio/soundcomponent.h>
 
 #include <dtEntity/core.h>
-#include <dtEntity/audiomanager.h>
-#include <dtEntity/sound.h>
 #include <dtEntity/entity.h>
 #include <dtEntity/entitymanager.h>
 #include <dtEntity/systemmessages.h>
+#include <dtEntityAudio/audiomanager.h>
+#include <dtEntityAudio/sound.h>
 #include <osg/Camera>
 #include <assert.h>
 #include <iostream>
 
-namespace dtEntity
+namespace dtEntityAudio
 {
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SoundComponent::TYPE(dtEntity::SID("Sound"));
-   const StringId SoundComponent::SoundPathId(dtEntity::SID("SoundPath"));
-   const StringId SoundComponent::AutoPlayId(dtEntity::SID("AutoPlay"));
-   const StringId SoundComponent::GainId(dtEntity::SID("Gain"));
-   const StringId SoundComponent::PitchId(dtEntity::SID("Pitch"));
-   const StringId SoundComponent::RollOffId(dtEntity::SID("RollOff"));
-   const StringId SoundComponent::LoopingId(dtEntity::SID("Looping"));
+   const dtEntity::StringId SoundComponent::TYPE(dtEntity::SID("Sound"));
+   const dtEntity::StringId SoundComponent::SoundPathId(dtEntity::SID("SoundPath"));
+   const dtEntity::StringId SoundComponent::AutoPlayId(dtEntity::SID("AutoPlay"));
+   const dtEntity::StringId SoundComponent::GainId(dtEntity::SID("Gain"));
+   const dtEntity::StringId SoundComponent::PitchId(dtEntity::SID("Pitch"));
+   const dtEntity::StringId SoundComponent::RollOffId(dtEntity::SID("RollOff"));
+   const dtEntity::StringId SoundComponent::LoopingId(dtEntity::SID("Looping"));
    
    
    ////////////////////////////////////////////////////////////////////////////////
@@ -106,9 +106,9 @@ namespace dtEntity
       dtEntity::Component* comp;
       if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), patsid, comp, true))
       {
-        Vec3d currPos = comp->GetVec3d(possid);
-        Vec3f oldPos = mCurrentSound->GetPosition();
-        Vec3f velocity = (currPos - oldPos) * (1 / dt);
+        osg::Vec3d currPos = comp->GetVec3d(possid);
+        osg::Vec3f oldPos = mCurrentSound->GetPosition();
+        osg::Vec3f velocity = (currPos - oldPos) * (1 / dt);
         mCurrentSound->SetVelocity(velocity);
         mCurrentSound->SetPosition(currPos);
         // TODO - need to set orientation as well...
@@ -116,14 +116,14 @@ namespace dtEntity
       }
       else if(mOwner->GetEntityManager().GetComponent(mOwner->GetId(), matrixsid, comp, true))
       {
-        Matrix mat = comp->GetMatrix(matsid);
+         dtEntity::Matrix mat = comp->GetMatrix(matsid);
 
-        Vec3d currPos = mat.getTrans();
-        Vec3f oldPos = mCurrentSound->GetPosition();
-        Vec3f velocity = (currPos - oldPos) * (1 / dt);
-        mCurrentSound->SetVelocity(velocity);
-        mCurrentSound->SetPosition(currPos);
-        // TODO - need to set orientation as well...
+         osg::Vec3d currPos = mat.getTrans();
+         osg::Vec3f oldPos = mCurrentSound->GetPosition();
+         osg::Vec3f velocity = (currPos - oldPos) * (1 / dt);
+         mCurrentSound->SetVelocity(velocity);
+         mCurrentSound->SetPosition(currPos);
+         // TODO - need to set orientation as well...
 
       }
       // also flush all sound commands
@@ -181,16 +181,16 @@ namespace dtEntity
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   const StringId SoundSystem::TYPE(dtEntity::SID("Sound"));
-   const StringId SoundSystem::ListenerGainId(dtEntity::SID("ListenerGain"));
-   const StringId SoundSystem::ListenerEntityId(dtEntity::SID("ListenerEntity"));
+   const dtEntity::StringId SoundSystem::TYPE(dtEntity::SID("Sound"));
+   const dtEntity::StringId SoundSystem::ListenerGainId(dtEntity::SID("ListenerGain"));
+   const dtEntity::StringId SoundSystem::ListenerEntityId(dtEntity::SID("ListenerEntity"));
 
    ////////////////////////////////////////////////////////////////////////////////
-   SoundSystem::SoundSystem(EntityManager& em)
-      : DefaultEntitySystem<SoundComponent>(em)
+   SoundSystem::SoundSystem(dtEntity::EntityManager& em)
+      : dtEntity::DefaultEntitySystem<SoundComponent>(em)
       , mListenerEntity(
-           DynamicUIntProperty::SetValueCB(this, &SoundSystem::SetListenerEntity),
-           DynamicUIntProperty::GetValueCB(this, &SoundSystem::GetListenerEntity)
+           dtEntity::DynamicUIntProperty::SetValueCB(this, &SoundSystem::SetListenerEntity),
+           dtEntity::DynamicUIntProperty::GetValueCB(this, &SoundSystem::GetListenerEntity)
         )
      , mListenerEntityTrans(0)
      , mListenerEntityVal(0)
@@ -200,23 +200,23 @@ namespace dtEntity
 
       mListenerGain = 1.0f;
 
-      mEnterWorldFunctor = MessageFunctor(this, &SoundSystem::OnEnterWorld);
-      em.RegisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
+      mEnterWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnEnterWorld);
+      em.RegisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor, "SoundSystem::OnEnterWorld");
 
-      mLeaveWorldFunctor = MessageFunctor(this, &SoundSystem::OnLeaveWorld);
-      em.RegisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "SoundSystem::OnLeaveWorld");
+      mLeaveWorldFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnLeaveWorld);
+      em.RegisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor, "SoundSystem::OnLeaveWorld");
 
-      mTickFunctor = MessageFunctor(this, &SoundSystem::OnTick);
-      em.RegisterForMessages(TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
+      mTickFunctor = dtEntity::MessageFunctor(this, &SoundSystem::OnTick);
+      em.RegisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor, "SoundSystem::OnTick");
 
-      dtEntity::AudioManager::GetInstance().Init();
+      dtEntityAudio::AudioManager::GetInstance().Init();
 
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    SoundSystem::~SoundSystem()
    {
-      dtEntity::AudioManager::DestroyInstance();
+      dtEntityAudio::AudioManager::DestroyInstance();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +227,7 @@ namespace dtEntity
       CopyEntityTransformToListener();      
      
       // set global gain
-      dtEntity::AudioManager::GetListener()->SetGain(mListenerGain.Get());
+      dtEntityAudio::AudioManager::GetListener()->SetGain(mListenerGain.Get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -238,17 +238,17 @@ namespace dtEntity
          SoundComponent* sc = i->second;
          sc->FreeSound();
       }
-      em.UnregisterForMessages(EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
-      em.UnregisterForMessages(EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
-      em.UnregisterForMessages(TickMessage::TYPE, mTickFunctor);
-      em.UnregisterForMessages(WindowClosedMessage::TYPE, mWindowClosedFunctor);
+      em.UnregisterForMessages(dtEntity::EntityAddedToSceneMessage::TYPE, mEnterWorldFunctor);
+      em.UnregisterForMessages(dtEntity::EntityRemovedFromSceneMessage::TYPE, mLeaveWorldFunctor);
+      em.UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
+      em.UnregisterForMessages(dtEntity::WindowClosedMessage::TYPE, mWindowClosedFunctor);
 
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnEnterWorld(const Message& msg)
+   void SoundSystem::OnEnterWorld(const dtEntity::Message& msg)
    {
-      EntityId eid = static_cast<EntityId>(msg.GetUInt(EntityAddedToSceneMessage::AboutEntityId));
+      dtEntity::EntityId eid = static_cast<dtEntity::EntityId>(msg.GetUInt(dtEntity::EntityAddedToSceneMessage::AboutEntityId));
       SoundComponent* sc;
       if(GetEntityManager().GetComponent(eid, sc))
       {
@@ -260,9 +260,9 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnLeaveWorld(const Message& msg)
+   void SoundSystem::OnLeaveWorld(const dtEntity::Message& msg)
    {
-      EntityId eid = static_cast<EntityId>(msg.GetUInt(EntityRemovedFromSceneMessage::AboutEntityId));
+      dtEntity::EntityId eid = static_cast<dtEntity::EntityId>(msg.GetUInt(dtEntity::EntityRemovedFromSceneMessage::AboutEntityId));
       SoundComponent* sc;
       if(GetEntityManager().GetComponent(eid, sc))
       {  
@@ -276,7 +276,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::OnTick(const Message& msg)
+   void SoundSystem::OnTick(const dtEntity::Message& msg)
    {
       // shortcut
       if(mComponents.empty())
@@ -296,7 +296,7 @@ namespace dtEntity
       {
          // 1 - check if any sound file needs to be loaded
          SoundComponent* currSoundComp = i->second;
-         dtEntity::Sound* soundObj = currSoundComp->GetCurrentSound();
+         dtEntityAudio::Sound* soundObj = currSoundComp->GetCurrentSound();
          if (soundObj && soundObj->GetMustLoadBuffer())
          {
             AudioManager::GetInstance().LoadSoundBuffer(*soundObj);
@@ -309,7 +309,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::SetSoundPath(EntityId eid, const std::string& p)
+   void SoundSystem::SetSoundPath(dtEntity::EntityId eid, const std::string& p)
    {
 
       SoundComponent* sc = GetComponent(eid);
@@ -320,7 +320,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::PlaySound(EntityId eid)
+   void SoundSystem::PlaySound(dtEntity::EntityId eid)
    {
       SoundComponent* sc = GetComponent(eid);
       if(sc)
@@ -330,7 +330,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::StopSound(EntityId eid)
+   void SoundSystem::StopSound(dtEntity::EntityId eid)
    {
       SoundComponent* sc = GetComponent(eid);
       if(sc)
@@ -342,35 +342,35 @@ namespace dtEntity
    ////////////////////////////////////////////////////////////////////////////////
    void SoundSystem::CopyEntityTransformToListener()
    {
-      static const StringId possid = dtEntity::SID("Position");
-      static const StringId attsid = dtEntity::SID("Attitude");
-      static const StringId eyedirsid = dtEntity::SID("EyeDirection");
-      static const StringId upsid = dtEntity::SID("Up");
+      static const dtEntity::StringId possid = dtEntity::SID("Position");
+      static const dtEntity::StringId attsid = dtEntity::SID("Attitude");
+      static const dtEntity::StringId eyedirsid = dtEntity::SID("EyeDirection");
+      static const dtEntity::StringId upsid = dtEntity::SID("Up");
 
       if(mListenerEntityTrans)
       {
          osg::Vec3d pos = mListenerEntityTrans->GetVec3d(possid);
-         dtEntity::AudioManager::GetListener()->SetPosition(pos);
+         dtEntityAudio::AudioManager::GetListener()->SetPosition(pos);
          
          if(mListenerEntityTrans->Has(attsid))
          {
             osg::Quat att = mListenerEntityTrans->GetQuat(attsid);
             osg::Vec3 eyedir = att * osg::Vec3(0,1,0);
             osg::Vec3 up = att * osg::Vec3(0,0,1);
-            dtEntity::AudioManager::GetListener()->SetOrientation(eyedir, up);
+            dtEntityAudio::AudioManager::GetListener()->SetOrientation(eyedir, up);
          }
          else if(mListenerEntityTrans->Has(eyedirsid) &&
             mListenerEntityTrans->Has(upsid))
          {
             osg::Vec3d eyedir = mListenerEntityTrans->GetVec3d(eyedirsid);
             osg::Vec3d up = mListenerEntityTrans->GetVec3d(upsid);
-            dtEntity::AudioManager::GetListener()->SetOrientation(eyedir, up);
+            dtEntityAudio::AudioManager::GetListener()->SetOrientation(eyedir, up);
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SoundSystem::SetListenerEntity(EntityId id)  
+   void SoundSystem::SetListenerEntity(dtEntity::EntityId id)  
    { 
       
       bool success = GetEntityManager().GetComponent(id, dtEntity::SID("Transform"), mListenerEntityTrans, true);
@@ -386,7 +386,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   EntityId SoundSystem::GetListenerEntity() const 
+   dtEntity::EntityId SoundSystem::GetListenerEntity() const 
    { 
       return mListenerEntityVal; 
    }

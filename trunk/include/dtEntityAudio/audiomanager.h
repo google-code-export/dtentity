@@ -34,20 +34,20 @@
 #   include <AL/alc.h>
 #endif
 
-#include <dtEntity/export.h>
+#include <dtEntityAudio/export.h>
 #include <dtEntity/singleton.h>
-#include <dtEntity/sound.h>
-#include <dtEntity/listener.h>
+#include <dtEntityAudio/sound.h>
+#include <dtEntityAudio/listener.h>
 
 #include <osg/ref_ptr>
 
 
-namespace dtEntity
+namespace dtEntityAudio
 {
 
-   /** dtAudio::AudioManager
+   /** dtEntityAudio::AudioManager
     *
-    * dtAudio::AudioManager is the interface to the underlying audio-
+    * dtEntityAudio::AudioManager is the interface to the underlying audio-
     * engine; OpenAL.
     *
     * Before using, the user must instantiate and configure the
@@ -57,7 +57,7 @@ namespace dtEntity
     *
     * Optionally the user can create an AudioConfigData structure
     * to pass to the AudioManager when configuring set some of the
-    * base functionalit of the manager.  Currently only the number
+    * base functionality of the manager.  Currently only the number
     * of sources is set this way.  It is encouraged, but not required,
     * that the user know how many channels their audio hardware uses
     * and set the number of sources = the number of channels.
@@ -102,7 +102,7 @@ namespace dtEntity
     * The current version is heavily inspired from the Delta3D one
     *
     */
-   class DT_ENTITY_EXPORT AudioManager : public dtEntity::Singleton<AudioManager>
+   class DTENTITY_AUDIO_EXPORT AudioManager : public dtEntity::Singleton<AudioManager>
    {
 
    public:
@@ -356,7 +356,7 @@ namespace dtEntity
 
       bool mShutdownContexts;
    };
-};
+}; // dtEntityAudio
 
 
 

@@ -27,7 +27,7 @@
 
 #include <queue>
 
-#include <dtEntity/export.h>
+#include <dtEntityAudio/export.h>
 
 #ifdef __APPLE__
   #include <OpenAL/alut.h>
@@ -46,7 +46,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace dtEntity
+namespace dtEntityAudio
 {
    static const std::string ERROR_CLEARING_STRING = "Clearing Error code "
             "system at start of method, if this appears then an error occurred before this "
@@ -82,7 +82,7 @@ namespace dtEntity
     * The current version is heavily inspired from the Delta3D one
     *
     */
-   class DT_ENTITY_EXPORT Sound : public osg::Referenced
+   class DTENTITY_AUDIO_EXPORT Sound : public osg::Referenced
    {
    public:
       typedef void (*CallBack)(Sound* sound, void* param);  ///callback function type
@@ -383,7 +383,7 @@ namespace dtEntity
       void SetPitch(float pitch);
 
       /**
-       * Returns the pitch multipier of the sound source.
+       * Returns the pitch multiplier of the sound source.
        *
        * @return the current pitch
        */
@@ -399,7 +399,7 @@ namespace dtEntity
        * and Orientation all become relative to the Listener's parameters rather
        * than absolute values.
        *
-       * Therefore: calling this function has no effect on the Listnener it
+       * Therefore: calling this function has no effect on the Listener it
        * ONLY affects the Sound source.
        *
        * You almost never want to set ListenerRelative to be true-- if a
@@ -415,20 +415,20 @@ namespace dtEntity
        *
        * @param position to set
        */
-      void SetPosition(const Vec3f& position);
+      void SetPosition(const osg::Vec3f& position);
 
       /**
        * Get the position of sound.
        *
        * @param position to get
        */
-      void GetPosition(Vec3f& position) const;
+      void GetPosition(osg::Vec3f& position) const;
 
       /**
        * Returns the position of the Sound.
        *       
        */
-      Vec3f& GetPosition();
+      osg::Vec3f& GetPosition();
 
       /**
        * Set the direction of sound.
@@ -439,7 +439,7 @@ namespace dtEntity
        *
        * @param direction to set
        */
-      void SetDirection(const Vec3f& direction);
+      void SetDirection(const osg::Vec3f& direction);
 
 
       /**
@@ -447,29 +447,29 @@ namespace dtEntity
        *
        * @param direction to get
        */
-      void GetDirection(Vec3f& direction) const;
+      void GetDirection(osg::Vec3f& direction) const;
 
       /*
        * Return the direction of the Sound
        */
-      Vec3f GetDirection();
+      osg::Vec3f GetDirection();
 
       /**
        * Set the velocity of sound.
        *
        * @param velocity to set
        */
-      void SetVelocity(const Vec3f& velocity);
+      void SetVelocity(const osg::Vec3f& velocity);
 
       /**
        * Get the velocity of sound.
        *
        * @param velocity to get
        */
-      void GetVelocity(Vec3f& velocity) const;
+      void GetVelocity(osg::Vec3f& velocity) const;
 
       /// Returns the velocity vector of the Sound.
-      Vec3f GetVelocity();
+      osg::Vec3f GetVelocity();
 
       /**
        * Sets the distance where there will no longer be any attenuation of
@@ -604,13 +604,13 @@ namespace dtEntity
       ALfloat                 mMinGain;
       ALfloat                 mMaxGain;
       bool                    mListenerRelative;
-      Vec3f                   mPosition;
-      Vec3f                   mDirection;
-      Vec3f                   mVelocity;
+      osg::Vec3f              mPosition;
+      osg::Vec3f              mDirection;
+      osg::Vec3f              mVelocity;
 
       bool                    mUserDefinedSource;
    };
-} // namespace dtEntity
+} // namespace dtEntityAudio
 
 ////////////////////////////////////////////////////////////////////////////////
 

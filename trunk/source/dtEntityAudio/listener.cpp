@@ -19,11 +19,11 @@
 */
 
 
-#include <dtEntity/listener.h>
-#include <dtEntity/sound.h>
+#include <dtEntityAudio/listener.h>
+#include <dtEntityAudio/sound.h>
 #include <osg/Matrix>
 
-namespace dtEntity
+namespace dtEntityAudio
 {
    ////////////////////////////////////////////////////////////////////////////////
    Listener::Listener()
@@ -38,7 +38,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Listener::SetVelocity(const Vec3f& velocity)
+   void Listener::SetVelocity(const osg::Vec3f& velocity)
    {
       alListener3f(AL_VELOCITY,
          static_cast<ALfloat>(velocity[0]),
@@ -48,7 +48,7 @@ namespace dtEntity
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Listener::GetVelocity(Vec3f& velocity) const
+   void Listener::GetVelocity(osg::Vec3f& velocity) const
    {
       alGetListener3f(AL_VELOCITY, static_cast<ALfloat*>(&velocity[0]),
          static_cast<ALfloat*>(&velocity[1]),
@@ -103,12 +103,12 @@ namespace dtEntity
       alListenerfv( AL_ORIENTATION, orient.ort );
       Sound::CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
 
-      SetVelocity(Vec3f(0.0f, 0.0f, 0.0f));
+      SetVelocity(osg::Vec3f(0.0f, 0.0f, 0.0f));
       SetGain(1.0);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Listener::SetPosition(const Vec3f& position)
+   void Listener::SetPosition(const osg::Vec3f& position)
    {
       // store it internally
       mPosition = position;
@@ -121,7 +121,7 @@ namespace dtEntity
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Listener::SetOrientation(const Vec3f& atVec, const Vec3f& upVec)
+   void Listener::SetOrientation(const osg::Vec3f& atVec, const osg::Vec3f& upVec)
    {
       // store it internally
       mDirection = atVec;
@@ -137,4 +137,4 @@ namespace dtEntity
       Sound::CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
    }
 
-}  // namespace dtEntity
+}  // namespace dtEntityAudio

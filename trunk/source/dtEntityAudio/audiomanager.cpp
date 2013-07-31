@@ -19,7 +19,7 @@
 */
 
 
-#include <dtEntity/audiomanager.h>
+#include <dtEntityAudio/audiomanager.h>
 #include <dtEntity/core.h>
 #include <dtEntity/systeminterface.h>
 #include <dtEntity/log.h>
@@ -47,7 +47,7 @@
 
 
 
-namespace dtEntity 
+namespace dtEntityAudio 
 {
    AudioManager::LOB_PTR AudioManager::_Mic(NULL);
    const char*           AudioManager::_EaxVer = "EAX2.0";
@@ -112,7 +112,7 @@ namespace dtEntity
          std::string ext = osgDB::getLowerCaseFileExtension(file);
          if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
 
-         if (!GetSystemInterface()->FileExists(file))
+         if (!dtEntity::GetSystemInterface()->FileExists(file))
          {
             return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
          }
@@ -422,13 +422,13 @@ namespace dtEntity
       }
 
       std::string filename;
-      if (GetSystemInterface()->FileExists(file))
+      if (dtEntity::GetSystemInterface()->FileExists(file))
       {
          filename = file;
       }
       else
       {
-         filename = GetSystemInterface()->FindDataFile(file);
+         filename = dtEntity::GetSystemInterface()->FindDataFile(file);
       }
 
       if (filename.empty())
@@ -811,4 +811,4 @@ namespace dtEntity
       }
    }
 
-} //namespace dtEntity
+} //namespace dtEntityAudio
