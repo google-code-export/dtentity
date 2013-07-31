@@ -66,35 +66,74 @@ namespace dtEntityAudio
          return (id == TYPE); 
       }
 
-      virtual void Finished();
       virtual void OnAddedToEntity(dtEntity::Entity& entity) { mOwner = &entity;}
       virtual void OnRemovedFromEntity(dtEntity::Entity& entity) { mOwner = NULL; }
 
+
+      // accessors
+
       dtEntityAudio::Sound* GetCurrentSound() const { return mCurrentSound.get(); }
 
-      void SetSoundPath(const std::string& p);
-      std::string GetSoundPath() const { return mSoundPath.Get(); }
+      std::string GetSoundPath() const { return mSoundPath; }
+      void SetSoundPath(const std::string& val);
+      bool GetAutoPlay() const { return mAutoPlay; }
+      void SetAutoPlay(bool val);
+      bool GetLooping() const { return mLooping; }
+      void SetLooping(bool val);
+      float GetGain() const { return mGain; }
+      void SetGain(float val);
+      float GetPitch() const { return mPitch; }
+      void SetPitch(float val);
+      float GetRollOff() const { return mRollOff; }
+      void SetRollOff(float val);
 
-      void SetAutoPlay(bool p) { mAutoPlay.Set(p); }
-      bool GetAutoPlay() const { return mAutoPlay.Get(); }
+
+      // other utils
 
       bool IsPlaying() const;
       void PlaySound();
       void StopSound();
 
-      void Update(float dt);
-      void FreeSound();
+
 
    private:
 
-      dtEntity::StringProperty mSoundPath;
-      dtEntity::BoolProperty mAutoPlay;
-      dtEntity::FloatProperty mGain;
-      dtEntity::FloatProperty mPitch;
-      dtEntity::FloatProperty mRollOff;
-      dtEntity::BoolProperty mLooping;
-      osg::ref_ptr<dtEntityAudio::Sound> mCurrentSound;
+      /// initializes the component as needed
+      void Init();
+      /// Update properties on the related sound objects
+      void UpdateSoundValues();
+      /// reset the component to default then initializes it again
+      void Reinit();
+
+      /// Updates sound object (normally called at every tick)
+      void Update(float dt);
+      /// Frees the related sound object
+      void FreeSound();
+
+      /// parent entity
       dtEntity::Entity* mOwner;
+      /// flag indicating if the component has been initialized
+      bool mIsInitialized;
+      /// sound object linked to this component
+      osg::ref_ptr<dtEntityAudio::Sound> mCurrentSound;
+
+      // dynamic properties
+      dtEntity::DynamicStringProperty mSoundPathProp;
+      dtEntity::DynamicBoolProperty mAutoPlayProp;
+      dtEntity::DynamicFloatProperty mGainProp;
+      dtEntity::DynamicFloatProperty mPitchProp;
+      dtEntity::DynamicFloatProperty mRollOffProp;
+      dtEntity::DynamicBoolProperty mLoopingProp;
+
+      std::string mSoundPath;
+      bool mAutoPlay;
+      bool mLooping;
+      float mGain;
+      float mPitch;
+      float mRollOff;
+
+
+      
    };
 
    
@@ -121,7 +160,7 @@ namespace dtEntityAudio
       static const dtEntity::StringId ListenerGainId;
       static const dtEntity::StringId ListenerEntityId;
 
-      //void OnAddedToEntityManager(dtEntity::EntityManager& em)
+      void OnAddedToEntityManager(dtEntity::EntityManager& em);
       void OnRemoveFromEntityManager(dtEntity::EntityManager& em);
       void OnEnterWorld(const dtEntity::Message&);
       void OnLeaveWorld(const dtEntity::Message&);
