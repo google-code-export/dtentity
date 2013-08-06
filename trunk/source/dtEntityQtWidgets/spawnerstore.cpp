@@ -408,8 +408,14 @@ namespace dtEntityQtWidgets
       // TODO get correct context id! drag drop only works on first window!
       osg::Vec3 pickray = iface->GetPickRay(0, pos.x(), pos.y());
       
-      dtEntity::Component* cam;
-      mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), dtEntity::SID("Camera"), cam);
+      dtEntity::Component* cam = NULL;
+      bool foundCam = mEntityManager->GetComponent(mtsystem->GetEntityIdByUniqueId("cam_0"), dtEntity::SID("Camera"), cam);
+      if(!foundCam)
+      {
+         LOG_ERROR("Could not spawn by drag and drop: no \"cam_0\" camera entity!");
+         return;
+      }
+
       osg::Vec3d start = cam->GetVec3d(dtEntity::SID("Position"));
      
       osg::ref_ptr<osgUtil::LineSegmentIntersector> lsi = new osgUtil::LineSegmentIntersector(start, start + pickray * 100000);
