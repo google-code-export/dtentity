@@ -62,6 +62,7 @@ namespace dtEntity
       
       static const ComponentType TYPE;
       static const StringId EntityNameId;
+      static const StringId EntityDescriptionId;
       static const StringId SpawnerNameId;
       static const StringId MapNameId;
       static const StringId UniqueIdId;
@@ -81,6 +82,12 @@ namespace dtEntity
        */
       std::string GetEntityName() const;
       void SetEntityName(const std::string& v);
+
+      /**
+       * string description of entity
+       */
+      std::string GetEntityDescription() const;
+      void SetEntityDescription(const std::string& v);
 
       /**
        * If entity was created from a spawner then this is set to the spawners name.
@@ -116,12 +123,14 @@ namespace dtEntity
 
    private:
       DynamicStringProperty mEntityName;
+      DynamicStringProperty mEntityDescription;
       StringProperty mMapName;
       DynamicStringProperty mSpawnerNameProp;
       DynamicStringProperty mUniqueId;
       Spawner* mSpawner;
       std::string mUniqueIdStr;
       std::string mEntityNameStr;
+      std::string mEntityDescStr;
       BoolProperty mSaveWithMap;
       BoolProperty mVisibleInEntityList;
       Entity* mOwner;

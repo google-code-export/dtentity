@@ -44,6 +44,7 @@ namespace dtEntity
 {
    const StringId MapComponent::TYPE(dtEntity::SID("Map"));   
    const StringId MapComponent::EntityNameId(dtEntity::SID("EntityName"));  
+   const StringId MapComponent::EntityDescriptionId(dtEntity::SID("EntityDescription"));  
    const StringId MapComponent::MapNameId(dtEntity::SID("MapName"));  
    const StringId MapComponent::SpawnerNameId(dtEntity::SID("SpawnerName"));  
    const StringId MapComponent::UniqueIdId(dtEntity::SID("UniqueId"));  
@@ -57,6 +58,10 @@ namespace dtEntity
         DynamicStringProperty::SetValueCB(this, &MapComponent::SetEntityName),
         DynamicStringProperty::GetValueCB(this, &MapComponent::GetEntityName)
         )
+      , mEntityDescription(
+        DynamicStringProperty::SetValueCB(this, &MapComponent::SetEntityDescription),
+        DynamicStringProperty::GetValueCB(this, &MapComponent::GetEntityDescription)
+        )
       , mSpawnerNameProp(
            DynamicStringProperty::SetValueCB(this, &MapComponent::SetSpawnerName),
            DynamicStringProperty::GetValueCB(this, &MapComponent::GetSpawnerName)
@@ -69,6 +74,7 @@ namespace dtEntity
       , mOwner(NULL)
    {
       Register(EntityNameId, &mEntityName);
+      Register(EntityDescriptionId, &mEntityDescription);
       Register(MapNameId, &mMapName);
       Register(SpawnerNameId, &mSpawnerNameProp);
       Register(UniqueIdId, &mUniqueId);
@@ -105,6 +111,22 @@ namespace dtEntity
          mOwner->GetEntityManager().EmitMessage(msg);
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   std::string MapComponent::GetEntityDescription() const
+   {
+      return mEntityDescStr;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void MapComponent::SetEntityDescription(const std::string& v)
+   {
+      if(v != mEntityDescStr)
+      {
+         mEntityDescStr = v;
+      }
+   }
+
 
 
    ////////////////////////////////////////////////////////////////////////////
