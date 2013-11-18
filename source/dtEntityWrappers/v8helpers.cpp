@@ -118,16 +118,13 @@ namespace dtEntityWrappers
          LOG_ERROR("Cannot open script file " + fileName);
          return false;
       }
+      
+      // assign the file contents into the recipient string
+      recipient.clear();
+      recipient.assign( (std::istreambuf_iterator<char>(inFile) ),
+                        (std::istreambuf_iterator<char>()) );
 
-      char buffer[256];
-      while(!inFile.eof() )
-      {
-         inFile.getline(buffer, sizeof(buffer));
-         stream << buffer << "\n";
-      }
-
-      inFile.close();
-      recipient = stream.str();
+      inFile.close();      
       return true;
    }
 
