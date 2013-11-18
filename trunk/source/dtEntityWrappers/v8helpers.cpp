@@ -121,10 +121,16 @@ namespace dtEntityWrappers
       
       // assign the file contents into the recipient string
       recipient.clear();
+
+      // allocate the needed space on the string upfront (avoids string memory re-allocation)
+      inFile.seekg(0, std::ios::end);
+      recipient.reserve(inFile.tellg());
+      inFile.seekg(0, std::ios::beg);
+
       recipient.assign( (std::istreambuf_iterator<char>(inFile) ),
                         (std::istreambuf_iterator<char>()) );
 
-      inFile.close();      
+      inFile.close();
       return true;
    }
 
