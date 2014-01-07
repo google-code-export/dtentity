@@ -73,16 +73,15 @@ namespace dtEntityWrappers
    {
 
       dtEntity::SystemInterface* sysinf = dtEntity::GetSystemInterface();
-      int argc = sysinf->GetArgC();;
-      const char** argv = sysinf->GetArgV();
+      int argc = sysinf->GetArgC();
+      const std::vector<std::string>& argv = sysinf->GetArgV();
 
       HandleScope scope;
       Handle<Array> o = Array::New(argc);
 
       for(int i = 0; i < argc; ++i)
-      {
-         const char* arg = argv[i];
-         o->Set(i, String::New(arg));
+      {  
+         o->Set(i, String::New(argv[i].c_str()));
       }
       return scope.Close(o);
    }

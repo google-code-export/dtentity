@@ -114,9 +114,10 @@ namespace dtEntityOSG
       : mMessagePump(&mp)
       , mImpl(new Impl())
       , mArgC(argc)
-      , mArgV(argv)
-   {
-
+   {  
+      // create a copy of the argv
+      for (int i =0; i<mArgC; ++i)
+         mArgV.push_back(std::string(argv[i]));
    }
 
 

@@ -143,9 +143,9 @@ namespace dtEntity
       virtual int GetArgC() = 0;
 
       /**
-       * Return command line arg with given number
+       * Return command line arg with given number (use std::string instead of raw c pointers
        */
-      virtual const char** GetArgV() = 0;
+      virtual std::vector<std::string> GetArgV() = 0;
 
    };
   
