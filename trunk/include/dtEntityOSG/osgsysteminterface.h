@@ -99,7 +99,7 @@ namespace dtEntityOSG
                    const std::string& msg) const;
 
       virtual int GetArgC() { return mArgC; }
-      virtual const char** GetArgV() { return mArgV; }
+      virtual std::vector<std::string> GetArgV() { return mArgV; }
 
    private:
       osg::observer_ptr<osgViewer::ViewerBase> mViewer;      
@@ -108,8 +108,7 @@ namespace dtEntityOSG
       Impl* mImpl;
 
       int mArgC;
-      const char** mArgV;
-
+      std::vector<std::string> mArgV;
    };
 
    inline OSGSystemInterface* GetOSGSystemInterface()
