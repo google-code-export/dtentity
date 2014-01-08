@@ -319,7 +319,7 @@ namespace dtEntityWrappers
       GetInternal(args.This(), 1, storage);
       storage->mHolders.push_back(fh);
 
-      unsigned int options = 0;
+      unsigned int options = 1;
       if(args.Length() > 2)
       {
          options = args[2]->Uint32Value();
