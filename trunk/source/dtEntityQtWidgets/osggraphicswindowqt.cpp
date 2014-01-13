@@ -319,10 +319,11 @@ namespace dtEntityQtWidgets
    }
 
    ////////////////////////////////////////////////////////////
-   void OSGGraphicsWindowQt::checkEvents()
+   bool OSGGraphicsWindowQt::checkEvents()
    {
       if (mCloseRequested)
           getEventQueue()->closeWindow();
+	  return mCloseRequested ;
    }
 
    ////////////////////////////////////////////////////////////
