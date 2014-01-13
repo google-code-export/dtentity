@@ -105,7 +105,7 @@ namespace dtEntityQtWidgets
       virtual void swapBuffersImplementation();
 
       /** Check to see if any events have been generated.*/
-      virtual void checkEvents();
+      virtual bool checkEvents();
 
       /** Get the window's position and size.*/
       virtual void getWindowRectangle(int& x, int& y, int& width, int& height);
