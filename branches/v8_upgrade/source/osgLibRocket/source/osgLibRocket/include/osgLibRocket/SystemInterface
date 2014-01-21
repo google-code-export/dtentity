@@ -1,0 +1,63 @@
+#pragma once
+
+#include <osgLibRocket/export.h>
+#include <Rocket/Core/Core.h>
+#include <osg/Notify>
+#include <osg/Timer>
+
+namespace osgLibRocket
+{
+   class OSGLIBROCKET_EXPORT SystemInterface : public Rocket::Core::SystemInterface
+   {
+   public:
+
+      SystemInterface()
+         : _timer(osg::Timer::instance()->tick())
+      {
+
+      }
+
+      virtual float GetElapsedTime();
+
+	   /// Translate the input string into the translated string.
+	   /// @param[out] translated Translated string ready for display.
+	   /// @param[in] input String as received from XML.
+	   /// @return Number of translations that occured.
+	   virtual int TranslateString(Rocket::Core::String& translated, const Rocket::Core::String& input)
+	   {
+		   translated = input;
+		   return 0;
+	   }
+
+	   /// Log the specified message.
+	   /// @param[in] type Type of log message, ERROR, WARNING, etc.
+	   /// @param[in] message Message to log.
+	   /// @return True to continue execution, false to break into the debugger.
+	   virtual bool LogMessage(Rocket::Core::Log::Type type, const Rocket::Core::String& message)
+	   {
+		   std::string str = message.CString();
+
+		   switch(type)
+		   {
+		   case Rocket::Core::Log::LT_ALWAYS  : OSG_ALWAYS << str << "\n"; break;
+		   case Rocket::Core::Log::LT_ERROR   : OSG_FATAL  << str << "\n"; break;
+		   case Rocket::Core::Log::LT_ASSERT  : OSG_FATAL  << str << "\n"; break;
+		   case Rocket::Core::Log::LT_WARNING : OSG_WARN   << str << "\n"; break;
+		   case Rocket::Core::Log::LT_INFO    : OSG_INFO   << str << "\n"; break;
+		   case Rocket::Core::Log::LT_DEBUG   : OSG_DEBUG  << str << "\n"; break;
+		   case Rocket::Core::Log::LT_MAX     : OSG_ALWAYS << str << "\n"; break;
+		   }
+		   return true;
+	   }
+
+	   /// Called when this system interface is no longer required.
+	   virtual void Release()
+	   {
+
+	   }
+
+   private:
+      osg::Timer_t _timer;
+   };
+
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<map>
+   <spawner addtospawnerstore="true" guicategory="TestGuiCategory" iconpath="TestIconPath" name="TestSpawner">
+    <component type="TestComponent">
+      <stringproperty name="StringProperty">StringValue</stringproperty>
+	  <arrayproperty name="ArrayProperty">
+	    <stringproperty name="0">ArrayValOne</stringproperty>
+		<stringproperty name="1">ArrayValTwo</stringproperty>
+	  </arrayproperty>
+	  <boolproperty name="BoolTrue" value="true" />
+	  <boolproperty name="BoolFalse" value="false" />
+	  <charproperty name="CharProperty" value="x" />
+	  <doubleproperty name="DoubleProperty" value="12345.6789" />
+	  <groupproperty name="GroupProperty">
+		  <stringproperty name="GroupNameOne">GroupValOne</stringproperty>
+		  <stringproperty name="GroupNameTwo">GroupValTwo</stringproperty>
+	  </groupproperty>
+      <intproperty name="IntProperty" value="-12345" />
+	  <floatproperty name="FloatProperty" value="12345.6789" />
+	  <matrixproperty name="MatrixProperty">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</matrixproperty>
+	  <quatproperty name="QuatProperty" x="1" y="2" z="3" w="4" />
+	  <uintproperty name="UIntProperty" value="12345" />
+	  <vec2property name="Vec2Property" x="1" y="2"/>
+	  <vec3property name="Vec3Property" x="1" y="2" z="3" />
+	  <vec4property name="Vec4Property" x="1" y="2" z="3" w="4"/>
+    </component>
+  </spawner>  
+
+  <entity>
+    <component type="Velocity">
+      <vec3property name="Position" x="1" y="2" z="3" />
+    </component>
+  </entity>
+</map>

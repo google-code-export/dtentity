@@ -1,0 +1,18 @@
+<?xml  version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<delegates>
+   <enuminput propertyname="CullingMode" values="NoAutoNearFarCulling|BoundingVolumeNearFarCulling|PrimitiveNearFarCulling" />
+   <enuminput propertyname="ProjectionMode" values="ModePerspective|ModeOrtho" />
+   <colorinput propertyname="ClearColor" />
+   <translations>
+		<translation language="de_DE">
+			<componentname>Kamera</componentname>
+			
+			<property name="CullingMode">Culling Modus</property>
+			<description name="CullingMode">Der Algorithmus der festlegt, welche Szenenteile dargestellt werden</description>
+			<description name="AspectRatio">Ratio zwischen Breite und Höhe des Fensters</description>
+			<description name="ClearColor">Hintergrundfarbe für unbedeckte Bildteile</description>
+
+			
+		</translation>
+   </translations>
+</delegates>   

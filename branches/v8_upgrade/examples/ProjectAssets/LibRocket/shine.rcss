@@ -1,0 +1,680 @@
+body
+{
+	font-family: Delicious;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 15;
+	color: #303030;
+}
+
+body.window
+{	
+	z-index: top;
+	min-width: 250px;
+	max-width: 800px;
+	
+	min-height: 135px;
+	max-height: 700px;
+	padding-bottom:64px;
+	
+	background-decorator: tiled-box;
+	background-top-left-image:     shine.tga           0px  0px 17px 50px;
+	background-top-image:          shine.tga stretch  18px  0px 52px 50px;
+	background-top-right-image:    shine.tga          53px  0px 70px 50px;
+	background-left-image:         shine.tga stretch   0px 30px 17px 54px;
+	background-center-image:       shine.tga stretch  18px 31px 52px 53px;
+	background-right-image:        shine.tga stretch  53px 30px 70px 54px;
+	background-bottom-left-image:  shine.tga           0px 54px 17px 71px;
+	background-bottom-image:       shine.tga stretch  17px 54px 54px 71px;
+	background-bottom-right-image: shine.tga          53px 54px 70px 71px;	
+}
+
+div#title_bar
+{
+	
+	text-align: left;
+	font-family: Delicious;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 10;
+	color: #303030;
+
+	height: 30px;
+	
+	/*background-decorator: tiled-horizontal;
+	background-left-image: shine.tga 0px 0px 17px 30px;
+	background-center-image: shine.tga stretch 18px 0px 52px 30px;
+	background-right-image: shine.tga 53px 0px 70px 30px;*/
+}
+
+div#mover
+{
+	
+
+}
+div#title
+{
+	margin-top:10px;
+	padding-left: 17px;
+	padding-right: 17px;
+	padding-top:2px;
+	font-size: 12px;	
+
+}
+
+
+div#window
+{
+	padding-top: 0px;
+	padding-bottom: 10px;
+	padding-left: 17px;
+	padding-right: 17px;
+}
+
+div#scrollbar
+{
+	overflow: hidden auto;
+	width: auto;
+	height: 100%;
+	
+}
+
+div#spacer
+{
+	background-color:#FFFFFF88;
+	padding-right: 12px;
+	padding-top: 6px;
+	padding-bottom: 10px;
+}
+div#content
+{  
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	
+	text-align: center;
+	
+}
+
+p
+{
+	text-align: left;
+	margin-bottom: 1em;
+}
+
+h1
+{
+	margin-left: 0.4em;
+	margin-bottom: 0.4em;
+
+	text-align: left;
+	font-size: 16;
+	font-weight: bold;
+
+	shadow-font-effect: shadow;
+	shadow-offset: 1px 1px;
+	shadow-color: black;
+}
+
+
+
+input,
+select,
+dataselect
+{
+	
+}
+
+input.submit
+{
+}
+
+
+
+button,
+input.submit
+{
+
+	display: inline-block;
+
+	width: 90px;
+	height: 22px;
+
+
+	padding-left:0px;
+	padding-top: 4px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+
+
+	font-size: 12;
+	text-align: center;
+	tab-index: auto;
+
+	background-decorator: image;
+	background-image: shine.tga 66px 78px 156px 100px;
+}
+
+button:focus,
+input.submit:focus
+{
+    font-weight: bold;
+    
+    shadow-font-effect: shadow;
+    shadow-offset: 1px 1px;
+    shadow-color: black;
+}
+
+button:hover,
+input.submit:hover
+{
+	background-image: shine.tga 66px 103px 156px 125px;
+}
+
+button:active,
+input.submit:active
+{
+	background-image: shine.tga 66px 128px 156px 150px;
+}
+
+
+
+input.text
+{
+	height: 22px;
+	padding: 3px 10px 0px;
+
+	background-decorator: tiled-horizontal;
+	background-left-image: shine.tga 41px 113px 43px 131px;
+	background-right-image: shine.tga 56px 113px 58px 131px;
+	background-center-image: shine.tga stretch 43px 113px 56px 131px;
+}
+
+input.text,
+select,
+dataselect
+{
+	color: black;
+	font-size: 12;
+}
+
+datagrid input.text
+{
+	width: 100%;
+	height: auto;
+	margin: 0px;
+	padding: 0px 2px 0px;
+
+	border-width: 1px;
+	border-color: black;
+	background-color: white;
+
+	font-size: 15;
+	
+	background-decorator: none;
+}
+
+
+
+select,
+dataselect
+{
+	width: 90px;
+	height: 22px;
+}
+
+select selectvalue,
+dataselect selectvalue
+{
+	width: auto;
+	
+	height: 22px;
+	padding-left: 9px;
+	padding-right: 2px;
+
+	background-decorator: image;
+	background-image: shine.tga 66px 78px 156px 100px;
+}
+
+select selectvalue:hover,
+dataselect selectvalue:hover
+{
+	icon-image: shine.tga 5px 108px 15px 115px;
+}
+
+select selectarrow,
+dataselect selectarrow
+{
+	width: 15px;
+	height: 18px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 5px 107px 20px 125px;
+}
+
+select selectarrow:hover,
+dataselect selectarrow:hover
+{
+	icon-image: shine.tga 24px 107px 39px 125px;
+}
+
+select selectarrow:active,
+select selectarrow:checked,
+dataselect selectarrow:active,
+dataselect selectarrow:checked
+{
+	icon-image: shine.tga 24px 107px 39px 125px;
+}
+
+select selectbox,
+dataselect selectbox
+{
+	margin-left: 1px;
+	margin-top: 0px;
+	width: 162px;
+	padding: 1px 4px 4px 4px;
+}
+
+select selectbox,
+dataselect selectbox,
+datagrid datagridbody
+{
+	background-decorator: tiled-box;
+	background-top-left-image: shine.tga 41px 113px 43px 115px;
+	background-top-right-image: shine.tga 55px 113px 58px 115px;
+	background-top-image: shine.tga stretch 44px 113px 55px 115px;
+	background-bottom-image: shine.tga stretch 43px 128px 56px 132px;
+	background-bottom-left-image: shine.tga 41px 128px 43px 132px;
+	background-left-image: shine.tga 41px 115px 43px 128px;
+	background-right-image: shine.tga 56px 116px 58px 128px;
+	background-bottom-right-image: shine.tga 56px 128px 58px 132px;
+	background-center-image: shine.tga stretch 42px 114px 57px 130px;
+}
+
+select selectbox option,
+dataselect selectbox option
+{
+	width: auto;
+	padding-left: 3px;
+}
+
+
+input.radio,
+input.checkbox
+{
+	width: 11px;
+	height: 11px;
+
+}
+
+input.radio
+{
+	icon-decorator: image;
+	icon-image: shine.tga 32px 78px 43px 89px;
+}
+
+input.radio:hover
+{
+	icon-image: shine.tga 47px 78px 58px 89px;
+}
+
+input.radio:active
+{
+	icon-image: shine.tga 47px 78px 58px 89px;
+}
+
+input.radio:checked
+{
+	icon-image: shine.tga 32px 93px 43px 104px;
+}
+
+input.radio:checked:hover
+{
+	icon-image: shine.tga 47px 93px 58px 104px;
+}
+
+input.radio:checked:active
+{
+	icon-image: shine.tga 47px 93px 58px 104px;
+}
+
+input.checkbox
+{
+	icon-decorator: image;
+	icon-image: shine.tga 3px 93px 14px 104px;
+}
+
+input.checkbox:hover
+{
+	icon-image: shine.tga 17px 93px 28px 104px;
+}
+
+input.checkbox:active
+{
+	icon-image: shine.tga 17px 93px 28px 104px;
+}
+
+input.checkbox:checked
+{
+	icon-image: shine.tga 3px 78px 14px 89px;
+}
+
+input.checkbox:checked:hover
+{
+	icon-image: shine.tga 17px 78px 28px 89px;
+}
+
+input.checkbox:checked:active
+{
+	icon-image: shine.tga 17px 78px 28px 89px;
+}
+
+
+
+datagrid datagridheader
+{
+	width: auto;
+	height: 25px;
+	padding: 5px 10px 0px 10px;
+
+	background-decorator: tiled-horizontal;
+	background-left-image: shine.tga 127px 192px 143px 223px;
+	background-center-image: shine.tga stretch 143px 192px 145px 223px;
+	background-right-image: shine.tga 145px 192px 160px 223px;
+}
+
+datagrid datagridbody
+{
+	color: black;
+
+	margin-left: 4px;
+	margin-right: 3px;
+	padding: 0px 4px 4px 4px;
+}
+
+
+
+datagridexpand
+{
+	display: block;
+	
+	margin: 1px 0px 1px 5px;
+	height: 17px;
+	width: 17px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 3px 232px 20px 249px;
+}
+
+datagridexpand:hover
+{
+	icon-image-s: 21px 38px;
+}
+
+datagridexpand:active
+{
+	icon-image-s: 39px 56px;
+}
+
+datagridexpand.collapsed
+{
+	icon-image-t: 250px 267px;
+}
+
+
+scrollbarvertical
+{
+	margin-top: -6px;
+	margin-bottom: -6px;
+	margin-right: -11px;
+	width: 15px;
+}
+
+scrollbarvertical slidertrack
+{
+	background-decorator: tiled-vertical;
+	background-top-image: shine.tga 		   79px 60px  94px 62px;
+	background-center-image: shine.tga stretch 79px 62px  94px 64px;
+	background-bottom-image: shine.tga         79px 64px  94px 66px;
+}
+
+scrollbarvertical sliderbar
+{
+	margin-left: 0px;
+	width: 15px;
+	min-height: 46px;
+
+	background-decorator: tiled-vertical;
+	background-top-image: shine.tga 		   115px  3px 130px   14px;
+	background-center-image: shine.tga stretch 115px 11px 130px   17px;
+	background-bottom-image: shine.tga         115px 59px 130px   66px;
+}
+
+scrollbarvertical sliderbar:hover
+{
+	background-top-image: shine.tga 		   133px   3px 148px   14px;
+	background-center-image: shine.tga stretch 133px  11px 148px   17px;
+	background-bottom-image: shine.tga         133px  59px 148px   66px;
+}
+
+scrollbarvertical sliderbar:active
+{
+	background-top-image: shine.tga 		   151px  3px 166px  14px;
+	background-center-image: shine.tga stretch 151px 11px 166px  17px;
+	background-bottom-image: shine.tga         151px 59px 166px  66px;
+}
+
+scrollbarvertical sliderarrowdec
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 79px 3px 94px 19px;
+}
+
+scrollbarvertical sliderarrowdec:hover
+{
+	icon-image: shine.tga 79px 22px 94px 38px;
+}
+
+scrollbarvertical sliderarrowdec:active
+{
+	icon-image: shine.tga 79px 41px 94px 57px;
+}
+
+scrollbarvertical sliderarrowinc
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 97px 3px 112px 19px;
+}
+scrollbarvertical sliderarrowinc:hover
+{
+	icon-image: shine.tga 97px 22px 112px 38px;
+}
+
+scrollbarvertical sliderarrowinc:active
+{
+	icon-image: shine.tga 97px 41px 112px 57px;
+}
+
+
+scrollbarhorizontal
+{
+	width: 0px;
+	height: 0px;
+}
+
+
+input.range
+{
+	width: 15px;
+}
+
+input.range slidertrack
+{
+    background-decorator: tiled-vertical;
+   	background-top-image: shine.tga 		   79px 60px  94px 62px;
+	background-center-image: shine.tga stretch 79px 62px  94px 64px;
+	background-bottom-image: shine.tga         79px 64px  94px 66px;
+}
+
+input.range sliderbar
+{
+	margin-left: 0px;
+	width: 15px;
+	min-height: 10px;
+	height:30px;
+
+	background-decorator: tiled-vertical;
+	background-top-image: shine.tga 		   115px  3px 130px   14px;
+	background-center-image: shine.tga stretch 115px 11px 130px   17px;
+	background-bottom-image: shine.tga         115px 59px 130px   66px;
+	background-color:#00FF00;
+}
+
+input.range sliderbar:hover
+{
+	background-top-image: shine.tga 		   133px   3px 148px   14px;
+	background-center-image: shine.tga stretch 133px  11px 148px   17px;
+	background-bottom-image: shine.tga         133px  59px 148px   66px;
+	background-color:blue;
+}
+
+input.range sliderbar:active
+{
+	background-top-image: shine.tga 		   151px  3px 166px  14px;
+	background-center-image: shine.tga stretch 151px 11px 166px  17px;
+	background-bottom-image: shine.tga         151px 59px 166px  66px;
+	background-color:red;
+	
+}
+
+input.range sliderarrowdec
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 79px 3px 94px 19px;
+}
+
+input.range sliderarrowdec:hover
+{
+	icon-image: shine.tga 79px 22px 94px 38px;
+}
+
+input.range sliderarrowdec:active
+{
+	icon-image: shine.tga 79px 41px 94px 57px;
+}
+
+input.range sliderarrowinc
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 97px 3px 112px 19px;
+}
+input.range sliderarrowinc:hover
+{
+	icon-image: shine.tga 97px 22px 112px 38px;
+}
+
+input.range sliderarrowinc:active
+{
+	icon-image: shine.tga 97px 41px 112px 57px;
+}
+
+
+
+
+
+
+
+
+
+
+input.range.horizontal
+{
+	height: 16px;
+}
+
+input.range.horizontal slidertrack
+{
+    background-decorator: tiled-horizontal;
+   	background-left-image: shine.tga 		   192px 23px  194px 40px;
+	background-center-image: shine.tga stretch 194px 23px  207px 40px;
+	background-right-image: shine.tga          207px 23px  209px 40px;
+}
+
+input.range.horizontal sliderbar
+{
+	margin-left: 0px;
+	width: 30px;
+	min-height: 10px;
+	height:16px;
+
+	background-decorator: tiled-horizontal;
+	background-left-image: shine.tga 		   191px  4px 198px   20px;
+	background-center-image: shine.tga stretch 198px  4px 227px   20px;
+	background-right-image: shine.tga          227px  4px 236px   20px;
+
+}
+
+input.range.horizontal sliderbar:hover
+{
+	background-left-image: shine.tga 		   191px  4px 198px   20px;
+	background-center-image: shine.tga stretch 198px  4px 227px   20px;
+	background-right-image: shine.tga          227px  4px 236px   20px;
+}
+
+input.range.horizontal sliderbar:active
+{
+	background-left-image: shine.tga 		   191px  4px 198px   20px;
+	background-center-image: shine.tga stretch 198px  4px 227px   20px;
+	background-right-image: shine.tga          227px  4px 236px   20px;
+	
+}
+
+input.range.horizontal sliderarrowdec
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 79px 3px 94px 19px;
+}
+
+input.range.horizontal sliderarrowdec:hover
+{
+	icon-image: shine.tga 79px 22px 94px 38px;
+}
+
+input.range.horizontal sliderarrowdec:active
+{
+	icon-image: shine.tga 79px 41px 94px 57px;
+}
+
+input.range.horizontal sliderarrowinc
+{
+	width: 15px;
+	height: 16px;
+	
+	icon-decorator: image;
+	icon-image: shine.tga 97px 3px 112px 19px;
+}
+input.range.horizontal sliderarrowinc:hover
+{
+	icon-image: shine.tga 97px 22px 112px 38px;
+}
+
+input.range.horizontal sliderarrowinc:active
+{
+	icon-image: shine.tga 97px 41px 112px 57px;
+}
