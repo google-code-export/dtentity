@@ -27,6 +27,7 @@
 
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/RefPersistent.h>
 #include <dtEntityWrappers/wrappers.h>
 
 #include <iostream>
@@ -37,27 +38,32 @@ using namespace v8;
 
 namespace dtEntityWrappers
 {
-   
-   typedef std::map<dtEntity::ComponentType, Persistent<FunctionTemplate> > SubWrapperMap;
+ 
+   // TODO Ricky on 1/18/2014 
+   // Using ref pointers here is as wrappers for the Persistent object which is not copyable and cannot be used within a map.
+   // Persistent objects will be reset and deleted by the ref_ptr automatically
+   typedef std::map<dtEntity::ComponentType, osg::ref_ptr< RefPersistent<FunctionTemplate> > > SubWrapperMap;
    SubWrapperMap s_subWrapperMap;
 
    dtEntity::StringId s_entitySystemWrapper = dtEntity::SID("EntitySystemWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESToString(const Arguments& args)
+   void ESToString(const FunctionCallbackInfo<Value>& args)
    {
-      return String::New("<EntitySystem>");
+      args.GetReturnValue().Set( String::NewFromUtf8(v8::Isolate::GetCurrent(), "<EntitySystem>"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESHasComponent(const Arguments& args)
+   void ESHasComponent(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       
       if(!args[0]->IsUint32())
       {
-         return ThrowError("Usage: hasComponent(int)");
+         ThrowError("Usage: hasComponent(int)");
+         return;
       }
+
       bool searchderived = false;
       if(args.Length() > 1)
       {
@@ -65,22 +71,23 @@ namespace dtEntityWrappers
       }
       if(es->GetEntityManager().HasComponent(args[0]->Uint32Value(), es->GetComponentType(), searchderived))
       {
-         return True();
+         args.GetReturnValue().Set( True(Isolate::GetCurrent()));
       }
       else
       {
-         return False();
+         args.GetReturnValue().Set(False(Isolate::GetCurrent()));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESGetComponent(const Arguments& args)
+   void ESGetComponent(const FunctionCallbackInfo<Value>& args)
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
+      ScriptSystem* ss = GetScriptSystem();
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       if(!args[0]->IsUint32())
       {
-         return ThrowError("Usage: getComponent(int entityid, [bool getDerived])");
+         ThrowError("Usage: getComponent(int entityid, [bool getDerived])");
+         return;
       }
 
       dtEntity::EntityId eid = args[0]->Uint32Value();
@@ -88,26 +95,26 @@ namespace dtEntityWrappers
       bool found = es->GetEntityManager().GetComponent(eid, es->GetComponentType(), comp, args[1]->BooleanValue());
       if(found)
       {
-         return WrapComponent(args.This(), ss, eid, comp);
+         args.GetReturnValue().Set( WrapComponent(args.This(), ss, eid, comp) );
       }
       else
       {
-         return Null();
+         args.GetReturnValue().Set( Null(Isolate::GetCurrent()));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESGetAllComponents(const Arguments& args)
+   void ESGetAllComponents(const FunctionCallbackInfo<Value>& args)
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
+      ScriptSystem* ss = GetScriptSystem();
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       std::list<dtEntity::EntityId> eids;
       es->GetEntitiesInSystem(eids);
 
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
 
-      Handle<Array> arr = Array::New();
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
       unsigned int count = 0;
       for(std::list<dtEntity::EntityId>::const_iterator i = eids.begin(); i != eids.end(); ++i)
       {
@@ -115,149 +122,149 @@ namespace dtEntityWrappers
          dtEntity::Component* comp;
          if(es->GetComponent(eid, comp))
          {
-            arr->Set(Integer::New(count++), WrapComponent(args.This(), ss, eid, comp));
+            arr->Set(Integer::New(Isolate::GetCurrent(), count++), WrapComponent(args.This(), ss, eid, comp));
          }
       }
-      return scope.Close(arr);
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESGetEntitiesInSystem(const Arguments& args)
+   void ESGetEntitiesInSystem(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       std::list<dtEntity::EntityId> eids;
       es->GetEntitiesInSystem(eids);
 
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
 
-      Handle<Array> arr = Array::New();
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
       unsigned int count = 0;
       for(std::list<dtEntity::EntityId>::const_iterator i = eids.begin(); i != eids.end(); ++i)
       {         
-         arr->Set(Integer::New(count++), Integer::New(*i));         
+         arr->Set(Integer::New(Isolate::GetCurrent(), count++), Integer::New(Isolate::GetCurrent(), *i));         
       }
-      return scope.Close(arr);
+      args.GetReturnValue().Set(arr);
    }   
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESGetComponentType(const Arguments& args)
+   void ESGetComponentType(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
-      return ToJSString(dtEntity::GetStringFromSID(es->GetComponentType()));
+      args.GetReturnValue().Set( ToJSString(dtEntity::GetStringFromSID(es->GetComponentType())));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESCreateComponent(const Arguments& args)
+   void ESCreateComponent(const FunctionCallbackInfo<Value>& args)
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(External::Unwrap(args.Data()));
+      ScriptSystem* ss = GetScriptSystem();
 
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       if(!args[0]->IsUint32())
       {
-         return ThrowError("Usage: createComponent(int)");
+         ThrowError("Usage: createComponent(int)");
+         return;
       }
       dtEntity::Component* component;
       
       dtEntity::EntityId eid = args[0]->Uint32Value();
       if(es->CreateComponent(eid, component))
       {
-         return WrapComponent(args.This(), ss, eid, component);
+         args.GetReturnValue().Set( WrapComponent(args.This(), ss, eid, component));
       }
       else
       {
-         return Null();
+         args.GetReturnValue().Set( Null(Isolate::GetCurrent()));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESDeleteComponent(const Arguments& args)
+   void ESDeleteComponent(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       if(!args[0]->IsUint32())
       {
-         return ThrowError("Usage: deleteComponent(int)");
+         ThrowError("Usage: deleteComponent(int)");
+         return;
       }
       
       if(es->GetEntityManager().DeleteComponent(args[0]->Uint32Value(), es->GetComponentType()))
       {
-         return True();
+         args.GetReturnValue().Set(True(Isolate::GetCurrent()));
       }
       else
       {
-         return False();
+         args.GetReturnValue().Set(False(Isolate::GetCurrent()));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESStoreComponentToMap(const Arguments& args)
+   void ESStoreComponentToMap(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
-      return Boolean::New(sys->StoreComponentToMap((dtEntity::EntityId)args[0]->Uint32Value()));
+      args.GetReturnValue().Set(Boolean::New(Isolate::GetCurrent(), sys->StoreComponentToMap((dtEntity::EntityId)args[0]->Uint32Value())));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESAllowComponentCreationBySpawner(const Arguments& args)
+   void ESAllowComponentCreationBySpawner(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
-      return Boolean::New(sys->AllowComponentCreationBySpawner());
+      args.GetReturnValue().Set(Boolean::New(Isolate::GetCurrent(), sys->AllowComponentCreationBySpawner()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESStorePropertiesToScene(const Arguments& args)
+   void ESStorePropertiesToScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* sys = UnwrapEntitySystem(args.This());
-      return Boolean::New(sys->StorePropertiesToScene());
+      args.GetReturnValue().Set(Boolean::New(Isolate::GetCurrent(), sys->StorePropertiesToScene()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESCopyPropertyValues(const Arguments& args)
+   void ESCopyPropertyValues(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
       dtEntity::StringId propname = UnwrapSID(args[0]);
       dtEntity::Property* prop = es->Get(propname);
       if(prop == NULL)
       {
-         return ThrowError("Entity System has no property named " + dtEntity::GetStringFromSID(UnwrapSID(args[0])));
+         ThrowError("Entity System has no property named " + dtEntity::GetStringFromSID(UnwrapSID(args[0])));
+         return;
       }
-      return SetValueFromProperty(prop, args[1]);
+      args.GetReturnValue().Set(SetValueFromProperty(prop, args[1]));
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESFinished(const Arguments& args)
+   void ESFinished(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
 
       es->Finished();
-      return Undefined();
    }
    
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ConstructES(const v8::Arguments& args)
+   void ConstructES(const v8::FunctionCallbackInfo<Value>& args)
    {  
       Handle<External> ext = Handle<External>::Cast(args[0]);
       dtEntity::EntitySystem* es = static_cast<dtEntity::EntitySystem*>(ext->Value());   
-      args.This()->SetInternalField(0, External::New(es));
-
-      return Undefined();
+      args.This()->SetInternalField(0, External::New(Isolate::GetCurrent(), es));
    }
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESCallScriptMethodRecursive(const v8::Arguments& args, dtEntity::PropertyArgs& pargs, int idx)
+   void ESCallScriptMethodRecursive(const v8::FunctionCallbackInfo<Value>& args, dtEntity::PropertyArgs& pargs, int idx)
    {
       if(idx < args.Length())
       {
-         HandleScope scope;
+         HandleScope scope(Isolate::GetCurrent());
          Handle<Value> val = args[idx];
 
          if(val->IsArray())
          {
             Handle<Array> arr = Handle<Array>::Cast(val);
 
-            Handle<String> hintstr = String::New("__TYPE_HINT");
+            Handle<String> hintstr = String::NewFromUtf8(v8::Isolate::GetCurrent(), "__TYPE_HINT");
             if(arr->Has(hintstr))
             {
                Handle<Value> hint = arr->Get(hintstr);
@@ -266,89 +273,94 @@ namespace dtEntityWrappers
                {
                   dtEntity::Vec2dProperty p(UnwrapVec2(val));
                   pargs.push_back(&p);
-                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+                  return ESCallScriptMethodRecursive(args, pargs, idx + 1);
                }
                else if(h == "V3")
                {
                   dtEntity::Vec3dProperty p(UnwrapVec3(val));
                   pargs.push_back(&p);
-                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+                  return ESCallScriptMethodRecursive(args, pargs, idx + 1);
 
                }
                else if(h == "V4")
                {
                   dtEntity::Vec4dProperty p(UnwrapVec4(val));
                   pargs.push_back(&p);
-                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+                  return ESCallScriptMethodRecursive(args, pargs, idx + 1);
                }
                else if(h == "QT")
                {
                   dtEntity::QuatProperty p(UnwrapQuat(val));
                   pargs.push_back(&p);
-                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+                  return ESCallScriptMethodRecursive(args, pargs, idx + 1);
                }
                else if(h == "MT")
                {
                   dtEntity::MatrixProperty p(UnwrapMatrix(val));
                   pargs.push_back(&p);
-                  return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+                  return ESCallScriptMethodRecursive(args, pargs, idx + 1);
                }
                else
                {
                   assert(false && "Unknown vector type encountered");
-                  return Undefined();
+                  args.GetReturnValue().Set(Undefined(Isolate::GetCurrent()));
+                  return;
                }
             }
+            // no hint
             else
             {
                Handle<Array> arr = Handle<Array>::Cast(val);
                dtEntity::ArrayProperty p;
                for(unsigned int i = 0; i < arr->Length(); ++i)
                {
-                  p.Add(ConvertValueToProperty(arr->Get(Integer::New(i))));
+                  p.Add(ConvertValueToProperty(arr->Get(Integer::New(Isolate::GetCurrent(), i))));
                }
 
                pargs.push_back(&p);
-               return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+               return ESCallScriptMethodRecursive(args, pargs, idx + 1);
             }
-            
-         }
+         } // end - if array property
+
          else if(val->IsBoolean())
          {
             dtEntity::BoolProperty p(val->BooleanValue());
             pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            return ESCallScriptMethodRecursive(args, pargs, idx + 1);
          }
          else if(val->IsString())
          {
             dtEntity::StringProperty p(ToStdString(val));
             pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            return ESCallScriptMethodRecursive(args, pargs, idx + 1);
          }
          else if(val->IsUint32())
          {
             dtEntity::UIntProperty p(val->Uint32Value());
             pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            return ESCallScriptMethodRecursive(args, pargs, idx + 1);
          }
          else if(val->IsInt32())
          {
             dtEntity::IntProperty p(val->Int32Value());
             pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            return ESCallScriptMethodRecursive(args, pargs, idx + 1);
          }      
          else if(val->IsNumber())
          {
             dtEntity::DoubleProperty p(val->NumberValue());
             pargs.push_back(&p);
-            return scope.Close(ESCallScriptMethodRecursive(args, pargs, idx + 1));
+            return ESCallScriptMethodRecursive(args, pargs, idx + 1);
          }
          else
          {
-            return ThrowError("Error converting script arguments: " + ToStdString(val));
+            ThrowError("Error converting script arguments: " + ToStdString(val));
+            return;
          }
 
       }
+
+      // finished with converting the arguments, call the actual scripted method
       else
       {
          dtEntity::EntitySystem* es = UnwrapEntitySystem(args.This());
@@ -357,28 +369,30 @@ namespace dtEntityWrappers
       
          dtEntity::Property* ret = dynamic_cast<dtEntity::ScriptAccessor*>(es)->CallScriptedMethod(name, pargs);
       
-         HandleScope scope;
-         Handle<Value> r = Null();
+         HandleScope scope(Isolate::GetCurrent());
+         Handle<Value> r = Null(Isolate::GetCurrent());
          if(ret != NULL)
          {
             r = ConvertPropertyToValue(args.This()->CreationContext(), ret);
             delete ret;
          }
-         return scope.Close(r);
+
+         // return the value returned by the method
+         args.GetReturnValue().Set(r);
       }
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESCallScriptMethod(const v8::Arguments& args)
+   void ESCallScriptMethod(const v8::FunctionCallbackInfo<Value>& args)
    {
       dtEntity::PropertyArgs pargs;
       return ESCallScriptMethodRecursive(args, pargs, 0);
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ESPropertyGetter(Local<String> propname, const AccessorInfo& info)
+   void ESPropertyGetter(Local<String> propname, const PropertyCallbackInfo<Value>& info)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
 
@@ -405,23 +419,29 @@ namespace dtEntityWrappers
          {
             Handle<Value> ret = SetPropertyFromValue(v, prop);
             if(ret->BooleanValue() == false) {
-               return ThrowError("Internal error: Did property change type on the fly?");
+               ThrowError("Internal error: Did property change type on the fly?");
+               return;
             }
          }
-         return scope.Close(v);
+         info.GetReturnValue().Set(v);
+         return;
       }
       default:
-         return scope.Close(ConvertPropertyToValue(info.Holder()->CreationContext(), prop));
+      {
+         info.GetReturnValue().Set( ConvertPropertyToValue(info.Holder()->CreationContext(), prop));
+         return;
+      }
+         
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void ESPropertySetter(Local<String> propname,
-                               Local<Value> value,
-                               const AccessorInfo& info)
+                         Local<Value> value,
+                         const PropertyCallbackInfo<void>& info)
    {
 
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<External> ext = Handle<External>::Cast(info.Data());
       dtEntity::Property* prop = static_cast<dtEntity::Property*>(ext->Value());
       if(prop)
@@ -439,9 +459,9 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    void InitEntitySystemWrapper(ScriptSystem* scriptSystem)
-   {
-      
-      HandleScope handle_scope;
+   {  
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope handle_scope(isolate);
       Handle<Context> context = scriptSystem->GetGlobalContext();
       Context::Scope context_scope(context);
 
@@ -450,27 +470,27 @@ namespace dtEntityWrappers
       if(templt.IsEmpty())
       {
 
-        templt = FunctionTemplate::New();
+        templt = FunctionTemplate::New(isolate);
 
-        templt->SetClassName(String::New("EntitySystem"));
+        templt->SetClassName(String::NewFromUtf8(v8::Isolate::GetCurrent(), "EntitySystem"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-        proto->Set("toString", FunctionTemplate::New(ESToString));
-        proto->Set("getAllComponents", FunctionTemplate::New(ESGetAllComponents, External::New(scriptSystem)));
-        proto->Set("getComponent", FunctionTemplate::New(ESGetComponent, External::New(scriptSystem)));
-        proto->Set("getComponentType", FunctionTemplate::New(ESGetComponentType));
-        proto->Set("getEntitiesInSystem", FunctionTemplate::New(ESGetEntitiesInSystem));
-        proto->Set("hasComponent", FunctionTemplate::New(ESHasComponent));
-        proto->Set("createComponent", FunctionTemplate::New(ESCreateComponent, External::New(scriptSystem)));
-        proto->Set("deleteComponent", FunctionTemplate::New(ESDeleteComponent));
-        proto->Set("copyPropertyValues", FunctionTemplate::New(ESCopyPropertyValues));
-        proto->Set("finished", FunctionTemplate::New(ESFinished));
+        proto->Set(String::NewFromUtf8(isolate, "toString"), FunctionTemplate::New(isolate, ESToString));
+        proto->Set(String::NewFromUtf8(isolate, "getAllComponents"), FunctionTemplate::New(isolate, ESGetAllComponents, External::New(isolate, scriptSystem)));
+        proto->Set(String::NewFromUtf8(isolate, "getComponent"), FunctionTemplate::New(isolate, ESGetComponent, External::New(isolate, scriptSystem)));
+        proto->Set(String::NewFromUtf8(isolate, "getComponentType"), FunctionTemplate::New(isolate, ESGetComponentType));
+        proto->Set(String::NewFromUtf8(isolate, "getEntitiesInSystem"), FunctionTemplate::New(isolate, ESGetEntitiesInSystem));
+        proto->Set(String::NewFromUtf8(isolate, "hasComponent"), FunctionTemplate::New(isolate, ESHasComponent));
+        proto->Set(String::NewFromUtf8(isolate, "createComponent"), FunctionTemplate::New(isolate, ESCreateComponent, External::New(isolate, scriptSystem)));
+        proto->Set(String::NewFromUtf8(isolate, "deleteComponent"), FunctionTemplate::New(isolate, ESDeleteComponent));
+        proto->Set(String::NewFromUtf8(isolate, "copyPropertyValues"), FunctionTemplate::New(isolate, ESCopyPropertyValues));
+        proto->Set(String::NewFromUtf8(isolate, "finished"), FunctionTemplate::New(isolate, ESFinished));
 
-        proto->Set("storeComponentToMap", FunctionTemplate::New(ESStoreComponentToMap));
-        proto->Set("allowComponentCreationBySpawner", FunctionTemplate::New(ESAllowComponentCreationBySpawner));
-        proto->Set("storePropertiesToScene", FunctionTemplate::New(ESStorePropertiesToScene));
+        proto->Set(String::NewFromUtf8(isolate, "storeComponentToMap"), FunctionTemplate::New(isolate, ESStoreComponentToMap));
+        proto->Set(String::NewFromUtf8(isolate, "allowComponentCreationBySpawner"), FunctionTemplate::New(isolate, ESAllowComponentCreationBySpawner));
+        proto->Set(String::NewFromUtf8(isolate, "storePropertiesToScene"), FunctionTemplate::New(isolate, ESStorePropertiesToScene));
         GetScriptSystem()->SetTemplateBySID(s_entitySystemWrapper, templt);
       }
    }   
@@ -481,7 +501,8 @@ namespace dtEntityWrappers
 
       InitEntitySystemWrapper(scriptSystem);
 
-      HandleScope handle_scope;
+      Isolate* isolate = Isolate::GetCurrent();
+      EscapableHandleScope handle_scope(isolate);
       Context::Scope context_scope(scriptSystem->GetGlobalContext());
 
       Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
@@ -492,21 +513,22 @@ namespace dtEntityWrappers
       SubWrapperMap::iterator i = s_subWrapperMap.find(v->GetComponentType());
       if(i != s_subWrapperMap.end()) 
       {
-         templt = i->second;
+         templt = i->second->GetLocal();
       }
       Local<Object> instance = templt->GetFunction()->NewInstance();
-      instance->SetInternalField(0, External::New(v));
+      instance->SetInternalField(0, External::New(isolate, v));
 
       const dtEntity::PropertyGroup& props = v->Get();
 
       dtEntity::PropertyGroup::const_iterator j;
       for(j = props.begin(); j != props.end(); ++j)
       {
-         Handle<External> ext = v8::External::New(static_cast<void*>(j->second));
+         Handle<External> ext = v8::External::New(isolate, static_cast<void*>(j->second));
          std::string propname = dtEntity::GetStringFromSID(j->first);
-         instance->SetAccessor(String::New(propname.c_str()),
-                          ESPropertyGetter, ESPropertySetter,
-                          ext);
+         instance->SetAccessor(String::NewFromUtf8(v8::Isolate::GetCurrent(), propname.c_str()),
+                               ESPropertyGetter, 
+                               ESPropertySetter,
+                               ext);
       }
 
       dtEntity::ScriptAccessor* scriptaccessor = dynamic_cast<dtEntity::ScriptAccessor*>(v);
@@ -518,11 +540,11 @@ namespace dtEntityWrappers
          {
             std::string name = *i;
             Handle<Value> namestr = ToJSString(name);
-            instance->Set(namestr, FunctionTemplate::New(ESCallScriptMethod, namestr)->GetFunction());
+            instance->Set(namestr, FunctionTemplate::New(isolate, ESCallScriptMethod, namestr)->GetFunction());
          }
       }
       
-      return handle_scope.Close(instance);
+      return handle_scope.Escape(instance);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -537,7 +559,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    bool IsEntitySystem(v8::Handle<v8::Value> obj)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<FunctionTemplate> tpl = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
       if(tpl.IsEmpty())
       {
@@ -553,7 +575,10 @@ namespace dtEntityWrappers
 
       Handle<FunctionTemplate> tmplt = GetScriptSystem()->GetTemplateBySID(s_entitySystemWrapper);
       assert(!tmplt.IsEmpty());
-      s_subWrapperMap[ctype] = Persistent<FunctionTemplate>::New(ftpl);
+
+      // allocate a RefPersistent, it will be automatically Reset and cleaned up the the ptr in the map gets destroyed
+      //Persistent<FunctionTemplate>* pFT = new Persistent<FunctionTemplate>(Isolate::GetCurrent(), ftpl);
+      s_subWrapperMap[ctype] = new RefPersistent<FunctionTemplate>(Isolate::GetCurrent(), ftpl);
       ftpl->Inherit(tmplt);
    }
 }

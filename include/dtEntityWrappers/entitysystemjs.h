@@ -23,6 +23,7 @@
 #include <dtEntity/component.h>
 #include <dtEntity/entitysystem.h>
 #include <dtEntityWrappers/export.h>
+#include <dtEntityWrappers/RefPersistent.h>
 #include <v8.h>
 #include <dtEntity/dtentity_config.h>
 
@@ -35,7 +36,7 @@ namespace dtEntityWrappers
 {
   
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_WRAPPERS_EXPORT ComponentJS
+   class /*DTENTITY_WRAPPERS_EXPORT*/ ComponentJS
       : public dtEntity::Component
    {
 
@@ -63,11 +64,11 @@ namespace dtEntityWrappers
 
    private:
       dtEntity::ComponentType mComponentType;
-      v8::Persistent<v8::Object> mComponent;
+      osg::ref_ptr<RefPersistent<v8::Object> > mComponent;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   class DTENTITY_WRAPPERS_EXPORT EntitySystemJS
+   class /*DTENTITY_WRAPPERS_EXPORT*/ EntitySystemJS
       : public dtEntity::EntitySystem
    {
    public:

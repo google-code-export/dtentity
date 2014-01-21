@@ -35,38 +35,33 @@ namespace dtEntityWrappers
    dtEntity::StringId s_loggerWrapper = dtEntity::SID("LoggerWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogDebug(const Arguments& args)
+   void LogDebug(const FunctionCallbackInfo<Value>& args)
    {
       LOG_DEBUG(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogAlways(const Arguments& args)
+   void LogAlways(const FunctionCallbackInfo<Value>& args)
    {
       LOG_ALWAYS(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogError(const Arguments& args)
+   void LogError(const FunctionCallbackInfo<Value>& args)
    {
       LOG_ERROR(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogInfo(const Arguments& args)
+   void LogInfo(const FunctionCallbackInfo<Value>& args)
    {
       LOG_INFO(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogWarning(const Arguments& args)
+   void LogWarning(const FunctionCallbackInfo<Value>& args)
    {
       LOG_WARNING(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -87,30 +82,36 @@ namespace dtEntityWrappers
    public:
 
       LogListenerHolder(Handle<Function> func)
-         : mFunction(Persistent<Function>::New(func))
-         , mDebug(Persistent<String>::New(String::New("DEBUG")))
-         , mAlways(Persistent<String>::New(String::New("ALWAYS")))
-         , mError(Persistent<String>::New(String::New("ERROR")))
-         , mInfo(Persistent<String>::New(String::New("INFO")))
-         , mWarning(Persistent<String>::New(String::New("WARNING")))
       {
-      }
+         Isolate* isolate = v8::Isolate::GetCurrent();
+
+         mFunction.Reset(isolate, func);
+         mDebug.Reset(isolate, String::NewFromUtf8(isolate, "DEBUG"));
+         mAlways.Reset(isolate, String::NewFromUtf8(isolate, "ALWAYS"));
+         mError.Reset(isolate, String::NewFromUtf8(isolate, "ERROR"));
+         mInfo.Reset(isolate, String::NewFromUtf8(isolate, "INFO"));
+         mWarning.Reset(isolate, String::NewFromUtf8(isolate, "WARNING"));
+       }
 
       ~LogListenerHolder()
       {
-         mDebug.Dispose();
-         mAlways.Dispose();
-         mError.Dispose();
-         mInfo.Dispose();
-         mWarning.Dispose();
-         mFunction.Dispose();
+         mDebug.Reset();
+         mAlways.Reset();
+         mError.Reset();
+         mInfo.Reset();
+         mWarning.Reset();
+         mFunction.Reset();
       }
 
 
       void Process()
       {
-         HandleScope scope;
-         Context::Scope context_scope(mFunction->CreationContext());
+         Isolate* isolate = Isolate::GetCurrent();
+         HandleScope scope(isolate);
+   
+         v8::Local<v8::Function> func = v8::Local<v8::Function>::New(isolate, mFunction);
+
+         Context::Scope context_scope(func->CreationContext());
 
          Handle<String> loglevel;
 
@@ -119,11 +120,11 @@ namespace dtEntityWrappers
             Msg msg = mMessages.Pop();
             switch(msg.mLevel)
             {
-            case dtEntity::LogLevel::LVL_ALWAYS:  loglevel = mAlways; break;
-            case dtEntity::LogLevel::LVL_DEBUG:   loglevel = mDebug; break;
-            case dtEntity::LogLevel::LVL_ERROR:   loglevel = mError; break;
-            case dtEntity::LogLevel::LVL_INFO :   loglevel = mInfo; break;
-            case dtEntity::LogLevel::LVL_WARNING: loglevel = mWarning; break;
+            case dtEntity::LogLevel::LVL_ALWAYS:  loglevel = v8::Local<v8::String>::New(isolate, mAlways); break;
+            case dtEntity::LogLevel::LVL_DEBUG:   loglevel = v8::Local<v8::String>::New(isolate, mDebug); break;
+            case dtEntity::LogLevel::LVL_ERROR:   loglevel = v8::Local<v8::String>::New(isolate, mError); break;
+            case dtEntity::LogLevel::LVL_INFO :   loglevel = v8::Local<v8::String>::New(isolate, mInfo); break;
+            case dtEntity::LogLevel::LVL_WARNING: loglevel = v8::Local<v8::String>::New(isolate, mWarning); break;
             }
 
    #if defined (_DEBUG)
@@ -135,14 +136,14 @@ namespace dtEntityWrappers
                loglevel,
                ToJSString(msg.mFilename),
                ToJSString(msg.mMethodname),
-               Integer::New(msg.mLinenumber),
+               Integer::New(isolate, msg.mLinenumber),
                ToJSString(msg.mMsg),
-               Boolean::New(is_debug)
+               Boolean::New(isolate, is_debug)
             };
 
 
             TryCatch try_catch;
-            Handle<Value> result = mFunction->Call(mFunction, 6, argv);
+            Handle<Value> result = func->Call(func, 6, argv);
 
             if(result.IsEmpty())
             {
@@ -150,6 +151,7 @@ namespace dtEntityWrappers
             }
          }
       }
+
 
       virtual void LogMessage(dtEntity::LogLevel::e level, const std::string& filename, const std::string& methodname, int linenumber,
                       const std::string& msg)
@@ -176,21 +178,22 @@ namespace dtEntityWrappers
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogAddListener(const Arguments& args)
+   void LogAddListener(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() != 1 || !args[0]->IsFunction())
       {
-         return ThrowError("Usage: addLogListener(function(LogLevel, filename, methodname, linenumber, message))");
+         ThrowError("Usage: addLogListener(function(LogLevel, filename, methodname, linenumber, message))");
+         return;
       }
-      HandleScope scope;
+
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Function> func = Handle<Function>::Cast(args[0]);
       LogListenerHolder* h = new LogListenerHolder(func);
       dtEntity::LogManager::GetInstance().AddListener(h);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> LogProcessListeners(const Arguments& args)
+   void LogProcessListeners(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::LogManager& lm = dtEntity::LogManager::GetInstance();
       unsigned int num = lm.GetNumListeners();
@@ -203,32 +206,32 @@ namespace dtEntityWrappers
             lh->Process();
          }
       }
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapLogger(Handle<Context> context)
    {
-      v8::HandleScope handle_scope;
+      Isolate* isolate = Isolate::GetCurrent();
+      EscapableHandleScope handle_scope(isolate);
       Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_loggerWrapper);
       if(templt.IsEmpty())
       {
-        templt = FunctionTemplate::New();
-        templt->SetClassName(String::New("Log"));
+        templt = FunctionTemplate::New(isolate);
+        templt->SetClassName(String::NewFromUtf8(isolate, "Log"));
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-        proto->Set("always", FunctionTemplate::New(LogAlways));
-        proto->Set("debug", FunctionTemplate::New(LogDebug));
-        proto->Set("error", FunctionTemplate::New(LogError));
-        proto->Set("info", FunctionTemplate::New(LogInfo));
-        proto->Set("warning", FunctionTemplate::New(LogWarning));
-        proto->Set("addLogListener", FunctionTemplate::New(LogAddListener));
-        proto->Set("processLogListeners", FunctionTemplate::New(LogProcessListeners));
+        proto->Set(String::NewFromUtf8(isolate, "always"), FunctionTemplate::New(isolate, LogAlways));
+        proto->Set(String::NewFromUtf8(isolate, "debug"), FunctionTemplate::New(isolate, LogDebug));
+        proto->Set(String::NewFromUtf8(isolate, "error"), FunctionTemplate::New(isolate, LogError));
+        proto->Set(String::NewFromUtf8(isolate, "info"), FunctionTemplate::New(isolate, LogInfo));
+        proto->Set(String::NewFromUtf8(isolate, "warning"), FunctionTemplate::New(isolate, LogWarning));
+        proto->Set(String::NewFromUtf8(isolate, "addLogListener"), FunctionTemplate::New(isolate, LogAddListener));
+        proto->Set(String::NewFromUtf8(isolate, "processLogListeners"), FunctionTemplate::New(isolate, LogProcessListeners));
         GetScriptSystem()->SetTemplateBySID(s_loggerWrapper, templt);
       }
       Local<Object> instance = templt->GetFunction()->NewInstance();
-      return handle_scope.Close(instance);
+      return handle_scope.Escape(instance);
    }
 
 }

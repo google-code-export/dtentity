@@ -75,6 +75,8 @@ namespace dtEntityWrappers
    ScriptSystem::ScriptSystem(dtEntity::EntityManager& em)
       : dtEntity::EntitySystem(em)
       , mDebugPortOpened(false)
+      , mpGlobalContext(NULL)
+      , mpGlobalTickFunction(NULL)
    {      
 
       V8::Initialize();
@@ -95,9 +97,12 @@ namespace dtEntityWrappers
       mLoadScriptFunctor = dtEntity::MessageFunctor(this, &ScriptSystem::OnLoadScript);
       em.RegisterForMessages(ExecuteScriptMessage::TYPE, mLoadScriptFunctor, "ScriptSystem::OnLoadScript");
 
-      HandleScope scope;
-      mEntityIdString = Persistent<String>::New(String::New("__entityid__"));
-      mPropertyNamesString = Persistent<String>::New(String::New("__propertynames__"));
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      mpEntityIdString = new Persistent<String>;
+      mpEntityIdString->Reset(isolate, String::NewFromUtf8(v8::Isolate::GetCurrent(), "__entityid__"));
+      mpPropertyNamesString = new Persistent<String>;
+      mpPropertyNamesString->Reset(isolate, String::NewFromUtf8(v8::Isolate::GetCurrent(), "__propertynames__"));
    }  
 
    ////////////////////////////////////////////////////////////////////////////
@@ -108,17 +113,29 @@ namespace dtEntityWrappers
 
       for(ComponentMap::iterator i = mComponentMap.begin(); i != mComponentMap.end(); ++i)
       {
-         i->second.Dispose();
+         // reset the persistent and delete the persistent pointer itself
+         i->second->Reset();
+         delete i->second;
       }
       mComponentMap.clear();
 
       for(TemplateMap::iterator i = mTemplateMap.begin(); i != mTemplateMap.end(); ++i)
       {
-         i->second.Dispose();
+         i->second->Reset();
+         delete i->second;
       }
       mTemplateMap.clear();
 
-      mGlobalContext.Dispose();
+      // reset (v8) and delete the pointer
+      mpGlobalContext->Reset();
+      delete mpGlobalContext;
+
+      mpGlobalTickFunction->Reset();
+      delete mpGlobalTickFunction;
+
+      delete mpEntityIdString;
+      delete mpPropertyNamesString;
+      
 
       GetEntityManager().UnregisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor);
       GetEntityManager().UnregisterForMessages(dtEntity::TickMessage::TYPE, mTickFunctor);
@@ -129,46 +146,55 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::SetupContext()
    {
-      HandleScope handle_scope;
-      if(!mGlobalContext.IsEmpty())
+      Isolate* isolate = Isolate::GetCurrent();
+
+      // create the pointers
+      if(mpGlobalContext == NULL)
+         mpGlobalContext = new Persistent<Context>;
+
+      if(mpGlobalTickFunction == NULL)
+         mpGlobalTickFunction = new Persistent<Function>;
+
+      HandleScope handle_scope(isolate);
+      if(!mpGlobalContext->IsEmpty())
       {
-         mGlobalContext.Dispose();
+         mpGlobalContext->Reset();
       }
 
       // create a template for the global object
       Handle<ObjectTemplate> global = ObjectTemplate::New();
 
       // create persistent global context
-      mGlobalContext = Persistent<Context>::New(Context::New(NULL, global));
+      Handle<Context> context = Context::New(isolate, NULL, global);
+      mpGlobalContext->Reset(isolate, context);
 
-      // store pointer to script system into isolate data to have it globally available in javascript
-      Isolate::GetCurrent()->SetData(this);
+      // store pointer to script system into isolate data field 0 to have it globally available in javascript
+      isolate->SetData(0, this);
 
-      RegisterGlobalFunctions(this, mGlobalContext);
-      RegisterPropertyFunctions(this, mGlobalContext);
+      RegisterGlobalFunctions(this, context);
+      RegisterPropertyFunctions(this, context);
 
       InitializeAllWrappers(GetEntityManager());
 
-      Handle<Context> context = GetGlobalContext();
       Context::Scope context_scope(context);
-      Handle<FunctionTemplate> tmplt = FunctionTemplate::New();
+      Handle<FunctionTemplate> tmplt = FunctionTemplate::New(isolate);
       tmplt->InstanceTemplate()->SetInternalFieldCount(2);
 
-      tmplt->SetClassName(String::New("ScriptSystem"));
+      tmplt->SetClassName(String::NewFromUtf8(isolate, "ScriptSystem"));
 
-      context->Global()->Set(String::New("Screen"), WrapScreen(this));
+      context->Global()->Set(String::NewFromUtf8(isolate, "Screen"), WrapScreen(this));
 
       dtEntity::InputInterface* ipiface = dtEntity::GetInputInterface();
       if(ipiface)
       {
-         context->Global()->Set(String::New("Input"), WrapInputInterface(GetGlobalContext(), ipiface));
-         context->Global()->Set(String::New("Axis"), WrapAxes(ipiface));
-         context->Global()->Set(String::New("Key"), WrapKeys(ipiface));
+         context->Global()->Set(String::NewFromUtf8(isolate, "Input"), WrapInputInterface(GetGlobalContext(), ipiface));
+         context->Global()->Set(String::NewFromUtf8(isolate, "Axis"), WrapAxes(ipiface));
+         context->Global()->Set(String::NewFromUtf8(isolate, "Key"), WrapKeys(ipiface));
       }
 
-      context->Global()->Set(String::New("TouchPhase"), WrapTouchPhases());
-      context->Global()->Set(String::New("Priority"), WrapPriorities());
-      context->Global()->Set(String::New("Order"), WrapPriorities());
+      context->Global()->Set(String::NewFromUtf8(isolate, "TouchPhase"), WrapTouchPhases());
+      context->Global()->Set(String::NewFromUtf8(isolate, "Priority"), WrapPriorities());
+      context->Global()->Set(String::NewFromUtf8(isolate, "Order"), WrapPriorities());
 
    }
 
@@ -208,7 +234,7 @@ namespace dtEntityWrappers
       for(i = scripts.begin(); i != scripts.end(); ++i)
       {
          std::string script = (*i)->StringValue();
-         v8::HandleScope scope;
+         v8::HandleScope scope(Isolate::GetCurrent());
          ExecuteFile(script);
       }
    }
@@ -218,7 +244,7 @@ namespace dtEntityWrappers
    {
       const ExecuteScriptMessage& msg = static_cast<const ExecuteScriptMessage&>(m);
 
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Context> context = GetGlobalContext();      
       Context::Scope context_scope(context);
       
@@ -235,18 +261,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Context> ScriptSystem::GetGlobalContext()
    {
-      return mGlobalContext;
+      return v8::Handle<v8::Context>::New(v8::Isolate::GetCurrent(), *mpGlobalContext);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::FetchGlobalTickFunction()
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Context> context = GetGlobalContext();
 
-      mGlobalTickFunction.Clear();
+      mpGlobalTickFunction->Reset();
 
-      Handle<String> funcname = String::New("__executeTimeOuts");
+      Handle<String> funcname = String::NewFromUtf8(v8::Isolate::GetCurrent(), "__executeTimeOuts");
       if(context->Global()->Has(funcname))
       {
          Handle<Value> func = context->Global()->Get(funcname);
@@ -255,7 +281,7 @@ namespace dtEntityWrappers
             Handle<Function> f = Handle<Function>::Cast(func);
             if(!f.IsEmpty())
             {
-               mGlobalTickFunction = Persistent<Function>::New(f);
+               mpGlobalTickFunction->Reset(Isolate::GetCurrent(), f);
             }
          }
       }
@@ -264,24 +290,25 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::Tick(const dtEntity::Message& m)
    {
-      if(mGlobalTickFunction.IsEmpty())
-      {
+      if(mpGlobalTickFunction->IsEmpty())
          return;
-      }
 
-      HandleScope scope;  
+      Isolate* isolate = Isolate::GetCurrent();
+
+      HandleScope scope(isolate);  
       Context::Scope context_scope(GetGlobalContext());
 
       const dtEntity::TickMessage& msg = static_cast<const dtEntity::TickMessage&>(m);
 
       TryCatch try_catch;
       Handle<Value> argv[3] = {
-         Number::New(msg.GetDeltaSimTime()),
-         Number::New(msg.GetSimulationTime()),
-         Uint32::New(osg::Timer::instance()->time_m())
+         Number::New(isolate, msg.GetDeltaSimTime()),
+         Number::New(isolate, msg.GetSimulationTime()),
+         Uint32::New(isolate, osg::Timer::instance()->time_m())
       };
 
-      Handle<Value> ret = mGlobalTickFunction->Call(mGlobalTickFunction, 3, argv);
+      Local<Function> globalTick = Local<Function>::New(isolate, *mpGlobalTickFunction);
+      Handle<Value> ret = globalTick->Call(globalTick, 3, argv);
 
       if(ret.IsEmpty())
       {
@@ -302,7 +329,7 @@ namespace dtEntityWrappers
          return Handle<Script>();
       }
 
-      HandleScope handle_scope;
+      EscapableHandleScope handle_scope(Isolate::GetCurrent());
       Context::Scope context_scope(GetGlobalContext());
       TryCatch try_catch;
       Local<Script> compiled_script = Script::Compile(ToJSString(code), ToJSString(path));
@@ -313,14 +340,14 @@ namespace dtEntityWrappers
          return Handle<Script>();
       }
 
-      return handle_scope.Close(compiled_script);
+      return handle_scope.Escape(compiled_script);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ScriptSystem::ExecuteJS(const std::string& code, const std::string& path)
    {
        // Init JavaScript context
-      HandleScope handle_scope;
+      EscapableHandleScope handle_scope(Isolate::GetCurrent());
       Context::Scope context_scope(GetGlobalContext());
 
       // We're just about to compile the script; set up an error handler to
@@ -347,13 +374,13 @@ namespace dtEntityWrappers
 
       FetchGlobalTickFunction();
 
-      return handle_scope.Close(ret);
+      return handle_scope.Escape(ret);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Local<Value> ScriptSystem::ExecuteFile(const std::string& path)
    {
-      HandleScope handle_scope;
+      EscapableHandleScope handle_scope(Isolate::GetCurrent());
 
       Handle<Script> script = GetScriptFromFile(path);
 
@@ -370,7 +397,7 @@ namespace dtEntityWrappers
             ReportException(&try_catch);
             return Local<Value>();
          }
-         return handle_scope.Close(ret);
+         return handle_scope.Escape(ret);
       }
       return Local<Value>();
    }
@@ -387,13 +414,16 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    void ComponentWrapperDestructor(v8::Persistent<Value> v, void* scriptsysnull)
-   {      
-      dtEntity::Component* component = UnwrapComponent(v);
+   {
+      HandleScope scope(Isolate::GetCurrent());
+
+      Local<Value> val = Local<Value>::New(Isolate::GetCurrent(), v);
+      dtEntity::Component* component = UnwrapComponent(val);
+
       if(component != NULL)
       {
-         ScriptSystem* scriptsys = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
-         HandleScope scope;
-         Handle<Object> o = Handle<Object>::Cast(v);
+         ScriptSystem* scriptsys = GetScriptSystem();
+         Handle<Object> o = Handle<Object>::Cast(val);
          assert(!o.IsEmpty());
          Handle<Value> val = o->GetHiddenValue(scriptsys->GetEntityIdString());
          assert(!val.IsEmpty());
@@ -408,10 +438,16 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::AddToComponentMap(dtEntity::ComponentType ct, dtEntity::EntityId eid, v8::Handle<v8::Object> obj)
    {
-      HandleScope scope;
-      Persistent<Object> pobj = Persistent<Object>::New(obj);
-      pobj.MakeWeak(this, &ComponentWrapperDestructor);
-      V8::AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
+      Isolate* isolate = Isolate::GetCurrent();
+      //HandleScope scope(isolate);
+
+      Persistent<Object>* pobj = new Persistent<Object>(isolate, obj);
+
+      // TODO review make weak mechanims after bumping v8 release
+
+      //pobj.MakeWeak(this, &ComponentWrapperDestructor);
+
+      //AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
       mComponentMap[std::make_pair(ct, eid)] = pobj;
    }
 
@@ -423,7 +459,8 @@ namespace dtEntityWrappers
       {
          return Handle<Object>();
       }
-      return it->second;
+
+      return Handle<Object>::New(Isolate::GetCurrent(), *it->second);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -434,14 +471,23 @@ namespace dtEntityWrappers
       {
          return false;
       }
-      HandleScope scope;
-      Persistent<Object> obj = it->second;
+
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+
+      //TODO (ricky) what is this used for??
+      Local<Object> obj = Local<Object>::New(isolate, *it->second);
       assert(!obj.IsEmpty() && obj->IsObject());
       // invalidate component wrapper
-      obj->SetInternalField(0, External::New(0));
-      obj.Dispose();
+      obj->SetInternalField(0, External::New(isolate, 0));
+
+      // reset the persistent and remove the persisten object itself
+      it->second->Reset();
+      delete it->second;
+
+      // remove the entry from the map
       mComponentMap.erase(it);
-      V8::AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(dtEntity::Component));
+      isolate->AdjustAmountOfExternalAllocatedMemory(-(int)sizeof(dtEntity::Component));
       return true;
 
    }
@@ -460,12 +506,14 @@ namespace dtEntityWrappers
       {
          return Handle<FunctionTemplate>();
       }
-      return i->second;
+
+      return Handle<FunctionTemplate>::New(Isolate::GetCurrent(), *i->second);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::SetTemplateBySID(dtEntity::StringId v, v8::Handle<v8::FunctionTemplate> tpl)
    {
-      mTemplateMap[v] = Persistent<FunctionTemplate>::New(tpl);
+      Persistent<FunctionTemplate>* pfunc = new Persistent<FunctionTemplate>(Isolate::GetCurrent(), tpl);
+      mTemplateMap[v] = pfunc;
    }
 }

@@ -35,12 +35,14 @@ using namespace v8;
 namespace dtEntityWrappers
 {
 
+#if 0
+
    dtEntity::StringId s_debugDrawWrapper = dtEntity::SID("DebugDrawWrapper");
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> DebugDrawManagerToString(const Arguments& args)
    {
-      return String::New("<DebugDrawInterface>");
+      return String::NewFromUtf8(v8::Isolate::GetCurrent(), "<DebugDrawInterface>");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +125,7 @@ namespace dtEntityWrappers
       }
 
       std::vector<dtEntity::Vec3f> lines;
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(args[0]);
       
       unsigned int l = arr->Length();
@@ -431,14 +433,14 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Function> CreateDebugDrawManager(Handle<Context> context)
    {
-      v8::HandleScope handle_scope;
+      EscapableHandleScope scope(Isolate::GetCurrent());
 
       Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_debugDrawWrapper);
       if(templt.IsEmpty())
       {
 
         templt = FunctionTemplate::New();
-        templt->SetClassName(String::New("DebugDrawManager"));
+        templt->SetClassName(String::NewFromUtf8(v8::Isolate::GetCurrent(), "DebugDrawManager"));
         templt->InstanceTemplate()->SetInternalFieldCount(1);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
@@ -458,7 +460,10 @@ namespace dtEntityWrappers
         
         GetScriptSystem()->SetTemplateBySID(s_debugDrawWrapper, templt);
       }
-      return handle_scope.Close(templt->GetFunction());
+      return handle_scope.Escape(templt->GetFunction());
    }
+
+
+#endif
 }
 

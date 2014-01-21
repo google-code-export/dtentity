@@ -35,43 +35,45 @@ namespace dtEntityWrappers
    {
       using namespace v8;
 
+      Isolate* isolate = Isolate::GetCurrent();
+
       switch(prop->GetDataType())
       {
       case dtEntity::DataType::ARRAY:
       {
          dtEntity::PropertyArray arr = prop->ArrayValue();
-         HandleScope scope;
+         EscapableHandleScope scope(isolate);
          Context::Scope context_scope(context);
 
-         Handle<Array> out = Array::New(arr.size());
+         Local<Array> out = Array::New(isolate, arr.size());
 
          for(unsigned int i = 0; i < arr.size(); ++i)
          {
-            out->Set(Integer::New(i), ConvertPropertyToValue(context, arr[i]));
+            out->Set(Integer::New(isolate, i), ConvertPropertyToValue(context, arr[i]));
          }
          
-         return scope.Close(out);
+         return scope.Escape(out);
       }
-      case DataType::BOOL:     return Boolean::New(prop->BoolValue());
-      case DataType::DOUBLE:   return Number::New(prop->DoubleValue());
-      case DataType::FLOAT:    return Number::New(prop->FloatValue());
+      case DataType::BOOL:     return Boolean::New(isolate, prop->BoolValue());
+      case DataType::DOUBLE:   return Number::New(isolate, prop->DoubleValue());
+      case DataType::FLOAT:    return Number::New(isolate, prop->FloatValue());
       case DataType::GROUP:    
       {
          dtEntity::PropertyGroup grp = prop->GroupValue();
-         HandleScope scope;
+         EscapableHandleScope scope(isolate);
          Context::Scope context_scope(context);
 
-         Handle<Object> out = Object::New();
+         Local<Object> out = Object::New(isolate);
 
          for(dtEntity::PropertyGroup::iterator i = grp.begin(); i != grp.end(); ++i)
          {
             out->Set(ToJSString(dtEntity::GetStringFromSID(i->first)), ConvertPropertyToValue(context, i->second));
          }
          
-         return scope.Close(out);
+         return scope.Escape(out);
       }
-      case DataType::INT:      return Int32::New(prop->IntValue());
-      case DataType::UINT:     return Uint32::New(prop->UIntValue());
+      case DataType::INT:      return Int32::New(isolate, prop->IntValue());
+      case DataType::UINT:     return Uint32::New(isolate, prop->UIntValue());
       case DataType::QUAT:     return WrapQuat(prop->QuatValue());
       case DataType::MATRIX:   return WrapMatrix(prop->MatrixValue());
       case DataType::STRING:   return ToJSString(prop->StringValue());
@@ -90,14 +92,16 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Property* ConvertValueToProperty(v8::Handle<v8::Value> val)
    {
+      Isolate* isolate = Isolate::GetCurrent();
+
       if(val->IsArray())
       {
 
-         HandleScope scope;
+         HandleScope scope(isolate);
          Handle<Array> arr = Handle<Array>::Cast(val);
          unsigned int len = arr->Length();
 
-         Handle<Value> hint = arr->Get(String::New("__TYPE_HINT"));
+         Handle<Value> hint = arr->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "__TYPE_HINT"));
          if(!hint.IsEmpty())
          {
             std::string h = ToStdString(hint);
@@ -166,7 +170,7 @@ namespace dtEntityWrappers
          ArrayProperty* prop = new ArrayProperty();
          for(unsigned int i = 0; i < arr->Length(); ++i)
          {
-            prop->Add(ConvertValueToProperty(arr->Get(Integer::New(i))));
+            prop->Add(ConvertValueToProperty(arr->Get(Integer::New(isolate, i))));
          }
          return prop;
       }
@@ -174,13 +178,13 @@ namespace dtEntityWrappers
       {
          GroupProperty* prp = new GroupProperty();
 
-         HandleScope scope;
+         HandleScope scope(Isolate::GetCurrent());
          Handle<Object> obj = Handle<Object>::Cast(val);
          Handle<Array> keys = obj->GetPropertyNames();
 
          for(unsigned int i = 0; i < keys->Length(); ++i)
          {
-            Handle<Value> key = keys->Get(Integer::New(i));
+            Handle<Value> key = keys->Get(Integer::New(isolate, i));
             std::string keyname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
             prp->Add(dtEntity::SID(keyname), ConvertValueToProperty(val));
@@ -232,7 +236,7 @@ namespace dtEntityWrappers
          }
          for(unsigned int i = 0; i < arr->Length(); ++i)
          {
-            Handle<Value> val = arr->Get(Integer::New(i));
+            Handle<Value> val = arr->Get(Integer::New(Isolate::GetCurrent(), i));
             dtEntity::Property* newprop = ConvertValueToProperty(val);
             if(newprop == NULL)
             {
@@ -262,7 +266,7 @@ namespace dtEntityWrappers
          
          for(unsigned int i = 0; i < propnames->Length(); ++i)
          {
-            Handle<Value> key = propnames->Get(Integer::New(i));
+            Handle<Value> key = propnames->Get(Integer::New(Isolate::GetCurrent(), i));
             std::string kname = ToStdString(key);
             Handle<Value> val = obj->Get(key);
             dtEntity::Property* newprop = ConvertValueToProperty(val);
@@ -361,13 +365,14 @@ namespace dtEntityWrappers
          return ThrowError("Type not yet wrapped!");
       }
 
-      return True();
+      return True(Isolate::GetCurrent());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> SetValueFromProperty(dtEntity::Property*& prop, v8::Handle<v8::Value> val)
    {
       using namespace v8;
+      Isolate* isolate = Isolate::GetCurrent();
 
       switch(prop->GetDataType())
       {
@@ -411,7 +416,7 @@ namespace dtEntityWrappers
 
          for(dtEntity::PropertyGroup::const_iterator i = vals.begin(); i != vals.end(); ++i)
          {
-            obj->Set(String::New(dtEntity::GetStringFromSID(i->first).c_str()), ConvertPropertyToValue(obj->CreationContext(), i->second));
+            obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::GetStringFromSID(i->first).c_str()), ConvertPropertyToValue(obj->CreationContext(), i->second));
          }
          break;
       }
@@ -423,22 +428,22 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts matrix values!");
          }
-         arr->Set( 0, Number::New(mat(0,0)));
-         arr->Set( 1, Number::New(mat(0,1)));
-         arr->Set( 2, Number::New(mat(0,2)));
-         arr->Set( 3, Number::New(mat(0,3)));
-         arr->Set( 4, Number::New(mat(1,0)));
-         arr->Set( 5, Number::New(mat(1,1)));
-         arr->Set( 6, Number::New(mat(1,2)));
-         arr->Set( 7, Number::New(mat(1,3)));
-         arr->Set( 8, Number::New(mat(2,0)));
-         arr->Set( 9, Number::New(mat(2,1)));
-         arr->Set(10, Number::New(mat(2,2)));
-         arr->Set(11, Number::New(mat(2,3)));
-         arr->Set(12, Number::New(mat(3,0)));
-         arr->Set(13, Number::New(mat(3,1)));
-         arr->Set(14, Number::New(mat(3,2)));
-         arr->Set(15, Number::New(mat(3,3)));
+         arr->Set( 0, Number::New(isolate, mat(0,0)));
+         arr->Set( 1, Number::New(isolate, mat(0,1)));
+         arr->Set( 2, Number::New(isolate, mat(0,2)));
+         arr->Set( 3, Number::New(isolate, mat(0,3)));
+         arr->Set( 4, Number::New(isolate, mat(1,0)));
+         arr->Set( 5, Number::New(isolate, mat(1,1)));
+         arr->Set( 6, Number::New(isolate, mat(1,2)));
+         arr->Set( 7, Number::New(isolate, mat(1,3)));
+         arr->Set( 8, Number::New(isolate, mat(2,0)));
+         arr->Set( 9, Number::New(isolate, mat(2,1)));
+         arr->Set(10, Number::New(isolate, mat(2,2)));
+         arr->Set(11, Number::New(isolate, mat(2,3)));
+         arr->Set(12, Number::New(isolate, mat(3,0)));
+         arr->Set(13, Number::New(isolate, mat(3,1)));
+         arr->Set(14, Number::New(isolate, mat(3,2)));
+         arr->Set(15, Number::New(isolate, mat(3,3)));
          break;
       }
       case dtEntity::DataType::QUAT:
@@ -449,10 +454,10 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts quat values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
-         arr->Set( 2, Number::New(v[2]));
-         arr->Set( 3, Number::New(v[3]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
+         arr->Set( 2, Number::New(isolate, v[2]));
+         arr->Set( 3, Number::New(isolate, v[3]));
          break;
       }
       case dtEntity::DataType::VEC2:
@@ -463,8 +468,8 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec2 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
          break;
       }
       case dtEntity::DataType::VEC3:
@@ -475,9 +480,9 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec3 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
-         arr->Set( 2, Number::New(v[2]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
+         arr->Set( 2, Number::New(isolate, v[2]));
          break;
       }
       case dtEntity::DataType::VEC4:
@@ -488,10 +493,10 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec3 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
-         arr->Set( 2, Number::New(v[2]));
-         arr->Set( 3, Number::New(v[3]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
+         arr->Set( 2, Number::New(isolate, v[2]));
+         arr->Set( 3, Number::New(isolate, v[3]));
          break;
       }
       case dtEntity::DataType::VEC2D:
@@ -502,8 +507,8 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec2 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
          break;
       }
       case dtEntity::DataType::VEC3D:
@@ -514,9 +519,9 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec3 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
-         arr->Set( 2, Number::New(v[2]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
+         arr->Set( 2, Number::New(isolate, v[2]));
          break;
       }
       case dtEntity::DataType::VEC4D:
@@ -527,10 +532,10 @@ namespace dtEntityWrappers
          {
             return ThrowError("Property only accepts Vec3 values!");
          }
-         arr->Set( 0, Number::New(v[0]));
-         arr->Set( 1, Number::New(v[1]));
-         arr->Set( 2, Number::New(v[2]));
-         arr->Set( 3, Number::New(v[3]));
+         arr->Set( 0, Number::New(isolate, v[0]));
+         arr->Set( 1, Number::New(isolate, v[1]));
+         arr->Set( 2, Number::New(isolate, v[2]));
+         arr->Set( 3, Number::New(isolate, v[3]));
          break;
       }
 
@@ -539,6 +544,6 @@ namespace dtEntityWrappers
          return ThrowError("Cannot set non-aray js values from property!");
       }
 
-      return True();
+      return True(Isolate::GetCurrent());
    }
 }

@@ -39,7 +39,7 @@ namespace dtEntityWrappers
 {
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> PrintLN(const Arguments& args)
+   void PrintLN(const FunctionCallbackInfo<Value>& args)
    {
       for (int i = 0; i < args.Length(); i++)
       {
@@ -47,130 +47,131 @@ namespace dtEntityWrappers
       }      
       std::cout << "\n";
       fflush(stdout);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> Print(const Arguments& args)
+   void Print(const FunctionCallbackInfo<Value>& args)
    {
       for (int i = 0; i < args.Length(); i++)
       {
          std::cout << ToStdString(args[i]);
       }
       fflush(stdout);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> FindDataFile(const Arguments& args)
+   void FindDataFile(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() != 1 || !args[0]->IsString())
       {
-         return ThrowError("usage: findDataFile(string path)");
+         ThrowError("usage: findDataFile(string path)");
+         return;
       }
       std::string path = ToStdString(args[0]);
       std::string result = dtEntity::GetSystemInterface()->FindDataFile(path);
-      return ToJSString(result);
+      args.GetReturnValue().Set( ToJSString(result) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> Include(const Arguments& args)
+   void Include(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() != 1 || !args[0]->IsString())
       {
-         return ThrowError("usage: include(string path)");
+         ThrowError("usage: include(string path)");
+         return;
       }
       std::string path = ToStdString(args[0]);
-      return GetScriptSystem()->ExecuteFile(path);
+      args.GetReturnValue().Set( GetScriptSystem()->ExecuteFile(path));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IncludeOnce(const Arguments& args)
+   void IncludeOnce(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() != 1 || !args[0]->IsString())
       {
-         return ThrowError("usage: include_once(string path)");
+         ThrowError("usage: include_once(string path)");
+         return;
       }
 
       std::string path = ToStdString(args[0]);
       GetScriptSystem()->ExecuteFileOnce(path);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SetDataFilePathList(const Arguments& args)
+   void SetDataFilePathList(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() == 0 || ! args[0]->IsArray())
       {
-         return ThrowError("Usage: setDataFilePathList(array)");
+         ThrowError("Usage: setDataFilePathList(array)");
+         return;
       }
+
       osgDB::FilePathList pl;
 
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(args[0]);
       for(unsigned int i = 0; i < arr->Length(); ++i)
       {
          pl.push_back(osgDB::convertFileNameToUnixStyle(ToStdString(arr->Get(i))));
       }
       osgDB::setDataFilePathList(pl);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> GetDataFilePathList(const Arguments& args)
+   void GetDataFilePathList(const FunctionCallbackInfo<Value>& args)
    {
+      Isolate* isolate = Isolate::GetCurrent();
       osgDB::FilePathList pl = osgDB::getDataFilePathList();
-      HandleScope scope;
-      Handle<Array> arr = Array::New();
+      HandleScope scope(isolate);
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
 
       for(unsigned int i = 0; i < pl.size(); ++i)
       {
-         arr->Set(Integer::New(i), ToJSString(pl[i]));
+         arr->Set(Integer::New(isolate, i), ToJSString(pl[i]));
       }
-      return scope.Close(arr);
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> StartProfile(const Arguments& args)
+   void StartProfile(const FunctionCallbackInfo<Value>& args)
    {
       CProfileManager::Start_Profile(dtEntity::SID(ToStdString(args[0])));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> StopProfile(const Arguments& args)
+   void StopProfile(const FunctionCallbackInfo<Value>& args)
    {
       CProfileManager::Stop_Profile();
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> SID(const Arguments& args)
+   void SID(const FunctionCallbackInfo<Value>& args)
    {
-      return WrapSID(dtEntity::SID(ToStdString(args[0])));
+      args.GetReturnValue().Set( WrapSID(dtEntity::SID(ToStdString(args[0]))));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> GetStringFromSID(const Arguments& args)
+   void GetStringFromSID(const FunctionCallbackInfo<Value>& args)
    {
-      return String::New(dtEntity::GetStringFromSID(UnwrapSID(args[0])).c_str());
+      args.GetReturnValue().Set( String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::GetStringFromSID(UnwrapSID(args[0])).c_str()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void RegisterGlobalFunctions(ScriptSystem* ss, Handle<Context> context)
    {
+      Isolate* isolate = Isolate::GetCurrent();
       //HandleScope handle_scope;
       Context::Scope context_scope(context);
-      context->Global()->Set(String::New("findDataFile"), FunctionTemplate::New(FindDataFile)->GetFunction());
-      context->Global()->Set(String::New("include"), FunctionTemplate::New(Include)->GetFunction());
-      context->Global()->Set(String::New("include_once"), FunctionTemplate::New(IncludeOnce)->GetFunction());
-      context->Global()->Set(String::New("print"), FunctionTemplate::New(Print)->GetFunction());
-      context->Global()->Set(String::New("println"), FunctionTemplate::New(PrintLN)->GetFunction());
-      context->Global()->Set(String::New("getDataFilePathList"), FunctionTemplate::New(GetDataFilePathList)->GetFunction());
-      context->Global()->Set(String::New("setDataFilePathList"), FunctionTemplate::New(SetDataFilePathList)->GetFunction());
-      context->Global()->Set(String::New("sid"), FunctionTemplate::New(SID)->GetFunction());
-      context->Global()->Set(String::New("getStringFromSid"), FunctionTemplate::New(GetStringFromSID)->GetFunction());
-      context->Global()->Set(String::New("startProfile"), FunctionTemplate::New(StartProfile)->GetFunction());
-      context->Global()->Set(String::New("stopProfile"), FunctionTemplate::New(StopProfile)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "findDataFile"), FunctionTemplate::New(isolate, FindDataFile)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "include"), FunctionTemplate::New(isolate, Include)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "include_once"), FunctionTemplate::New(isolate, IncludeOnce)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "print"), FunctionTemplate::New(isolate, Print)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "println"), FunctionTemplate::New(isolate, PrintLN)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "getDataFilePathList"), FunctionTemplate::New(isolate, GetDataFilePathList)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "setDataFilePathList"), FunctionTemplate::New(isolate, SetDataFilePathList)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "sid"), FunctionTemplate::New(isolate, SID)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "getStringFromSid"), FunctionTemplate::New(isolate, GetStringFromSID)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "startProfile"), FunctionTemplate::New(isolate, StartProfile)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "stopProfile"), FunctionTemplate::New(isolate, StopProfile)->GetFunction());
    }
 }

@@ -38,46 +38,52 @@ namespace dtEntityWrappers
 
       InputCallbackWrapper(Handle<Object> obj)
       {
-         mObject = Persistent<Object>::New(obj);
+         Isolate* isolate = Isolate::GetCurrent();
+         mObject.Reset(isolate, obj);
          
-         if(obj->Has(String::New("keyDown"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "keyDown"))) 
          {
-            mKeyDownFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("keyDown"))));
+            mKeyDownFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyDown"))));
          }
-         if(obj->Has(String::New("keyUp"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "keyUp"))) 
          {
-            mKeyUpFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("keyUp"))));
+            mKeyUpFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyUp"))));
          }
-         if(obj->Has(String::New("mouseButtonDown"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "mouseButtonDown"))) 
          {
-            mMouseDownFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseButtonDown"))));
+            mMouseDownFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseButtonDown"))));
          }
-         if(obj->Has(String::New("mouseButtonUp"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "mouseButtonUp"))) 
          {
-            mMouseUpFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseButtonUp"))));
+            mMouseUpFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseButtonUp"))));
          }
-         if(obj->Has(String::New("mouseWheel"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "mouseWheel"))) 
          {
-            mMouseWheelFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseWheel"))));
+            mMouseWheelFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseWheel"))));
          }
-         if(obj->Has(String::New("mouseMove"))) 
+         if(obj->Has(String::NewFromUtf8(isolate, "mouseMove"))) 
          {
-            mMouseMoveFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseMove"))));
+            mMouseMoveFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseMove"))));
          }
-         if(obj->Has(String::New("mouseEnterLeave")))
+         if(obj->Has(String::NewFromUtf8(isolate, "mouseEnterLeave")))
          {
-            mMouseEnterLeaveFunc = Persistent<Function>::New(Handle<Function>::Cast(obj->Get(String::New("mouseEnterLeave"))));
+            mMouseEnterLeaveFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseEnterLeave"))));
          }
       }
 
       virtual bool KeyUp(const std::string& name, bool handled, unsigned int contextId) {
          if(!mKeyUpFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mKeyUpFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> keyUpFunc = Handle<Function>::New(isolate, mKeyUpFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(keyUpFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mKeyUpFunc->Call(mObject, 3, argv);
+            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = keyUpFunc->Call(object, 3, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -93,11 +99,16 @@ namespace dtEntityWrappers
       {
          if(!mKeyDownFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mKeyDownFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> keyDownFunc = Handle<Function>::New(isolate, mKeyDownFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(keyDownFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mKeyDownFunc->Call(mObject, 3, argv);
+            Handle<Value> argv[3] = { ToJSString(name), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = keyDownFunc->Call(object, 3, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -113,11 +124,16 @@ namespace dtEntityWrappers
       {
          if(!mMouseUpFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mMouseUpFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> mouseUpFunc = Handle<Function>::New(isolate, mMouseUpFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(mouseUpFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { Integer::New(button), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mMouseUpFunc->Call(mObject, 3, argv);
+            Handle<Value> argv[3] = { Integer::New(isolate, button), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = mouseUpFunc->Call(object, 3, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -133,11 +149,16 @@ namespace dtEntityWrappers
       {
          if(!mMouseDownFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mMouseDownFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> mouseDownFunc = Handle<Function>::New(isolate, mMouseDownFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(mouseDownFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { Integer::New(button), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mMouseDownFunc->Call(mObject, 3, argv);
+            Handle<Value> argv[3] = { Integer::New(isolate, button), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = mouseDownFunc->Call(object, 3, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -153,11 +174,16 @@ namespace dtEntityWrappers
       {
          if(!mMouseWheelFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mMouseWheelFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> mouseWheelFunc = Handle<Function>::New(isolate, mMouseWheelFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(mouseWheelFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[3] = { Integer::New(dir), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mMouseWheelFunc->Call(mObject, 3, argv);
+            Handle<Value> argv[3] = { Integer::New(isolate, dir), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = mouseWheelFunc->Call(object, 3, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -173,11 +199,16 @@ namespace dtEntityWrappers
       {
          if(!mMouseMoveFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mMouseMoveFunc->CreationContext());
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> mouseWheelFunc = Handle<Function>::New(isolate, mMouseWheelFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(mouseWheelFunc->CreationContext());
             TryCatch try_catch;
-            Handle<Value> argv[4] = { Number::New(x), Number::New(y), Boolean::New(handled), Uint32::New(contextId) };
-            Handle<Value> ret = mMouseMoveFunc->Call(mObject, 4, argv);
+            Handle<Value> argv[4] = { Number::New(isolate, x), Number::New(isolate, y), Boolean::New(isolate, handled), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = mouseWheelFunc->Call(object, 4, argv);
 
             if(ret.IsEmpty()) 
             {
@@ -193,11 +224,16 @@ namespace dtEntityWrappers
       {
          if(!mMouseEnterLeaveFunc.IsEmpty())
          {
-            HandleScope scope;
-            Context::Scope context_scope(mMouseEnterLeaveFunc->CreationContext());            
+            Isolate* isolate = Isolate::GetCurrent();
+            HandleScope scope(isolate);
+
+            Handle<Function> mouseEnterLeaveFunc = Handle<Function>::New(isolate, mMouseEnterLeaveFunc);
+            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+
+            Context::Scope context_scope(mouseEnterLeaveFunc->CreationContext());            
             TryCatch try_catch;
-            Handle<Value> argv[2] = { Boolean::New(focused), Uint32::New(contextId) };
-            Handle<Value> ret = mMouseEnterLeaveFunc->Call(mObject, 2, argv);
+            Handle<Value> argv[2] = { Boolean::New(isolate, focused), Uint32::New(isolate, contextId) };
+            Handle<Value> ret = mouseEnterLeaveFunc->Call(object, 2, argv);
 
             if(ret.IsEmpty())
             {
@@ -219,7 +255,7 @@ namespace dtEntityWrappers
    std::vector<InputCallbackWrapper*> s_inputCallbackWrappers;
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetKey(const Arguments& args)
+   void IHGetKey(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
@@ -227,11 +263,12 @@ namespace dtEntityWrappers
       {
          contextId = args[1]->Uint32Value();
       }
-      return Boolean::New(input->GetKey(ToStdString(args[0]), contextId));
+
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetKey(ToStdString(args[0]), contextId)) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetKeyUp(const Arguments& args)
+   void IHGetKeyUp(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
@@ -239,11 +276,12 @@ namespace dtEntityWrappers
       {
          contextId = args[1]->Uint32Value();
       }
-      return Boolean::New(input->GetKeyUp(ToStdString(args[0]), contextId));
+
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetKeyUp(ToStdString(args[0]), contextId)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetKeyDown(const Arguments& args)
+   void IHGetKeyDown(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
@@ -251,38 +289,25 @@ namespace dtEntityWrappers
       {
          contextId = args[1]->Uint32Value();
       }
-      return Boolean::New(input->GetKeyDown(ToStdString(args[0]), contextId));
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetKeyDown(ToStdString(args[0]), contextId)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHAnyKey(const Arguments& args)
+   void IHAnyKey(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
-      return Boolean::New(input->AnyKeyDown());
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->AnyKeyDown()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetInputString(const Arguments& args)
+   void IHGetInputString(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
-      return ToJSString(input->GetInputString());
+      args.GetReturnValue().Set( ToJSString(input->GetInputString()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetMouseButton(const Arguments& args)
-   {
-      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
-
-      unsigned int contextId = 0;
-      if(args.Length() > 1)
-      {
-         contextId = args[1]->Uint32Value();
-      }
-      return Boolean::New(input->GetMouseButton(args[0]->Int32Value(), contextId));
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetMouseButtonUp(const Arguments& args)
+   void IHGetMouseButton(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
 
@@ -291,11 +316,24 @@ namespace dtEntityWrappers
       {
          contextId = args[1]->Uint32Value();
       }
-      return Boolean::New(input->GetMouseButtonUp(args[0]->Int32Value(), contextId));
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetMouseButton(args[0]->Int32Value(), contextId)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetMouseButtonDown(const Arguments& args)
+   void IHGetMouseButtonUp(const FunctionCallbackInfo<Value>& args)
+   {
+      dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
+
+      unsigned int contextId = 0;
+      if(args.Length() > 1)
+      {
+         contextId = args[1]->Uint32Value();
+      }
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetMouseButtonUp(args[0]->Int32Value(), contextId)));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void IHGetMouseButtonDown(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
@@ -303,22 +341,22 @@ namespace dtEntityWrappers
       {
          contextId = args[1]->Uint32Value();
       }
-      return Boolean::New(input->GetMouseButtonDown(args[0]->Int32Value(), contextId));
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), input->GetMouseButtonDown(args[0]->Int32Value(), contextId)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetAxis(const Arguments& args)
+   void IHGetAxis(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      return Number::New(input->GetAxis(ToStdString(args[0])));
+      args.GetReturnValue().Set( Number::New(input->GetAxis(ToStdString(args[0]))));
 #else
-      return Number::New(input->GetAxis((dtEntity::StringId)args[0]->Uint32Value()));
+      args.GetReturnValue().Set( Number::New(Isolate::GetCurrent(), input->GetAxis((dtEntity::StringId)args[0]->Uint32Value())));
 #endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetMouseWheelState(const Arguments& args)
+   void IHGetMouseWheelState(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* input = UnwrapInputInterface(args.This());
       unsigned int contextId = 0;
@@ -326,61 +364,62 @@ namespace dtEntityWrappers
       {
          contextId = args[0]->Uint32Value();
       }
-      return Integer::New((int)input->GetMouseWheelState(contextId));
+      args.GetReturnValue().Set( Integer::New(Isolate::GetCurrent(), (int)input->GetMouseWheelState(contextId)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetMultiTouchEnabled(const Arguments& args)
+   void IHGetMultiTouchEnabled(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
-      return Boolean::New(ih->GetMultiTouchEnabled());
+      args.GetReturnValue().Set( Boolean::New (Isolate::GetCurrent(), ih->GetMultiTouchEnabled()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetNumTouches(const Arguments& args)
+   void IHGetNumTouches(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
-      return Integer::New(ih->GetNumTouches());
+      args.GetReturnValue().Set( Integer::New(Isolate::GetCurrent(), ih->GetNumTouches()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHGetTouches(const Arguments& args)
+   void IHGetTouches(const FunctionCallbackInfo<Value>& args)
    {
+      Isolate* isolate = Isolate::GetCurrent();
       dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
-      HandleScope scope;
-      Handle<Array> jstouches = Array::New();
+      HandleScope scope(isolate);
+      Handle<Array> jstouches = Array::New(v8::Isolate::GetCurrent());
 
-      Handle<String> tapcount = String::New("tapcount");
-      Handle<String> id = String::New("id");
-      Handle<String> x = String::New("x");
-      Handle<String> y = String::New("y");
-      Handle<String> phase = String::New("phase");
+      Handle<String> tapcount = String::NewFromUtf8(isolate, "tapcount");
+      Handle<String> id = String::NewFromUtf8(isolate, "id");
+      Handle<String> x = String::NewFromUtf8(isolate, "x");
+      Handle<String> y = String::NewFromUtf8(isolate, "y");
+      Handle<String> phase = String::NewFromUtf8(isolate, "phase");
 
       const std::vector<dtEntity::TouchPoint>& touches = ih->GetTouches();
       unsigned int count = 0;
       for(std::vector<dtEntity::TouchPoint>::const_iterator i = touches.begin(); i != touches.end(); ++i)
       {
          dtEntity::TouchPoint tp = *i;
-         Handle<Object> o = Object::New();
-         o->Set(id, Uint32::New(tp.mId));
-         o->Set(tapcount, Uint32::New(tp.mTapCount));
-         o->Set(x, Number::New(tp.mX));
-         o->Set(y, Number::New(tp.mY));
-         o->Set(phase, Integer::New(tp.mTouchPhase));
+         Handle<Object> o = Object::New(Isolate::GetCurrent());
+         o->Set(id, Uint32::New(isolate, tp.mId));
+         o->Set(tapcount, Uint32::New(isolate, tp.mTapCount));
+         o->Set(x, Number::New(isolate, tp.mX));
+         o->Set(y, Number::New(isolate, tp.mY));
+         o->Set(phase, Integer::New(isolate, tp.mTouchPhase));
          jstouches->Set(count++, o);
       }
 
-      return scope.Close(jstouches);
+      args.GetReturnValue().Set(jstouches);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHToString(const Arguments& args)
+   void IHToString(const FunctionCallbackInfo<Value>& args)
    {
-      return String::New("<Input>");
+      args.GetReturnValue().Set( String::NewFromUtf8(v8::Isolate::GetCurrent(), "<Input>"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHAddInputCallback(const Arguments& args)
+   void IHAddInputCallback(const FunctionCallbackInfo<Value>& args)
    {
       Handle<Object> o = Handle<Object>::Cast(args[0]);
       InputCallbackWrapper* wr = new InputCallbackWrapper(o);
@@ -388,12 +427,10 @@ namespace dtEntityWrappers
       dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       ih->AddInputCallback(wr);
       s_inputCallbackWrappers.push_back(wr);
-
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> IHRemoveInputCallback(const Arguments& args)
+   void IHRemoveInputCallback(const FunctionCallbackInfo<Value>& args)
    {
       for(std::vector<InputCallbackWrapper*>::iterator i = s_inputCallbackWrappers.begin();
          i != s_inputCallbackWrappers.end(); ++i)
@@ -403,15 +440,15 @@ namespace dtEntityWrappers
             dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
             ih->RemoveInputCallback(*i);
             s_inputCallbackWrappers.erase(i);
-            return True();
+            args.GetReturnValue().Set( True(Isolate::GetCurrent()));
          }
       }
       
-      return False();
+      args.GetReturnValue().Set( False(Isolate::GetCurrent()) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   /*Handle<Value> IHPrintKeys(const Arguments& args)
+   /*void IHPrintKeys(const Arguments& args)
    {
       dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
       const dtEntity::InputInterface::KeyNames k = ih->GetKeyNames();
@@ -428,40 +465,41 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapInputInterface(Handle<Context> context, dtEntity::InputInterface* v)
    {
-      HandleScope handle_scope;
+      Isolate* isolate = Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
       Context::Scope context_scope(context);
 
-      Handle<FunctionTemplate> templt = FunctionTemplate::New();
-      templt->SetClassName(String::New("Input"));
+      Handle<FunctionTemplate> templt = FunctionTemplate::New(isolate);
+      templt->SetClassName(String::NewFromUtf8(isolate, "Input"));
       templt->InstanceTemplate()->SetInternalFieldCount(1);
 
       Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-      proto->Set("getAxis", FunctionTemplate::New(IHGetAxis));
-      proto->Set("getKey", FunctionTemplate::New(IHGetKey));
-      proto->Set("getKeyDown", FunctionTemplate::New(IHGetKeyDown));
-      proto->Set("getKeyUp", FunctionTemplate::New(IHGetKeyUp));
-      proto->Set("anyKeyDown", FunctionTemplate::New(IHAnyKey));
+      proto->Set(String::NewFromUtf8(isolate, "getAxis"), FunctionTemplate::New(isolate, IHGetAxis));
+      proto->Set(String::NewFromUtf8(isolate, "getKey"), FunctionTemplate::New(isolate, IHGetKey));
+      proto->Set(String::NewFromUtf8(isolate, "getKeyDown"), FunctionTemplate::New(isolate, IHGetKeyDown));
+      proto->Set(String::NewFromUtf8(isolate, "getKeyUp"), FunctionTemplate::New(isolate, IHGetKeyUp));
+      proto->Set(String::NewFromUtf8(isolate, "anyKeyDown"), FunctionTemplate::New(isolate, IHAnyKey));
 
-      proto->Set("getInputString", FunctionTemplate::New(IHGetInputString));
+      proto->Set(String::NewFromUtf8(isolate, "getInputString"), FunctionTemplate::New(isolate, IHGetInputString));
 
-      proto->Set("getMouseButton", FunctionTemplate::New(IHGetMouseButton));
-      proto->Set("getMouseButtonUp", FunctionTemplate::New(IHGetMouseButtonUp));
-      proto->Set("getMouseButtonDown", FunctionTemplate::New(IHGetMouseButtonDown));
-      proto->Set("getMouseWheelState", FunctionTemplate::New(IHGetMouseWheelState));
+      proto->Set(String::NewFromUtf8(isolate, "getMouseButton"), FunctionTemplate::New(isolate, IHGetMouseButton));
+      proto->Set(String::NewFromUtf8(isolate, "getMouseButtonUp"), FunctionTemplate::New(isolate, IHGetMouseButtonUp));
+      proto->Set(String::NewFromUtf8(isolate, "getMouseButtonDown"), FunctionTemplate::New(isolate, IHGetMouseButtonDown));
+      proto->Set(String::NewFromUtf8(isolate, "getMouseWheelState"), FunctionTemplate::New(isolate, IHGetMouseWheelState));
       
-      proto->Set("getMultiTouchEnabled", FunctionTemplate::New(IHGetMultiTouchEnabled));
-      proto->Set("getNumTouches", FunctionTemplate::New(IHGetNumTouches));
-      proto->Set("getTouches", FunctionTemplate::New(IHGetTouches));
-      //proto->Set("printKeys", FunctionTemplate::New(IHPrintKeys));
-      proto->Set("toString", FunctionTemplate::New(IHToString));
-      proto->Set("addInputCallback", FunctionTemplate::New(IHAddInputCallback));
-      proto->Set("removeInputCallback", FunctionTemplate::New(IHRemoveInputCallback));
+      proto->Set(String::NewFromUtf8(isolate, "getMultiTouchEnabled"), FunctionTemplate::New(isolate, IHGetMultiTouchEnabled));
+      proto->Set(String::NewFromUtf8(isolate, "getNumTouches"), FunctionTemplate::New(isolate, IHGetNumTouches));
+      proto->Set(String::NewFromUtf8(isolate, "getTouches"), FunctionTemplate::New(isolate, IHGetTouches));
+      //proto->Set(String::NewFromUtf8(isolate, "printKeys"), FunctionTemplate::New(IHPrintKeys));
+      proto->Set(String::NewFromUtf8(isolate, "toString"), FunctionTemplate::New(isolate, IHToString));
+      proto->Set(String::NewFromUtf8(isolate, "addInputCallback"), FunctionTemplate::New(isolate, IHAddInputCallback));
+      proto->Set(String::NewFromUtf8(isolate, "removeInputCallback"), FunctionTemplate::New(isolate, IHRemoveInputCallback));
       
       Local<Object> instance = templt->GetFunction()->NewInstance();
-      instance->SetInternalField(0, External::New(v));
+      instance->SetInternalField(0, External::New(isolate, v));
 
-      return handle_scope.Close(instance);
+      return scope.Escape(instance);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -476,14 +514,16 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapTouchPhases()
    {
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
-      obj->Set(String::New("Unknown"), Integer::New(dtEntity::TouchPhase::UNKNOWN));
-      obj->Set(String::New("Began"), Integer::New(dtEntity::TouchPhase::BEGAN));
-      obj->Set(String::New("Moved"), Integer::New(dtEntity::TouchPhase::MOVED));
-      obj->Set(String::New("Stationary"), Integer::New(dtEntity::TouchPhase::STATIONARY));
-      obj->Set(String::New("Ended"), Integer::New(dtEntity::TouchPhase::ENDED));
-      return scope.Close(obj);
+      Isolate* isolate = Isolate::GetCurrent();
+
+      EscapableHandleScope scope(isolate);
+      Local<Object> obj = Object::New(isolate);
+      obj->Set(String::NewFromUtf8(isolate, "Unknown"), Integer::New(isolate, dtEntity::TouchPhase::UNKNOWN));
+      obj->Set(String::NewFromUtf8(isolate, "Began"), Integer::New(isolate, dtEntity::TouchPhase::BEGAN));
+      obj->Set(String::NewFromUtf8(isolate, "Moved"), Integer::New(isolate, dtEntity::TouchPhase::MOVED));
+      obj->Set(String::NewFromUtf8(isolate, "Stationary"), Integer::New(isolate, dtEntity::TouchPhase::STATIONARY));
+      obj->Set(String::NewFromUtf8(isolate, "Ended"), Integer::New(isolate, dtEntity::TouchPhase::ENDED));
+      return scope.Escape(obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -493,44 +533,44 @@ namespace dtEntityWrappers
       KN kn;
       ih->GetKeyNames(kn);
       
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
+      EscapableHandleScope scope(Isolate::GetCurrent());
+      Local<Object> obj = Object::New(Isolate::GetCurrent());
       
       for(KN::const_iterator i = kn.begin(); i != kn.end(); ++i)
       {
-         obj->Set(ToJSString(i->first), Uint32::New(i->second));
+         obj->Set(ToJSString(i->first), Uint32::New(Isolate::GetCurrent(), i->second));
       }
 
-      return scope.Close(obj);
+      return scope.Escape(obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapAxes(dtEntity::InputInterface* ih)
    {
-            
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
+      Isolate* isolate = Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
+      Local<Object> obj = Object::New(isolate);
       
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      obj->Set(String::New("MouseX"), String::New(dtEntity::InputInterface::MouseXId.c_str()));
-      obj->Set(String::New("MouseY"), String::New(dtEntity::InputInterface::MouseYId.c_str()));
-      obj->Set(String::New("MouseXRaw"), String::New(dtEntity::InputInterface::MouseXRawId.c_str()));
-      obj->Set(String::New("MouseYRaw"), String::New(dtEntity::InputInterface::MouseYRawId.c_str()));
-      obj->Set(String::New("MouseDeltaX"), String::New(dtEntity::InputInterface::MouseDeltaXId.c_str()));
-      obj->Set(String::New("MouseDeltaY"), String::New(dtEntity::InputInterface::MouseDeltaYId.c_str()));
-      obj->Set(String::New("MouseDeltaXRaw"), String::New(dtEntity::InputInterface::MouseDeltaXRawId.c_str()));
-      obj->Set(String::New("MouseDeltaYRaw"), String::New(dtEntity::InputInterface::MouseDeltaYRawId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseX"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseXId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseY"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseYId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseXRaw"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseXRawId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseYRaw"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseYRawId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseDeltaX"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseDeltaXId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseDeltaY"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseDeltaYId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseDeltaXRaw"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseDeltaXRawId.c_str()));
+      obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MouseDeltaYRaw"), String::NewFromUtf8(v8::Isolate::GetCurrent(), dtEntity::InputInterface::MouseDeltaYRawId.c_str()));
 #else
-      obj->Set(String::New("MouseX"), Uint32::New(dtEntity::InputInterface::MouseXId));
-      obj->Set(String::New("MouseY"), Uint32::New(dtEntity::InputInterface::MouseYId));
-      obj->Set(String::New("MouseXRaw"), Uint32::New(dtEntity::InputInterface::MouseXRawId));
-      obj->Set(String::New("MouseYRaw"), Uint32::New(dtEntity::InputInterface::MouseYRawId));
-      obj->Set(String::New("MouseDeltaX"), Uint32::New(dtEntity::InputInterface::MouseDeltaXId));
-      obj->Set(String::New("MouseDeltaY"), Uint32::New(dtEntity::InputInterface::MouseDeltaYId));
-      obj->Set(String::New("MouseDeltaXRaw"), Uint32::New(dtEntity::InputInterface::MouseDeltaXRawId));
-      obj->Set(String::New("MouseDeltaYRaw"), Uint32::New(dtEntity::InputInterface::MouseDeltaYRawId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseX"), Uint32::New(isolate, dtEntity::InputInterface::MouseXId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseY"), Uint32::New(isolate, dtEntity::InputInterface::MouseYId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseXRaw"), Uint32::New(isolate, dtEntity::InputInterface::MouseXRawId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseYRaw"), Uint32::New(isolate, dtEntity::InputInterface::MouseYRawId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseDeltaX"), Uint32::New(isolate, dtEntity::InputInterface::MouseDeltaXId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseDeltaY"), Uint32::New(isolate, dtEntity::InputInterface::MouseDeltaYId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseDeltaXRaw"), Uint32::New(isolate, dtEntity::InputInterface::MouseDeltaXRawId));
+      obj->Set(String::NewFromUtf8(isolate, "MouseDeltaYRaw"), Uint32::New(isolate, dtEntity::InputInterface::MouseDeltaYRawId));
 #endif 
-      return scope.Close(obj);
+      return scope.Escape(obj);
    }
 
 }

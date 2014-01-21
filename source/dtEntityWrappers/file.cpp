@@ -35,6 +35,8 @@ using namespace v8;
 namespace dtEntityWrappers
 {
 
+#if 0
+
    Persistent<Function> s_file;
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -307,4 +309,7 @@ namespace dtEntityWrappers
      return ft->GetFunction();
 
    }
+
+
+#endif
 }

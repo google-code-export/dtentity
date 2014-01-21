@@ -24,6 +24,8 @@
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/bytestorage.h>
 
+
+#if 0
 /*
   This file is basically copied from the v8cgi project: http://code.google.com/p/v8cgi/
   */
@@ -65,7 +67,7 @@ namespace dtEntityWrappers{
 	////////////////////////////////////////////////////////////////////////////////
    void Buffer_destroy(v8::Persistent<v8::Value> v, void* ptr) {
       using namespace v8;
-		HandleScope scope;
+		HandleScope scope(Isolate::GetCurrent());
 		Handle<Object> o = Handle<Object>::Cast(v);
 		ByteStorage * bs = BS_OTHER(o);
 		delete bs;
@@ -344,7 +346,7 @@ namespace dtEntityWrappers{
    v8::Handle<v8::Function> CreateBuffer()
 	{
       using namespace v8;
-		HandleScope handle_scope;
+      EscapableHandleScope handle_scope(Isolate::GetCurrent());
 
 		bufferTemplate = Persistent<FunctionTemplate>::New(FunctionTemplate::New(_Buffer));
 		bufferTemplate->SetClassName(JS_STR("Buffer"));
@@ -364,9 +366,9 @@ namespace dtEntityWrappers{
 		bufferObject->SetAccessor(JS_STR("length"), Buffer_length, 0, Handle<Value>(), DEFAULT, static_cast<PropertyAttribute>(DontDelete));
 		bufferObject->SetIndexedPropertyHandler(Buffer_get, Buffer_set);
 
-		return handle_scope.Close(bufferTemplate->GetFunction());
+		return handle_scope.Escape(bufferTemplate->GetFunction());
 	}
 
 } /* namespace */
 
-
+#endif

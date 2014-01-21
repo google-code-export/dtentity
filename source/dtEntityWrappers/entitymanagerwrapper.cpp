@@ -34,6 +34,7 @@
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/scriptcomponent.h>
 #include <dtEntityWrappers/wrappers.h>
+#include <dtEntityWrappers/RefPersistent.h>
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -48,41 +49,45 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    class StringCache
    {
-      typedef std::map<dtEntity::StringId, v8::Persistent<v8::String> > StringMap;
+      typedef std::map<dtEntity::StringId, osg::ref_ptr< RefPersistent<v8::String> > > StringMap;
+
    public:
       v8::Handle<v8::String> GetString(dtEntity::StringId v)
       {
          StringMap::iterator i = mStrings.find(v);
          if(i != mStrings.end())
          {
-            return i->second;
+            return i->second->GetLocal();
          }
-         HandleScope scope;
+         EscapableHandleScope scope(Isolate::GetCurrent());
          std::string str = dtEntity::GetStringFromSID(v);
-         Handle<String> jsstr = ToJSString(str);
-         mStrings[v] = Persistent<String>::New(jsstr);
-         return scope.Close(jsstr);
+         Local<String> jsstr = ToJSString(str);
+         mStrings[v] = new RefPersistent<String>(Isolate::GetCurrent(), jsstr);
+         return scope.Escape(jsstr);
       }
 
    private:
-      std::map<dtEntity::StringId, v8::Persistent<v8::String> > mStrings;
+      StringMap mStrings;
    };
 
    static StringCache s_stringCache;
 
+
+   ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::String> GetString(dtEntity::StringId v)
    {
       return s_stringCache.GetString(v);
    }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> ConvertMessageToJS(Handle<Context> context, const dtEntity::Message& msg)
    {
       const dtEntity::PropertyGroup& params = msg.Get();
 
-      HandleScope scope;
+      EscapableHandleScope scope(Isolate::GetCurrent());
      
-      Handle<Object> o = Object::New();
+      Local<Object> obj = Object::New(Isolate::GetCurrent());
       dtEntity::PropertyGroup::const_iterator i;
       for(i = params.begin(); i != params.end(); ++i)
       {
@@ -90,39 +95,42 @@ namespace dtEntityWrappers
          const dtEntity::Property* p = i->second;
          Handle<Value> v = ConvertPropertyToValue(context, p);
          Handle<String> str = GetString(n);
-         o->Set(str, v);
+         obj->Set(str, v);
       }
-      return scope.Close(o);
+      return scope.Escape(obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    struct MessageFunctorHolder
    {
       MessageFunctorHolder(dtEntity::MessageType msgtype, Handle<Function> func)
-         : mFunction(Persistent<Function>::New(func))
-         , mFunctor(dtEntity::MessageFunctor(this, &MessageFunctorHolder::Call))
+         : mFunctor(dtEntity::MessageFunctor(this, &MessageFunctorHolder::Call))
          , mMessageType(msgtype)
       {
+         mFunction.Reset(Isolate::GetCurrent(), func);
          Handle<String> str = GetString(msgtype);
-         mMessageTypeStr = Persistent<String>::New(str);
+         mMessageTypeStr.Reset(Isolate::GetCurrent(), str);
       }
 
       ~MessageFunctorHolder()
       {
-         mMessageTypeStr.Dispose();
+         mMessageTypeStr.Reset();
       }
 
       void Call(const dtEntity::Message& msg)
       {
-         HandleScope scope;
-         Handle<Context> context = mFunction->CreationContext();
+         HandleScope scope(Isolate::GetCurrent());
+         Handle<Function> function = Handle<Function>::New(Isolate::GetCurrent(), mFunction);
+
+         Handle<Context> context = function->CreationContext();
          Context::Scope context_scope(context);
    
          TryCatch try_catch;
 
-         Handle<Value> argv[2] = { mMessageTypeStr, ConvertMessageToJS(context, msg) };
+         Handle<String> messageTypeStr = Handle<String>::New(Isolate::GetCurrent(), mMessageTypeStr);
+         Handle<Value> argv[2] = { messageTypeStr, ConvertMessageToJS(context, msg) };
 
-         Handle<Value> result = mFunction->Call(mFunction, 2, argv);
+         Handle<Value> result = function->Call(function, 2, argv);
 
          if(result.IsEmpty()) 
          {
@@ -143,58 +151,64 @@ namespace dtEntityWrappers
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMToString(const Arguments& args)
+   void EMToString(const FunctionCallbackInfo<Value>& args)
    {
-      return String::New("<EntityManager>");
+      args.GetReturnValue().Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "<EntityManager>"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMCloneEntity(const v8::Arguments& args)
+   void EMCloneEntity(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      return Boolean::New(em->CloneEntity(args[0]->Uint32Value(), args[1]->Uint32Value()));
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), em->CloneEntity(args[0]->Uint32Value(), args[1]->Uint32Value())) );
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMCreateEntity(const v8::Arguments& args)
+   void EMCreateEntity(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       dtEntity::Entity* entity;
       bool success = em->CreateEntity(entity);
-      if(!success) return Null();
-      return Integer::New(entity->GetId());
+      if(!success) {
+         args.GetReturnValue().Set( Null(Isolate::GetCurrent()) );
+         return;
+      }
+
+      args.GetReturnValue().Set( Integer::New(Isolate::GetCurrent(), entity->GetId()) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMGetEntityIds(const v8::Arguments& args)
+   void EMGetEntityIds(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
 
       std::vector<dtEntity::EntityId> ids;
       em->GetEntityIds(ids);
 
-      HandleScope scope;
-      Handle<Array> arr = Array::New(ids.size());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      Handle<Array> arr = Array::New(isolate, ids.size());
 
       for(unsigned int i = 0; i < ids.size(); ++i)
       {
-         arr->Set(Integer::New(i), Integer::New(ids[i]));
+         arr->Set(Integer::New(isolate, i), Integer::New(isolate, ids[i]));
       }
-      return scope.Close(arr);
+
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMHasEntity(const v8::Arguments& args)
+   void EMHasEntity(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      return Boolean::New(em->HasEntity(args[0]->Uint32Value()));
+      args.GetReturnValue().Set( Boolean::New(Isolate::GetCurrent(), em->HasEntity(args[0]->Uint32Value())) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void ConvertJSToMessage(Handle<Value> val, dtEntity::Message* msg)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Object> o = Handle<Object>::Cast(val);
       Local<Array> propnames = o->GetPropertyNames();
       for(unsigned int i = 0; i < propnames->Length(); ++i)
@@ -216,7 +230,7 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMEmitMessage(const v8::Arguments& args)
+   void EMEmitMessage(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       std::string namestr = ToStdString(args[0]);
@@ -227,16 +241,17 @@ namespace dtEntityWrappers
       
       if(!success)
       {
-         return ThrowError("Could not create message of type " + namestr);
+         ThrowError("Could not create message of type " + namestr);
+         return;
       }
+
       ConvertJSToMessage(args[1], msg);
       em->EmitMessage(*msg);
       delete msg;
-      return Undefined();
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMEnqueueMessage(const v8::Arguments& args)
+   void EMEnqueueMessage(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
       
@@ -247,58 +262,74 @@ namespace dtEntityWrappers
       
       if(!success)
       {
-         return ThrowError("Could not create message of type " + ToStdString(args[0]));
+         ThrowError("Could not create message of type " + ToStdString(args[0]));
+         return;
       }
 
       ConvertJSToMessage(args[1], msg);
       em->EnqueueMessage(*msg, args[2]->NumberValue());
       delete msg;
-      return Undefined();
-   }  
-
-   ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMKillEntity(const v8::Arguments& args)
-   {  
-      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      bool success = em->KillEntity(args[0]->Int32Value());
-      return success ? True() : False();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMAddPlugin(const v8::Arguments& args)
+   void EMKillEntity(const FunctionCallbackInfo<Value>& args)
+   {  
+      dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
+      bool success = em->KillEntity(args[0]->Int32Value());
+      if(success)
+         args.GetReturnValue().Set(True(Isolate::GetCurrent()) );
+      else
+         args.GetReturnValue().Set( False(Isolate::GetCurrent()) );
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EMAddPlugin(const FunctionCallbackInfo<Value>& args)
    {  
       std::string path = ToStdString(args[0]);
       std::string name = ToStdString(args[1]);
 
       dtEntity::ComponentPluginManager& pm = dtEntity::ComponentPluginManager::GetInstance();
       std::set<dtEntity::ComponentType> handled = pm.AddPlugin(path, name, false);
-      HandleScope scope;
-      Handle<Array> arr = Array::New();
+
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      Handle<Array> arr = Array::New(isolate);
 
       int idx = 0;
       for(std::set<dtEntity::ComponentType>::iterator i = handled.begin(); i != handled.end(); ++i)
       {
-         arr->Set(Integer::New(idx++), String::New(dtEntity::GetStringFromSID(*i).c_str()));
+         arr->Set(Integer::New(isolate, idx++), String::NewFromUtf8(isolate, dtEntity::GetStringFromSID(*i).c_str()));
       }
-      return arr;
+
+      args.GetReturnValue().Set( arr );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMAddToScene(const v8::Arguments& args)
+   void EMAddToScene(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      if(!args[0]->IsInt32()) return ThrowError("usage: addToScene(int32 entityId)");
+      if(!args[0]->IsInt32()) 
+      {
+         ThrowError("usage: addToScene(int32 entityId)");
+         return;
+      }
+
       bool success = em->AddToScene(args[0]->Int32Value());
-      return success ? True() : False();
+      if(success)
+         args.GetReturnValue().Set(True(Isolate::GetCurrent()));
+      else
+         args.GetReturnValue().Set(False(Isolate::GetCurrent()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMRegisterForMessages(const v8::Arguments& args)
+   void EMRegisterForMessages(const FunctionCallbackInfo<Value>& args)
    {  
       if(!args[0]->IsString() || !args[1]->IsFunction())
       {
-         return ThrowError("Usage: registerForMessages(string msgname, function, [options])");
+         ThrowError("Usage: registerForMessages(string msgname, function, [options])");
+         return;
       }
+
       std::string msgname = ToStdString(args[0]);
       
       Handle<Function> func = Handle<Function>::Cast(args[1]);
@@ -325,16 +356,17 @@ namespace dtEntityWrappers
          options = args[2]->Uint32Value();
       }
       em->RegisterForMessages(dtEntity::SIDHash(msgname), fh->mFunctor, options, funcname);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMUnregisterForMessages(const v8::Arguments& args)
+   void EMUnregisterForMessages(const FunctionCallbackInfo<Value>& args)
    {  
       if(!args[0]->IsString() || !args[1]->IsFunction())
       {
-         return ThrowError("Usage: unregisterForMessages(string msgname, function)");
+         ThrowError("Usage: unregisterForMessages(string msgname, function)");
+         return;
       }
+
       std::string msgname = ToStdString(args[0]);
       dtEntity::StringId msgnamesid = dtEntity::SIDHash(msgname);
       Handle<Function> func = Handle<Function>::Cast(args[1]);
@@ -352,44 +384,62 @@ namespace dtEntityWrappers
             em->UnregisterForMessages(holder->mMessageType, holder->mFunctor);
             storage->mHolders.erase(i);
             delete holder;
-            return Undefined();
+            return;
          }
       }
-      return ThrowError("Could not unregister from message, no registrant found: " + msgname);
+
+      ThrowError("Could not unregister from message, no registrant found: " + msgname);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMRemoveFromScene(const v8::Arguments& args)
+   void EMRemoveFromScene(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      if(!args[0]->IsInt32()) return ThrowError("usage: removeFromScene(int32 entityId)");
+      if(!args[0]->IsInt32()) 
+      {
+         ThrowError("usage: removeFromScene(int32 entityId)");
+         return;
+      }
+
       bool success = em->RemoveFromScene(args[0]->Int32Value());
-      return success ? True() : False();
+      
+      if(success)
+         args.GetReturnValue().Set(True(Isolate::GetCurrent()));
+      else
+         args.GetReturnValue().Set(False(Isolate::GetCurrent()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMHasEntitySystem(const v8::Arguments& args)
+   void EMHasEntitySystem(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      if(!args[0]->IsString()) return ThrowError("usage: hasEntitySystem(string)");
+      if(!args[0]->IsString()) 
+      {
+         ThrowError("usage: hasEntitySystem(string)");
+         return;
+      }
+
       dtEntity::ComponentType t = dtEntity::SIDHash(ToStdString(args[0]));
       if(em->HasEntitySystem(t))
       {
-         return True();
+         args.GetReturnValue().Set(True(Isolate::GetCurrent()));
+         return;
       }
       else
       {
          bool success = dtEntity::ComponentPluginManager::GetInstance().FactoryExists(t);
          if(success)
          {
-            return True();
+            args.GetReturnValue().Set(True(Isolate::GetCurrent()));
+            return;
          }
       }
-      return False();
+
+      args.GetReturnValue().Set(False(Isolate::GetCurrent()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMAddEntitySystem(const v8::Arguments& args)
+   void EMAddEntitySystem(const FunctionCallbackInfo<Value>& args)
    {  
       if(IsEntitySystem(args[0]))
       {
@@ -397,36 +447,44 @@ namespace dtEntityWrappers
 
          dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
          em->AddEntitySystem(*es);
-         return Undefined();
+         args.GetReturnValue().Set( Undefined( Isolate::GetCurrent()));
+         return;
       }
-      HandleScope scope;
+
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Object> obj = Handle<Object>::Cast(args[0]);
       if(!obj.IsEmpty() &&
-         obj->Has(String::New("componentType")) &&
-         obj->Has(String::New("hasComponent")) &&
-         obj->Has(String::New("getComponent")) &&
-         obj->Has(String::New("createComponent")) &&
-         obj->Has(String::New("deleteComponent")) &&
-         obj->Has(String::New("getEntitiesInSystem"))
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "componentType")) &&
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "hasComponent")) &&
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "getComponent")) &&
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "createComponent")) &&
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "deleteComponent")) &&
+         obj->Has(String::NewFromUtf8(v8::Isolate::GetCurrent(), "getEntitiesInSystem"))
       )
       {
          dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-         std::string compType = ToStdString(obj->Get(String::New("componentType")));
+         std::string compType = ToStdString(obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "componentType")));
          dtEntity::ComponentType ct = (dtEntity::ComponentType) dtEntity::SID(compType);
          EntitySystemJS* es = new EntitySystemJS(ct, *em, obj);
          em->AddEntitySystem(*es);
-         return Undefined();
+         args.GetReturnValue().Set( Undefined( Isolate::GetCurrent()));
+         return;
       }
 
-      return ThrowError("Not an entity system! Has to have componentType, "
-         "hasComponent(), getComponent(), createComponent(), deleteComponent() and getEntitiesInSystem()");
+      ThrowError("Not an entity system! Has to have componentType, "
+                  "hasComponent(), getComponent(), createComponent(), deleteComponent() and getEntitiesInSystem()");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> EMGetEntitySystem(const v8::Arguments& args)
+   void EMGetEntitySystem(const FunctionCallbackInfo<Value>& args)
    {  
       dtEntity::EntityManager* em = UnwrapEntityManager(args.This());
-      if(!args[0]->IsString()) return ThrowError("usage: getEntitySystem(string)");
+      if(!args[0]->IsString()) 
+      {
+         ThrowError("usage: getEntitySystem(string)");
+         return;
+      }
+
       std::string str = ToStdString(args[0]);
       dtEntity::ComponentType t = dtEntity::SIDHash(str);
       dtEntity::EntitySystem* es = em->GetEntitySystem(t);
@@ -439,34 +497,39 @@ namespace dtEntityWrappers
             es = em->GetEntitySystem(t);
             if(es == NULL)
             {
-               return ThrowError("Could not start entity system " + str);
+               ThrowError("Could not start entity system " + str);
+               return;
             }
          }
          else
          {
-            return Null();
+            args.GetReturnValue().Set( Null( Isolate::GetCurrent()));
+            return;
          }
       }
+
       ScriptSystem* ss;
       em->GetEntitySystem(ScriptSystem::TYPE, ss);
-      return WrapEntitySystem(ss, es);
+      args.GetReturnValue().Set( WrapEntitySystem(ss, es) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Object> WrapPriorities()
    {
-     HandleScope scope;
-     Handle<Object> obj = Object::New();
+     Isolate* isolate = Isolate::GetCurrent();
+     EscapableHandleScope scope(isolate);
+     Local<Object> obj = Object::New(isolate);
 
-     obj->Set(String::New("default"), Uint32::New(dtEntity::FilterOptions::ORDER_DEFAULT));
-     obj->Set(String::New("lowest"),  Uint32::New(dtEntity::FilterOptions::PRIORITY_LOWEST));
-     obj->Set(String::New("higher"), Uint32::New(dtEntity::FilterOptions::PRIORITY_HIGHER));
-     obj->Set(String::New("highest"),  Uint32::New(dtEntity::FilterOptions::PRIORITY_HIGHEST));
-     obj->Set(String::New("late"),  Uint32::New(dtEntity::FilterOptions::ORDER_LATE));
-     obj->Set(String::New("early"), Uint32::New(dtEntity::FilterOptions::ORDER_EARLY));
-     obj->Set(String::New("earliest"),  Uint32::New(dtEntity::FilterOptions::ORDER_EARLIEST));
-     obj->Set(String::New("singleshot"), Uint32::New(dtEntity::FilterOptions::SINGLE_SHOT));
-     return scope.Close(obj);
+     obj->Set(String::NewFromUtf8(isolate, "default"), Uint32::New(isolate, dtEntity::FilterOptions::ORDER_DEFAULT));
+     obj->Set(String::NewFromUtf8(isolate, "lowest"),  Uint32::New(isolate, dtEntity::FilterOptions::PRIORITY_LOWEST));
+     obj->Set(String::NewFromUtf8(isolate, "higher"), Uint32::New(isolate, dtEntity::FilterOptions::PRIORITY_HIGHER));
+     obj->Set(String::NewFromUtf8(isolate, "highest"),  Uint32::New(isolate, dtEntity::FilterOptions::PRIORITY_HIGHEST));
+     obj->Set(String::NewFromUtf8(isolate, "late"),  Uint32::New(isolate, dtEntity::FilterOptions::ORDER_LATE));
+     obj->Set(String::NewFromUtf8(isolate, "early"), Uint32::New(isolate, dtEntity::FilterOptions::ORDER_EARLY));
+     obj->Set(String::NewFromUtf8(isolate, "earliest"),  Uint32::New(isolate, dtEntity::FilterOptions::ORDER_EARLIEST));
+     obj->Set(String::NewFromUtf8(isolate, "singleshot"), Uint32::New(isolate, dtEntity::FilterOptions::SINGLE_SHOT));
+
+     return scope.Escape(obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -474,43 +537,46 @@ namespace dtEntityWrappers
    {
       s_stringCache = StringCache();
 
-      v8::HandleScope handle_scope;
+
+      Isolate* isolate = Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
 
       Handle<FunctionTemplate> templt = GetScriptSystem()->GetTemplateBySID(s_entityManagerWrapper);
 
       if(templt.IsEmpty())
       {
-        templt = FunctionTemplate::New();
-        templt->SetClassName(String::New("EntityManager"));
+        templt = FunctionTemplate::New(isolate);
+        templt->SetClassName(String::NewFromUtf8(isolate, "EntityManager"));
         templt->InstanceTemplate()->SetInternalFieldCount(2);
 
         Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-        proto->Set("addEntitySystem", FunctionTemplate::New(EMAddEntitySystem));
-        proto->Set("addToScene", FunctionTemplate::New(EMAddToScene));
-        proto->Set("cloneEntity", FunctionTemplate::New(EMCloneEntity));
-        proto->Set("createEntity", FunctionTemplate::New(EMCreateEntity));
-        proto->Set("getEntityIds", FunctionTemplate::New(EMGetEntityIds));
-        proto->Set("hasEntity", FunctionTemplate::New(EMHasEntity));
-        proto->Set("emitMessage", FunctionTemplate::New(EMEmitMessage));
-        proto->Set("enqueueMessage", FunctionTemplate::New(EMEnqueueMessage));
-        proto->Set("getEntitySystem", FunctionTemplate::New(EMGetEntitySystem));
-        proto->Set("hasEntitySystem", FunctionTemplate::New(EMHasEntitySystem));
-        proto->Set("killEntity", FunctionTemplate::New(EMKillEntity));
-        proto->Set("addPlugin", FunctionTemplate::New(EMAddPlugin));
-        proto->Set("registerForMessages", FunctionTemplate::New(EMRegisterForMessages));
-        proto->Set("unregisterForMessages", FunctionTemplate::New(EMUnregisterForMessages));
-        proto->Set("removeFromScene", FunctionTemplate::New(EMRemoveFromScene));
-        proto->Set("toString", FunctionTemplate::New(EMToString));
+        proto->Set(String::NewFromUtf8(isolate, "addEntitySystem"), FunctionTemplate::New(isolate, EMAddEntitySystem));
+        proto->Set(String::NewFromUtf8(isolate, "addToScene"), FunctionTemplate::New(isolate, EMAddToScene));
+        proto->Set(String::NewFromUtf8(isolate, "cloneEntity"), FunctionTemplate::New(isolate, EMCloneEntity));
+        proto->Set(String::NewFromUtf8(isolate, "createEntity"), FunctionTemplate::New(isolate, EMCreateEntity));
+        proto->Set(String::NewFromUtf8(isolate, "getEntityIds"), FunctionTemplate::New(isolate, EMGetEntityIds));
+        proto->Set(String::NewFromUtf8(isolate, "hasEntity"), FunctionTemplate::New(isolate, EMHasEntity));
+        proto->Set(String::NewFromUtf8(isolate, "emitMessage"), FunctionTemplate::New(isolate, EMEmitMessage));
+        proto->Set(String::NewFromUtf8(isolate, "enqueueMessage"), FunctionTemplate::New(isolate, EMEnqueueMessage));
+        proto->Set(String::NewFromUtf8(isolate, "getEntitySystem"), FunctionTemplate::New(isolate, EMGetEntitySystem));
+        proto->Set(String::NewFromUtf8(isolate, "hasEntitySystem"), FunctionTemplate::New(isolate, EMHasEntitySystem));
+        proto->Set(String::NewFromUtf8(isolate, "killEntity"), FunctionTemplate::New(isolate, EMKillEntity));
+        proto->Set(String::NewFromUtf8(isolate, "addPlugin"), FunctionTemplate::New(isolate, EMAddPlugin));
+        proto->Set(String::NewFromUtf8(isolate, "registerForMessages"), FunctionTemplate::New(isolate, EMRegisterForMessages));
+        proto->Set(String::NewFromUtf8(isolate, "unregisterForMessages"), FunctionTemplate::New(isolate, EMUnregisterForMessages));
+        proto->Set(String::NewFromUtf8(isolate, "removeFromScene"), FunctionTemplate::New(isolate, EMRemoveFromScene));
+        proto->Set(String::NewFromUtf8(isolate, "toString"), FunctionTemplate::New(isolate, EMToString));
 
         GetScriptSystem()->SetTemplateBySID(s_entityManagerWrapper, templt);
 
       }
-      Local<Object> instance = templt->GetFunction()->NewInstance();
-      instance->SetInternalField(0, External::New(v));
-      instance->SetInternalField(1, External::New(new MessageFunctorStorage()));
 
-      return handle_scope.Close(instance);
+      Local<Object> instance = templt->GetFunction()->NewInstance();
+      instance->SetInternalField(0, External::New(isolate, v));
+      instance->SetInternalField(1, External::New(isolate, new MessageFunctorStorage()));
+
+      return scope.Escape(instance);
 
    }
 
