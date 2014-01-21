@@ -95,8 +95,14 @@ namespace dtEntityWrappers
       // implementation of dtEntity::ComponentDeletedCallback
       virtual void ComponentDeleted(dtEntity::ComponentType t, dtEntity::EntityId id);
 
-      v8::Handle<v8::String> GetEntityIdString() const { return mEntityIdString; }
-      v8::Handle<v8::String> GetPropertyNamesString() const { return mPropertyNamesString; }
+      v8::Handle<v8::String> GetEntityIdString() const 
+      {
+         return v8::Handle<v8::String>::New(v8::Isolate::GetCurrent(), *mpEntityIdString);
+         //return mEntityIdString; 
+      }
+
+
+      v8::Handle<v8::String> GetPropertyNamesString() const { return v8::Handle<v8::String>::New(v8::Isolate::GetCurrent(), *mpPropertyNamesString); }
 
       v8::Handle<v8::FunctionTemplate> GetTemplateBySID(dtEntity::StringId) const;
       void SetTemplateBySID(dtEntity::StringId, v8::Handle<v8::FunctionTemplate>);
@@ -114,16 +120,21 @@ namespace dtEntityWrappers
       dtEntity::ArrayProperty mScripts;
       dtEntity::UIntProperty mDebugPort;
 
-      v8::Persistent<v8::Context> mGlobalContext;
-      v8::Persistent<v8::Function> mGlobalTickFunction;
+      // Ugly trick needed for MSVC to build - 
+      // DLL export complain about v8::Persistent NOT to be copyable
+      // so using pointer in the interface. 
+      // One could also use copiable traits, but does not seems to be a correct fix.
+      // For similar issue see: https://github.com/joyent/node/issues/6410
+      v8::Persistent<v8::Context>* mpGlobalContext;
+      v8::Persistent<v8::Function>* mpGlobalTickFunction;
       std::set<std::string> mIncludedFiles;
 
-      typedef std::map<std::pair<dtEntity::ComponentType, dtEntity::EntityId>, v8::Persistent<v8::Object> > ComponentMap;
+      typedef std::map<std::pair<dtEntity::ComponentType, dtEntity::EntityId>, v8::Persistent<v8::Object>* > ComponentMap;
       ComponentMap mComponentMap;
-      v8::Persistent<v8::String> mEntityIdString;
-      v8::Persistent<v8::String> mPropertyNamesString;
+      v8::Persistent<v8::String>* mpEntityIdString;
+      v8::Persistent<v8::String>* mpPropertyNamesString;
 
-      typedef std::map<dtEntity::StringId, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
+      typedef std::map<dtEntity::StringId, v8::Persistent<v8::FunctionTemplate>* > TemplateMap;
       TemplateMap mTemplateMap;
    };
 

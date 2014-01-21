@@ -28,6 +28,23 @@ namespace dtEntityWrappers
 {
 
 
+   PropertyGetterSetter::PropertyGetterSetter(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter)         
+   {
+      //mpHolder = new v8::Persistent<v8::Object, v8::CopyablePersistentTraits<v8::Object> >(v8::Isolate::GetCurrent(), holder);
+      mpHolder = new RefPersistent<v8::Object>(v8::Isolate::GetCurrent(), holder);
+      mpGetter = new RefPersistent<v8::Function>(v8::Isolate::GetCurrent(), getter);
+      mpSetter = new RefPersistent<v8::Function>(v8::Isolate::GetCurrent(), setter);
+   }
+
+   PropertyGetterSetter::~PropertyGetterSetter()
+   {
+      // nothing to do here, the ref_ptr will do out of scope and the 
+      // persistent will be automatically Reset
+   }
+
+
+
+#if 0
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyDestructor(v8::Persistent<Value> v, void* scriptsysnull)
    {
@@ -39,26 +56,38 @@ namespace dtEntityWrappers
       delete gs;
       v.Dispose();
    }
+#endif
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> JSPropertyGetter(Local<String> propname, const AccessorInfo& info)
+   //Handle<Value> JSPropertyGetter(Local<String> propname, const AccessorInfo& info)
+   void JSPropertyGetter( Local<String> propname, const PropertyCallbackInfo<Value>& info)
    {
       PropertyGetterSetter* prop = static_cast<PropertyGetterSetter*>(Handle<External>::Cast(info.Data())->Value());
       std::string propnamestr = ToStdString(propname);
       if(!prop)
       {
          LOG_ERROR("Property not found!");
-         return Undefined();
+         return;
       }
-      HandleScope scope;
-      Context::Scope context_scope(prop->mGetter->CreationContext());
-      return scope.Close(prop->mGetter->Call(prop->mHolder, 0, NULL));
+      
+      EscapableHandleScope scope(Isolate::GetCurrent());
+
+      // create local handle for persistent objects
+      Local<Function> getter = prop->mpGetter->GetLocal();
+      //Local<Object> holder = Local<Object>::New(Isolate::GetCurrent(), *prop->mpHolder);
+      Local<Object> holder = prop->mpHolder->GetLocal();
+
+      // call the function using the local handles and escape with the return value
+      Context::Scope context_scope(getter->CreationContext());
+      info.GetReturnValue().Set(getter->Call(holder, 0, NULL));
+
+      //return scope.Escape(getter->Call(holder, 0, NULL));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void JSPropertySetter(Local<String> propname,
                                Local<Value> value,
-                               const AccessorInfo& info)
+                               const PropertyCallbackInfo<void>& info)
    {
       PropertyGetterSetter* prop = static_cast<PropertyGetterSetter*>(Handle<External>::Cast(info.Data())->Value());
 
@@ -68,13 +97,18 @@ namespace dtEntityWrappers
          return;
       }
 
-      HandleScope scope;
-      Context::Scope context_scope(prop->mSetter->CreationContext());
+      // create local handle for persistent objects
+      Local<Function> setter = prop->mpSetter->GetLocal();
+      //Local<Object> holder = Local<Object>::New(Isolate::GetCurrent(), *prop->mpHolder);
+      Local<Object> holder = prop->mpHolder->GetLocal();
+
+      HandleScope scope(Isolate::GetCurrent());      
+      Context::Scope context_scope(setter->CreationContext());
 
       Handle<Value> argv[1] = { value };
 
       TryCatch try_catch;
-      Handle<Value> ret = prop->mSetter->Call(prop->mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
       if(ret.IsEmpty())
       {
          ReportException(&try_catch);
@@ -83,9 +117,10 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    template<class T>
-   Handle<Value> CreateProp(const Arguments& args)
+   void CreateProp(const FunctionCallbackInfo<Value>& args)
    {
-      HandleScope scope;
+      Isolate* isolate = Isolate::GetCurrent(); 
+      HandleScope scope(isolate);
 
       //obj, propname, val, getter, setter
       Handle<Object> obj = Handle<Function>::Cast(args[0]);
@@ -95,24 +130,28 @@ namespace dtEntityWrappers
 
       if(fg.IsEmpty() || fs.IsEmpty())
       {
-         return ThrowError("__createPropertyInt32 expects two function arguments");
+         ThrowError("__createPropertyInt32 expects two function arguments");
+         return;
       }
-      Persistent<Object> holder = Persistent<Object>::New(Object::New());
-      holder->Set(String::New("get"), fg);
-      holder->Set(String::New("set"), fs);
+      
+      // TODO this was previously declared as persistent handle. 
+      // review te 
+      Local<Object> holder = Local<Object>::New(isolate, Object::New(isolate));
+      holder->Set(String::NewFromUtf8(isolate, "get"), fg);
+      holder->Set(String::NewFromUtf8(isolate, "set"), fs);
 
-      holder.MakeWeak(NULL, &PropertyDestructor);
+      // TODO review make weak approach
+      //holder.MakeWeak(NULL, &PropertyDestructor);
       T* prop = new T(holder, fg, fs);
 
-      Handle<External> ext = v8::External::New(static_cast<void*>(prop));
-      holder->Set(String::New("__property"), ext);
+      Handle<External> ext = v8::External::New(isolate, static_cast<void*>(prop));
+      holder->Set(String::NewFromUtf8(isolate, "__property"), ext);
 
       obj->SetAccessor(propname, JSPropertyGetter, JSPropertySetter, ext, PROHIBITS_OVERWRITING, DontDelete);
 
       // also store property in object as hidden value. This way it can be found
       // when c++ wrappers are created
       obj->SetHiddenValue(propname, ext);
-      return Undefined();
    }
 
 
@@ -126,11 +165,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    bool JSBoolProperty::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -142,13 +185,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSBoolProperty::Set(bool v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> val = Boolean::New(v);
+      Handle<Value> val = Boolean::New(isolate, v);
       Handle<Value> argv[1] = { val };
-      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
 
       if(ret.IsEmpty())
       {
@@ -166,11 +214,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    int JSInt32Property::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -182,13 +234,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSInt32Property::Set(int v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> val = Int32::New(v);
+      Handle<Value> val = Int32::New(isolate, v);
       Handle<Value> argv[1] = { val };
-      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
 
       if(ret.IsEmpty())
       {
@@ -206,11 +263,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    unsigned int JSUInt32Property::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -222,13 +283,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSUInt32Property::Set(unsigned int v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> val = Uint32::New(v);
+      Handle<Value> val = Uint32::New(isolate, v);
       Handle<Value> argv[1] = { val };
-      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
 
       if(ret.IsEmpty())
       {
@@ -246,11 +312,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    double JSNumberProperty::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -262,13 +332,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSNumberProperty::Set(double v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> val = Number::New(v);
+      Handle<Value> val = Number::New(isolate, v);
       Handle<Value> argv[1] = { val };
-      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
 
       if(ret.IsEmpty())
       {
@@ -286,11 +361,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Quat JSQuatProperty::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -310,16 +389,22 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSQuatProperty::Set(const dtEntity::Quat& v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> argv[4] = { Number::New(v[0]),
-                                Number::New(v[1]),
-                                Number::New(v[2]),
-                                Number::New(v[3])
+      Handle<Value> argv[4] = { Number::New(isolate, v[0]),
+                                Number::New(isolate, v[1]),
+                                Number::New(isolate, v[2]),
+                                Number::New(isolate, v[3])
                               };
-      Handle<Value> ret = mSetter->Call(mHolder, 4, argv);
+
+      Handle<Value> ret = setter->Call(holder, 4, argv);
 
       if(ret.IsEmpty())
       {
@@ -338,11 +423,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    std::string JSStringProperty::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -354,13 +443,18 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSStringProperty::Set(const std::string& v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> val = String::New(v.c_str());
+      Handle<Value> val = String::NewFromUtf8(isolate, v.c_str());
       Handle<Value> argv[1] = { val };
-      Handle<Value> ret = mSetter->Call(mHolder, 1, argv);
+      Handle<Value> ret = setter->Call(holder, 1, argv);
 
       if(ret.IsEmpty())
       {
@@ -378,11 +472,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec2d JSVec2Property::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -400,14 +498,20 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSVec2Property::Set(const dtEntity::Vec2d& v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> argv[2] = { Number::New(v[0]),
-                                Number::New(v[1])
+      Handle<Value> argv[2] = { Number::New(isolate, v[0]),
+                                Number::New(isolate, v[1])
                               };
-      Handle<Value> ret = mSetter->Call(mHolder, 2, argv);
+      Handle<Value> ret = setter->Call(holder, 2, argv);
 
       if(ret.IsEmpty())
       {
@@ -425,11 +529,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec3d JSVec3Property::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -448,15 +556,21 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSVec3Property::Set(const dtEntity::Vec3d& v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> argv[3] = { Number::New(v[0]),
-                                Number::New(v[1]),
-                                Number::New(v[2])
+      Handle<Value> argv[3] = { Number::New(isolate, v[0]),
+                                Number::New(isolate, v[1]),
+                                Number::New(isolate, v[2])
                               };
-      Handle<Value> ret = mSetter->Call(mHolder, 3, argv);
+
+      Handle<Value> ret = setter->Call(holder, 3, argv);
 
       if(ret.IsEmpty())
       {
@@ -474,11 +588,15 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec4d JSVec4Property::Get() const
    {
-      HandleScope scope;
-      Context::Scope context_scope(mGetter->CreationContext());
+      HandleScope scope(Isolate::GetCurrent());
+      // create local handle for persistent objects
+      Local<Function> getter = mpGetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+      Context::Scope context_scope(getter->CreationContext());
+
       TryCatch try_catch;
 
-      Handle<Value> ret = mGetter->Call(mHolder, 0, NULL);
+      Handle<Value> ret = getter->Call(holder, 0, NULL);
 
       if(ret.IsEmpty())
       {
@@ -498,16 +616,21 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    void JSVec4Property::Set(const dtEntity::Vec4d& v)
    {
-      HandleScope scope;
-      Context::Scope context_scope(mSetter->CreationContext());
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      // create local handle for persistent objects
+      Local<Function> setter = mpSetter->GetLocal();
+      Local<Object> holder = mpHolder->GetLocal();
+
+      Context::Scope context_scope(setter->CreationContext());
       TryCatch try_catch;
 
-      Handle<Value> argv[4] = { Number::New(v[0]),
-                                Number::New(v[1]),
-                                Number::New(v[2]),
-                                Number::New(v[3])
+      Handle<Value> argv[4] = { Number::New(isolate, v[0]),
+                                Number::New(isolate, v[1]),
+                                Number::New(isolate, v[2]),
+                                Number::New(isolate, v[3])
                               };
-      Handle<Value> ret = mSetter->Call(mHolder, 4, argv);
+      Handle<Value> ret = setter->Call(holder, 4, argv);
 
       if(ret.IsEmpty())
       {
@@ -520,15 +643,16 @@ namespace dtEntityWrappers
    void RegisterPropertyFunctions(ScriptSystem* ss, Handle<Context> context)
    {
       Context::Scope context_scope(context);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
-      context->Global()->Set(String::New("__createInt32Prop"), FunctionTemplate::New(CreateProp<JSInt32Property>)->GetFunction());
-      context->Global()->Set(String::New("__createUint32Prop"), FunctionTemplate::New(CreateProp<JSUInt32Property>)->GetFunction());
-      context->Global()->Set(String::New("__createBoolProp"), FunctionTemplate::New(CreateProp<JSBoolProperty>)->GetFunction());
-      context->Global()->Set(String::New("__createNumberProp"), FunctionTemplate::New(CreateProp<JSNumberProperty>)->GetFunction());
-      context->Global()->Set(String::New("__createStringProp"), FunctionTemplate::New(CreateProp<JSStringProperty>)->GetFunction());
-      context->Global()->Set(String::New("__createQuatProp"), FunctionTemplate::New(CreateProp<JSQuatProperty>)->GetFunction());
-      context->Global()->Set(String::New("__createVec2Prop"), FunctionTemplate::New(CreateProp<JSVec2Property>)->GetFunction());
-      context->Global()->Set(String::New("__createVec3Prop"), FunctionTemplate::New(CreateProp<JSVec3Property>)->GetFunction());
-      context->Global()->Set(String::New("__createVec4Prop"), FunctionTemplate::New(CreateProp<JSVec4Property>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createInt32Prop"), FunctionTemplate::New(isolate, CreateProp<JSInt32Property>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createUint32Prop"), FunctionTemplate::New(isolate, CreateProp<JSUInt32Property>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createBoolProp"), FunctionTemplate::New(isolate, CreateProp<JSBoolProperty>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createNumberProp"), FunctionTemplate::New(isolate, CreateProp<JSNumberProperty>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createStringProp"), FunctionTemplate::New(isolate, CreateProp<JSStringProperty>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createQuatProp"), FunctionTemplate::New(isolate, CreateProp<JSQuatProperty>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createVec2Prop"), FunctionTemplate::New(isolate, CreateProp<JSVec2Property>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createVec3Prop"), FunctionTemplate::New(isolate, CreateProp<JSVec3Property>)->GetFunction());
+      context->Global()->Set(String::NewFromUtf8(isolate, "__createVec4Prop"), FunctionTemplate::New(isolate, CreateProp<JSVec4Property>)->GetFunction());
    }
 }

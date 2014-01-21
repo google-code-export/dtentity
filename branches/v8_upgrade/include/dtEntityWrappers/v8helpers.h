@@ -35,16 +35,17 @@
 #define LOAD_PTR(index, type) reinterpret_cast<type>(args.This()->GetPointerFromInternalField(index))
 #define SAVE_VALUE(index, val) args.This()->SetInternalField(index, val)
 #define LOAD_VALUE(index) args.This()->GetInternalField(index)
-#define JS_STR(...) v8::String::New(__VA_ARGS__)
-#define JS_INT(val) v8::Integer::New(val)
-#define JS_FLOAT(val) v8::Number::New(val)
-#define JS_BOOL(val) v8::Boolean::New(val)
-#define JS_NULL v8::Null()
-#define JS_UNDEFINED v8::Undefined()
-#define JS_METHOD(name) v8::Handle<v8::Value> name(const v8::Arguments& args)
+//#define JS_STR(...) v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), __VA_ARGS__)
+#define JS_STR(...) v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), __VA_ARGS__)
+#define JS_INT(val) v8::Integer::New(v8::Isolate::GetCurrent(), val)
+#define JS_FLOAT(val) v8::Number::New(v8::Isolate::GetCurrent(), val)
+#define JS_BOOL(val) v8::Boolean::New(v8::Isolate::GetCurrent(), val)
+#define JS_NULL v8::Null(v8::Isolate::GetCurrent())
+#define JS_UNDEFINED v8::Undefined(v8::Isolate::GetCurrent())
+#define JS_METHOD(name) void name(const v8::FunctionCallbackInfo<Value>& args)
 #define INSTANCEOF(obj, func) func->HasInstance(obj)
 
-#define JS_THROW(type, reason) v8::ThrowException(v8::Exception::type(JS_STR(reason)))
+#define JS_THROW(type, reason) v8::Isolate::GetCurrent()->ThrowException(v8::Exception::type(JS_STR(reason)))
 #define JS_ERROR(reason) JS_THROW(Error, reason)
 #define JS_TYPE_ERROR(reason) JS_THROW(TypeError, reason)
 #define JS_RANGE_ERROR(reason) JS_THROW(RangeError, reason)
@@ -56,8 +57,8 @@
 #define GLOBAL_PROTO v8::Handle<v8::Object>::Cast(JS_GLOBAL->GetPrototype())
 #define GC_PTR reinterpret_cast<GC *>(v8::Handle<v8::External>::Cast(GLOBAL_PROTO->GetInternalField(1))->Value())
 
-#define ASSERT_CONSTRUCTOR if (!args.IsConstructCall()) { return JS_ERROR("Invalid call format. Please use the 'new' operator."); }
-#define ASSERT_NOT_CONSTRUCTOR if (args.IsConstructCall()) { return JS_ERROR("Invalid call format. Please do not use the 'new' operator."); }
+#define ASSERT_CONSTRUCTOR if (!args.IsConstructCall()) { JS_ERROR("Invalid call format. Please use the 'new' operator."); }
+#define ASSERT_NOT_CONSTRUCTOR if (args.IsConstructCall()) { JS_ERROR("Invalid call format. Please do not use the 'new' operator."); }
 #define RETURN_CONSTRUCT_CALL \
 	std::vector< v8::Handle<v8::Value> > params(args.Length()); \
 	for (size_t i=0; i<params.size(); i++) { params[i] = args[i]; } \
@@ -78,16 +79,20 @@ namespace dtEntityWrappers
 
    inline v8::Handle<v8::Value> BYTESTORAGE_TO_JS(v8::Handle<v8::Context> context, ByteStorage * bs) {
       using namespace v8;
-      HandleScope scope;
-      Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::New("Buffer")));
+      EscapableHandleScope scope(Isolate::GetCurrent());
+      Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::NewFromUtf8(Isolate::GetCurrent(), "Buffer")));
       assert(!buffer.IsEmpty() && buffer->IsFunction());
-      Handle<v8::Value> newargs[] = { External::New((void*)bs) };
-      return scope.Close(Handle<Function>::Cast(buffer)->NewInstance(1, newargs));
+      Handle<v8::Value> newargs[1];
+      newargs[0] = External::New(Isolate::GetCurrent(), (void*)bs);
+      return scope.Escape(Handle<Function>::Cast(buffer)->NewInstance(1, newargs));
    }
 
 	inline ByteStorage * JS_TO_BYTESTORAGE(v8::Handle<v8::Value> value) {
 		v8::Handle<v8::Object> object = value->ToObject();
-		return reinterpret_cast<ByteStorage *>(object->GetPointerFromInternalField(0));
+
+      v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(object->GetInternalField(0));
+      void* ptr = field->Value();
+      return static_cast<ByteStorage *>(ptr);
 	}
 
 	inline v8::Handle<v8::Value> JS_BUFFER(v8::Handle<v8::Context> context, char * data, size_t length) {
@@ -105,8 +110,8 @@ namespace dtEntityWrappers
       using namespace v8;
 		if (!value->IsObject()) { return false; }
 		Handle<Value> proto = value->ToObject()->GetPrototype();
-		HandleScope scope;
-		Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::New("Buffer")));
+      HandleScope scope(Isolate::GetCurrent());
+		Handle<Function> buffer = Handle<Function>::Cast(context->Global()->Get(String::NewFromUtf8(Isolate::GetCurrent(), "Buffer")));
 		assert(!buffer.IsEmpty() && buffer->IsFunction());
 		Handle<Value> prototype = buffer->Get(JS_STR("prototype"));
 		return proto->Equals(prototype);
@@ -130,9 +135,14 @@ namespace dtEntityWrappers
      */
    template <typename T> 
    inline void GetInternal(v8::Handle<v8::Object> obj, 
-      unsigned int internalFieldIndex, T*& compType)
+                           unsigned int internalFieldIndex, 
+                           T*& compType)
    {
-      compType = static_cast<T*>(obj->GetPointerFromInternalField(internalFieldIndex));
+      // use by default the safe value which casts the internal field to external handle
+      // can't be sure this has been set with a SetAlignedPointerInInternalField()
+      Handle<External> field = Handle<External>::Cast(obj->GetInternalField(internalFieldIndex));
+      void* ptr = field->Value();
+      compType = static_cast<T*>(ptr);
    }
 
 
@@ -142,9 +152,11 @@ namespace dtEntityWrappers
      * @param cb The C callback when function is executed from javascript
      */
    void inline AddFunctionToTpl(v8::Handle<v8::Template> fn,
-      const char* name, v8::InvocationCallback cb)
+                                const char* name, 
+                                v8::FunctionCallback cb)
    {
-      fn->Set(v8::String::New(name), v8::FunctionTemplate::New(cb));
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      fn->Set(v8::String::NewFromUtf8(isolate, name), v8::FunctionTemplate::New(isolate, cb));
    }
 
    /** convert ANY js value to string 
@@ -162,7 +174,7 @@ namespace dtEntityWrappers
 
    inline v8::Handle<v8::String> ToJSString(const std::string& value)
    {
-      return v8::String::New(value.c_str(), value.size());
+      return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value.c_str(), v8::String::kNormalString, value.size());
    }
 
    /** write a JavaScript exception to log */
@@ -173,12 +185,14 @@ namespace dtEntityWrappers
      */
    inline v8::Handle<v8::Value> ThrowError(const std::string& err)
    {
-      return v8::ThrowException(v8::Exception::Error(v8::String::New(err.c_str())));
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      return isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, err.c_str())));
    }
 
    inline v8::Handle<v8::Value> ThrowSyntaxError(const std::string& err)
    {
-      return v8::ThrowException(v8::Exception::SyntaxError(v8::String::New(err.c_str())));
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      return isolate->ThrowException(v8::Exception::SyntaxError(v8::String::NewFromUtf8(isolate, err.c_str())));
    }
 
    DTENTITY_WRAPPERS_EXPORT v8::Handle<v8::Value> WrapVec2(const dtEntity::Vec2d& v);

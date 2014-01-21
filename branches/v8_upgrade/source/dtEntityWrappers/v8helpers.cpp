@@ -46,7 +46,7 @@ namespace dtEntityWrappers
 
    ScriptSystem* GetScriptSystem()
    {
-      ScriptSystem* ss = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData());
+      ScriptSystem* ss = static_cast<ScriptSystem*>(Isolate::GetCurrent()->GetData(0));
       assert(ss != NULL);
       return ss;
    }
@@ -57,7 +57,7 @@ namespace dtEntityWrappers
    void ReportException(TryCatch *try_catch) 
    {
         
-	  HandleScope scope;
+	  HandleScope scope(Isolate::GetCurrent());
 
       Handle<Message> message = try_catch->Message();
 	  std::string filename_string = "";
@@ -137,84 +137,88 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::EntityManager* GetEntityManager(v8::Handle<v8::Context> context)
    {
-      Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::New("EntityManager")));
+      Handle<Object> emh = Handle<Object>::Cast(context->Global()->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "EntityManager")));
       return UnwrapEntityManager(emh);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapVec2(const dtEntity::Vec2d& v)
    {
-      HandleScope scope;
-      Handle<Array> arr = Array::New(2);
-      arr->Set(0, Number::New(v[0]));
-      arr->Set(1, Number::New(v[1]));
-      arr->Set(String::New("__TYPE_HINT"), String::New("V2"));
-      return scope.Close(arr);
+      EscapableHandleScope scope(Isolate::GetCurrent());
+      Local<Array> arr = Array::New(v8::Isolate::GetCurrent(), 2);
+      arr->Set(0, Number::New(v8::Isolate::GetCurrent(), v[0]));
+      arr->Set(1, Number::New(v8::Isolate::GetCurrent(), v[1]));
+      arr->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "__TYPE_HINT"), String::NewFromUtf8(v8::Isolate::GetCurrent(), "V2"));
+      return scope.Escape(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapVec3(const dtEntity::Vec3d& v)
    {
-      HandleScope scope;
-      Handle<Array> arr = Array::New(3);
-      arr->Set(0, Number::New(v[0]));
-      arr->Set(1, Number::New(v[1]));
-      arr->Set(2, Number::New(v[2]));
-      arr->Set(String::New("__TYPE_HINT"), String::New("V3"));
-      return scope.Close(arr);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
+      Local<Array> arr = Array::New(isolate, 3);
+      arr->Set(0, Number::New(isolate, v[0]));
+      arr->Set(1, Number::New(isolate, v[1]));
+      arr->Set(2, Number::New(isolate, v[2]));
+      arr->Set(String::NewFromUtf8(isolate, "__TYPE_HINT"), String::NewFromUtf8(isolate, "V3"));
+      return scope.Escape(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapVec4(const dtEntity::Vec4d& v)
    {
-      HandleScope scope;
-      Handle<Array> arr = Array::New(4);
-      arr->Set(0, Number::New(v[0]));
-      arr->Set(1, Number::New(v[1]));
-      arr->Set(2, Number::New(v[2]));
-      arr->Set(3, Number::New(v[3]));
-      arr->Set(String::New("__TYPE_HINT"), String::New("V4"));
-      return scope.Close(arr);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
+      Local<Array> arr = Array::New(isolate, 4);
+      arr->Set(0, Number::New(isolate, v[0]));
+      arr->Set(1, Number::New(isolate, v[1]));
+      arr->Set(2, Number::New(isolate, v[2]));
+      arr->Set(3, Number::New(isolate, v[3]));
+      arr->Set(String::NewFromUtf8(isolate,  "__TYPE_HINT"), String::NewFromUtf8(isolate, "V4"));
+      return scope.Escape(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapQuat(const dtEntity::Quat& v)
    {
-      HandleScope scope;
-      Handle<Array> arr = Array::New(4);
-      arr->Set(0, Number::New(v[0]));
-      arr->Set(1, Number::New(v[1]));
-      arr->Set(2, Number::New(v[2]));
-      arr->Set(3, Number::New(v[3]));
-      arr->Set(String::New("__TYPE_HINT"), String::New("QT"));
-      return scope.Close(arr);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
+      Local<Array> arr = Array::New(isolate, 4);
+      arr->Set(0, Number::New(isolate, v[0]));
+      arr->Set(1, Number::New(isolate, v[1]));
+      arr->Set(2, Number::New(isolate, v[2]));
+      arr->Set(3, Number::New(isolate, v[3]));
+      arr->Set(String::NewFromUtf8(isolate, "__TYPE_HINT"), String::NewFromUtf8(isolate, "QT"));
+      return scope.Escape(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapMatrix(const dtEntity::Matrix& v)
    {
-      HandleScope scope;
-      Handle<Array> arr = Array::New(4);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      EscapableHandleScope scope(isolate);
+      Local<Array> arr = Array::New(isolate, 4);
       for(unsigned int i = 0; i < 4; ++i)
       {
-         Handle<Array> inner = Array::New(4);
-         inner->Set(0, Number::New(v(i, 0)));
-         inner->Set(1, Number::New(v(i, 1)));
-         inner->Set(2, Number::New(v(i, 2)));
-         inner->Set(3, Number::New(v(i, 3)));
+         Handle<Array> inner = Array::New(isolate, 4);
+         inner->Set(0, Number::New(isolate, v(i, 0)));
+         inner->Set(1, Number::New(isolate, v(i, 1)));
+         inner->Set(2, Number::New(isolate, v(i, 2)));
+         inner->Set(3, Number::New(isolate, v(i, 3)));
          arr->Set(i, inner);
       }
-      arr->Set(String::New("__TYPE_HINT"), String::New("MT"));
-      return scope.Close(arr);
+      arr->Set(String::NewFromUtf8(isolate, "__TYPE_HINT"), String::NewFromUtf8(isolate, "MT"));
+      return scope.Escape(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Value> WrapSID(dtEntity::StringId v)
    {
 #if DTENTITY_USE_STRINGS_AS_STRINGIDS
-      return String::New(v.c_str());
+      return String::NewFromUtf8(v8::Isolate::GetCurrent(), v.c_str());
 #else
-      return Uint32::New(v);
+      return Uint32::New(v8::Isolate::GetCurrent(), v);
 #endif
    }
 
@@ -261,7 +265,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec2d UnwrapVec2(v8::Handle<v8::Value> v)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(v);
       return dtEntity::Vec2d(arr->Get(0)->NumberValue(),
                        arr->Get(1)->NumberValue());
@@ -270,7 +274,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec3d UnwrapVec3(v8::Handle<v8::Value> v)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(v);
       return dtEntity::Vec3d(arr->Get(0)->NumberValue(),
                        arr->Get(1)->NumberValue(),
@@ -280,7 +284,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Vec4d UnwrapVec4(v8::Handle<v8::Value> v)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(v);
       return dtEntity::Vec4d(arr->Get(0)->NumberValue(),
                        arr->Get(1)->NumberValue(),
@@ -291,7 +295,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Quat UnwrapQuat(v8::Handle<v8::Value> v)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(v);
       return dtEntity::Quat(arr->Get(0)->NumberValue(),
                        arr->Get(1)->NumberValue(),
@@ -302,7 +306,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    dtEntity::Matrix UnwrapMatrix(v8::Handle<v8::Value> v)
    {
-      HandleScope scope;
+      HandleScope scope(Isolate::GetCurrent());
       Handle<Array> arr = Handle<Array>::Cast(v);
 
       return dtEntity::Matrix(arr->Get(0)->NumberValue(),

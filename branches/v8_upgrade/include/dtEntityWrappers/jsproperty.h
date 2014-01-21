@@ -22,6 +22,7 @@
 
 #include <v8.h>
 #include <dtEntity/property.h>
+#include <dtEntityWrappers/RefPersistent.h>
 
 namespace dtEntityWrappers
 {
@@ -33,24 +34,18 @@ namespace dtEntityWrappers
    {
    public:
 
-      PropertyGetterSetter(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter)
-      : mHolder(v8::Persistent<v8::Object>::New(holder))
-      , mGetter(v8::Persistent<v8::Function>::New(getter))
-      , mSetter(v8::Persistent<v8::Function>::New(setter))
-      {
-      }
+      PropertyGetterSetter(v8::Handle<v8::Object> holder, v8::Handle<v8::Function> getter, v8::Handle<v8::Function> setter);
 
-      ~PropertyGetterSetter()
-      {
-         mHolder.Dispose();
-         mGetter.Dispose();
-         mSetter.Dispose();         
-      }
+      ~PropertyGetterSetter();
 
-      v8::Persistent<v8::Object> mHolder;
-      v8::Persistent<v8::Function> mGetter;
-      v8::Persistent<v8::Function> mSetter;
 
+      // pointer "trick" is needed for MSCV to compile without complaining that v8::Persistent cannot be copied
+      // the usage of ref_ptr + RefPersistent automatically handles persistent Reset when the RefPersistent is destroyed
+
+      //v8::Persistent<v8::Object, v8::CopyablePersistentTraits<v8::Object> >* mpHolder;
+      osg::ref_ptr< RefPersistent<v8::Object> > mpHolder;
+      osg::ref_ptr< RefPersistent<v8::Function> > mpGetter;
+      osg::ref_ptr< RefPersistent<v8::Function> > mpSetter;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

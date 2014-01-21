@@ -3,8 +3,8 @@ include_once("Scripts/stdlib.js");
 
 EntityManager.addPlugin("plugins", "dtEntityRocket");
 
-var ddm = new DebugDrawManager();
-ddm.setEnabled(true);
+//var ddm = new DebugDrawManager();
+// ddm.setEnabled(true);
 
 var earthradius = 6371;
 var camradius = 100000;

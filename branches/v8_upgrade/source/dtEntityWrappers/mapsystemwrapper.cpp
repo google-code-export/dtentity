@@ -45,148 +45,124 @@ namespace dtEntityWrappers
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSToString(const Arguments& args)
+   void MSToString(const FunctionCallbackInfo<Value>& args)
    {
-      return String::New("<MapSystem>");
+      args.GetReturnValue().Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "<MapSystem>"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSAddEmptyMap(const Arguments& args)
+   void MSAddEmptyMap(const FunctionCallbackInfo<Value>& args)
    {
       if(args.Length() != 2)
        {
-          return ThrowError("usage: addEmptyMap(datapath, mappath");
+          ThrowError("usage: addEmptyMap(datapath, mappath");
+          return;
        }
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       ms->AddEmptyMap(ToStdString(args[0]), ToStdString(args[1]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSAddToScene(const Arguments& args)
+   void MSAddToScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->AddToScene(args[0]->Uint32Value());
-      if(success)
-      {
-         return Undefined();
-      }
-      else
-      {
-         return ThrowError("Could not add to scene: " + ToStdString(args[0]));
-      }
+
+      if(!success)
+         ThrowError("Could not add to scene: " + ToStdString(args[0]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetEntityIdByUniqueId(const Arguments& args)
+   void MSGetEntityIdByUniqueId(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       dtEntity::EntityId id = ms->GetEntityIdByUniqueId(ToStdString(args[0]));
-      return Integer::New(id);
+      args.GetReturnValue().Set(Integer::New(Isolate::GetCurrent(), id));
    }
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSIsSpawnOf(const Arguments& args)
+   void MSIsSpawnOf(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
-      return Boolean::New(ms->IsSpawnOf(args[0]->Uint32Value(), ToStdString(args[1])));
+      args.GetReturnValue().Set(Boolean::New(Isolate::GetCurrent(), ms->IsSpawnOf(args[0]->Uint32Value(), ToStdString(args[1]))) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSLoadMap(const Arguments& args)
+   void MSLoadMap(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->LoadMap(ToStdString(args[0]));
-      return Boolean::New(success);
+      args.GetReturnValue().Set(Boolean::New(Isolate::GetCurrent(), success));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSLoadScene(const Arguments& args)
+   void MSLoadScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->LoadScene(ToStdString(args[0]));
-      if(success)
-      {
-         return Undefined();
-      }
-      else
-      {
-         return ThrowError("Could not load scene " + ToStdString(args[0]));
-      }
+
+      if(!success)
+         ThrowError("Could not load scene " + ToStdString(args[0]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSRemoveFromScene(const Arguments& args)
+   void MSRemoveFromScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->RemoveFromScene(args[0]->Uint32Value());
-      if(success)
-      {
-         return Undefined();
-      }
-      else
-      {
-         return ThrowError("Could not remove from scene: " + ToStdString(args[0]));
-      }
+      if(!success)
+         ThrowError("Could not remove from scene: " + ToStdString(args[0]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSUnloadScene(const Arguments& args)
+   void MSUnloadScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       ms->UnloadScene();
-      return Undefined();
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSSaveScene(const Arguments& args)
+   void MSSaveScene(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->SaveScene(ToStdString(args[0]), args[1]->BooleanValue());
-      if(success)
-      {
-         return Undefined();
-      }
-      else
-      {
-         return ThrowError("Could not save scene " + ToStdString(args[0]));
-      }
+
+      if(!success)
+         ThrowError("Could not save scene " + ToStdString(args[0]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSUnloadMap(const Arguments& args)
+   void MSUnloadMap(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       bool success = ms->UnloadMap(ToStdString(args[0]));
-      if(success)
-      {
-         return Undefined();
-      }
-      else
-      {
-         return ThrowError("Could not unload map " + ToStdString(args[0]));
-      }
+
+      if(!success)
+         ThrowError("Could not unload map " + ToStdString(args[0]));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetLoadedMaps(const Arguments& args)
+   void MSGetLoadedMaps(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       std::vector<std::string> maps = ms->GetLoadedMaps();
-      HandleScope scope;
-      Handle<Array> arr = Array::New(maps.size());
+
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      Handle<Array> arr = Array::New(isolate, maps.size());
       int idx = 0;
       for(std::vector<std::string>::iterator i = maps.begin(); i != maps.end(); ++i)
       {
-         arr->Set(Integer::New(idx), ToJSString(*i));
+         arr->Set(Integer::New(isolate, idx), ToJSString(*i));
          ++idx;
       }
-      return scope.Close(arr);
+
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSSpawn(const Arguments& args)
+   void MSSpawn(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       
@@ -195,42 +171,47 @@ namespace dtEntityWrappers
       bool success = ms->GetEntityManager().GetEntity(eid, entity);
       if(!success)
       {
-         return ThrowError("Cannot spawn: not a valid entity! Usage: spawn(string spawner, entityid)");
+         ThrowError("Cannot spawn: not a valid entity! Usage: spawn(string spawner, entityid)");
+         return;
       }
       success = ms->Spawn(ToStdString(args[0]), *entity);
       if(!success)
       {
-         return ThrowError("Cannot spawn: Spawner not found with name " + ToStdString(args[0]));
+         ThrowError("Cannot spawn: Spawner not found with name " + ToStdString(args[0]));
+         return;
       }
-      return True();
    }
 
-    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSAddSpawner(const Arguments& args)
+   ////////////////////////////////////////////////////////////////////////////////
+   void MSAddSpawner(const FunctionCallbackInfo<Value>& args)
    {
-      HandleScope scope;
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
 
       if(args.Length() != 1)
       {
-         return ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath})");
+         ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath})");
+         return;
       }
 
       Handle<Object> obj = Handle<Object>::Cast(args[0]);
 
-      Handle<Value> vname = obj->Get(String::New("name"));
-      Handle<Value> vcomponents = obj->Get(String::New("components"));
+      Handle<Value> vname = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "name"));
+      Handle<Value> vcomponents = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "components"));
 
       if(vname.IsEmpty() || vcomponents.IsEmpty())
       {
-         return ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath, parentname})");
+         ThrowError("Usage: addSpawner({components, name, guicategory, mapname, addtospawnerstore, iconpath, parentname})");
+         return;
       }
 
-      Handle<Value> vguicategory = obj->Get(String::New("guicategory"));
-      Handle<Value> vmapname = obj->Get(String::New("mapname"));
-      Handle<Value> vaddtospawnerstore = obj->Get(String::New("addtospawnerstore"));
-      Handle<Value> viconpath = obj->Get(String::New("iconpath"));
-      Handle<Value> vparentname = obj->Get(String::New("parentname"));
+      Handle<Value> vguicategory = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "guicategory"));
+      Handle<Value> vmapname = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "mapname"));
+      Handle<Value> vaddtospawnerstore = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "addtospawnerstore"));
+      Handle<Value> viconpath = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "iconpath"));
+      Handle<Value> vparentname = obj->Get(String::NewFromUtf8(v8::Isolate::GetCurrent(), "parentname"));
 
       std::string name = ToStdString(vname);
       std::string mapname = vmapname.IsEmpty() ? "" : ToStdString(vmapname);
@@ -265,7 +246,7 @@ namespace dtEntityWrappers
       
       for(unsigned int i = 0; i < keys->Length(); ++i)
       {
-         Handle<Value> key = keys->Get(Integer::New(i));
+         Handle<Value> key = keys->Get(Integer::New(isolate, i));
          std::string keyname = ToStdString(key);
 
          dtEntity::StringId ctype = dtEntity::SIDHash(keyname);
@@ -283,7 +264,7 @@ namespace dtEntityWrappers
                dtEntity::GroupProperty props;
                for(unsigned int j = 0; j < compkeys->Length(); ++j)
                {
-                  Handle<Value> compkey = compkeys->Get(Integer::New(j));
+                  Handle<Value> compkey = compkeys->Get(Integer::New(isolate, j));
                   std::string compkeystr = ToStdString(compkey);
                   Handle<Value> compval = compobj->Get(compkey);
                   dtEntity::Property* prop = ConvertValueToProperty(compval);
@@ -295,53 +276,51 @@ namespace dtEntityWrappers
       }
       
       ms->AddSpawner(*spawner);
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSDeleteSpawner(const Arguments& args)
+   void MSDeleteSpawner(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       ms->DeleteSpawner(ToStdString(args[0]));
-      return Undefined();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetSpawner(const Arguments& args)
+   void MSGetSpawner(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       dtEntity::Spawner* spawner;
       
       if(!ms->GetSpawner(ToStdString(args[0]), spawner))
-      {
-         return Null();
-      }
-      HandleScope scope;
-      Handle<Object> obj = Object::New();
+         return;
+
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+      Handle<Object> obj = Object::New(isolate);
 
       if(spawner->GetParent())
       {
-         obj->Set(String::New("parent"), String::New(spawner->GetParent()->GetName().c_str()));
+         obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "parent"), String::NewFromUtf8(v8::Isolate::GetCurrent(), spawner->GetParent()->GetName().c_str()));
       }
       else
       {
-         obj->Set(String::New("parent"), String::New(""));
+         obj->Set(String::NewFromUtf8(v8::Isolate::GetCurrent(), "parent"), String::NewFromUtf8(v8::Isolate::GetCurrent(), ""));
       }
 
-      obj->Set(String::New("name"), String::New(spawner->GetName().c_str()));
-      obj->Set(String::New("guicategory"), String::New(spawner->GetGUICategory().c_str()));
-      obj->Set(String::New("mapname"), String::New(spawner->GetMapName().c_str()));
-      obj->Set(String::New("addtospawnerstore"), Boolean::New(spawner->GetAddToSpawnerStore()));
-      obj->Set(String::New("iconpath"), String::New(spawner->GetIconPath().c_str()));
+      obj->Set(String::NewFromUtf8(isolate, "name"), String::NewFromUtf8(isolate, spawner->GetName().c_str()));
+      obj->Set(String::NewFromUtf8(isolate, "guicategory"), String::NewFromUtf8(isolate, spawner->GetGUICategory().c_str()));
+      obj->Set(String::NewFromUtf8(isolate, "mapname"), String::NewFromUtf8(isolate, spawner->GetMapName().c_str()));
+      obj->Set(String::NewFromUtf8(isolate, "addtospawnerstore"), Boolean::New(isolate, spawner->GetAddToSpawnerStore()));
+      obj->Set(String::NewFromUtf8(isolate, "iconpath"), String::NewFromUtf8(isolate, spawner->GetIconPath().c_str()));
 
-      Handle<Object> comps = Object::New();
+      Handle<Object> comps = Object::New(isolate);
       dtEntity::Spawner::ComponentProperties props;
       spawner->GetAllComponentProperties(props);
       dtEntity::Spawner::ComponentProperties::iterator i;
       for(i = props.begin(); i != props.end(); ++i)
       {
          std::string compname = dtEntity::GetStringFromSID(i->first);
-         Handle<Object> jscomp = Object::New();
+         Handle<Object> jscomp = Object::New(isolate);
 
          const dtEntity::GroupProperty props = i->second;
          dtEntity::PropertyGroup g = props.Get();
@@ -355,8 +334,9 @@ namespace dtEntityWrappers
          
          comps->Set(ToJSString(compname), jscomp);
       }
-      obj->Set(String::New("components"), comps);
-      return scope.Close(obj);
+
+      obj->Set(String::NewFromUtf8(isolate, "components"), comps);
+      args.GetReturnValue().Set(obj);
    }
 
 
@@ -365,25 +345,27 @@ namespace dtEntityWrappers
      Returns JS object with all components of spawner and its spawner parents
    */
 
-   Handle<Value> MSGetSpawnerComponents(const Arguments& args)
+   void MSGetSpawnerComponents(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       dtEntity::Spawner* spawner;
 
       if(!ms->GetSpawner(ToStdString(args[0]), spawner))
       {
-         return Null();
+         return;
       }
-      HandleScope scope;
 
-      Handle<Object> comps = Object::New();
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
+
+      Handle<Object> comps = Object::New(isolate);
       dtEntity::Spawner::ComponentProperties props;
       spawner->GetAllComponentPropertiesRecursive(props);
       dtEntity::Spawner::ComponentProperties::iterator i;
       for(i = props.begin(); i != props.end(); ++i)
       {
          std::string compname = dtEntity::GetStringFromSID(i->first);
-         Handle<Object> jscomp = Object::New();
+         Handle<Object> jscomp = Object::New(isolate);
 
          const dtEntity::GroupProperty props = i->second;
          dtEntity::PropertyGroup g = props.Get();
@@ -397,12 +379,13 @@ namespace dtEntityWrappers
 
          comps->Set(ToJSString(compname), jscomp);
       }
-      return scope.Close(comps);
+
+      args.GetReturnValue().Set(comps);
    }
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetSpawnerCreatedEntities(const Arguments& args)
+   void MSGetSpawnerCreatedEntities(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       std::string spawnername = ToStdString(args[0]);
@@ -410,98 +393,98 @@ namespace dtEntityWrappers
 
       std::vector<dtEntity::EntityId> ids;
       ms->GetSpawnerCreatedEntities(spawnername, ids, recursive);
-      HandleScope scope;
-      Handle<Array> arr = Array::New();
+      HandleScope scope(Isolate::GetCurrent());
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
       for(unsigned int i = 0; i < ids.size(); ++i)
       {
-         arr->Set(i, Integer::New(ids[i]));
+         arr->Set(i, Integer::New(Isolate::GetCurrent(), ids[i]));
       }
-      return scope.Close(arr);
+
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetAllSpawnerNames(const Arguments& args)
+   void MSGetAllSpawnerNames(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       std::vector<std::string> names;
       ms->GetAllSpawnerNames(names);
-      HandleScope scope;
-      Handle<Array> arr = Array::New();
+      HandleScope scope(Isolate::GetCurrent());
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
       for(unsigned int i = 0; i < names.size(); ++i)
       {
-         arr->Set(Integer::New(i), ToJSString(names[i]));
+         arr->Set(Integer::New(Isolate::GetCurrent(), i), ToJSString(names[i]));
       }
-      return scope.Close(arr);
+
+      args.GetReturnValue().Set(arr);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSGetEntitiesInMap(const Arguments& args)
+   void MSGetEntitiesInMap(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       std::string mapname = ToStdString(args[0]);
       std::vector<dtEntity::EntityId> ids;
       ms->GetEntitiesInMap(mapname, ids);
       
-      HandleScope scope;
-      Handle<Array> arr = Array::New();
+      HandleScope scope(Isolate::GetCurrent());
+      Handle<Array> arr = Array::New(v8::Isolate::GetCurrent());
       for(unsigned int i = 0; i < ids.size(); ++i)
       {
-         arr->Set(Integer::New(i), Uint32::New(ids[i]));
+         arr->Set(Integer::New(Isolate::GetCurrent(), i), Uint32::New(Isolate::GetCurrent(), ids[i]));
       }
-      return scope.Close(arr);
+      args.GetReturnValue().Set(arr);
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> MSDeleteEntitiesByMap(const Arguments& args)
+   void MSDeleteEntitiesByMap(const FunctionCallbackInfo<Value>& args)
    {
       dtEntity::MapSystem* ms = UnwrapMapSystem(args.This());
       ms->DeleteEntitiesByMap(ToStdString(args[0]));
-      return Undefined();
    }   
 
    ////////////////////////////////////////////////////////////////////////////////
-   Handle<Value> ConstructMS(const v8::Arguments& args)
+   void ConstructMS(const v8::FunctionCallbackInfo<Value>& args)
    {  
       Handle<External> ext = Handle<External>::Cast(args[0]);
       dtEntity::MapSystem* ls = static_cast<dtEntity::MapSystem*>(ext->Value());   
-      args.This()->SetInternalField(0, External::New(ls));
-    
-      return Undefined();
+      args.This()->SetInternalField(0, External::New(Isolate::GetCurrent(), ls));
    }
   
    ////////////////////////////////////////////////////////////////////////////////
    void InitMapSystemWrapper(ScriptSystem* ss)
    {
-      HandleScope scope;
+      Isolate* isolate = Isolate::GetCurrent();
+      HandleScope scope(isolate);
       Context::Scope context_scope(ss->GetGlobalContext());
 
-      Handle<FunctionTemplate> templt= FunctionTemplate::New();
-      templt->SetClassName(String::New("MapSystem"));
+      Handle<FunctionTemplate> templt= FunctionTemplate::New(Isolate::GetCurrent());
+      templt->SetClassName(String::NewFromUtf8(v8::Isolate::GetCurrent(), "MapSystem"));
       templt->InstanceTemplate()->SetInternalFieldCount(1);
 
       Handle<ObjectTemplate> proto = templt->PrototypeTemplate();
 
-      proto->Set("addEmptyMap", FunctionTemplate::New(MSAddEmptyMap));
-      proto->Set("getEntityIdByUniqueId", FunctionTemplate::New(MSGetEntityIdByUniqueId));
-      proto->Set("isSpawnOf", FunctionTemplate::New(MSIsSpawnOf));
-      proto->Set("toString", FunctionTemplate::New(MSToString));
-      proto->Set("loadMap", FunctionTemplate::New(MSLoadMap));
-      proto->Set("loadScene", FunctionTemplate::New(MSLoadScene));
-      proto->Set("unloadScene", FunctionTemplate::New(MSUnloadScene));
-      proto->Set("saveScene", FunctionTemplate::New(MSSaveScene));
-      proto->Set("unloadMap", FunctionTemplate::New(MSUnloadMap));
-      proto->Set("getLoadedMaps", FunctionTemplate::New(MSGetLoadedMaps));
-      proto->Set("spawn", FunctionTemplate::New(MSSpawn));
-      proto->Set("deleteEntitiesByMap", FunctionTemplate::New(MSDeleteEntitiesByMap));
-      proto->Set("addSpawner", FunctionTemplate::New(MSAddSpawner));
-      proto->Set("addToScene", FunctionTemplate::New(MSAddToScene));
-      proto->Set("deleteSpawner", FunctionTemplate::New(MSDeleteSpawner));
-      proto->Set("getSpawner", FunctionTemplate::New(MSGetSpawner));
-      proto->Set("MSGetSpawnerComponents", FunctionTemplate::New(MSGetSpawnerComponents));
-      proto->Set("getSpawnerCreatedEntities", FunctionTemplate::New(MSGetSpawnerCreatedEntities));
-      proto->Set("getAllSpawnerNames", FunctionTemplate::New(MSGetAllSpawnerNames));
-      proto->Set("getEntitiesInMap", FunctionTemplate::New(MSGetEntitiesInMap));
-      proto->Set("removeFromScene", FunctionTemplate::New(MSRemoveFromScene));
+      proto->Set(String::NewFromUtf8(isolate, "addEmptyMap"), FunctionTemplate::New(isolate, MSAddEmptyMap));
+      proto->Set(String::NewFromUtf8(isolate, "getEntityIdByUniqueId"), FunctionTemplate::New(isolate, MSGetEntityIdByUniqueId));
+      proto->Set(String::NewFromUtf8(isolate, "isSpawnOf"), FunctionTemplate::New(isolate, MSIsSpawnOf));
+      proto->Set(String::NewFromUtf8(isolate, "toString"), FunctionTemplate::New(isolate, MSToString));
+      proto->Set(String::NewFromUtf8(isolate, "loadMap"), FunctionTemplate::New(isolate, MSLoadMap));
+      proto->Set(String::NewFromUtf8(isolate, "loadScene"), FunctionTemplate::New(isolate, MSLoadScene));
+      proto->Set(String::NewFromUtf8(isolate, "unloadScene"), FunctionTemplate::New(isolate, MSUnloadScene));
+      proto->Set(String::NewFromUtf8(isolate, "saveScene"), FunctionTemplate::New(isolate, MSSaveScene));
+      proto->Set(String::NewFromUtf8(isolate, "unloadMap"), FunctionTemplate::New(isolate, MSUnloadMap));
+      proto->Set(String::NewFromUtf8(isolate, "getLoadedMaps"), FunctionTemplate::New(isolate, MSGetLoadedMaps));
+      proto->Set(String::NewFromUtf8(isolate, "spawn"), FunctionTemplate::New(isolate, MSSpawn));
+      proto->Set(String::NewFromUtf8(isolate, "deleteEntitiesByMap"), FunctionTemplate::New(isolate, MSDeleteEntitiesByMap));
+      proto->Set(String::NewFromUtf8(isolate, "addSpawner"), FunctionTemplate::New(isolate, MSAddSpawner));
+      proto->Set(String::NewFromUtf8(isolate, "addToScene"), FunctionTemplate::New(isolate, MSAddToScene));
+      proto->Set(String::NewFromUtf8(isolate, "deleteSpawner"), FunctionTemplate::New(isolate, MSDeleteSpawner));
+      proto->Set(String::NewFromUtf8(isolate, "getSpawner"), FunctionTemplate::New(isolate, MSGetSpawner));
+      proto->Set(String::NewFromUtf8(isolate, "MSGetSpawnerComponents"), FunctionTemplate::New(isolate, MSGetSpawnerComponents));
+      proto->Set(String::NewFromUtf8(isolate, "getSpawnerCreatedEntities"), FunctionTemplate::New(isolate, MSGetSpawnerCreatedEntities));
+      proto->Set(String::NewFromUtf8(isolate, "getAllSpawnerNames"), FunctionTemplate::New(isolate, MSGetAllSpawnerNames));
+      proto->Set(String::NewFromUtf8(isolate, "getEntitiesInMap"), FunctionTemplate::New(isolate, MSGetEntitiesInMap));
+      proto->Set(String::NewFromUtf8(isolate, "removeFromScene"), FunctionTemplate::New(isolate, MSRemoveFromScene));
       
       RegisterEntitySystempWrapper(ss, dtEntity::MapComponent::TYPE, templt);
    }

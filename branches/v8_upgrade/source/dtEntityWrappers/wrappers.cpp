@@ -50,40 +50,43 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> WrapNodeMasks()
    {
-      HandleScope scope;
-      Handle<Object> o = Object::New();
+      Isolate* isolate = Isolate::GetCurrent();
 
-      o->Set(String::New("REFLECTION_SCENE"), Uint32::New(dtEntity::NodeMasks::REFLECTION_SCENE));
-      o->Set(String::New("REFRACTION_SCENE"), Uint32::New(dtEntity::NodeMasks::REFRACTION_SCENE));
-      o->Set(String::New("NORMAL_SCENE"),     Uint32::New(dtEntity::NodeMasks::NORMAL_SCENE));
-      o->Set(String::New("SURFACE_MASK"),     Uint32::New(dtEntity::NodeMasks::SURFACE_MASK));
-      o->Set(String::New("SILT_MASK"),        Uint32::New(dtEntity::NodeMasks::SILT_MASK));
-      o->Set(String::New("VISIBLE"),          Uint32::New(dtEntity::NodeMasks::VISIBLE));
-      o->Set(String::New("PICKABLE"),         Uint32::New(dtEntity::NodeMasks::PICKABLE));
-      o->Set(String::New("TERRAIN"),          Uint32::New(dtEntity::NodeMasks::TERRAIN));
-      o->Set(String::New("CASTS_SHADOWS"),    Uint32::New(dtEntity::NodeMasks::CASTS_SHADOWS));
-      o->Set(String::New("RECEIVES_SHADOWS"), Uint32::New(dtEntity::NodeMasks::RECEIVES_SHADOWS));
-      o->Set(String::New("MANIPULATOR"),      Uint32::New(dtEntity::NodeMasks::MANIPULATOR));
+      EscapableHandleScope scope(isolate);
+      Local<Object> o = Object::New(isolate);
 
-      return scope.Close(o);
+      o->Set(String::NewFromUtf8(isolate, "REFLECTION_SCENE"), Uint32::New(isolate, dtEntity::NodeMasks::REFLECTION_SCENE));
+      o->Set(String::NewFromUtf8(isolate, "REFRACTION_SCENE"), Uint32::New(isolate, dtEntity::NodeMasks::REFRACTION_SCENE));
+      o->Set(String::NewFromUtf8(isolate, "NORMAL_SCENE"),     Uint32::New(isolate, dtEntity::NodeMasks::NORMAL_SCENE));
+      o->Set(String::NewFromUtf8(isolate, "SURFACE_MASK"),     Uint32::New(isolate, dtEntity::NodeMasks::SURFACE_MASK));
+      o->Set(String::NewFromUtf8(isolate, "SILT_MASK"),        Uint32::New(isolate, dtEntity::NodeMasks::SILT_MASK));
+      o->Set(String::NewFromUtf8(isolate, "VISIBLE"),          Uint32::New(isolate, dtEntity::NodeMasks::VISIBLE));
+      o->Set(String::NewFromUtf8(isolate, "PICKABLE"),         Uint32::New(isolate, dtEntity::NodeMasks::PICKABLE));
+      o->Set(String::NewFromUtf8(isolate, "TERRAIN"),          Uint32::New(isolate, dtEntity::NodeMasks::TERRAIN));
+      o->Set(String::NewFromUtf8(isolate, "CASTS_SHADOWS"),    Uint32::New(isolate, dtEntity::NodeMasks::CASTS_SHADOWS));
+      o->Set(String::NewFromUtf8(isolate, "RECEIVES_SHADOWS"), Uint32::New(isolate, dtEntity::NodeMasks::RECEIVES_SHADOWS));
+      o->Set(String::NewFromUtf8(isolate, "MANIPULATOR"),      Uint32::New(isolate, dtEntity::NodeMasks::MANIPULATOR));
+
+      return scope.Escape(o);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Handle<Value> WrapCmdLineArgs()
    {
-
+      Isolate* isolate = Isolate::GetCurrent();
       dtEntity::SystemInterface* sysinf = dtEntity::GetSystemInterface();
+
       int argc = sysinf->GetArgC();
       const std::vector<std::string>& argv = sysinf->GetArgV();
 
-      HandleScope scope;
-      Handle<Array> o = Array::New(argc);
+      EscapableHandleScope scope(isolate);
+      Local<Array> o = Array::New(isolate, argc);
 
       for(int i = 0; i < argc; ++i)
       {  
-         o->Set(i, String::New(argv[i].c_str()));
+         o->Set(i, String::NewFromUtf8(isolate, argv[i].c_str()));
       }
-      return scope.Close(o);
+      return scope.Escape(o);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -104,22 +107,28 @@ namespace dtEntityWrappers
         return;
       }
 
-      HandleScope handle_scope;
+      Isolate* isolate = v8::Isolate::GetCurrent();
+
+      HandleScope handle_scope(isolate);
       Handle<Context> context = scriptsystem->GetGlobalContext();      
       Context::Scope context_scope(context);
       
-      context->Global()->Set(String::New("DebugDrawManager"), CreateDebugDrawManager(context));
-      //context->Global()->Set(String::New("Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
+      // TODO - temporary disabled, need porting to newest v8 version
+      //context->Global()->Set(String::NewFromUtf8(isolate, "DebugDrawManager"), CreateDebugDrawManager(context));
+      
+      //context->Global()->Set(String::NewFromUtf8(isolate, "Layer"), FunctionTemplate::New(CreateNewLayer)->GetFunction());
 
       // make entity manager accessible as a global variable
-      context->Global()->Set(String::New("EntityManager"), WrapEntityManager(scriptsystem, &em));
+      context->Global()->Set(String::NewFromUtf8(isolate, "EntityManager"), WrapEntityManager(scriptsystem, &em));
 
-      context->Global()->Set(String::New("NodeMasks"), WrapNodeMasks());
+      context->Global()->Set(String::NewFromUtf8(isolate, "NodeMasks"), WrapNodeMasks());
 
-      context->Global()->Set(String::New("Buffer"), CreateBuffer());
-      context->Global()->Set(String::New("File"), CreateFile());
-      context->Global()->Set(String::New("Log"), WrapLogger(context));
-      context->Global()->Set(String::New("CmdLineArgs"), WrapCmdLineArgs());
+      // TODO - temporary disabled, need porting to newest v8 version
+      //context->Global()->Set(String::NewFromUtf8(isolate, "Buffer"), CreateBuffer());
+      //context->Global()->Set(String::NewFromUtf8(isolate, "File"), CreateFile());
+
+      context->Global()->Set(String::NewFromUtf8(isolate, "Log"), WrapLogger(context));
+      context->Global()->Set(String::NewFromUtf8(isolate, "CmdLineArgs"), WrapCmdLineArgs());
 
       InitMapSystemWrapper(scriptsystem);
       
