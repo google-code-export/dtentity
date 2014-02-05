@@ -25,8 +25,9 @@
 #include <dtEntity/component.h>
 #include <dtEntity/dtentity_config.h>
 #include <dtEntityWrappers/scriptcomponent.h>
-#include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
+
+#include <v8.h>
 
 #include <iostream>
 #include <sstream>

@@ -22,6 +22,9 @@
 #include <dtEntity/dtentity_config.h>
 #include <dtEntityWrappers/inputhandlerwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
+#include <dtEntityWrappers/RefPersistent.h>
+
+
 #include <iostream>
 #include <v8.h>
 
@@ -39,46 +42,64 @@ namespace dtEntityWrappers
       InputCallbackWrapper(Handle<Object> obj)
       {
          Isolate* isolate = Isolate::GetCurrent();
-         mObject.Reset(isolate, obj);
+         //mObject.Reset(isolate, obj);
+         mObject = new RefPersistent<Object>(isolate, obj);
          
-         if(obj->Has(String::NewFromUtf8(isolate, "keyDown"))) 
+         Handle<String> keyDownString = String::NewFromUtf8(isolate, "keyDown");
+         if(obj->Has(keyDownString))
          {
-            mKeyDownFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyDown"))));
+            //mKeyDownFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyDown"))));
+            mKeyDownFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(keyDownString)));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "keyUp"))) 
+
+         Handle<String> keyUpString = String::NewFromUtf8(isolate, "keyUp");
+         if(obj->Has(keyUpString))
          {
-            mKeyUpFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyUp"))));
+            mKeyUpFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(keyUpString)));
+            //mKeyUpFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "keyUp"))));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "mouseButtonDown"))) 
+
+
+
+         Handle<String> mouseDownString = String::NewFromUtf8(isolate, "mouseButtonDown");
+         if(obj->Has(mouseDownString))
          {
-            mMouseDownFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseButtonDown"))));
+            mMouseDownFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(mouseDownString)));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "mouseButtonUp"))) 
+
+         Handle<String> mouseUpString = String::NewFromUtf8(isolate, "mouseButtonUp");
+         if(obj->Has(mouseUpString))
          {
-            mMouseUpFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseButtonUp"))));
+            mMouseUpFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(mouseUpString)));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "mouseWheel"))) 
+
+         Handle<String> mouseWheelString = String::NewFromUtf8(isolate, "mouseWheel");
+         if(obj->Has(mouseWheelString))
          {
-            mMouseWheelFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseWheel"))));
+            mMouseWheelFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(mouseWheelString)));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "mouseMove"))) 
+
+         Handle<String> mouseMoveString = String::NewFromUtf8(isolate, "mouseMove");
+         if(obj->Has(mouseMoveString))
          {
-            mMouseMoveFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseMove"))));
+            mMouseMoveFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(mouseMoveString)));
          }
-         if(obj->Has(String::NewFromUtf8(isolate, "mouseEnterLeave")))
+
+         Handle<String> mouseEnterLeaveString = String::NewFromUtf8(isolate, "mouseEnterLeave");
+         if(obj->Has(mouseEnterLeaveString))
          {
-            mMouseEnterLeaveFunc.Reset(isolate, Handle<Function>::Cast(obj->Get(String::NewFromUtf8(isolate, "mouseEnterLeave"))));
+            mMouseEnterLeaveFunc = new RefPersistent<Function>(isolate, Handle<Function>::Cast(obj->Get(mouseEnterLeaveString)));
          }
       }
 
       virtual bool KeyUp(const std::string& name, bool handled, unsigned int contextId) {
-         if(!mKeyUpFunc.IsEmpty())
+         if(mKeyUpFunc.valid() && !mKeyDownFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> keyUpFunc = Handle<Function>::New(isolate, mKeyUpFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> keyUpFunc = mKeyUpFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal(); //Handle<Object>::New(isolate, mObject);
 
             Context::Scope context_scope(keyUpFunc->CreationContext());
             TryCatch try_catch;
@@ -97,13 +118,14 @@ namespace dtEntityWrappers
 
       virtual bool KeyDown(const std::string& name, bool handled, unsigned int contextId)
       {
-         if(!mKeyDownFunc.IsEmpty())
+         // ptr initialized only if valid corresponding function to call
+         if(mKeyDownFunc.valid() && !mKeyDownFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> keyDownFunc = Handle<Function>::New(isolate, mKeyDownFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> keyDownFunc = mKeyDownFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal(); //Handle<Object>::New(isolate, mObject);
 
             Context::Scope context_scope(keyDownFunc->CreationContext());
             TryCatch try_catch;
@@ -120,15 +142,16 @@ namespace dtEntityWrappers
          return false;
       }
 
+
       virtual bool MouseButtonUp(int button, bool handled, unsigned int contextId)
       {
-         if(!mMouseUpFunc.IsEmpty())
+         if(mMouseUpFunc.valid() && !mMouseUpFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> mouseUpFunc = Handle<Function>::New(isolate, mMouseUpFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> mouseUpFunc = mMouseUpFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal();
 
             Context::Scope context_scope(mouseUpFunc->CreationContext());
             TryCatch try_catch;
@@ -147,13 +170,13 @@ namespace dtEntityWrappers
 
       virtual bool MouseButtonDown(int button, bool handled, unsigned int contextId)
       {
-         if(!mMouseDownFunc.IsEmpty())
+         if(mMouseDownFunc.valid() && !mMouseDownFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> mouseDownFunc = Handle<Function>::New(isolate, mMouseDownFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> mouseDownFunc = mMouseDownFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal();
 
             Context::Scope context_scope(mouseDownFunc->CreationContext());
             TryCatch try_catch;
@@ -172,13 +195,13 @@ namespace dtEntityWrappers
 
       virtual bool MouseWheel(int dir, bool handled, unsigned int contextId)
       {
-         if(!mMouseWheelFunc.IsEmpty())
+         if(mMouseWheelFunc.valid() && !mMouseWheelFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> mouseWheelFunc = Handle<Function>::New(isolate, mMouseWheelFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> mouseWheelFunc = mMouseWheelFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal();
 
             Context::Scope context_scope(mouseWheelFunc->CreationContext());
             TryCatch try_catch;
@@ -197,13 +220,13 @@ namespace dtEntityWrappers
 
       virtual bool MouseMove(float x, float y, bool handled, unsigned int contextId)
       {
-         if(!mMouseMoveFunc.IsEmpty())
+         if(mMouseMoveFunc.valid() && !mMouseMoveFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> mouseWheelFunc = Handle<Function>::New(isolate, mMouseWheelFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> mouseWheelFunc = mMouseMoveFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal();
 
             Context::Scope context_scope(mouseWheelFunc->CreationContext());
             TryCatch try_catch;
@@ -220,15 +243,16 @@ namespace dtEntityWrappers
          return false;
       }
 
+
       virtual void MouseEnterLeave(bool focused,unsigned int contextId)
       {
-         if(!mMouseEnterLeaveFunc.IsEmpty())
+         if(mMouseEnterLeaveFunc.valid() && !mMouseEnterLeaveFunc->GetPersistent().IsEmpty())
          {
             Isolate* isolate = Isolate::GetCurrent();
             HandleScope scope(isolate);
 
-            Handle<Function> mouseEnterLeaveFunc = Handle<Function>::New(isolate, mMouseEnterLeaveFunc);
-            Handle<Object> object = Handle<Object>::New(isolate, mObject);
+            Handle<Function> mouseEnterLeaveFunc = mMouseEnterLeaveFunc->GetLocal();
+            Handle<Object> object = mObject->GetLocal();
 
             Context::Scope context_scope(mouseEnterLeaveFunc->CreationContext());            
             TryCatch try_catch;
@@ -242,14 +266,27 @@ namespace dtEntityWrappers
          }
       }
 
-      Persistent<Function> mKeyUpFunc;
-      Persistent<Function> mKeyDownFunc;
-      Persistent<Function> mMouseUpFunc;
-      Persistent<Function> mMouseDownFunc;
-      Persistent<Function> mMouseWheelFunc;
-      Persistent<Function> mMouseMoveFunc;
-      Persistent<Function> mMouseEnterLeaveFunc;
-      Persistent<Object> mObject;
+
+      
+      osg::ref_ptr<RefPersistent<Function> > mKeyUpFunc;
+      osg::ref_ptr<RefPersistent<Function> > mKeyDownFunc;
+
+      osg::ref_ptr<RefPersistent<Function> > mMouseUpFunc;
+      osg::ref_ptr<RefPersistent<Function> > mMouseDownFunc;
+
+      osg::ref_ptr<RefPersistent<Function> > mMouseWheelFunc;
+      osg::ref_ptr<RefPersistent<Function> > mMouseMoveFunc;
+
+      osg::ref_ptr<RefPersistent<Function> > mMouseEnterLeaveFunc;
+
+      osg::ref_ptr<RefPersistent<Object> > mObject;
+
+      protected:
+         // hide default ctor, copy ctor and operator= to avoid issues with persistent (cannot be copied)
+         InputCallbackWrapper();
+         InputCallbackWrapper(const InputCallbackWrapper& rhs);         
+         // prevent copy operator
+         InputCallbackWrapper& operator=(const InputCallbackWrapper& that);
    };
 
    std::vector<InputCallbackWrapper*> s_inputCallbackWrappers;
@@ -435,7 +472,7 @@ namespace dtEntityWrappers
       for(std::vector<InputCallbackWrapper*>::iterator i = s_inputCallbackWrappers.begin();
          i != s_inputCallbackWrappers.end(); ++i)
       {
-         if((*i)->mObject == args[0])
+         if((*i)->mObject->GetLocal() == args[0])
          {
             dtEntity::InputInterface* ih; GetInternal(args.This(), 0, ih);
             ih->RemoveInputCallback(*i);

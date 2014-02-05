@@ -285,19 +285,21 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
       Context::Scope context_scope(obj->CreationContext());
-      mSystem.Reset(isolate, obj);
-      mHasCompFun.Reset(isolate, ExtractFun(obj, "hasComponent"));
-      mGetCompFun.Reset(isolate, ExtractFun(obj, "getComponent"));
-      mCreateCompFun.Reset(isolate, ExtractFun(obj, "createComponent"));
-      mDelCompFun.Reset(isolate, ExtractFun(obj, "deleteComponent"));
-      mGetESFun.Reset(isolate, ExtractFun(obj, "getEntitiesInSystem"));
+      mSystem = new RefPersistent<Object>(isolate, obj);
+      mHasCompFun = new RefPersistent<Function>(isolate, ExtractFun(obj, "hasComponent"));
+      mGetCompFun = new RefPersistent<Function>(isolate, ExtractFun(obj, "getComponent"));
+      mCreateCompFun = new RefPersistent<Function>(isolate, ExtractFun(obj, "createComponent"));
+      mDelCompFun = new RefPersistent<Function>(isolate, ExtractFun(obj, "deleteComponent"));
+      mGetESFun = new RefPersistent<Function>(isolate, ExtractFun(obj, "getEntitiesInSystem"));
+
       
-      mStringGetComponent.Reset(isolate, String::NewFromUtf8(isolate, "getComponent"));
-      mStringFinished.Reset(isolate, String::NewFromUtf8(isolate, "finished"));
-      mStringOnPropertyChanged.Reset(isolate, String::NewFromUtf8(isolate, "onPropertyChanged"));
-      mStringStoreComponentToMap.Reset(isolate, String::NewFromUtf8(isolate, "storeComponentToMap"));
-      mStringAllowComponentCreationBySpawner.Reset(isolate, String::NewFromUtf8(isolate, "allowComponentCreationBySpawner"));
-      mStringStorePropertiesToScene.Reset(isolate, String::NewFromUtf8(isolate, "storePropertiesToScene"));
+      
+      mStringGetComponent = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "getComponent"));      
+      mStringFinished = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "finished"));
+      mStringOnPropertyChanged = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "onPropertyChanged"));
+      mStringStoreComponentToMap = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "storeComponentToMap"));
+      mStringAllowComponentCreationBySpawner = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "allowComponentCreationBySpawner"));
+      mStringStorePropertiesToScene = new RefPersistent<String>(isolate, String::NewFromUtf8(isolate, "storePropertiesToScene"));
 
 
       Handle<Array> propnames = obj->GetPropertyNames();
@@ -359,13 +361,13 @@ namespace dtEntityWrappers
       std::string propname = dtEntity::GetStringFromSID(propnamesid);
       HandleScope scope(Isolate::GetCurrent());
 
-      Handle<Object> system = Handle<Object>::New(Isolate::GetCurrent(), mSystem);
+      Handle<Object> system = mSystem->GetLocal();
 
       Handle<Value> newval = ConvertPropertyToValue(system->CreationContext(), &prop);
       Handle<String> propnamestr = ToJSString(propname);
       system->Set(propnamestr, newval);
 
-      Handle<String> onPropChanged = Handle<String>::New(Isolate::GetCurrent(), mStringOnPropertyChanged);
+      Handle<String> onPropChanged = mStringOnPropertyChanged->GetLocal();
       Handle<Value> cb = system->Get(onPropChanged);
       if(!cb.IsEmpty() && cb->IsFunction())
       {
@@ -392,8 +394,8 @@ namespace dtEntityWrappers
       HandleScope scope(Isolate::GetCurrent());
 
       // get handles
-      Handle<Object> system = Handle<Object>::New(Isolate::GetCurrent(), mSystem);
-      Handle<String> finishedStr = Handle<String>::New(Isolate::GetCurrent(), mStringFinished);
+      Handle<Object> system = mSystem->GetLocal();
+      Handle<String> finishedStr = mStringFinished->GetLocal();
 
 
       Handle<Value> cb = system->Get(finishedStr);
@@ -416,21 +418,16 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////////
    EntitySystemJS::~EntitySystemJS()
-   {
-      mSystem.Reset();
-      mHasCompFun.Reset();
-      mGetCompFun.Reset();
-      mCreateCompFun.Reset();
-      mDelCompFun.Reset();
-      mGetESFun.Reset();
+   {  
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EntitySystemJS::OnRemovedFromEntityManager(dtEntity::EntityManager& em)
    {
       HandleScope scope(Isolate::GetCurrent());
+      
+      Handle<Object> system = mSystem->GetLocal();
 
-      Handle<Object> system = Handle<Object>::New(Isolate::GetCurrent(), mSystem);
          
       Handle<String> s = String::NewFromUtf8(v8::Isolate::GetCurrent(), "onRemovedFromEntityManager");
       Handle<Value> cb = system->Get(s);
@@ -456,13 +453,13 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
 
       Context::Scope context_scope(system->CreationContext());
       TryCatch try_catch;
       Handle<Value> argv[1] = { Integer::New(isolate, eid) };
 
-      Handle<Function> hasCompFunc = Handle<Function>::New(isolate, mHasCompFun);
+      Handle<Function> hasCompFunc = mHasCompFun->GetLocal();
       Handle<Value> ret = hasCompFunc->Call(system, 1, argv);
 
       if(ret.IsEmpty()) 
@@ -481,14 +478,14 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
 
       Context::Scope context_scope(system->CreationContext());
 
       TryCatch try_catch;
       
       Handle<Value> argv[1] = { Integer::New(isolate, eid) };
-      Handle<Function> getCompFunc = Handle<Function>::New(isolate, mGetCompFun);
+      Handle<Function> getCompFunc = mGetCompFun->GetLocal();
       Handle<Value> ret = getCompFunc->Call(system, 1, argv);
 
       if(ret.IsEmpty()) 
@@ -513,13 +510,13 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
       Context::Scope context_scope(system->CreationContext());
 
       TryCatch try_catch;
 
       Handle<Value> argv[1] = { Integer::New(isolate, eid) };
-      Handle<Function> getCompFunc = Handle<Function>::New(isolate, mGetCompFun);
+      Handle<Function> getCompFunc = mGetCompFun->GetLocal();
       Handle<Value> ret = getCompFunc->Call(system, 1, argv);
 
       if(ret.IsEmpty() || !ret->IsObject()) 
@@ -543,13 +540,13 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
       Context::Scope context_scope(system->CreationContext());
 
       TryCatch try_catch;
 
       Handle<Value> argv[1] = { Integer::New(isolate, eid) };
-      Handle<Function> createCompFunc = Handle<Function>::New(isolate, mCreateCompFun);
+      Handle<Function> createCompFunc = mCreateCompFun->GetLocal();
       Handle<Value> ret = createCompFunc->Call(system, 1, argv);
 
       if(ret.IsEmpty())
@@ -573,13 +570,13 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
       Context::Scope context_scope(system->CreationContext());
 
       TryCatch try_catch;
 
       Handle<Value> argv[1] = { Integer::New(isolate, eid) };
-      Handle<Function> delCompFunc = Handle<Function>::New(isolate, mDelCompFun);
+      Handle<Function> delCompFunc = mDelCompFun->GetLocal();
       Handle<Value> ret = delCompFunc->Call(system, 1, argv);
 
       if(ret.IsEmpty()) 
@@ -596,11 +593,11 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
       Context::Scope context_scope(system->CreationContext());
 
       TryCatch try_catch;
-      Handle<Function> getESFunc = Handle<Function>::New(isolate, mGetESFun);
+      Handle<Function> getESFunc = mGetESFun->GetLocal();
       Handle<Value> ret = getESFunc->Call(system, 0, NULL);
 
       if(ret.IsEmpty())
@@ -629,7 +626,7 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
       Context::Scope context_scope(system->CreationContext());
 
       Handle<Array> propnames = system->GetPropertyNames();
@@ -665,9 +662,9 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
+      Handle<Object> system = mSystem->GetLocal();
 
-      Handle<String> storeComptoMapStr = Handle<String>::New(isolate, mStringStoreComponentToMap);
+      Handle<String> storeComptoMapStr = mStringStoreComponentToMap->GetLocal();
       if(!system->Has(storeComptoMapStr))
       {
          return true;
@@ -694,8 +691,8 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
-      Handle<String> allowCompCreationBySpawnStr = Handle<String>::New(isolate, mStringAllowComponentCreationBySpawner);
+      Handle<Object> system = mSystem->GetLocal();
+      Handle<String> allowCompCreationBySpawnStr = mStringAllowComponentCreationBySpawner->GetLocal();
       
       if(!system->Has(allowCompCreationBySpawnStr))
       {
@@ -722,8 +719,8 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      Handle<Object> system = Handle<Object>::New(isolate, mSystem);
-      Handle<String> storePropToMapStr = Handle<String>::New(isolate, mStringStorePropertiesToScene);
+      Handle<Object> system = mSystem->GetLocal();
+      Handle<String> storePropToMapStr = mStringStorePropertiesToScene->GetLocal();
 
       if(!system->Has(storePropToMapStr))
       {

@@ -39,7 +39,7 @@ namespace dtEntityWrappers
       RefPersistent(v8::Isolate* isolate, v8::Handle<T> handle) { _persistent.Reset(isolate, handle); }
 
       // get internal persistent
-      v8::Persistent<T>& GetPersistent();
+      v8::Persistent<T>& GetPersistent() { return _persistent; }
 
       // shortcut to get a local handle from the internal persistent - uses Isolate::GetCurrent
       v8::Local<T> GetLocal() const { return v8::Local<T>::New(v8::Isolate::GetCurrent(), _persistent); }

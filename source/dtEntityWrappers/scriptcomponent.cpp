@@ -37,12 +37,16 @@
 #include <dtEntityWrappers/screenwrapper.h>
 #include <dtEntityWrappers/v8helpers.h>
 #include <dtEntityWrappers/wrappers.h>
+
+
+#include <v8.h>
+#include <v8-debug.h>
+
+
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 #include <iostream>
 #include <sstream>
-#include <v8.h>
-#include <v8-debug.h>
 
 using namespace v8;
 
@@ -75,8 +79,6 @@ namespace dtEntityWrappers
    ScriptSystem::ScriptSystem(dtEntity::EntityManager& em)
       : dtEntity::EntitySystem(em)
       , mDebugPortOpened(false)
-      , mpGlobalContext(NULL)
-      , mpGlobalTickFunction(NULL)
    {      
 
       V8::Initialize();
@@ -99,10 +101,13 @@ namespace dtEntityWrappers
 
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
-      mpEntityIdString = new Persistent<String>;
-      mpEntityIdString->Reset(isolate, String::NewFromUtf8(v8::Isolate::GetCurrent(), "__entityid__"));
-      mpPropertyNamesString = new Persistent<String>;
-      mpPropertyNamesString->Reset(isolate, String::NewFromUtf8(v8::Isolate::GetCurrent(), "__propertynames__"));
+
+      //mpEntityIdString = new Persistent<String>;
+      //mpEntityIdString->Reset(isolate, String::NewFromUtf8(isolate, "__entityid__"));
+      mpEntityIdString = new RefPersistent<v8::String>(isolate, String::NewFromUtf8(isolate, "__entityid__"));
+      //mpPropertyNamesString = new Persistent<String>;
+      //mpPropertyNamesString->Reset(isolate, String::NewFromUtf8(isolate, "__propertynames__"));
+      mpPropertyNamesString = new RefPersistent<v8::String>(isolate, String::NewFromUtf8(isolate, "__propertynames__"));
    }  
 
    ////////////////////////////////////////////////////////////////////////////
@@ -111,30 +116,20 @@ namespace dtEntityWrappers
       //V8::RemoveGCPrologueCallback(GCStartCallback);
       //V8::RemoveGCEpilogueCallback(GCEndCallback);
 
+      // RefPersistent will reset automatically when they get destroyed by the map
+      /*
       for(ComponentMap::iterator i = mComponentMap.begin(); i != mComponentMap.end(); ++i)
       {
          // reset the persistent and delete the persistent pointer itself
          i->second->Reset();
          delete i->second;
       }
-      mComponentMap.clear();
+      */
 
-      for(TemplateMap::iterator i = mTemplateMap.begin(); i != mTemplateMap.end(); ++i)
-      {
-         i->second->Reset();
-         delete i->second;
-      }
+      // same auto-cleanup goes for the template map
+
+      mComponentMap.clear();      
       mTemplateMap.clear();
-
-      // reset (v8) and delete the pointer
-      mpGlobalContext->Reset();
-      delete mpGlobalContext;
-
-      mpGlobalTickFunction->Reset();
-      delete mpGlobalTickFunction;
-
-      delete mpEntityIdString;
-      delete mpPropertyNamesString;
       
 
       GetEntityManager().UnregisterForMessages(dtEntity::SceneLoadedMessage::TYPE, mSceneLoadedFunctor);
@@ -149,24 +144,27 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
 
       // create the pointers
-      if(mpGlobalContext == NULL)
-         mpGlobalContext = new Persistent<Context>;
+      if(!mpGlobalContext.valid())
+         mpGlobalContext = new RefPersistent<Context>;
 
-      if(mpGlobalTickFunction == NULL)
-         mpGlobalTickFunction = new Persistent<Function>;
+      if(!mpGlobalTickFunction.valid())
+         mpGlobalTickFunction = new RefPersistent<Function>;
 
-      HandleScope handle_scope(isolate);
-      if(!mpGlobalContext->IsEmpty())
+      // handle scope
+      HandleScope handle_scope(isolate);      
+
+      // reset the global context if not empty
+      if(!mpGlobalContext->GetPersistent().IsEmpty())
       {
-         mpGlobalContext->Reset();
+         mpGlobalContext->GetPersistent().Reset();
       }
 
       // create a template for the global object
       Handle<ObjectTemplate> global = ObjectTemplate::New();
 
       // create persistent global context
-      Handle<Context> context = Context::New(isolate, NULL, global);
-      mpGlobalContext->Reset(isolate, context);
+      Local<Context> context = Context::New(isolate, NULL, global);
+      mpGlobalContext->GetPersistent().Reset(isolate, context);
 
       // store pointer to script system into isolate data field 0 to have it globally available in javascript
       isolate->SetData(0, this);
@@ -260,8 +258,10 @@ namespace dtEntityWrappers
 
    ////////////////////////////////////////////////////////////////////////////
    v8::Handle<v8::Context> ScriptSystem::GetGlobalContext()
-   {
-      return v8::Handle<v8::Context>::New(v8::Isolate::GetCurrent(), *mpGlobalContext);
+   {  
+      //return v8::Handle<v8::Context>::New(v8::Isolate::GetCurrent(), *mpGlobalContext);
+      // return local handle from the persistent instance
+      return mpGlobalContext->GetLocal();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -270,9 +270,9 @@ namespace dtEntityWrappers
       HandleScope scope(Isolate::GetCurrent());
       Handle<Context> context = GetGlobalContext();
 
-      mpGlobalTickFunction->Reset();
+      mpGlobalTickFunction->GetPersistent().Reset();
 
-      Handle<String> funcname = String::NewFromUtf8(v8::Isolate::GetCurrent(), "__executeTimeOuts");
+      Local<String> funcname = String::NewFromUtf8(v8::Isolate::GetCurrent(), "__executeTimeOuts");      
       if(context->Global()->Has(funcname))
       {
          Handle<Value> func = context->Global()->Get(funcname);
@@ -281,7 +281,7 @@ namespace dtEntityWrappers
             Handle<Function> f = Handle<Function>::Cast(func);
             if(!f.IsEmpty())
             {
-               mpGlobalTickFunction->Reset(Isolate::GetCurrent(), f);
+               mpGlobalTickFunction->GetPersistent().Reset(Isolate::GetCurrent(), f);
             }
          }
       }
@@ -290,7 +290,7 @@ namespace dtEntityWrappers
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::Tick(const dtEntity::Message& m)
    {
-      if(mpGlobalTickFunction->IsEmpty())
+      if(mpGlobalTickFunction->GetPersistent().IsEmpty())
          return;
 
       Isolate* isolate = Isolate::GetCurrent();
@@ -307,7 +307,8 @@ namespace dtEntityWrappers
          Uint32::New(isolate, osg::Timer::instance()->time_m())
       };
 
-      Local<Function> globalTick = Local<Function>::New(isolate, *mpGlobalTickFunction);
+      //Local<Function> globalTick = Local<Function>::New(isolate, *mpGlobalTickFunction);
+      Local<Function> globalTick = mpGlobalTickFunction->GetLocal(isolate);
       Handle<Value> ret = globalTick->Call(globalTick, 3, argv);
 
       if(ret.IsEmpty())
@@ -448,7 +449,8 @@ namespace dtEntityWrappers
       //pobj.MakeWeak(this, &ComponentWrapperDestructor);
 
       //AdjustAmountOfExternalAllocatedMemory(sizeof(dtEntity::Component));
-      mComponentMap[std::make_pair(ct, eid)] = pobj;
+
+      mComponentMap[std::make_pair(ct, eid)] = new RefPersistent<Object>(isolate, obj);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -459,8 +461,9 @@ namespace dtEntityWrappers
       {
          return Handle<Object>();
       }
-
-      return Handle<Object>::New(Isolate::GetCurrent(), *it->second);
+      
+      // return a local handle
+      return it->second->GetLocal();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -475,15 +478,11 @@ namespace dtEntityWrappers
       Isolate* isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
-      //TODO (ricky) what is this used for??
-      Local<Object> obj = Local<Object>::New(isolate, *it->second);
+      //TODO (ricky) what is this used for??      
+      Local<Object> obj = it->second->GetLocal();
       assert(!obj.IsEmpty() && obj->IsObject());
       // invalidate component wrapper
-      obj->SetInternalField(0, External::New(isolate, 0));
-
-      // reset the persistent and remove the persisten object itself
-      it->second->Reset();
-      delete it->second;
+      obj->SetInternalField(0, External::New(isolate, 0));      
 
       // remove the entry from the map
       mComponentMap.erase(it);
@@ -506,14 +505,13 @@ namespace dtEntityWrappers
       {
          return Handle<FunctionTemplate>();
       }
-
-      return Handle<FunctionTemplate>::New(Isolate::GetCurrent(), *i->second);
+      
+      return i->second->GetLocal();
    }
 
    ////////////////////////////////////////////////////////////////////////////
    void ScriptSystem::SetTemplateBySID(dtEntity::StringId v, v8::Handle<v8::FunctionTemplate> tpl)
-   {
-      Persistent<FunctionTemplate>* pfunc = new Persistent<FunctionTemplate>(Isolate::GetCurrent(), tpl);
-      mTemplateMap[v] = pfunc;
+   {  
+      mTemplateMap[v] = new RefPersistent<FunctionTemplate>(Isolate::GetCurrent(), tpl);
    }
 }
