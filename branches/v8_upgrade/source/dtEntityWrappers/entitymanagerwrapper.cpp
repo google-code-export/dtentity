@@ -107,27 +107,24 @@ namespace dtEntityWrappers
          : mFunctor(dtEntity::MessageFunctor(this, &MessageFunctorHolder::Call))
          , mMessageType(msgtype)
       {
-         mFunction.Reset(Isolate::GetCurrent(), func);
+         mFunction = new RefPersistent<Function>(Isolate::GetCurrent(), func);
          Handle<String> str = GetString(msgtype);
-         mMessageTypeStr.Reset(Isolate::GetCurrent(), str);
+         mMessageTypeStr = new RefPersistent<String>(Isolate::GetCurrent(), str);
       }
 
-      ~MessageFunctorHolder()
-      {
-         mMessageTypeStr.Reset();
-      }
+      ~MessageFunctorHolder() {}
 
       void Call(const dtEntity::Message& msg)
       {
          HandleScope scope(Isolate::GetCurrent());
-         Handle<Function> function = Handle<Function>::New(Isolate::GetCurrent(), mFunction);
+         Handle<Function> function = mFunction->GetLocal();
 
          Handle<Context> context = function->CreationContext();
          Context::Scope context_scope(context);
    
          TryCatch try_catch;
 
-         Handle<String> messageTypeStr = Handle<String>::New(Isolate::GetCurrent(), mMessageTypeStr);
+         Handle<String> messageTypeStr = mMessageTypeStr->GetLocal();
          Handle<Value> argv[2] = { messageTypeStr, ConvertMessageToJS(context, msg) };
 
          Handle<Value> result = function->Call(function, 2, argv);
@@ -138,9 +135,9 @@ namespace dtEntityWrappers
          }
       }
 
-      Persistent<Function> mFunction;
+      osg::ref_ptr<RefPersistent<Function> > mFunction;
       dtEntity::MessageFunctor mFunctor;
-      Persistent<String> mMessageTypeStr;
+      osg::ref_ptr<RefPersistent<String> > mMessageTypeStr;
       dtEntity::MessageType mMessageType;
    };
 
@@ -379,7 +376,7 @@ namespace dtEntityWrappers
       for(i = storage->mHolders.begin(); i != storage->mHolders.end(); ++i)
       {
          MessageFunctorHolder* holder = *i;
-         if(holder->mFunction == func && holder->mMessageType == msgnamesid)
+         if(holder->mFunction->GetLocal() == func && holder->mMessageType == msgnamesid)
          {
             em->UnregisterForMessages(holder->mMessageType, holder->mFunctor);
             storage->mHolders.erase(i);

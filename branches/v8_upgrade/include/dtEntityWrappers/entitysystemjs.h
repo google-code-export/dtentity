@@ -103,17 +103,18 @@ namespace dtEntityWrappers
    private:
 
       dtEntity::ComponentType mComponentType;
-      v8::Persistent<v8::Object> mSystem;
-      v8::Persistent<v8::Function> mHasCompFun;
-      v8::Persistent<v8::Function> mGetCompFun;
-      v8::Persistent<v8::Function> mCreateCompFun;
-      v8::Persistent<v8::Function> mDelCompFun;
-      v8::Persistent<v8::Function> mGetESFun;
-      v8::Persistent<v8::String> mStringGetComponent;
-      v8::Persistent<v8::String> mStringFinished;
-      v8::Persistent<v8::String> mStringOnPropertyChanged;
-      v8::Persistent<v8::String> mStringStoreComponentToMap;
-      v8::Persistent<v8::String> mStringAllowComponentCreationBySpawner;
-      v8::Persistent<v8::String> mStringStorePropertiesToScene;
+
+      osg::ref_ptr<RefPersistent<v8::Object> >   mSystem;
+      osg::ref_ptr<RefPersistent<v8::Function> > mHasCompFun;
+      osg::ref_ptr<RefPersistent<v8::Function> > mGetCompFun;
+      osg::ref_ptr<RefPersistent<v8::Function> > mCreateCompFun;
+      osg::ref_ptr<RefPersistent<v8::Function> > mDelCompFun;
+      osg::ref_ptr<RefPersistent<v8::Function> > mGetESFun;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringGetComponent;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringFinished;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringOnPropertyChanged;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringStoreComponentToMap;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringAllowComponentCreationBySpawner;
+      osg::ref_ptr<RefPersistent<v8::String> >   mStringStorePropertiesToScene;
    };
 }
