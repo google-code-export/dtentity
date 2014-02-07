@@ -30,7 +30,7 @@ namespace dtEntityWrappers
    /// Referenced wrapper around Persistent: 
    /// - auto Reset() on destructor
    /// - allow ref_ptr usage in stl container and/or exported dll, which need copyable classes
-   template<typename T> class DTENTITY_WRAPPERS_EXPORT RefPersistent : public osg::Referenced 
+   template<typename T> class RefPersistent : public osg::Referenced 
    {
    public:
       // default ctor

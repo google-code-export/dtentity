@@ -22,11 +22,12 @@ SET(LIB_PUBLIC_HEADERS
 	${HEADER_PATH}/file.h
 	${HEADER_PATH}/globalfunctions.h
 	${HEADER_PATH}/inputhandlerwrapper.h
-    ${HEADER_PATH}/jsproperty.h
+   ${HEADER_PATH}/jsproperty.h
 	${HEADER_PATH}/loggerwrapper.h
 	${HEADER_PATH}/mapsystemwrapper.h
 	${HEADER_PATH}/messages.h
 	${HEADER_PATH}/propertyconverter.h
+   ${HEADER_PATH}/RefPersistent.h
 	${HEADER_PATH}/screenwrapper.h
 	${HEADER_PATH}/scriptcomponent.h
 	${HEADER_PATH}/v8helpers.h
